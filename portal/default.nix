@@ -25,6 +25,7 @@ in {
   boot.kernelParams = [ "console=ttyS0,115200n8" ];
   boot.kernel.sysctl = {
     "net.ipv6.conf.all.forwarding" = true;
+    "net.ipv6.conf.enp1s0.accept_ra" = 2;
   };
 
   networking = {
@@ -68,7 +69,7 @@ in {
       noipv6rs
       interface ${externalInterface}
       ia_na 1
-      ia_pd 2/::/60 br0/0 voip/1
+      ia_pd 2/::/60 br0/0/64 voip/1/64
     '';
     firewall = {
       enable = true;
