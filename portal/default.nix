@@ -1,5 +1,5 @@
 { secrets }:
-{ config, pkgs, ... }:
+{ lib, config, pkgs, ... }:
 let
   externalInterface = "enp1s0";
   internalInterfaces = [
@@ -8,6 +8,7 @@ let
     "enp3s0.9"
     "enp3s0.12"
     "enp3s0.40"
+    "wg0"
   ];
 
 
@@ -16,6 +17,7 @@ in {
     [
       ./hardware.nix
     ];
+  deployment.keys."wg0-private".text = secrets.portal_wg0_private;
 
 
   # Use the GRUB 2 boot loader.
@@ -74,8 +76,89 @@ in {
     firewall = {
       enable = true;
       allowPing = true;
-      allowedTCPPorts = [ 53 5353 546 547 ];
-      allowedUDPPorts = [ 5353 53 67 546 547 ];
+      extraCommands = let
+        dropPortNoLog = port:
+          ''
+            ip46tables -A nixos-fw -p tcp \
+              --dport ${toString port} -j nixos-fw-refuse
+            ip46tables -A nixos-fw -p udp \
+              --dport ${toString port} -j nixos-fw-refuse
+          '';
+
+        refusePortOnInterface = port: interface:
+          ''
+            ip46tables -A nixos-fw -i ${interface} -p tcp \
+              --dport ${toString port} -j nixos-fw-log-refuse
+            ip46tables -A nixos-fw -i ${interface} -p udp \
+              --dport ${toString port} -j nixos-fw-log-refuse
+          '';
+        acceptPortOnInterface = port: interface:
+          ''
+            ip46tables -A nixos-fw -i ${interface} -p tcp \
+              --dport ${toString port} -j nixos-fw-accept
+            ip46tables -A nixos-fw -i ${interface} -p udp \
+              --dport ${toString port} -j nixos-fw-accept
+          '';
+        forwardPortOnInterface = port: interface:
+          ''
+            ip46tables -A FORWARD -i ${interface} -p tcp \
+              --dport ${toString port} -j nixos-fw-accept
+            ip46tables -A FORWARD -i ${interface} -p udp \
+              --dport ${toString port} -j nixos-fw-accept
+          '';
+
+        privatelyAcceptPort = port:
+          lib.concatMapStrings
+            (interface: acceptPortOnInterface port interface)
+            internalInterfaces;
+
+        publiclyRejectPort = port:
+          refusePortOnInterface port externalInterface;
+
+        allowPortOnlyPrivately = port:
+          ''
+            ${privatelyAcceptPort port}
+            ${publiclyRejectPort port}
+          '';
+      in lib.concatStrings [
+        (lib.concatMapStrings allowPortOnlyPrivately
+          [
+            67    # DHCP
+            546   # DHCPv6
+            547   # DHCPv6
+          ])
+        (lib.concatMapStrings dropPortNoLog
+          [
+            23   # Common from public internet
+            143  # Common from public internet
+            139  # From RT AP
+            515  # From RT AP
+            9100 # From RT AP
+          ])
+          ''
+            ip46tables -A FORWARD -m state --state NEW -i br0 -o enp1s0 -j nixos-fw-accept
+            ip46tables -A FORWARD -m state --state NEW -i voip -o enp1s0 -j nixos-fw-accept
+            ip46tables -A FORWARD -m state --state NEW -i wg0 -o enp1s0 -j nixos-fw-accept
+            ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j nixos-fw-accept
+            ip46tables -A FORWARD -i enp1s0 -j nixos-fw-refuse
+          ''
+      ];
+      allowedTCPPorts = [ ];
+      allowedUDPPorts = [ 51820 ];
+    };
+    wireguard.interfaces = {
+      wg0 = {
+        ips = [ "10.40.9.1/24" "fe80:1::1" ];
+        listenPort = 51820;
+        privateKeyFile = "/run/keys/wg0-private";
+        peers = [
+          {
+            publicKey = "mFn9gVTlPTEa+ZplilmKiZ0pYqzzof75IaDiG9q/pko=";
+            allowedIPs = [ "10.40.9.39/32" "10.39.0.0/24" "2601:98a:4000:9ed0::1/64" "fe80:1::1/64" ];
+          }
+        ];
+
+      };
     };
   };
 
