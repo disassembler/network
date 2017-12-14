@@ -103,12 +103,13 @@ in {
             ip46tables -A nixos-fw -i ${interface} -p udp \
               --dport ${toString port} -j nixos-fw-accept
           '';
-        forwardPortOnInterface = port: interface:
+        # IPv6 flat forwarding. For ipv4, see nat.forwardPorts
+        forwardPortToHost = port: interface: proto: host:
           ''
-            ip46tables -A FORWARD -i ${interface} -p tcp \
+            ip6tables -A FORWARD -i ${interface} \
+              -p ${proto} -d ${host} \
               --dport ${toString port} -j nixos-fw-accept
-            ip46tables -A FORWARD -i ${interface} -p udp \
-              --dport ${toString port} -j nixos-fw-accept
+
           '';
 
         privatelyAcceptPort = port:
@@ -139,13 +140,16 @@ in {
             515  # From RT AP
             9100 # From RT AP
           ])
-          ''
-            ip46tables -A FORWARD -m state --state NEW -i br0 -o enp1s0 -j nixos-fw-accept
-            ip46tables -A FORWARD -m state --state NEW -i voip -o enp1s0 -j nixos-fw-accept
-            ip46tables -A FORWARD -m state --state NEW -i wg0 -o enp1s0 -j nixos-fw-accept
-            ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j nixos-fw-accept
-            ip46tables -A FORWARD -i enp1s0 -j nixos-fw-refuse
-          ''
+        ''
+          # allow from trusted interfaces
+          ip46tables -A FORWARD -m state --state NEW -i br0 -o enp1s0 -j nixos-fw-accept
+          ip46tables -A FORWARD -m state --state NEW -i voip -o enp1s0 -j nixos-fw-accept
+          ip46tables -A FORWARD -m state --state NEW -i wg0 -o enp1s0 -j nixos-fw-accept
+          # allow traffic with existing state
+          ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j nixos-fw-accept
+          # block forwarding from external interface
+          ip6tables -A FORWARD -i enp1s0 -j nixos-fw-refuse
+        ''
       ];
       allowedTCPPorts = [ 32400 ];
       allowedUDPPorts = [ 51820 1194 ];
