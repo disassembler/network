@@ -64,6 +64,10 @@ in {
       externalInterface = "${externalInterface}";
       internalIPs = [ "10.40.33.0/24" "10.40.40.0/24" ];
       internalInterfaces = [ "voip" "br0" ];
+      forwardPorts = [
+        { sourcePort = 32400; destination = "10.40.33.20:32400"; proto = "tcp"; }
+        { sourcePort = 1194; destination = "10.40.33.20:1194"; proto = "udp"; }
+      ];
     };
     enableIPv6 = true;
     dhcpcd.persistent = true;
@@ -143,8 +147,8 @@ in {
             ip46tables -A FORWARD -i enp1s0 -j nixos-fw-refuse
           ''
       ];
-      allowedTCPPorts = [ ];
-      allowedUDPPorts = [ 51820 ];
+      allowedTCPPorts = [ 32400 ];
+      allowedUDPPorts = [ 51820 1194 ];
     };
     wireguard.interfaces = {
       wg0 = {
