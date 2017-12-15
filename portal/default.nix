@@ -108,7 +108,7 @@ in {
           ''
             ip6tables -A FORWARD -i ${interface} \
               -p ${proto} -d ${host} \
-              --dport ${toString port} -j nixos-fw-accept
+              --dport ${toString port} -j ACCEPT
 
           '';
 
@@ -142,13 +142,13 @@ in {
           ])
         ''
           # allow from trusted interfaces
-          ip46tables -A FORWARD -m state --state NEW -i br0 -o enp1s0 -j nixos-fw-accept
-          ip46tables -A FORWARD -m state --state NEW -i voip -o enp1s0 -j nixos-fw-accept
-          ip46tables -A FORWARD -m state --state NEW -i wg0 -o enp1s0 -j nixos-fw-accept
+          ip46tables -A FORWARD -m state --state NEW -i br0 -o enp1s0 -j ACCEPT
+          ip46tables -A FORWARD -m state --state NEW -i voip -o enp1s0 -j ACCEPT
+          ip46tables -A FORWARD -m state --state NEW -i wg0 -o enp1s0 -j ACCEPT
           # allow traffic with existing state
-          ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j nixos-fw-accept
+          ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
           # block forwarding from external interface
-          ip6tables -A FORWARD -i enp1s0 -j nixos-fw-refuse
+          ip6tables -A FORWARD -i enp1s0 -j DROP
         ''
       ];
       allowedTCPPorts = [ 32400 ];
@@ -162,7 +162,11 @@ in {
         peers = [
           {
             publicKey = "mFn9gVTlPTEa+ZplilmKiZ0pYqzzof75IaDiG9q/pko=";
-            allowedIPs = [ "10.40.9.39/32" "10.39.0.0/24" "2601:98a:4000:9ed0::1/64" "fe80:1::1/64" ];
+            allowedIPs = [ "10.40.9.39/32" "10.39.0.0/24" "2601:98a:4000:9ed0::1/64" "fe80:1::39/128" ];
+          }
+          {
+            publicKey = "b1mP5d9m041QyP0jbXicP145BOUYwNefUOOqo6XXwF8=";
+            allowedIPs = [ "10.40.9.2/32" "fe80:1::2/128" ];
           }
         ];
 
