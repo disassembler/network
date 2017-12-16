@@ -157,17 +157,17 @@ in {
     };
     wireguard.interfaces = {
       wg0 = {
-        ips = [ "10.40.9.1/24" "fe80:1::1" ];
+        ips = [ "10.40.9.1/24" "fd00::1" ];
         listenPort = 51820;
         privateKeyFile = "/run/keys/wg0-private";
         peers = [
           {
             publicKey = "mFn9gVTlPTEa+ZplilmKiZ0pYqzzof75IaDiG9q/pko=";
-            allowedIPs = [ "10.40.9.39/32" "10.39.0.0/24" "2601:98a:4000:9ed0::1/64" "fe80:1::39/128" ];
+            allowedIPs = [ "10.40.9.39/32" "10.39.0.0/24" "2601:98a:4000:9ed0::1/64" "fd00::39/128" ];
           }
           {
             publicKey = "b1mP5d9m041QyP0jbXicP145BOUYwNefUOOqo6XXwF8=";
-            allowedIPs = [ "10.40.9.2/32" "fe80:1::2/128" ];
+            allowedIPs = [ "10.40.9.2/32" "fd00::2/128" ];
           }
         ];
 
@@ -188,6 +188,8 @@ in {
     vim
     tmux
     git
+    tcpdump
+    dnsutils
   ];
 
   services = {
