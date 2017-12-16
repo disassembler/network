@@ -131,6 +131,7 @@ in {
             67    # DHCP
             546   # DHCPv6
             547   # DHCPv6
+            9100  # prometheus
           ])
         (lib.concatMapStrings dropPortNoLog
           [
@@ -241,6 +242,29 @@ in {
            };
         };
       '';
+    };
+    prometheus.nodeExporter = {
+      enable = true;
+      enabledCollectors = [
+        "systemd"
+        "tcpstat"
+        "conntrack"
+        "diskstats"
+        "entropy"
+        "filefd"
+        "filesystem"
+        "loadavg"
+        "meminfo"
+        "netdev"
+        "netstat"
+        "stat"
+        "time"
+        "vmstat"
+        "systemd"
+        "logind"
+        "interrupts"
+        "ksmd"
+      ];
     };
   };
 
