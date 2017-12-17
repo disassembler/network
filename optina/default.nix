@@ -183,7 +183,7 @@
         unifiPassword = secrets.unifi_password_ro;
         openFirewall = true;
       };
-      alertmanagerURL = [ "http://localhost:9093" ];
+      alertmanagerURL = [ "http://optina.wedlake.lan:9093" ];
       rules = [
         ''
           ALERT node_down
@@ -291,20 +291,6 @@
           ];
         }
         {
-          job_name = "telegraf";
-          scrape_interval = "10s";
-          static_configs = [
-            {
-              targets = [
-                "localhost:9101"
-              ];
-              labels = {
-                alias = "crate.wedlake.lan";
-              };
-            }
-          ];
-        }
-        {
           job_name = "node";
           scrape_interval = "10s";
           static_configs = [
@@ -399,12 +385,8 @@
           "global" = {
             "smtp_smarthost" = "smtp.gmail.com:587";
             "smtp_from" = "alertmanager@samleathers.com";
-            "auth_identity" = "disasm@gmail.com";
-            "auth_password" = secrets.alertmanager_smtp_pw;
-          };
-          "pushover" = {
-            "user_key" = secrets.alertmanager_pushover_user;
-            "token" = secrets.alertmanager_pushover_token;
+            "smtp_auth_username" = "disasm@gmail.com";
+            "smtp_auth_password" = secrets.alertmanager_smtp_pw;
           };
           "route" = {
             "group_by" = [ "alertname" "alias" ];
@@ -417,8 +399,8 @@
             {
               "name" = "team-admins";
               "email_configs" = [
-                {
-                  "to" = "disasm@gmail.com";
+              {
+                  "to"            = "disasm@gmail.com";
                   "send_resolved" = true;
                 }
               ];
@@ -426,6 +408,12 @@
                 {
                   "url" = "https://crate.wedlake.lan/prometheus-alerts";
                   "send_resolved" = true;
+                }
+              ];
+              "pushover_configs" = [
+                {
+                  "user_key" = secrets.alertmanager_pushover_user;
+                  "token" = secrets.alertmanager_pushover_token;
                 }
               ];
             }
@@ -436,11 +424,6 @@
     grafana = {
       enable = true;
       addr = "0.0.0.0";
-    };
-    ympd = {
-      enable = true;
-      webPort = "8082";
-      mpd.host = "10.40.33.20";
     };
     phpfpm = {
       phpPackage = pkgs.php71;
@@ -515,28 +498,6 @@
             proxy_set_header Connection "upgrade";
           }
         }
-        server {
-          listen [::]:443 ssl;
-          listen *:443 ssl;
-          server_name  mpd.wedlake.lan;
-
-          ssl_certificate      /data/ssl/mpd.wedlake.lan.crt;
-          ssl_certificate_key  /data/ssl/mpd.wedlake.lan.key;
-
-          ssl_session_cache    shared:SSL:1m;
-          ssl_session_timeout  5m;
-
-          ssl_ciphers  HIGH:!aNULL:!MD5;
-          ssl_prefer_server_ciphers  on;
-
-          location / {
-            proxy_pass http://127.0.0.1:8082;
-            # Websocket
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade"; 
-          }
-        }
         '';
       };
 
@@ -601,49 +562,12 @@
           };
           };
 
-        icecast = {
-          enable = true;
-          hostname = "prophet.samleathers.com";
-          admin.password = secrets.mpd_admin_pw;
-          extraConf = ''
-            <mount type="normal">
-            <mount-name>/mpd.ogg</mount-name>
-            <username>mpd</username>
-            <password>${secrets.mpd_user_pw}</password>
-            </mount>
-          '';
-        };
-        mpd = {
+        mopidy = {
           enable = false;
-          musicDirectory = "/data/pvr/music";
-          extraConfig = ''
-            log_level "verbose"
-            restore_paused "no"
-            metadata_to_use "artist,album,title,track,name,genre,date,composer,performer,disc,comment"
-            bind_to_address "10.40.33.20"
-            password "mpd@${secrets.mpd_admin_pw},read,add,control"
-
-            input {
-            plugin "curl"
-            }
-            audio_output {
-            type        "shout"
-            encoding    "ogg"
-            name        "Icecast stream"
-            host        "prophet.samleathers.com"
-            port        "8000"
-            mount       "/mpd.ogg"
-            public      "yes"
-            bitrate     "192"
-            format      "44100:16:1"
-            user        "mpd"
-            password    "${secrets.mpd_user_pw}"
-            }
-            audio_output {
-            type "alsa"
-            name "fake out"
-            driver "null"
-            }
+          configuration = ''
+            [local]
+            enabled = true
+            media_dir = /data/pvr/music
           '';
         };
         powerdns = {

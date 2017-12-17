@@ -210,7 +210,7 @@ in {
           option subnet-mask 255.255.255.0;
           option broadcast-address 10.40.33.255;
           option routers 10.40.33.1;
-          option domain-name-servers 10.40.33.20;
+          option domain-name-servers 10.40.33.20,8.8.8.8;
           range 10.40.33.100 10.40.33.200;
         }
         subnet 10.40.40.0 netmask 255.255.255.0 {
