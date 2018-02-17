@@ -1,12 +1,13 @@
-{ antBuild }:
-with import <nixpkgs> {}; # bring all of Nixpkgs into scope
+{ stdenv, antBuild, fetchgit, git, python }:
 
-antBuild {
-  name = "passopolis-unstable-2016-05-07";
+let
+  version = "unstable-2016-05-07";
+in antBuild {
+  name = "passopolis-${version}";
 
   src = fetchgit {
     url = "https://github.com/WeAreWizards/passopolis-server";
-    sha256 = "0ywmymbjcfsxv1p1j0l0lw9cb7f79h23ic1c4b5w5nb0k9f4zvfq";
+    sha256 = "1gnksrc06j3sk8yg85ydk1b8vv0bwrmryxsldgiclc5i7lfs0x7s";
     rev = "b827b3a6176e050deb729009676fad7e86e5393a";
     leaveDotGit = true;
   };
@@ -14,9 +15,14 @@ antBuild {
   buildInputs = [ git python ];
   antTargets = [ "jar" ];
 
+  postPatch = ''
+    patchShebangs .
+  '';
+
   meta = {
     homepage = "https://github.com/WeAreWizards/passopolis-server";
     description = "A well-designed, well-functioning and secure secret manager.";
     license = stdenv.lib.licenses.gpl3;
+    maintainers = with stdenv.lib.maintainers; [ disassembler ];
   };
 }

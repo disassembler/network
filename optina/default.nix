@@ -6,6 +6,7 @@
     [
       ./hardware.nix
     ];
+  deployment.keys."gitea-dbpass".text = secrets.gitea_dbpass;
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -31,7 +32,7 @@
     firewall = {
       enable = true;
       allowPing = true;
-      allowedTCPPorts = [ 443 32400 445 139 53 24000 3000 6667 6600 8080 22022 8000 8083 8086 9100 9093 9090 4444 5900 8091 9100 ];
+      allowedTCPPorts = [ 443 32400 445 139 53 24000 3000 6667 6600 8080 22022 8000 8083 8086 9100 9093 9090 4444 5900 8091 9100 3001 ];
       allowedUDPPorts = [ 53 137 138 1194 500 4500 ];
     };
   };
@@ -54,9 +55,41 @@
     ncmpc
     git
     fasd
+    dnsutils
   ];
 
   services = {
+    xserver = {
+      autorun = true;
+      enable = true;
+      layout = "us";
+      windowManager.default = "i3";
+      windowManager.i3 = {
+        enable = true;
+        #extraSessionCommands = ''
+        #  ${pkgs.feh} --bg-scale /home/sam/photos/20170503_183237.jpg
+        #'';
+        package = pkgs.i3-gaps;
+      };
+      displayManager.lightdm = {
+        enable = true;
+        background = "/etc/lightdm/background.jpg";
+      };
+    };
+    gitea = {
+      enable = true;
+      domain = "git.wedlake.lan";
+      httpAddress = "127.0.0.1";
+      rootUrl = "https://git.wedlake.lan";
+      httpPort = 3001;
+      database = {
+        type = "postgres";
+        port = 5432;
+        passwordFile = "/run/keys/gitea-dbpass";
+        sslMode = "disable";
+      };
+    };
+    mongodb.enable = true;
     openssh = {
       enable = true;
       permitRootLogin = "without-password";
@@ -498,6 +531,27 @@
             proxy_set_header Connection "upgrade";
           }
         }
+        server {
+          listen [::]:443 ssl;
+          listen *:443 ssl;
+          server_name  git.wedlake.lan;
+
+          ssl_certificate      /data/ssl/git.wedlake.lan.crt;
+          ssl_certificate_key  /data/ssl/git.wedlake.lan.key;
+
+          ssl_session_cache    shared:SSL:1m;
+          ssl_session_timeout  5m;
+
+          ssl_ciphers  HIGH:!aNULL:!MD5;
+          ssl_prefer_server_ciphers  on;
+
+          location / {
+            proxy_pass http://localhost:3001/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
+          }
+        }
         '';
       };
 
@@ -529,38 +583,6 @@
           browsing = true;
 
           };
-          openvpn = {
-          servers = {
-          wedlake = {
-          config = ''
-          dev tun
-          proto udp
-          port 1194
-          tun-ipv6
-          ca /data/openvpn/ca.crt
-          cert /data/openvpn/crate.wedlake.lan.crt
-          key /data/openvpn/crate.wedlake.lan.key
-          dh /data/openvpn/dh2048.pem
-          server 10.40.12.0 255.255.255.0
-          server-ipv6 2601:98a:4101:d352::/64
-          push "route 10.40.33.0 255.255.255.0"
-          push "route-ipv6 2601:98a:4101:d350::/60"
-          push "route-ipv6 2000::/3"
-          push "dhcp-option DNS 10.40.33.20"
-          duplicate-cn
-          keepalive 10 120
-          tls-auth /data/openvpn/ta.key 0
-          comp-lzo
-          user openvpn
-          group root
-          persist-key
-          persist-tun
-          status openvpn-status.log
-          verb 3
-          '';
-          };
-          };
-          };
 
         mopidy = {
           enable = false;
@@ -568,6 +590,39 @@
             [local]
             enabled = true
             media_dir = /data/pvr/music
+          '';
+        };
+        mpd = {
+          enable = true;
+          musicDirectory = "/data/pvr/music";
+          extraConfig = ''
+            log_level "verbose"
+            restore_paused "no"
+            metadata_to_use "artist,album,title,track,name,genre,date,composer,performer,disc,comment"
+            bind_to_address "10.40.33.20"
+            password "${secrets.mpd_pw}@admin,read,add,control"
+
+            input {
+            plugin "curl"
+            }
+            audio_output {
+            type        "shout"
+            encoding    "ogg"
+            name        "Icecast stream"
+            host        "prophet.samleathers.com"
+            port        "8000"
+            mount       "/mpd.ogg"
+            public      "yes"
+            bitrate     "192"
+            format      "44100:16:1"
+            user        "mpd"
+            password    "${secrets.mpd_icecast_pw}"
+            }
+            audio_output {
+            type "alsa"
+            name "fake out"
+            driver "null"
+            }
           '';
         };
         powerdns = {
@@ -642,10 +697,6 @@
       users.extraUsers.megan = {
         isNormalUser = true;
         uid = 1002;
-      };
-      users.extraUsers.openvpn = {
-        isNormalUser = true;
-        uid = 1003;
       };
       users.extraUsers.nursery = {
         isNormalUser = true;

@@ -22,6 +22,6 @@ in {
         '';
       };
     };
-    nixpkgs.config.packageOverrides = pkgs: { passopolis = (import passopolis/pkg.nix { antBuild = pkgs.releaseTools.antBuild; }); };
+    nixpkgs.config.packageOverrides = pkgs: { passopolis = (pkgs.callPackage passopolis/pkg.nix { antBuild = pkgs.releaseTools.antBuild; }); };
   };
 }

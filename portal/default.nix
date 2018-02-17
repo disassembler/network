@@ -66,7 +66,7 @@ in {
       internalInterfaces = [ "voip" "br0" ];
       forwardPorts = [
         { sourcePort = 32400; destination = "10.40.33.20:32400"; proto = "tcp"; }
-        { sourcePort = 1194; destination = "10.40.33.20:1194"; proto = "udp"; }
+        #{ sourcePort = 1194; destination = "10.40.33.20:1194"; proto = "udp"; }
       ];
     };
     enableIPv6 = true;
@@ -146,6 +146,7 @@ in {
           ip46tables -A FORWARD -m state --state NEW -i br0 -o enp1s0 -j ACCEPT
           ip46tables -A FORWARD -m state --state NEW -i voip -o enp1s0 -j ACCEPT
           ip46tables -A FORWARD -m state --state NEW -i wg0 -o enp1s0 -j ACCEPT
+          ip46tables -A FORWARD -m state --state NEW -i tun0 -o enp1s0 -j ACCEPT
           # allow traffic with existing state
           ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
           # block forwarding from external interface
@@ -168,6 +169,10 @@ in {
           {
             publicKey = "b1mP5d9m041QyP0jbXicP145BOUYwNefUOOqo6XXwF8=";
             allowedIPs = [ "10.40.9.2/32" "fd00::2/128" ];
+          }
+          {
+            publicKey = "dCKIaTC40Y5sQqbdsYw1adSgVDmV+1SZMV4DVx1ctSk=";
+            allowedIPs = [ "10.38.0.0/24" "fd00::38/128" ];
           }
         ];
 
@@ -203,6 +208,7 @@ in {
       enable = true;
       machines = [
         { hostName = "crate"; ethernetAddress = "d4:3d:7e:4d:c4:7f"; ipAddress = "10.40.33.20"; }
+        { hostName = "printer"; ethernetAddress = "a4:5d:36:d6:22:d9"; ipAddress = "10.40.33.50"; }
       ];
       extraConfig = ''
         subnet 10.40.33.0 netmask 255.255.255.0 {
@@ -210,7 +216,7 @@ in {
           option subnet-mask 255.255.255.0;
           option broadcast-address 10.40.33.255;
           option routers 10.40.33.1;
-          option domain-name-servers 10.40.33.20,8.8.8.8;
+          option domain-name-servers 8.8.8.8;
           range 10.40.33.100 10.40.33.200;
         }
         subnet 10.40.40.0 netmask 255.255.255.0 {
@@ -268,6 +274,38 @@ in {
         "ksmd"
       ];
     };
+    openvpn = {
+      servers = {
+        wedlake = {
+          config = ''
+          dev tun
+          proto udp
+          port 1194
+          tun-ipv6
+          ca /var/lib/openvpn/ca.crt
+          cert /var/lib/openvpn/crate.wedlake.lan.crt
+          key /var/lib/openvpn/crate.wedlake.lan.key
+          dh /var/lib/openvpn/dh2048.pem
+          server 10.40.12.0 255.255.255.0
+          server-ipv6 2601:98a:4101:bff2::/64
+          push "route 10.40.33.0 255.255.255.0"
+          push "route-ipv6 2601:98a:4101:bff0::/60"
+          push "route-ipv6 2000::/3"
+          push "dhcp-option DNS 10.40.33.20"
+          duplicate-cn
+          keepalive 10 120
+          tls-auth /var/lib/openvpn/ta.key 0
+          comp-lzo
+          user openvpn
+          group root
+          persist-key
+          persist-tun
+          status openvpn-status.log
+          verb 3
+          '';
+        };
+      };
+    };
   };
 
   users.extraUsers.sam = {
@@ -276,6 +314,10 @@ in {
     uid = 1000;
     extraGroups = [ "wheel" ];
     openssh.authorizedKeys.keys = secrets.sam_ssh_keys;
+  };
+  users.extraUsers.openvpn = {
+    isNormalUser = true;
+    uid = 1003;
   };
   system.stateVersion = "17.09";
 
