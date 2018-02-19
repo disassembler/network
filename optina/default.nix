@@ -660,6 +660,20 @@
           '';
         };
         postgresqlBackup.enable = true;
+        # Plex
+        plex = {
+          enable = true;
+          package = pkgs.plex.overrideAttrs (x: {
+            src = pkgs.fetchurl {
+              url = let
+                version = "1.10.1.4602";
+                vsnHash = "f54242b6b";
+
+              in "https://downloads.plex.tv/plex-media-server/${version}-${vsnHash}/plexmediaserver-${version}-${vsnHash}.x86_64.rpm";
+              sha256 = "0f7yh8pqjv9ib4191mg0ydlb44ls9xc1ybv10v1iy75s9w00c0vd";
+            };
+          });
+        };
 
       };
       virtualisation.docker.enable = true;
