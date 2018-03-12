@@ -43,6 +43,13 @@
 
   nixpkgs.config = {
     allowUnfree = true;
+    packageOverrides = pkgs: rec {
+      weechat = pkgs.weechat.override {
+        extraBuildInputs = [ pkgs.python27Packages.websocket_client ];
+        pythonPackages = pkgs.python27Packages;
+      };
+    };
+
   };
   environment.systemPackages = with pkgs; [
     unrar
@@ -78,6 +85,7 @@
         background = "/etc/lightdm/background.jpg";
       };
     };
+    bitlbee.enable = true;
     gitea = {
       enable = true;
       domain = "git.wedlake.lan";
