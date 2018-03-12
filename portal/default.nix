@@ -9,6 +9,7 @@ let
     "enp3s0.12"
     "enp3s0.40"
     "wg0"
+    "tun0"
   ];
 
 
@@ -51,12 +52,16 @@ in {
         useDHCP = true;
       };
       br0 = {
-        ipAddress = "10.40.33.1";
-        prefixLength = 24;
+        ipv4.addresses = [{
+          address = "10.40.33.1";
+          prefixLength = 24;
+        }];
       };
       voip = {
-        ipAddress = "10.40.40.1";
-        prefixLength = 24;
+        ipv4.addresses = [{
+          address = "10.40.40.1";
+          prefixLength = 24;
+        }];
       };
     };
     nat = {
@@ -268,7 +273,6 @@ in {
         "stat"
         "time"
         "vmstat"
-        "systemd"
         "logind"
         "interrupts"
         "ksmd"

@@ -52,9 +52,9 @@
       options = [ "subvol=@home" ];
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/298a52b3-be6b-48b7-b7f5-838e42935f0c"; }
-    ];
+  #swapDevices =
+  #  [ { device = "/dev/disk/by-uuid/298a52b3-be6b-48b7-b7f5-838e42935f0c"; }
+  #  ];
 
   nix.maxJobs = lib.mkDefault 4;
 }

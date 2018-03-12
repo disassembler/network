@@ -10,6 +10,7 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.supportedFilesystems = [ "zfs" ];
   profiles.vim.enable = true;
   profiles.zsh.enable = true;
   profiles.tmux.enable = true;
@@ -17,7 +18,8 @@
 
   networking = {
     hostName = "optina.wedlake.lan";
-    interfaces.enp2s0.ip4 = [ { address = "10.40.33.20"; prefixLength = 24; } ];
+    hostId = "1768b40b";
+    interfaces.enp2s0.ipv4.addresses = [ { address = "10.40.33.20"; prefixLength = 24; } ];
     defaultGateway = "10.40.33.1";
     nameservers = [ "10.40.33.20" "8.8.8.8" ];
     extraHosts =
@@ -203,7 +205,6 @@
           "stat"
           "time"
           "vmstat"
-          "systemd"
           "logind"
           "interrupts"
           "ksmd"
@@ -578,7 +579,7 @@
           };
           printing = {
           enable = true;
-          drivers = [ pkgs.hplip ];
+          #drivers = [ pkgs.hplip ];
           defaultShared = true;
           browsing = true;
 
@@ -629,9 +630,9 @@
           enable = true;
           extraConfig = ''
             launch=gpgsql
-            allow-recursion=10.0.0.0/8
-            recursor=127.0.0.1:8699
-            local-address=10.40.33.20
+            local-address=127.0.0.1
+            local-ipv6=
+            local-port=5300
             gpgsql-host=127.0.0.1
             gpgsql-dbname=pdns
             gpgsql-user=pdns
@@ -643,10 +644,13 @@
         };
         pdns-recursor = {
           enable = true;
-          dns.allowFrom = [ "127.0.0.1/8" ];
-          dns.port = 8699;
+          dns.address = "0.0.0.0,::";
+          dns.allowFrom = [ "127.0.0.1/8" "10.0.0.0/8" "2601:98a:4101:bff0::1/60" "fd00::1/64" ];
+          dns.port = 53;
           extraConfig = ''
             forward-zones-recurse=.=8.8.8.8;7.7.7.7
+            forward-zones=wedlake.lan=127.0.0.1:5300
+            dnssec=off
           '';
         };
 
