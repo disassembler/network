@@ -7,8 +7,14 @@
       ./hardware.nix
     ];
   deployment.keys."gitea-dbpass".text = secrets.gitea_dbpass;
+  users.extraUsers.root.shell = lib.mkOverride 50 "${pkgs.bashInteractive}/bin/bash";
+
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
+  #boot.loader.grub = {
+  #  efiSupport = true;
+  #  device = "nodev";
+  #};
   boot.loader.efi.canTouchEfiVariables = true;
   boot.supportedFilesystems = [ "zfs" ];
   profiles.vim.enable = true;
@@ -45,14 +51,31 @@
     allowUnfree = true;
     packageOverrides = pkgs: rec {
       weechat = pkgs.weechat.override {
-        extraBuildInputs = [ pkgs.python27Packages.websocket_client ];
-        pythonPackages = pkgs.python27Packages;
+        configure = {availablePlugins, ...}: {
+          plugins = with availablePlugins; [
+                  (python.withPackages (ps: with ps; [ websocket_client ]))
+                  perl ruby
+          ];
+        };
       };
     };
 
   };
+
+  i18n = {
+    consoleFont = "Lat2-Terminus16";
+    consoleKeyMap = "us";
+    defaultLocale = "en_US.UTF-8";
+  };
+
+  time.timeZone = "America/New_York";
   environment.systemPackages = with pkgs; [
+    aspell
+    aspellDicts.en
+    ncdu
     unrar
+    conky
+    chromium
     unzip
     zip
     gnupg
@@ -65,6 +88,7 @@
     git
     fasd
     dnsutils
+    openssl
   ];
 
   services = {
@@ -89,6 +113,7 @@
     gitea = {
       enable = true;
       domain = "git.wedlake.lan";
+      appName = "Personal Git Server";
       httpAddress = "127.0.0.1";
       rootUrl = "https://git.wedlake.lan";
       httpPort = 3001;
@@ -96,7 +121,6 @@
         type = "postgres";
         port = 5432;
         passwordFile = "/run/keys/gitea-dbpass";
-        sslMode = "disable";
       };
     };
     mongodb.enable = true;
@@ -495,73 +519,59 @@
         };
         nginx = {
         enable = true;
-        httpConfig = ''
-        error_log /var/log/nginx/error.log;
-        server {
-          listen [::]:443 ssl;
-          listen *:443 ssl;
-          server_name  crate.wedlake.lan;
-
-          ssl_certificate      /data/ssl/nginx.crt;
-          ssl_certificate_key  /data/ssl/nginx.key;
-
-          ssl_session_cache    shared:SSL:1m;
-          ssl_session_timeout  5m;
-
-          ssl_ciphers  HIGH:!aNULL:!MD5;
-          ssl_prefer_server_ciphers  on;
-
-          location / {
-            proxy_pass http://localhost:8089/;
-          }
-        }
-        server {
-          listen [::]:443 ssl;
-          listen *:443 ssl;
-          server_name  unifi.wedlake.lan;
-
-          ssl_certificate      /data/ssl/unifi.wedlake.lan.crt;
-          ssl_certificate_key  /data/ssl/unifi.wedlake.lan.key;
-
-          ssl_session_cache    shared:SSL:1m;
-          ssl_session_timeout  5m;
-
-          ssl_ciphers  HIGH:!aNULL:!MD5;
-          ssl_prefer_server_ciphers  on;
-
-          location / {
-            proxy_set_header Referer "";
-            proxy_pass https://localhost:8443/;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
-          }
-        }
-        server {
-          listen [::]:443 ssl;
-          listen *:443 ssl;
-          server_name  git.wedlake.lan;
-
-          ssl_certificate      /data/ssl/git.wedlake.lan.crt;
-          ssl_certificate_key  /data/ssl/git.wedlake.lan.key;
-
-          ssl_session_cache    shared:SSL:1m;
-          ssl_session_timeout  5m;
-
-          ssl_ciphers  HIGH:!aNULL:!MD5;
-          ssl_prefer_server_ciphers  on;
-
-          location / {
-            proxy_pass http://localhost:3001/;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
-          }
-        }
-        '';
+        virtualHosts = {
+          "crate.wedlake.lan" = {
+            forceSSL = true;
+            sslCertificate = "/data/ssl/nginx.crt";
+            sslCertificateKey = "/data/ssl/nginx.key";
+            locations."/".extraConfig = ''
+              proxy_pass http://localhost:8089/;
+              proxy_set_header Host $host;
+              proxy_set_header X-Forwarded-Proto $scheme;
+              proxy_set_header  X-Real-IP         $remote_addr;
+              proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+            '';
+          };
+          "unifi.wedlake.lan" = {
+            forceSSL = true;
+            sslCertificate = "/data/ssl/unifi.wedlake.lan.crt";
+            sslCertificateKey = "/data/ssl/unifi.wedlake.lan.key";
+            locations."/".extraConfig = ''
+              proxy_set_header Referer "";
+              proxy_pass https://localhost:8443/;
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
+              proxy_http_version 1.1;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection "upgrade";
+            '';
+          };
+          "git.wedlake.lan" = {
+            forceSSL = true;
+            sslCertificate = "/data/ssl/git.wedlake.lan.crt";
+            sslCertificateKey = "/data/ssl/git.wedlake.lan.key";
+            locations."/".extraConfig = ''
+              proxy_pass http://localhost:3001/;
+              proxy_set_header Host $host;
+              proxy_set_header X-Forwarded-Proto $scheme;
+              proxy_set_header  X-Real-IP         $remote_addr;
+              proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+            '';
+          };
+          "hydra.wedlake.lan" = {
+            forceSSL = true;
+            sslCertificate = "/data/ssl/hydra.wedlake.lan.crt";
+            sslCertificateKey = "/data/ssl/hydra.wedlake.lan.key";
+            locations."/".extraConfig = ''
+              proxy_pass http://localhost:3002/;
+              proxy_set_header Host $host;
+              proxy_set_header X-Forwarded-Proto $scheme;
+              proxy_set_header  X-Real-IP         $remote_addr;
+              proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+            '';
+          };
+        };
       };
 
       samba = {
@@ -686,11 +696,17 @@
             };
           });
         };
+        hydra = {
+          enable = true;
+          hydraURL = "https://hydra.wedlake.lan";
+          notificationSender = "disasm@gmail.com";
+          port = 3002;
+        };
 
       };
       virtualisation.docker.enable = true;
       virtualisation.docker.enableOnBoot = true;
-      virtualisation.docker.storageDriver = "btrfs";
+      virtualisation.docker.storageDriver = "zfs";
       containers.rtorrent = {
         privateNetwork = true;
         hostAddress = "10.233.1.1";

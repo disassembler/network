@@ -8,53 +8,44 @@
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
     ];
 
-  boot.initrd.availableKernelModules = [ "ahci" "ohci_pci" "ehci_pci" "pata_atiixp" "usb_storage" "usbhid" "sd_mod" ];
+  boot.initrd.availableKernelModules = [ "ahci" "ohci_pci" "ehci_pci" "pata_atiixp" "usbhid" "sd_mod" ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/879668d8-390f-49e5-ad62-2410ccf1329c";
-      fsType = "btrfs";
-      options = [ "subvol=@nixos" ];
+    { device = "zroot/root/nixos";
+      fsType = "zfs";
+    };
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/0A70-078F";
+      fsType = "vfat";
+    };
+
+  fileSystems."/var" =
+    { device = "zroot/root/var";
+      fsType = "zfs";
     };
 
   fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/879668d8-390f-49e5-ad62-2410ccf1329c";
-      fsType = "btrfs";
-      options = [ "subvol=@nix" ];
+    { device = "zroot/root/nix";
+      fsType = "zfs";
     };
 
-  fileSystems."/arch" =
-    { device = "/dev/disk/by-uuid/879668d8-390f-49e5-ad62-2410ccf1329c";
-      fsType = "btrfs";
-      options = [ "subvol=@arch" ];
+  fileSystems."/home" =
+    { device = "zroot/root/home";
+      fsType = "zfs";
     };
 
   fileSystems."/data" =
     { device = "/dev/disk/by-uuid/07fd113d-e50c-408c-91e3-a05d04e43f41";
       fsType = "ext4";
+      options = [ "defaults" "nofail" ];
     };
 
-  fileSystems."/var/lib/docker" =
-    { device = "/dev/disk/by-uuid/879668d8-390f-49e5-ad62-2410ccf1329c";
-      fsType = "btrfs";
-      options = [ "subvol=@docker" ];
-    };
+  swapDevices =
+    [ { device = "/dev/disk/by-uuid/4c8f1655-ec84-45fa-9ef6-d34453d95d6b"; }
+    ];
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/6584-BFAC";
-      fsType = "vfat";
-    };
-
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/879668d8-390f-49e5-ad62-2410ccf1329c";
-      fsType = "btrfs";
-      options = [ "subvol=@home" ];
-    };
-
-  #swapDevices =
-  #  [ { device = "/dev/disk/by-uuid/298a52b3-be6b-48b7-b7f5-838e42935f0c"; }
-  #  ];
-
-  nix.maxJobs = lib.mkDefault 4;
+  nix.maxJobs = lib.mkDefault 8;
 }
