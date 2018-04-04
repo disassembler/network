@@ -38,9 +38,8 @@
     };
 
   fileSystems."/data" =
-    { device = "/dev/disk/by-uuid/07fd113d-e50c-408c-91e3-a05d04e43f41";
-      fsType = "ext4";
-      options = [ "defaults" "nofail" ];
+    { device = "zdata/data";
+      fsType = "zfs";
     };
 
   swapDevices =
