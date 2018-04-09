@@ -32,8 +32,9 @@ in {
   };
 
   networking = {
-    hostName = "portal";
+    hostName = "portal.wedlake.lan";
     hostId = "fa4b7394";
+    nameservers = [ "10.40.33.20" "8.8.8.8" ];
     vlans = {
       lan_port = {
         interface = "enp3s0";
@@ -221,14 +222,14 @@ in {
           option subnet-mask 255.255.255.0;
           option broadcast-address 10.40.33.255;
           option routers 10.40.33.1;
-          option domain-name-servers 8.8.8.8;
+          option domain-name-servers 10.40.33.20;
           range 10.40.33.100 10.40.33.200;
         }
         subnet 10.40.40.0 netmask 255.255.255.0 {
           option subnet-mask 255.255.255.0;
           option broadcast-address 10.40.40.255;
           option routers 10.40.40.1;
-          option domain-name-servers 8.8.8.8;
+          option domain-name-servers 10.40.33.20;
           range 10.40.40.100 10.40.40.200;
         }
       '';
@@ -254,6 +255,23 @@ in {
                 AdvAutonomous on;
            };
         };
+      '';
+    };
+    journalbeat = {
+      enable = true;
+      extraConfig = ''
+      journalbeat:
+        seek_position: cursor
+        cursor_seek_fallback: tail
+        write_cursor_state: true
+        cursor_flush_period: 5s
+        clean_field_names: true
+        convert_to_numbers: false
+        move_metadata_to_field: journal
+        default_type: journal
+      output.kafka:
+        hosts: ["optina.wedlake.lan:9092"]
+        topic: KAFKA-LOGSTASH-ELASTICSEARCH
       '';
     };
     prometheus.exporters.node = {
