@@ -257,6 +257,10 @@ in {
         };
       '';
     };
+    journald = {
+      rateLimitBurst = 0;
+      extraConfig = "SystemMaxUse=50M";
+    };
     journalbeat = {
       enable = true;
       extraConfig = ''
