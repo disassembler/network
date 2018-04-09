@@ -117,6 +117,65 @@
   ];
 
   services = {
+    zookeeper = {
+      enable = true;
+    };
+    apache-kafka = {
+      enable = true;
+      extraProperties = ''
+        offsets.topic.replication.factor = 1
+      '';
+      hostname = "optina.wedlake.lan";
+      zookeeper = "localhost:2181";
+    };
+    elasticsearch = {
+      enable = true;
+      listenAddress = "0";
+      #plugins = with pkgs.elasticsearchPlugins; [ search_guard ];
+    };
+
+    kibana = {
+      enable = true;
+      listenAddress = "optina.wedlake.lan";
+      elasticsearch.url = "http://localhost:9200";
+    };
+
+    journalbeat = {
+      enable = true;
+      extraConfig = ''
+      journalbeat:
+        seek_position: cursor
+        cursor_seek_fallback: tail
+        write_cursor_state: true
+        cursor_flush_period: 5s
+        clean_field_names: true
+        convert_to_numbers: false
+        move_metadata_to_field: journal
+        default_type: journal
+      output.kafka:
+        hosts: ["optina.wedlake.lan:9092"]
+        topic: KAFKA-LOGSTASH-ELASTICSEARCH
+      '';
+    };
+
+    logstash = {
+      enable = true;
+      inputConfig = ''
+        kafka {
+          zk_connect => "localhost:2181"
+          topic_id => "KAFKA-LOGSTASH-ELASTICSEARCH"
+          codec => json {}
+        }
+      '';
+      outputConfig = ''
+        elasticsearch {
+            index  => "systemd-logs-%{+YYYY.MM.dd}"
+            hosts => ["localhost:9200"]
+            sniffing => false
+         }
+      '';
+    };
+
     xserver = {
       autorun = true;
       enable = true;
