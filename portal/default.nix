@@ -256,7 +256,7 @@ in {
         };
       '';
     };
-    prometheus.nodeExporter = {
+    prometheus.exporters.node = {
       enable = true;
       enabledCollectors = [
         "systemd"

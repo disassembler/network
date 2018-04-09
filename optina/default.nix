@@ -252,86 +252,88 @@
         "-storage.local.index-cache-size.label-name-to-label-values 2097152"
         "-storage.local.index-cache-size.label-pair-to-fingerprints 41943040"
       ];
-      blackboxExporter = {
-        enable = true;
-        configFile = pkgs.writeText "blackbox-exporter.yaml" (builtins.toJSON {
-        modules = {
-          https_2xx = {
-            prober = "http";
-            timeout = "5s";
-            http = {
-              fail_if_not_ssl = true;
+      exporters = {
+        blackbox = {
+          enable = true;
+          configFile = pkgs.writeText "blackbox-exporter.yaml" (builtins.toJSON {
+          modules = {
+            https_2xx = {
+              prober = "http";
+              timeout = "5s";
+              http = {
+                fail_if_not_ssl = true;
+              };
+            };
+            ssh_banner = {
+              prober = "tcp";
+              timeout = "10s";
+              tcp = {
+                query_response = [ { expect = "^SSH-2.0-"; } ];
+              };
+            };
+            tcp_v4 = {
+              prober = "tcp";
+              timeout = "5s";
+              tcp = {
+                preferred_ip_protocol = "ip4";
+              };
+            };
+            tcp_v6 = {
+              prober = "tcp";
+              timeout = "5s";
+              tcp = {
+                preferred_ip_protocol = "ip6";
+              };
+            };
+            icmp_v4 = {
+              prober = "icmp";
+              timeout = "5s";
+              icmp = {
+                preferred_ip_protocol = "ip4";
+              };
+            };
+            icmp_v6 = {
+              prober = "icmp";
+              timeout = "5s";
+              icmp = {
+                preferred_ip_protocol = "ip6";
+              };
             };
           };
-          ssh_banner = {
-            prober = "tcp";
-            timeout = "10s";
-            tcp = {
-              query_response = [ { expect = "^SSH-2.0-"; } ];
-            };
-          };
-          tcp_v4 = {
-            prober = "tcp";
-            timeout = "5s";
-            tcp = {
-              preferred_ip_protocol = "ip4";
-            };
-          };
-          tcp_v6 = {
-            prober = "tcp";
-            timeout = "5s";
-            tcp = {
-              preferred_ip_protocol = "ip6";
-            };
-          };
-          icmp_v4 = {
-            prober = "icmp";
-            timeout = "5s";
-            icmp = {
-              preferred_ip_protocol = "ip4";
-            };
-          };
-          icmp_v6 = {
-            prober = "icmp";
-            timeout = "5s";
-            icmp = {
-              preferred_ip_protocol = "ip6";
-            };
-          };
+        });
         };
-      });
-      };
-      surfboardExporter = {
-        enable = true;
-      };
-      nodeExporter = {
-        enable = true;
-        enabledCollectors = [
-          "systemd"
-          "tcpstat"
-          "conntrack"
-          "diskstats"
-          "entropy"
-          "filefd"
-          "filesystem"
-          "loadavg"
-          "meminfo"
-          "netdev"
-          "netstat"
-          "stat"
-          "time"
-          "vmstat"
-          "logind"
-          "interrupts"
-          "ksmd"
-        ];
-      };
-      unifiExporter = {
-        enable = true;
-        unifiAddress = "https://unifi.wedlake.lan";
-        unifiUsername = "prometheus";
-        unifiPassword = secrets.unifi_password_ro;
-        openFirewall = true;
+        #surfboard = {
+        #  enable = true;
+        #};
+        node = {
+          enable = true;
+          enabledCollectors = [
+            "systemd"
+            "tcpstat"
+            "conntrack"
+            "diskstats"
+            "entropy"
+            "filefd"
+            "filesystem"
+            "loadavg"
+            "meminfo"
+            "netdev"
+            "netstat"
+            "stat"
+            "time"
+            "vmstat"
+            "logind"
+            "interrupts"
+            "ksmd"
+          ];
+        };
+        unifi = {
+          enable = true;
+          unifiAddress = "https://unifi.wedlake.lan";
+          unifiUsername = "prometheus";
+          unifiPassword = secrets.unifi_password_ro;
+          openFirewall = true;
+        };
       };
       alertmanagerURL = [ "http://optina.wedlake.lan:9093" ];
       rules = [
