@@ -69,7 +69,7 @@ in {
       enable = true;
       externalInterface = "${externalInterface}";
       internalIPs = [ "10.40.33.0/24" "10.40.40.0/24" ];
-      internalInterfaces = [ "voip" "br0" ];
+      internalInterfaces = [ "voip" "br0" "ovpn-guest" ];
       forwardPorts = [
         { sourcePort = 32400; destination = "10.40.33.20:32400"; proto = "tcp"; }
         #{ sourcePort = 1194; destination = "10.40.33.20:1194"; proto = "udp"; }
@@ -148,6 +148,8 @@ in {
             9100 # From RT AP
           ])
         ''
+          # block internal traffic from guest vpn
+          ip46tables -A FORWARD -m state --state NEW -i ovpn-guest -o br0 -j DROP
           # allow from trusted interfaces
           ip46tables -A FORWARD -m state --state NEW -i br0 -o enp1s0 -j ACCEPT
           ip46tables -A FORWARD -m state --state NEW -i voip -o enp1s0 -j ACCEPT
@@ -160,7 +162,7 @@ in {
         ''
       ];
       allowedTCPPorts = [ 32400 ];
-      allowedUDPPorts = [ 51820 1194 ];
+      allowedUDPPorts = [ 51820 1194 1195 ];
     };
     wireguard.interfaces = {
       wg0 = {
@@ -330,6 +332,34 @@ in {
           verb 3
           '';
         };
+        guest = {
+          config = ''
+          dev ovpn-guest
+          dev-type tun
+          proto udp
+          port 1195
+          tun-ipv6
+          ca /var/lib/openvpn/ca.crt
+          cert /var/lib/openvpn/crate.wedlake.lan.crt
+          key /var/lib/openvpn/crate.wedlake.lan.key
+          dh /var/lib/openvpn/dh2048.pem
+          server 10.40.13.0 255.255.255.0
+          server-ipv6 2601:98a:4101:bff2::/64
+          push "redirect-gateway def1"
+          push "route-ipv6 2000::/3"
+          push "dhcp-option DNS 8.8.8.8"
+          duplicate-cn
+          keepalive 10 120
+          tls-auth /var/lib/openvpn/ta-guest.key 0
+          comp-lzo
+          user openvpn
+          group root
+          persist-key
+          persist-tun
+          status openvpn-status.log
+          verb 3
+          '';
+        };
       };
     };
   };
@@ -346,6 +376,4 @@ in {
     uid = 1003;
   };
   system.stateVersion = "17.09";
-
 }
-
