@@ -1,7 +1,50 @@
 { secrets }:
 { lib, config, pkgs, ... }:
 
-{
+with lib;
+
+let
+  netboot_root = pkgs.runCommand "nginxroot" {} ''
+    mkdir -pv $out
+    cat <<EOF > $out/boot.php
+    <?php
+    if (\$_GET['version'] == "") {
+    ?>
+    #!ipxe
+    chain tftp://10.40.33.1/undionly.kpxe
+    <?php
+    } else {
+    ?>
+    #!ipxe
+    chain netboot/netboot.ipxe
+    <?php
+    }
+    ?>
+    EOF
+    ln -sv ${netboot} $out/netboot
+  '';
+  netboot = let
+    build = (import (pkgs.path + "/nixos/lib/eval-config.nix") {
+      system = "x86_64-linux";
+      modules = [
+        (pkgs.path + "/nixos/modules/installer/netboot/netboot-minimal.nix")
+        ./justdoit.nix
+        module
+      ];
+    }).config.system.build;
+  in pkgs.symlinkJoin {
+    name = "netboot";
+    paths = with build; [ netbootRamdisk kernel netbootIpxeScript ];
+  };
+  module = {
+    kexec.justdoit = {
+      luksEncrypt = false;
+      rootDevice = "/dev/sda";
+      swapSize = 256;
+      bootSize = 64;
+    };
+  };
+in {
   imports =
     [
       ./hardware.nix
@@ -42,6 +85,7 @@
       allowPing = true;
       allowedTCPPorts = [
         53
+        80
         139
         443
         445
@@ -114,6 +158,7 @@
     fasd
     dnsutils
     openssl
+    powerdns
   ];
 
   services = {
@@ -606,6 +651,14 @@
         nginx = {
         enable = true;
         virtualHosts = {
+          "netboot.wedlake.lan" = {
+            root = netboot_root;
+            extraConfig = ''
+              location ~ [^/]\.php(/|$) {
+                fastcgi_pass 127.0.0.1:9000;
+              }
+            '';
+          };
           "crate.wedlake.lan" = {
             forceSSL = true;
             sslCertificate = "/data/ssl/nginx.crt";

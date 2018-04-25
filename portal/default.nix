@@ -11,6 +11,20 @@ let
     "wg0"
     "tun0"
   ];
+  ipxe' = pkgs.ipxe.overrideDerivation (drv: {
+    installPhase = ''
+      ${drv.installPhase}
+      make $makeFlags bin-x86_64-efi/ipxe.efi bin-i386-efi/ipxe.efi
+      cp -v bin-x86_64-efi/ipxe.efi $out/x86_64-ipxe.efi
+      cp -v bin-i386-efi/ipxe.efi $out/i386-ipxe.efi
+    '';
+  });
+  tftp_root = pkgs.runCommand "tftproot" {} ''
+    mkdir -pv $out
+    cp -vi ${ipxe'}/undionly.kpxe $out/undionly.kpxe
+    cp -vi ${ipxe'}/x86_64-ipxe.efi $out/x86_64-ipxe.efi
+    cp -vi ${ipxe'}/i386-ipxe.efi $out/i386-ipxe.efi
+  '';
 
 
 in {
@@ -135,6 +149,7 @@ in {
         (lib.concatMapStrings allowPortOnlyPrivately
           [
             67    # DHCP
+            69    # TFTP
             546   # DHCPv6
             547   # DHCPv6
             9100  # prometheus
@@ -206,6 +221,10 @@ in {
   ];
 
   services = {
+    tftpd = {
+      enable = true;
+      path = tftp_root;
+    };
     openssh = {
       enable = true;
       permitRootLogin = "without-password";
@@ -219,6 +238,8 @@ in {
         { hostName = "printer"; ethernetAddress = "a4:5d:36:d6:22:d9"; ipAddress = "10.40.33.50"; }
       ];
       extraConfig = ''
+        option arch code 93 = unsigned integer 16;
+        option rpiboot code 43 = text;
         subnet 10.40.33.0 netmask 255.255.255.0 {
           option domain-search "wedlake.lan";
           option subnet-mask 255.255.255.0;
@@ -226,6 +247,17 @@ in {
           option routers 10.40.33.1;
           option domain-name-servers 10.40.33.20;
           range 10.40.33.100 10.40.33.200;
+          next-server 10.40.33.1;
+          if exists user-class and option user-class = "iPXE" {
+            filename "http://netboot.wedlake.lan/boot.php?mac=''${net0/mac}&asset=''${asset:uristring}&version=''${builtin/version}";
+          } else {
+            if option arch = 00:07 or option arch = 00:09 {
+              filename = "x86_64-ipxe.efi";
+            } else {
+              filename = "undionly.kpxe";
+            }
+          }
+          option rpiboot "Raspberry Pi Boot   ";
         }
         subnet 10.40.40.0 netmask 255.255.255.0 {
           option subnet-mask 255.255.255.0;
