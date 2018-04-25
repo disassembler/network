@@ -472,17 +472,17 @@
             }
           ];
         }
-        {
-          job_name = "surfboard";
-          scrape_interval = "5s";
-          static_configs = [
-            {
-              targets = [
-                "localhost:9239"
-              ];
-            }
-          ];
-        }
+        #{
+        #  job_name = "surfboard";
+        #  scrape_interval = "5s";
+        #  static_configs = [
+        #    {
+        #      targets = [
+        #        "localhost:9239"
+        #      ];
+        #    }
+        #  ];
+        #}
         {
           job_name = "unifi";
           scrape_interval = "10s";
