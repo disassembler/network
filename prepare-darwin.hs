@@ -72,7 +72,7 @@ chopProfile p = do
 nixCopyClosureHack :: Shell ()
 nixCopyClosureHack = unlessM (testpath "/usr/local/bin/nix-store") $
   sudo ["mkdir", "-p", "/usr/local/bin" ]
-  sudo ["ln", "-sf", "/nix/var/nix/profiles/default/bin/nix-store", "/usr/local/bin"]
+  sudo ["ln", "-sf", "/nix/var/nix/profiles/default/bin/nix-store", "/usr/local/bin/nix-store"]
 
 -- | nixpkgs things need /run and normally the nix-darwin installer creates it
 createRunDir :: Shell ()
