@@ -13,5 +13,6 @@ in
       cp -R "$src/"* $out
       ghc -o $out/bin/deploy $out/deploy-darwin.hs
       ghc -o $out/bin/prepare $out/prepare-darwin.hs
+      ghc -o $out/bin/nuke-nix $out/nuke-nix.hs
     '';
   }
