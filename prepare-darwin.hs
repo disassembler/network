@@ -46,7 +46,7 @@ setupSSLCert = unlessM (testfile cert) $ mapM_ sudo setup
 prepareConfigs :: Shell ()
 prepareConfigs = do
   -- prepare configs for nix darwin
-  mapM_ moveAway ["/etc/bashrc", "/etc/nix/nix.conf"]
+  mapM_ moveAway ["/etc/nix/nix.conf"]
   chopProfile "/etc/profile"
 
 moveAway :: FilePath -> Shell ()
