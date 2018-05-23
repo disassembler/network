@@ -70,10 +70,8 @@ chopProfile p = do
 
 -- | This is needed so that nix-copy-closure to this host will work
 nixCopyClosureHack :: Shell ()
-nixCopyClosureHack = do
-  sudo ["mkdir", "-p", "/usr/local/bin" ]
-  unlessM (testpath "/usr/local/bin/nix-store") $
-    sudo ["ln", "-sf", "/nix/var/nix/profiles/default/bin/nix-store", "/usr/local/bin/nix-store"]
+nixCopyClosureHack = unlessM (testpath "/usr/bin/nix-store") $
+  sudo ["ln", "-sf", "/nix/var/nix/profiles/default/bin/nix-store", "/usr/bin"]
 
 -- | nixpkgs things need /run and normally the nix-darwin installer creates it
 createRunDir :: Shell ()
