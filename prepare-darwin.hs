@@ -9,7 +9,7 @@ import qualified Data.Text                 as T
 import qualified Data.Text.IO              as T
 import           Filesystem.Path.CurrentOS (decodeString)
 import           Prelude                   hiding (FilePath)
-import           System.Environment        (getExecutablePath)
+import           System.Environment        (getEnv, getExecutablePath)
 import           System.IO                 (hFlush)
 import           Turtle
 
@@ -22,7 +22,7 @@ installNixDarwin = do
   checkNix
   setupSSLCert
   prepareConfigs
-  setupUserBashrc
+  liftIO setupUserBashrc
   createRunDir
 
 checkNix :: Shell ()
@@ -69,10 +69,10 @@ chopProfile p = do
   sudo ["cp", tt temp, tt p]
 
 -- | This is needed so that nix-copy-closure to this host will work
-setupUserBashrc :: Shell ()
+setupUserBashrc :: IO ()
 setupUserBashrc = do
   homeDir <- getEnv "HOME"
-  writeTextFile (homeDir </> ".bashrc") "source /etc/bashrc"
+  writeTextFile (fromString homeDir </> ".bashrc") "source /etc/bashrc"
 
 -- | nixpkgs things need /run and normally the nix-darwin installer creates it
 createRunDir :: Shell ()
