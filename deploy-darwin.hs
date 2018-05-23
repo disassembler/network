@@ -1,5 +1,5 @@
 #! /usr/bin/env nix-shell
-#! nix-shell deploy-darwin.nix -i runhaskell
+#! nix-shell darwin-haskell.nix -i runhaskell
 {-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
