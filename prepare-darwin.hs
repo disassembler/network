@@ -22,7 +22,7 @@ installNixDarwin = do
   checkNix
   setupSSLCert
   prepareConfigs
-  nixCopyClosureHack
+  setupUserBashrc
   createRunDir
 
 checkNix :: Shell ()
@@ -69,9 +69,10 @@ chopProfile p = do
   sudo ["cp", tt temp, tt p]
 
 -- | This is needed so that nix-copy-closure to this host will work
-nixCopyClosureHack :: Shell ()
-nixCopyClosureHack = unlessM (testpath "/usr/bin/nix-store") $
-  sudo ["ln", "-sf", "/nix/var/nix/profiles/default/bin/nix-store", "/usr/bin"]
+setupUserBashrc :: Shell ()
+setupUserBashrc = do
+  homeDir <- getEnv "HOME"
+  writeTextFile (homeDir </> ".bashrc") "source /etc/bashrc"
 
 -- | nixpkgs things need /run and normally the nix-darwin installer creates it
 createRunDir :: Shell ()

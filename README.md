@@ -24,3 +24,22 @@ To create USB disk: `dd if=/nix/store/23vl3hllb7gyfsgdrbzcyx8gjk75yimm-nixos-17.
   1) Cable Modem
   2) untagged LAN
   3) tagged everything else (including LAN)
+
+
+## Darwin
+
+Preliminary darwin support has been added. It's a three step process:
+
+1) Install Nix
+
+    curl https://nixos.org/nix/install | sh
+
+
+2) Preparation
+
+    nix-build -I network=https://github.com/disassembler/network/archive/master.tar.gz <network>
+    result/bin/prepare
+
+2) Deployment
+
+    ./deploy.hs --role ohrid/default.nix <IP>
