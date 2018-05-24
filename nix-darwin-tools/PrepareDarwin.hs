@@ -3,6 +3,8 @@
 {-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 
+module PrepareDarwin where
+
 import           Control.Monad             (forM_)
 import           Data.Text                 (Text)
 import qualified Data.Text                 as T
@@ -13,8 +15,8 @@ import           System.Environment        (getEnv, getExecutablePath)
 import           System.IO                 (hFlush)
 import           Turtle
 
-main :: IO ()
-main = sh $ installNixDarwin
+prepare :: IO ()
+prepare = sh installNixDarwin
 
 -- | Install nix-darwin
 installNixDarwin :: Shell ()
@@ -24,14 +26,17 @@ installNixDarwin = do
   prepareConfigs
   liftIO setupUserBashrc
   createRunDir
+  restartDaemon
+  cleanupEtc
 
 checkNix :: Shell ()
 checkNix = sh $ which "nix-build" >>= \case
   Just nb -> procs (tt nb) ["--version"] empty
   Nothing -> do
-    -- this is never going to happen duh
     echo "nix-build was not found. Installing nix"
-    empty & inproc "curl" ["https://nixos.org/nix/install"] & inproc "sh" [] & void
+    -- Nix fails to install if these backup files exist
+    mapM_ restoreFile ["/etc/bashrc", "/etc/zshrc"]
+    empty & inproc "curl" ["https://nixos.org/nix/install"] & inproc "sh" [] & stdout
 
 -- | This is a workaround for nix curl on Darwin.
 setupSSLCert :: Shell ()
@@ -46,7 +51,11 @@ setupSSLCert = unlessM (testfile cert) $ mapM_ sudo setup
 prepareConfigs :: Shell ()
 prepareConfigs = do
   -- prepare configs for nix darwin
+  user <- liftIO $ getEnv "USER"
   mapM_ moveAway ["/etc/nix/nix.conf"]
+  let contents = fromString $ "trusted-users = " <> user
+  liftIO $ writeTextFile "./nix.conf" contents
+  sudo [ "cp", "./nix.conf", "/etc/nix/nix.conf" ]
   chopProfile "/etc/profile"
 
 moveAway :: FilePath -> Shell ()
@@ -58,6 +67,19 @@ moveAway cfg = do
     st <- stat cfg
     when (isRegularFile st || isDirectory st) $
       sudo ["mv", tt cfg, tt backup]
+
+restoreFile :: FilePath -> Shell ()
+restoreFile cfg = do
+  let backup = cfg <.> "backup-before-nix"
+  exists <- testpath cfg
+  backupExists <- testpath backup
+  when (backupExists) $ do
+    st <- stat cfg
+    when (exists) $
+      sudo ["rm", tt cfg]
+
+    when (isRegularFile st || isDirectory st) $
+      sudo ["mv", tt backup, tt cfg]
 
 -- | Delete everything after the # Nix line
 chopProfile :: FilePath -> Shell ()
@@ -72,7 +94,7 @@ chopProfile p = do
 setupUserBashrc :: IO ()
 setupUserBashrc = do
   homeDir <- getEnv "HOME"
-  writeTextFile (fromString homeDir </> ".bashrc") "source /etc/bashrc"
+  writeTextFile (fromString homeDir </> ".bashrc") "source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 
 -- | nixpkgs things need /run and normally the nix-darwin installer creates it
 createRunDir :: Shell ()
@@ -84,6 +106,17 @@ setupDotNixpkgs = do
   dotNixpkgs <- (</> ".nixpkgs") <$> home
   unlessM (testdir dotNixpkgs) $ mkdir dotNixpkgs
   pure dotNixpkgs
+
+restartDaemon :: Shell ()
+restartDaemon = do
+  sudo [ "launchctl", "stop", "org.nixos.nix-daemon" ]
+  sudo [ "launchctl", "start", "org.nixos.nix-daemon" ]
+
+cleanupEtc :: Shell ()
+cleanupEtc = do
+  sudo [ "rm", "-f", "/etc/nix/nix.conf" ]
+  sudo [ "rm", "-f", "/etc/bashrc" ]
+  sudo [ "rm", "-f", "/etc/zshrc" ]
 
 -- | Create a directory for secret files which shouldn't go in nix store.
 sudo :: [Text] -> Shell ()
