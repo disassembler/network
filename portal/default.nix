@@ -48,7 +48,7 @@ in {
   networking = {
     hostName = "portal.wedlake.lan";
     hostId = "fa4b7394";
-    nameservers = [ "10.40.33.20" "8.8.8.8" ];
+    nameservers = [ "10.40.33.1" "8.8.8.8" ];
     vlans = {
       lan_port = {
         interface = "enp3s0";
@@ -109,6 +109,14 @@ in {
               --dport ${toString port} -j nixos-fw-refuse
           '';
 
+        dropPortIcmpLog =
+          ''
+            iptables -A nixos-fw -p icmp \
+              -j LOG --log-prefix "iptables[icmp]: "
+            ip6tables -A nixos-fw -p ipv6-icmp \
+              -j LOG --log-prefix "iptables[icmp-v6]: "
+          '';
+
         refusePortOnInterface = port: interface:
           ''
             ip46tables -A nixos-fw -i ${interface} -p tcp \
@@ -162,6 +170,7 @@ in {
             515  # From RT AP
             9100 # From RT AP
           ])
+        (dropPortIcmpLog)
         ''
           # block internal traffic from guest vpn
           ip46tables -A FORWARD -m state --state NEW -i ovpn-guest -o br0 -j DROP
@@ -176,8 +185,8 @@ in {
           ip6tables -A FORWARD -i enp1s0 -j DROP
         ''
       ];
-      allowedTCPPorts = [ 32400 ];
-      allowedUDPPorts = [ 51820 1194 1195 ];
+      allowedTCPPorts = [ 32400 5222 5060 53 ];
+      allowedUDPPorts = [ 51820 1194 1195 5060 5222 53 ];
     };
     wireguard.interfaces = {
       wg0 = {
@@ -221,6 +230,57 @@ in {
   ];
 
   services = {
+    unbound = {
+      enable = true;
+      interfaces = [ "0.0.0.0" "::1" ];
+      allowedAccess = [
+        "10.40.33.0/24"
+        "10.39.0.0/24"
+        "10.40.9.39/32"
+        "2601:98a:4101:bff0::/60"
+        "2601:98a:4000:3900::/64"
+      ];
+      extraConfig = ''
+        # server indent level
+          logfile: ""
+          log-queries: no
+          verbosity: 4
+          do-not-query-localhost: no
+          domain-insecure: "wedlake.lan"
+        forward-zone:
+          name: "wedlake.lan"
+          forward-addr: 127.0.0.1@5353
+      '';
+    };
+    nsd = {
+      enable = true;
+      interfaces = [ "0.0.0.0" "::1" ];
+      port = 5353;
+      zones."wedlake.lan.".data = ''
+        @ SOA ns.wedlake.lan portal.wedlake.lan 666 7200 3600 1209600 3600
+        optina      A       10.40.33.20
+        optina      AAAA    2601:98a:4101:bff0:d63d:7eff:fe4d:c47f
+        cloud       CNAME   optina
+        crate       CNAME   optina
+        git         CNAME   optina
+        hledger     CNAME   optina
+        hydra       CNAME   optina
+        mpd         CNAME   optina
+        netboot     CNAME   optina
+        plex        CNAME   optina
+        unifi       CNAME   optina
+        printer     A       10.40.33.50
+        ns          A       10.40.33.1
+        ns          AAAA    2601:98a:4101:bff0::1
+        portal      A       10.40.33.1
+        portal      AAAA    2601:98a:4101:bff0::1
+        prod01      AAAA    fd00::2
+      '';
+    };
+    asterisk = let
+      package = (pkgs.callPackage ../asterisk { inherit iksemel;}).asterisk-stable;
+      iksemel = pkgs.callPackage ../asterisk/iksemel.nix {};
+    in import ./asterisk.nix { asterisk = package; };
     tftpd = {
       enable = true;
       path = tftp_root;
@@ -234,7 +294,7 @@ in {
       interfaces = [ "br0" "voip" ];
       enable = true;
       machines = [
-        { hostName = "crate"; ethernetAddress = "d4:3d:7e:4d:c4:7f"; ipAddress = "10.40.33.20"; }
+        { hostName = "optina"; ethernetAddress = "d4:3d:7e:4d:c4:7f"; ipAddress = "10.40.33.20"; }
         { hostName = "printer"; ethernetAddress = "a4:5d:36:d6:22:d9"; ipAddress = "10.40.33.50"; }
       ];
       extraConfig = ''
@@ -245,7 +305,7 @@ in {
           option subnet-mask 255.255.255.0;
           option broadcast-address 10.40.33.255;
           option routers 10.40.33.1;
-          option domain-name-servers 10.40.33.20;
+          option domain-name-servers 10.40.33.1;
           range 10.40.33.100 10.40.33.200;
           next-server 10.40.33.1;
           if exists user-class and option user-class = "iPXE" {
@@ -296,7 +356,7 @@ in {
       extraConfig = "SystemMaxUse=50M";
     };
     journalbeat = {
-      enable = true;
+      enable = false;
       extraConfig = ''
       journalbeat:
         seek_position: cursor
@@ -349,7 +409,6 @@ in {
           server 10.40.12.0 255.255.255.0
           server-ipv6 2601:98a:4101:bff2::/64
           push "route 10.40.33.0 255.255.255.0"
-          push "route-ipv6 2601:98a:4101:bff0::/60"
           push "route-ipv6 2000::/3"
           push "dhcp-option DNS 10.40.33.20"
           duplicate-cn
@@ -376,9 +435,7 @@ in {
           key /var/lib/openvpn/crate.wedlake.lan.key
           dh /var/lib/openvpn/dh2048.pem
           server 10.40.13.0 255.255.255.0
-          server-ipv6 2601:98a:4101:bff2::/64
           push "redirect-gateway def1"
-          push "route-ipv6 2000::/3"
           push "dhcp-option DNS 8.8.8.8"
           duplicate-cn
           keepalive 10 120
