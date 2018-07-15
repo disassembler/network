@@ -14,6 +14,7 @@ in {
     screen
     ncdu
     git
+    tmux
   ] ++ (if pkgs.stdenv.isDarwin then [
     darwin.cctools
   ] else []);

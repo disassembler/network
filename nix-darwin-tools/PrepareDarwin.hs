@@ -27,7 +27,8 @@ installNixDarwin = do
   liftIO setupUserBashrc
   createRunDir
   restartDaemon
-  cleanupEtc
+  sleep 2.0
+  --cleanupEtc
 
 checkNix :: Shell ()
 checkNix = sh $ which "nix-build" >>= \case
@@ -73,13 +74,10 @@ restoreFile cfg = do
   let backup = cfg <.> "backup-before-nix"
   exists <- testpath cfg
   backupExists <- testpath backup
-  when (backupExists) $ do
-    st <- stat cfg
-    when (exists) $
+  when backupExists $ do
+    when exists $
       sudo ["rm", tt cfg]
-
-    when (isRegularFile st || isDirectory st) $
-      sudo ["mv", tt backup, tt cfg]
+    sudo ["mv", tt backup, tt cfg]
 
 -- | Delete everything after the # Nix line
 chopProfile :: FilePath -> Shell ()

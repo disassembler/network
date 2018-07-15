@@ -68,9 +68,12 @@ in {
   networking = {
     hostName = "optina.wedlake.lan";
     hostId = "1768b40b";
-    interfaces.enp2s0.ipv4.addresses = [ { address = "10.40.33.20"; prefixLength = 24; } ];
+    bridges = {
+      br0.interfaces = [ "enp2s0" ];
+    };
+    interfaces.br0.ipv4.addresses = [ { address = "10.40.33.20"; prefixLength = 24; } ];
     defaultGateway = "10.40.33.1";
-    nameservers = [ "10.40.33.20" "8.8.8.8" ];
+    nameservers = [ "10.40.33.1" "8.8.8.8" ];
     extraHosts =
     ''
       10.233.1.2 rtorrent.optina.local
@@ -78,7 +81,7 @@ in {
     nat = {
       enable = true;
       internalInterfaces = ["ve-+"];
-      externalInterface = "enp2s0";
+      externalInterface = "br0";
     };
     firewall = {
       enable = true;
@@ -94,6 +97,8 @@ in {
         4444
         5601   # kibana
         5900
+        5951
+        5952
         6600
         6667
         8000
@@ -159,14 +164,15 @@ in {
     dnsutils
     openssl
     powerdns
+    virtmanager
   ];
 
   services = {
     zookeeper = {
-      enable = true;
+      enable = false;
     };
     apache-kafka = {
-      enable = true;
+      enable = false;
       extraProperties = ''
         offsets.topic.replication.factor = 1
       '';
@@ -174,19 +180,31 @@ in {
       zookeeper = "localhost:2181";
     };
     elasticsearch = {
-      enable = true;
+      enable = false;
       listenAddress = "0";
       #plugins = with pkgs.elasticsearchPlugins; [ search_guard ];
     };
 
     kibana = {
-      enable = true;
+      enable = false;
       listenAddress = "optina.wedlake.lan";
       elasticsearch.url = "http://localhost:9200";
     };
 
+    hledger = {
+      api = {
+        enable = true;
+        listenPort = "8001";
+      };
+      web = {
+        enable = true;
+        listenPort = "8002";
+        baseURL = "https://hledger.wedlake.lan/";
+      };
+    };
+
     journalbeat = {
-      enable = true;
+      enable = false;
       extraConfig = ''
       journalbeat:
         seek_position: cursor
@@ -204,7 +222,7 @@ in {
     };
 
     logstash = {
-      enable = true;
+      enable = false;
       inputConfig = ''
         kafka {
           zk_connect => "localhost:2181"
@@ -453,8 +471,8 @@ in {
             summary = "{{$labels.alias}}: High CPU utilization.",
             description = "{{$labels.alias}} has total CPU utilization over 90% for at least 1h."
           }
-          ALERT node_ram_using_90percent
-          IF node_memory_MemFree + node_memory_Buffers + node_memory_Cached < node_memory_MemTotal * 0.1
+          ALERT node_ram_using_99percent
+          IF node_memory_MemFree + node_memory_Buffers + node_memory_Cached < node_memory_MemTotal * 0.01
           FOR 30m
           LABELS {
             severity="page"
@@ -507,14 +525,14 @@ in {
                 alias = "optina.wedlake.lan";
               };
             }
-            {
-              targets = [
-                "prod01.wedlake.lan:9100"
-              ];
-              labels = {
-                alias = "prod01.wedlake.lan";
-              };
-            }
+            #{
+            #  targets = [
+            #    "prod01.wedlake.lan:9100"
+            #  ];
+            #  labels = {
+            #    alias = "prod01.wedlake.lan";
+            #  };
+            #}
           ];
         }
         #{
@@ -659,6 +677,25 @@ in {
               }
             '';
           };
+          "hledger.wedlake.lan" = {
+            forceSSL = true;
+            sslCertificate = "/data/ssl/hledger.wedlake.lan.crt";
+            sslCertificateKey = "/data/ssl/hledger.wedlake.lan.key";
+            locations."/api".extraConfig = ''
+              proxy_pass http://localhost:8001/api;
+              proxy_set_header Host $host;
+              proxy_set_header X-Forwarded-Proto $scheme;
+              proxy_set_header  X-Real-IP         $remote_addr;
+              proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+            '';
+            locations."/".extraConfig = ''
+              proxy_pass http://localhost:8002/;
+              proxy_set_header Host $host;
+              proxy_set_header X-Forwarded-Proto $scheme;
+              proxy_set_header  X-Real-IP         $remote_addr;
+              proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+            '';
+          };
           "crate.wedlake.lan" = {
             forceSSL = true;
             sslCertificate = "/data/ssl/nginx.crt";
@@ -783,34 +820,6 @@ in {
             }
           '';
         };
-        powerdns = {
-          enable = true;
-          extraConfig = ''
-            launch=gpgsql
-            local-address=127.0.0.1
-            local-ipv6=
-            local-port=5300
-            gpgsql-host=127.0.0.1
-            gpgsql-dbname=pdns
-            gpgsql-user=pdns
-            gpgsql-password=${secrets.powerdns_pg_pw}
-            api=yes
-            api-key=${secrets.powerdns_api_key}
-            webserver=yes
-          '';
-        };
-        pdns-recursor = {
-          enable = true;
-          dns.address = "0.0.0.0,::";
-          dns.allowFrom = [ "127.0.0.1/8" "10.0.0.0/8" "2601:98a:4101:bff0::1/60" "fd00::1/64" ];
-          dns.port = 53;
-          extraConfig = ''
-            forward-zones-recurse=.=8.8.8.8;7.7.7.7
-            forward-zones=wedlake.lan=127.0.0.1:5300
-            dnssec=off
-          '';
-        };
-
         postgresql = {
           enable = true;
           # Only way to get passopolis to work
@@ -846,6 +855,7 @@ in {
       virtualisation.docker.enable = true;
       virtualisation.docker.enableOnBoot = true;
       virtualisation.docker.storageDriver = "zfs";
+      virtualisation.libvirtd.enable = false;
       containers.rtorrent = {
         privateNetwork = true;
         hostAddress = "10.233.1.1";
@@ -868,7 +878,7 @@ in {
         isNormalUser = true;
         description = "Sam Leathers";
         uid = 1000;
-        extraGroups = [ "wheel" ];
+        extraGroups = [ "wheel" "libvirtd" ];
         openssh.authorizedKeys.keys = secrets.sam_ssh_keys;
       };
       users.extraUsers.mitro = {
