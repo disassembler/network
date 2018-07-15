@@ -232,7 +232,7 @@ in {
   services = {
     unbound = {
       enable = true;
-      interfaces = [ "0.0.0.0" "::1" ];
+      interfaces = [ "0.0.0.0" "::" ];
       allowedAccess = [
         "10.40.33.0/24"
         "10.39.0.0/24"
@@ -249,12 +249,12 @@ in {
           domain-insecure: "wedlake.lan"
         forward-zone:
           name: "wedlake.lan"
-          forward-addr: 127.0.0.1@5353
+          forward-addr: ::1@5353
       '';
     };
     nsd = {
       enable = true;
-      interfaces = [ "0.0.0.0" "::1" ];
+      interfaces = [ "127.0.0.1" "::1" ];
       port = 5353;
       zones."wedlake.lan.".data = ''
         @ SOA ns.wedlake.lan portal.wedlake.lan 666 7200 3600 1209600 3600
