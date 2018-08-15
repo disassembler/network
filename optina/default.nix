@@ -119,6 +119,7 @@ in {
         22022
         24000
         32400  # plex
+        5201   # iperf
       ];
       allowedUDPPorts = [ 53 137 138 1194 500 4500 ];
     };
@@ -530,14 +531,14 @@ in {
                 alias = "optina.wedlake.lan";
               };
             }
-            #{
-            #  targets = [
-            #    "prod01.wedlake.lan:9100"
-            #  ];
-            #  labels = {
-            #    alias = "prod01.wedlake.lan";
-            #  };
-            #}
+            {
+              targets = [
+                "prod01.wedlake.lan:9100"
+              ];
+              labels = {
+                alias = "prod01.wedlake.lan";
+              };
+            }
           ];
         }
         #{

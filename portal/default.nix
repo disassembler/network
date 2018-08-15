@@ -54,6 +54,10 @@ in {
         interface = "enp3s0";
         id = 33;
       };
+      mgmt = {
+        interface = "enp3s0";
+        id = 3;
+      };
       voip = {
         interface = "enp3s0";
         id = 40;
@@ -75,6 +79,12 @@ in {
       voip = {
         ipv4.addresses = [{
           address = "10.40.40.1";
+          prefixLength = 24;
+        }];
+      };
+      mgmt = {
+        ipv4.addresses = [{
+          address = "10.40.3.1";
           prefixLength = 24;
         }];
       };
@@ -206,10 +216,23 @@ in {
             publicKey = "dCKIaTC40Y5sQqbdsYw1adSgVDmV+1SZMV4DVx1ctSk=";
             allowedIPs = [ "10.38.0.0/24" "fd00::38/128" ];
           }
+          {
+            publicKey = "eR6I+LI/BayJ90Kjt0wJyfJUsoSmayD+cb6Kb7qdCV4=";
+            allowedIPs = [ "10.37.4.0/24" "10.37.6.1/32" "fd00::37/128" ];
+          }
         ];
 
       };
     };
+  };
+
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+    };
+    overlays = [
+      (import ../overlays/asterisk.nix)
+    ];
   };
 
   i18n = {
@@ -277,10 +300,10 @@ in {
         prod01      AAAA    fd00::2
       '';
     };
-    asterisk = let
-      package = (pkgs.callPackage ../asterisk { inherit iksemel;}).asterisk-stable;
-      iksemel = pkgs.callPackage ../asterisk/iksemel.nix {};
-    in import ./asterisk.nix { asterisk = package; };
+    asterisk = {
+      enable = true;
+      confFiles = import ./asterisk-config.nix;
+    };
     tftpd = {
       enable = true;
       path = tftp_root;
@@ -291,7 +314,7 @@ in {
       passwordAuthentication = false;
     };
     dhcpd4 = {
-      interfaces = [ "br0" "voip" ];
+      interfaces = [ "br0" "voip" "mgmt" ];
       enable = true;
       machines = [
         { hostName = "optina"; ethernetAddress = "d4:3d:7e:4d:c4:7f"; ipAddress = "10.40.33.20"; }
@@ -372,28 +395,30 @@ in {
         topic: KAFKA-LOGSTASH-ELASTICSEARCH
       '';
     };
-    prometheus.exporters.node = {
-      enable = true;
-      enabledCollectors = [
-        "systemd"
-        "tcpstat"
-        "conntrack"
-        "diskstats"
-        "entropy"
-        "filefd"
-        "filesystem"
-        "loadavg"
-        "meminfo"
-        "netdev"
-        "netstat"
-        "stat"
-        "time"
-        "vmstat"
-        "logind"
-        "interrupts"
-        "ksmd"
-      ];
-    };
+    prometheus.exporters = {
+      node = {
+        enable = true;
+        enabledCollectors = [
+          "systemd"
+          "tcpstat"
+          "conntrack"
+          "diskstats"
+          "entropy"
+          "filefd"
+          "filesystem"
+          "loadavg"
+          "meminfo"
+          "netdev"
+          "netstat"
+          "stat"
+          "time"
+          "vmstat"
+          "logind"
+          "interrupts"
+          "ksmd"
+        ];
+      };
+     };
     openvpn = {
       servers = {
         wedlake = {

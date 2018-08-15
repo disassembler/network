@@ -1,0 +1,22 @@
+diff --git i/res/res_pjsip/pjsip_distributor.c w/res/res_pjsip/pjsip_distributor.c
+index 626f07cefb..60e6bdb02a 100644
+--- i/res/res_pjsip/pjsip_distributor.c
++++ w/res/res_pjsip/pjsip_distributor.c
+@@ -142,7 +142,7 @@ static struct ast_taskprocessor *find_request_serializer(pjsip_rx_data *rdata)
+ #ifdef HAVE_PJ_TRANSACTION_GRP_LOCK
+ 	pj_grp_lock_release(tsx->grp_lock);
+ #else
+-	pj_mutex_unlock(tsx->mutex);
++	pj_mutex_unlock(tsx->mutex_b);
+ #endif
+ 
+ 	return serializer;
+@@ -399,7 +399,7 @@ static pjsip_dialog *find_dialog(pjsip_rx_data *rdata)
+ #ifdef HAVE_PJ_TRANSACTION_GRP_LOCK
+ 	pj_grp_lock_release(tsx->grp_lock);
+ #else
+-	pj_mutex_unlock(tsx->mutex);
++	pj_mutex_unlock(tsx->mutex_b);
+ #endif
+ 
+ 	return dlg;

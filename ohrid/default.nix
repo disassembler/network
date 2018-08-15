@@ -10,7 +10,6 @@ in {
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
     nix-repl
-    nix
     screen
     ncdu
     git
@@ -29,7 +28,7 @@ in {
 
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
-  system.stateVersion = 2;
+  system.stateVersion = 3;
 
   # You should generally set this to the total number of logical cores in your system.
   # $ sysctl -n hw.ncpu
@@ -45,11 +44,11 @@ in {
   nix.binaryCaches = [ "https://hydra.iohk.io" ];
   nix.trustedUsers = [ "sam" ];
 
-  nix.nixPath = [
-    "nixpkgs=UNSET"
-    "darwin=UNSET"
-    "darwin-config=UNSET"
-  ];
+  #nix.nixPath = [
+  #  "nixpkgs=UNSET"
+  #  "darwin=UNSET"
+  #  "darwin-config=UNSET"
+  #];
 
   ########################################################################
 

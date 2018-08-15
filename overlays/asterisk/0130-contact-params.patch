@@ -1,0 +1,120 @@
+diff --git c/pjsip/include/pjsip-ua/sip_regc.h i/pjsip/include/pjsip-ua/sip_regc.h
+index 6b13665c..46bb397a 100644
+--- c/pjsip/include/pjsip-ua/sip_regc.h
++++ i/pjsip/include/pjsip-ua/sip_regc.h
+@@ -413,7 +413,8 @@ PJ_DECL(pj_status_t) pjsip_regc_unregister_all(pjsip_regc *regc,
+  */
+ PJ_DECL(pj_status_t) pjsip_regc_update_contact( pjsip_regc *regc,
+ 					        int ccnt,
+-						const pj_str_t contact[] );
++						const pj_str_t contact[],
++						const pjsip_param* params );
+ 
+ /**
+  * Update the expires value. The next REGISTER request will contain
+diff --git c/pjsip/src/pjsip-ua/sip_reg.c i/pjsip/src/pjsip-ua/sip_reg.c
+index 6b147610..25ebca94 100644
+--- c/pjsip/src/pjsip-ua/sip_reg.c
++++ i/pjsip/src/pjsip-ua/sip_reg.c
+@@ -250,7 +250,8 @@ static void set_expires( pjsip_regc *regc, pj_uint32_t expires)
+ 
+ static pj_status_t set_contact( pjsip_regc *regc,
+ 			        int contact_cnt,
+-				const pj_str_t contact[] )
++				const pj_str_t contact[],
++				const pjsip_param *params )
+ {
+     const pj_str_t CONTACT = { "Contact", 7 };
+     pjsip_contact_hdr *h;
+@@ -321,6 +322,20 @@ static pj_status_t set_contact( pjsip_regc *regc,
+ 	    pj_list_push_back(&sip_uri->other_param, xuid_param);
+ 	}
+ 
++	/* Add additional contact params */
++	if (params)
++	{
++	    pjsip_param* param = params->next;
++	    while (param != params) {
++	        pjsip_param *param_copy;
++	        param_copy = PJ_POOL_ZALLOC_T(regc->pool, pjsip_param);
++	        param_copy->name = param->name;
++	        param_copy->value = param->value;
++	        pj_list_push_back(&hdr->other_param, param_copy);
++	        param = param->next;
++	    }
++	}
++
+ 	pj_list_push_back(&regc->contact_hdr_list, hdr);
+     }
+ 
+@@ -376,7 +391,7 @@ PJ_DEF(pj_status_t) pjsip_regc_init( pjsip_regc *regc,
+ 
+ 
+     /* Set "Contact" header. */
+-    status = set_contact( regc, contact_cnt, contact);
++    status = set_contact( regc, contact_cnt, contact, NULL);
+     if (status != PJ_SUCCESS)
+ 	return status;
+ 
+@@ -709,14 +724,15 @@ PJ_DEF(pj_status_t) pjsip_regc_unregister_all(pjsip_regc *regc,
+ 
+ PJ_DEF(pj_status_t) pjsip_regc_update_contact(  pjsip_regc *regc,
+ 					        int contact_cnt,
+-						const pj_str_t contact[] )
++						const pj_str_t contact[],
++					        const pjsip_param *params )
+ {
+     pj_status_t status;
+ 
+     PJ_ASSERT_RETURN(regc, PJ_EINVAL);
+ 
+     pj_lock_acquire(regc->lock);
+-    status = set_contact( regc, contact_cnt, contact );
++    status = set_contact( regc, contact_cnt, contact, params );
+     pj_lock_release(regc->lock);
+ 
+     return status;
+@@ -1125,7 +1141,7 @@ static void regc_tsx_callback(void *token, pjsip_event *event)
+ 	    }
+ 
+             /* Update contact address */
+-            pjsip_regc_update_contact(regc, param.contact_cnt, param.contact);
++            pjsip_regc_update_contact(regc, param.contact_cnt, param.contact, NULL);
+             update_contact = PJ_TRUE;
+         }
+     }
+diff --git c/pjsip/src/pjsua-lib/pjsua_acc.c i/pjsip/src/pjsua-lib/pjsua_acc.c
+index 70a1ed9f..0811cd63 100644
+--- c/pjsip/src/pjsua-lib/pjsua_acc.c
++++ i/pjsip/src/pjsua-lib/pjsua_acc.c
+@@ -1865,7 +1865,7 @@ static pj_bool_t acc_check_nat_addr(pjsua_acc *acc,
+     if (contact_rewrite_method == PJSUA_CONTACT_REWRITE_NO_UNREG &&
+         acc->regc != NULL)
+     {
+-	pjsip_regc_update_contact(acc->regc, 1, &acc->reg_contact);
++	pjsip_regc_update_contact(acc->regc, 1, &acc->reg_contact, NULL);
+     }
+ 
+     /* Perform new registration */
+diff --git c/pjsip/src/test/regc_test.c i/pjsip/src/test/regc_test.c
+index ec65cb09..f86d11de 100644
+--- c/pjsip/src/test/regc_test.c
++++ i/pjsip/src/test/regc_test.c
+@@ -563,7 +563,7 @@ static int update_test(const pj_str_t *registrar_uri)
+      * replace the contact with new one 
+      */
+     PJ_LOG(3,(THIS_FILE, "   replacing contact"));
+-    status = pjsip_regc_update_contact(regc, 1, &contacts[1]);
++    status = pjsip_regc_update_contact(regc, 1, &contacts[1], NULL);
+     if (status != PJ_SUCCESS) {
+ 	ret = -610;
+ 	goto on_return;
+@@ -642,7 +642,7 @@ static int update_test(const pj_str_t *registrar_uri)
+ 	else
+ 	    PJ_LOG(3,(THIS_FILE, "   updating contacts with same contacts"));
+ 
+-	status = pjsip_regc_update_contact(regc, 2, &contacts[1]);
++	status = pjsip_regc_update_contact(regc, 2, &contacts[1], NULL);
+ 	if (status != PJ_SUCCESS) {
+ 	    ret = -710;
+ 	    goto on_return;
