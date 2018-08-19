@@ -1,14 +1,15 @@
-{ stdenv, writeText }:
+{ stdenv, writeText, python, pkgs, dev }:
 
 let
     generic = builtins.readFile ./vimrc/general.vim;
-    plug = import ./vimrc/pluginconfigurations.nix;
+    haskell = pkgs.callPackage haskell/vimrc.nix {};
+    javascript = pkgs.callPackage javascript/vimrc.nix {};
 in
 
-''
-    ${generic}
-
-    " ... more here
-
-    ${plug}
-''
+generic +
+(pkgs.lib.optionalString dev ''
+ " wakatime
+ let g:wakatime_Binary = "${pkgs.wakatime}/bin/wakatime"
+ ${haskell}
+ ${javascript}
+'')

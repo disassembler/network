@@ -1,10 +1,12 @@
 [
   ./profiles/zsh.nix
+  ./profiles/etcd.nix
   ./profiles/vim.nix
+  ./roles/base.nix
+  ./profiles/xapps.nix
   ./profiles/passopolis.nix
   ./profiles/passopolis/service.nix
   ./profiles/tmux
   ./profiles/prometheus-surfboard-exporter/service.nix
   ./profiles/hledger/service.nix
-  ./asterisk.nix
 ]

@@ -25,7 +25,7 @@ let
         'ssh' \
         'tmux' \
         'nix' \
-        'python'
+        #'python'
 
       # Set the key mapping style to 'emacs' or 'vi'.
       zstyle ':prezto:module:editor' key-bindings 'vi'
@@ -108,6 +108,9 @@ let
       fi
       source "$fasd_cache"
       unset fasd_cache
+
+      # custom key bindings
+      bindkey -M vicmd "^v" edit-command-line
       
       
       # jump to recently used items

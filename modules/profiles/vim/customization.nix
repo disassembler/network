@@ -1,11 +1,26 @@
-{ pkgs }:
+{ pkgs, dev }:
 
 let
   # this is the vimrc.nix from above
-  vimrc   = pkgs.callPackage ./vimrc.nix {};
+  vimrc   = pkgs.callPackage ./vimrc.nix { inherit dev;};
 
   # and the plugins.nix from above
-  plugins = pkgs.callPackage ./plugins.nix {};
+  plugins = pkgs.callPackage ./plugins.nix { };
+  dev_plugin_names = [
+          "ale"
+          #"deoplete-go"
+          #"deoplete-rust"
+          "vim-go"
+          "vim_jsx"
+          "vim_javascript"
+          "vim-docbk"
+          "vim-hoogle"
+          "vim-docbk-snippets"
+          "vim_stylish_haskell"
+          #"haskell_vim"
+          "wakatime"
+          "LanguageClient-neovim"
+  ];
 in
 {
   customRC = vimrc;
@@ -14,32 +29,24 @@ in
     pluginDictionaries = [
       {
         names = [
-          "vim-airline-themes"
           "ctrlp"
           "fugitive"
           "surround"
           "vim-markdown"
-          "multiple-cursors"
-          "syntastic"
           "gitgutter"
           "vim-nix"
-          #"youcompleteme"
+          "deoplete_nvim"
           "repeat"
           "nerdtree"
           "UltiSnips"
-          "vimwiki"
           "vim-colorschemes"
           "vim-colors_atelier-schemes"
           "vim-lastplace"
-          "vim-go"
-          "yankring"
+          #"yankring"
           "splice_vim"
-          "vim_jsx"
-          "vim_javascript"
-          "vim_ps1"
-          "vim-docbk"
-          "vim-docbk-snippets"
-        ];
+          "markdown_wiki"
+          "tagbar"
+        ] ++ (pkgs.lib.optionals dev dev_plugin_names);
       }
     ];
   };

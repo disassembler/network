@@ -1,3 +1,6 @@
 secrets.nix
 result*
 asterisk-config.nix
+configuration.nix
+hardware-configuration.nix
+keys

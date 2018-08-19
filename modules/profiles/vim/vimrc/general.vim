@@ -67,6 +67,10 @@ autocmd Filetype php setlocal tabstop=4 shiftwidth=4 softtabstop=4
 autocmd FileType ruby compiler ruby
 filetype plugin on    " Enable filetype-specific plugins
 
+" sshconfig
+au BufNewFile,BufRead ssh_config,*/.ssh/config,*/.ssh/config.d/*.conf	setf sshconfig
+
+
 " Those types
 if has("user_commands")
 command! -bang -nargs=? -complete=file E e<bang> <args>
@@ -96,7 +100,16 @@ nnoremap <leader>r :call NumberToggle()<cr>
 " gitgutter settings
 let g:gitgutter_max_signs = 2000
 
-let g:vimwiki_list = [{'path': '~/vimwiki/',
-                     \ 'syntax': 'markdown', 'ext': '.md'}]
-let g:ycm_server_keep_logfiles = 1
-let g:ycm_server_log_level = 'debug'
+ " deoplete.
+let g:deoplete#sources = {}
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#sources._ = ['buffer', 'file', 'omni', 'ultisnips']
+
+" Highlight trailing whitespace, remove on save/quit
+highlight ExtraWhitespace ctermbg=red guibg=red
+au ColorScheme * highlight ExtraWhitespace guibg=red
+au BufEnter * match ExtraWhitespace /\s\+$/
+au InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+au InsertLeave * match ExtraWhiteSpace /\s\+$/
+au BufWritePre * %s/\s\+$//e

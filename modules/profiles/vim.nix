@@ -1,23 +1,33 @@
 { config, pkgs, lib, ... }:
-
-with lib;
-
 let
   cfg = config.profiles.vim;
+  dev = cfg.dev;
+  customization = (import ./vim/customization.nix { inherit pkgs dev; });
   nvim = pkgs.neovim.override {
     vimAlias = true;
-    configure = (import ./vim/customization.nix { pkgs = pkgs; });
+    configure = customization;
+  };
+  vim = pkgs.vim_configurable.customize { 
+    name = "vim";
+    vimrcConfig.vam = customization.vam;
+    vimrcConfig.customRC = customization.customRC;
   };
 in {
-  options.profiles.vim = {
+  options.profiles.vim = with lib; {
     enable = mkEnableOption "enable vim profile";
+    dev = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Whether to enable development plugins like haskell/js";
+    };
   };
-  config = mkIf cfg.enable {
+  config = {
     environment.systemPackages = [ 
       nvim
       pkgs.ctags
-      pkgs.python
-      pkgs.python35Packages.neovim
+      #pkgs.python
+      #pkgs.python35Packages.neovim
     ];
   };
+  
 }

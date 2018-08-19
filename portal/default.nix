@@ -1,5 +1,4 @@
-{ secrets }:
-{ lib, config, pkgs, ... }:
+{ lib, config, pkgs, secrets, shared, ... }:
 let
   externalInterface = "enp1s0";
   internalInterfaces = [
@@ -235,14 +234,6 @@ in {
     ];
   };
 
-  i18n = {
-    consoleFont = "Lat2-Terminus16";
-    consoleKeyMap = "us";
-    defaultLocale = "en_US.UTF-8";
-  };
-
-  time.timeZone = "America/New_York";
-
   environment.systemPackages = with pkgs; [
     wget
     vim
@@ -307,11 +298,6 @@ in {
     tftpd = {
       enable = true;
       path = tftp_root;
-    };
-    openssh = {
-      enable = true;
-      permitRootLogin = "without-password";
-      passwordAuthentication = false;
     };
     dhcpd4 = {
       interfaces = [ "br0" "voip" "mgmt" ];
@@ -483,7 +469,7 @@ in {
     description = "Sam Leathers";
     uid = 1000;
     extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = secrets.sam_ssh_keys;
+    openssh.authorizedKeys.keys = shared.sam_ssh_keys;
   };
   users.extraUsers.openvpn = {
     isNormalUser = true;

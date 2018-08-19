@@ -1,5 +1,4 @@
-{ secrets }:
-{ lib, config, pkgs, ... }:
+{ lib, config, pkgs, secrets, shared, ... }:
 
 with lib;
 
@@ -50,7 +49,6 @@ in {
       ./hardware.nix
     ];
   deployment.keys."gitea-dbpass".text = secrets.gitea_dbpass;
-  users.extraUsers.root.shell = lib.mkOverride 50 "${pkgs.bashInteractive}/bin/bash";
 
   nix.sshServe = {
     enable = true;
@@ -125,7 +123,7 @@ in {
     };
   };
 
-  security.pki.certificates = [ secrets.wedlake_ca_cert ];
+  security.pki.certificates = [ shared.wedlake_ca_cert ];
 
   nixpkgs.config = {
     allowUnfree = true;
@@ -142,13 +140,6 @@ in {
 
   };
 
-  i18n = {
-    consoleFont = "Lat2-Terminus16";
-    consoleKeyMap = "us";
-    defaultLocale = "en_US.UTF-8";
-  };
-
-  time.timeZone = "America/New_York";
   environment.systemPackages = with pkgs; [
     aspell
     aspellDicts.en
@@ -277,11 +268,6 @@ in {
       };
     };
     mongodb.enable = true;
-    openssh = {
-      enable = true;
-      permitRootLogin = "without-password";
-      passwordAuthentication = false;
-    };
     unifi.enable = true;
     #telegraf = {
     #  enable = true;
@@ -885,7 +871,7 @@ in {
         description = "Sam Leathers";
         uid = 1000;
         extraGroups = [ "wheel" "libvirtd" ];
-        openssh.authorizedKeys.keys = secrets.sam_ssh_keys;
+        openssh.authorizedKeys.keys = shared.sam_ssh_keys;
       };
       users.extraUsers.mitro = {
         isNormalUser = true;

@@ -85,4 +85,58 @@ in {
     };
     dependencies = [];
   };
+  "haskell_vim" = buildVimPlugin {
+    name = "haskell_vim";
+    src = fetchgit {
+      url = "https://github.com/neovimhaskell/haskell-vim";
+      rev = "e027b314df128979dbd00dd94c9db080db156b5c";
+      sha256 = "13dx1ifwa444q8zkwda4qha74xjm4jfhhk9lbgbj9p1mj7gvbl7f";
+    };
+    dependencies = [];
+  };
+  "markdown_wiki" = buildVimPlugin {
+    name = "markdown_wiki";
+    src = fetchgit {
+      url = "https://github.com/mmai/vim-markdown-wiki";
+      rev = "aba50241ccf987bf0395b9a700f3dce894bf7a16";
+      sha256 = "15ykh6y1qzga2id065ixx3shl72q3w1g1i7dn34pzi4vhlwg8cns";
+    };
+    dependencies = [];
+  };
+  "ale" = buildVimPlugin {
+    name = "ale";
+    src = fetchgit {
+      url = "https://github.com/w0rp/ale";
+      rev = "164c711b3da5a51a2323a3bd613df251ce455ca5";
+      sha256 = "135xb70cyrawp2bpwv6mnayw5s8ms8798x0mg03i0h68dhv5z8ds";
+    };
+    dependencies = [];
+  };
+  "vim_stylish_haskell" = buildVimPlugin {
+    name = "vim_stylish_haskell";
+    src = fetchgit {
+      url = "https://github.com/nbouscal/vim-stylish-haskell";
+      rev = "c664376ba814de3f87cb7641f90b2c6a9dd53671";
+      sha256 = "1xm5ark2mwphznv3xsyzgcldnr52i5jzk1pfqdh0080j07aama8j";
+    };
+    dependencies = [];
+  };
+  "deoplete_nvim" = buildVimPlugin {
+    name = "deoplete_nvim";
+    src = fetchgit {
+      url = "https://github.com/Shougo/deoplete.nvim";
+      rev = "dc86f96f4f9ccb4214f419646e42c4fbe3287ba3";
+      sha256 = "1nnzq0snxvxkh63j5k53l5clkzqb7mi371fgbbw8ag1ar3iks0ky";
+    };
+    dependencies = [];
+  };
+  "wakatime" = buildVimPlugin {
+    name = "wakatime";
+    src = fetchgit {
+      url = "https://github.com/disassembler/vim-wakatime";
+      rev = "eb0ba24a1683f871952d395d1537fc39e096d16a";
+      sha256 = "19ff3bwxkrb3ad52jknbwhjgyhg6gnap38qsll9qlb2zn040l073";
+    };
+    dependencies = [];
+  };
 }
