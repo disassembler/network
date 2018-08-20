@@ -24,7 +24,6 @@ let
         'fasd' \
         'ssh' \
         'tmux' \
-        'nix' \
         #'python'
 
       # Set the key mapping style to 'emacs' or 'vi'.
@@ -111,8 +110,8 @@ let
 
       # custom key bindings
       bindkey -M vicmd "^v" edit-command-line
-      
-      
+
+
       # jump to recently used items
       alias a='fasd -a' # any
       alias s='fasd -si' # show / search / select
