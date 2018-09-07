@@ -10,6 +10,11 @@ let
 in {
   options.profiles.zsh = {
     enable = mkEnableOption "enable zsh profile";
+    autosuggest = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Whether to enable autosuggest";
+    };
   };
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
@@ -31,7 +36,6 @@ in {
       zsh = {
         enable = true;
         enableCompletion = true;
-        autosuggestions.enable = true;
         syntaxHighlighting = {
           enable = true;
           highlighters = [ "main" "pattern" ];
@@ -40,7 +44,7 @@ in {
           };
         };
 
-      };
+      } // optionalAttrs cfg.autosuggest { autosuggestions.enable = true; };
     };
     users.defaultUserShell = pkgs.zsh;
   };

@@ -119,6 +119,16 @@
 
   services = {
 
+    postgresql = {
+      enable = true;
+      authentication = ''
+        local all all trust
+        host  all all 127.0.0.1/32 trust
+      '';
+  };
+    influxdb.enable = true;
+    grafana.enable = true;
+
     #zfs.autoSnapshot.enable = true;
     #grafana_reporter = {
     #  enable = true;
@@ -202,6 +212,7 @@
       extraConfig = ''
         address=/portal.wedlake.lan/10.40.33.1
         server=/wedlake.lan/10.40.33.1
+        server=/lan.centrallakerealty.com/10.37.3.2
       '';
       servers = [
         "8.8.4.4"
@@ -219,6 +230,10 @@
         prophet-guest = {
           autoStart = false;
           config = secrets.prophet-guest-openvpn-config;
+        };
+        centrallake = {
+          autoStart = false;
+          config = secrets.centrallake-openvpn-config;
         };
       };
     };

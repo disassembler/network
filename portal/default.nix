@@ -276,6 +276,7 @@ in {
         optina      AAAA    2601:98a:4101:bff0:d63d:7eff:fe4d:c47f
         cloud       CNAME   optina
         crate       CNAME   optina
+        storage     CNAME   optina
         git         CNAME   optina
         hledger     CNAME   optina
         hydra       CNAME   optina

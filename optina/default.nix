@@ -700,6 +700,10 @@ in {
               proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
             '';
           };
+          "storage.wedlake.lan" = {
+            forceSSL = false;
+            root = "/var/storage";
+          };
           "unifi.wedlake.lan" = {
             forceSSL = true;
             sslCertificate = "/data/ssl/unifi.wedlake.lan.crt";
@@ -817,8 +821,11 @@ in {
           # Only way to get passopolis to work
           # Lock this down once we migrate away from passopolis
           authentication = ''
-            local all all trust
-            host  all all 127.0.0.1/32 trust
+            local passopolis all ident map=passopolis-users
+          '';
+          identMap = ''
+            hydra-users sam hydra
+            passopolis-users passopolis passopolis
           '';
         };
         postgresqlBackup.enable = true;
@@ -828,11 +835,11 @@ in {
           package = pkgs.plex.overrideAttrs (x: {
             src = pkgs.fetchurl {
               url = let
-                version = "1.12.3.4973";
-                vsnHash = "215c28d86";
+                version = "1.13.5.5332";
+                vsnHash = "21ab172de";
 
               in "https://downloads.plex.tv/plex-media-server/${version}-${vsnHash}/plexmediaserver-${version}-${vsnHash}.x86_64.rpm";
-              sha256 = "1f1h7jzmk2506y85qpqmckgp3ympw1rcm79hdbk84z8xgl29j18z";
+              sha256 = "05wahh7la565vjpywk8m2wz0zj6gl76k60cgzgaqz48d5g8q04r9";
             };
           });
         };

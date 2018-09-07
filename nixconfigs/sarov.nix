@@ -97,11 +97,14 @@ in {
     binaryCachePublicKeys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
     distributedBuilds = true;
     buildMachines = [
-      buildMachines.darwin.ohrid
+      #buildMachines.darwin.ohrid
       buildMachines.darwin.macvm
       #buildMachines.linux.optina
     ];
     nixPath = [ "nixpkgs=/home/sam/nixpkgs/custom" "nixos-config=/etc/nixos/configuration.nix" ];
+    extraOptions = ''
+      allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk/nixpkgs/archive
+    '';
   };
 
   nixpkgs.overlays = [
@@ -146,6 +149,7 @@ in {
 
   # move to host system
   profiles.zsh.enable = true;
+  profiles.zsh.autosuggest = true;
   profiles.vim = {
       enable = true;
       dev = true;
