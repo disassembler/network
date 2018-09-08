@@ -1,7 +1,6 @@
 let
-  nixpkgs = import (builtins.fetchTarball https://nixos.org/channels/nixpkgs-18.03-darwin/nixexprs.tar.xz);
-  pkgs_mac = nixpkgs {system = "x86_64-darwin";};
-  pkgs_native = nixpkgs {};
+  pkgs_mac = import <nixpkgs> {system = "x86_64-darwin";};
+  pkgs_native = import <nixpkgs> {};
 in rec {
   darwin-tools = let
     ghc = pkgs_mac.haskellPackages.ghcWithPackages (ps: [ ps.turtle ps.universum ps.megaparsec ]);
