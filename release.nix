@@ -5,7 +5,7 @@ let
   nix-darwin-tools = import ./.;
 
 in {
-  inherit nix-darwin-tools;
+  #inherit nix-darwin-tools;
   optina = (nixosFuncStable { configuration = ./optina; }).system;
   portal = (nixosFuncStable { configuration = ./portal; }).system;
   sarov  = (nixosFuncUnstable { configuration = ./machines/sarov.nix; }).system;
