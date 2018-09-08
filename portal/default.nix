@@ -1,5 +1,8 @@
-{ lib, config, pkgs, secrets, shared, ... }:
+{ lib, config, pkgs, ... }:
 let
+  secrets = import ../load-secrets.nix;
+  shared = import ../shared.nix;
+  custom_modules = (import ../modules/modules-list.nix);
   externalInterface = "enp1s0";
   internalInterfaces = [
     "br0"
@@ -30,9 +33,10 @@ in {
   imports =
     [
       ./hardware.nix
-    ];
-  deployment.keys."wg0-private".text = secrets.portal_wg0_private;
-
+    ] ++ custom_modules;
+    _module.args = {
+      inherit secrets shared;
+    };
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;

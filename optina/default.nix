@@ -1,8 +1,12 @@
-{ lib, config, pkgs, secrets, shared, ... }:
+{ lib, config, pkgs, ... }:
+
 
 with lib;
 
 let
+  secrets = import ../load-secrets.nix;
+  shared = import ../shared.nix;
+  custom_modules = (import ../modules/modules-list.nix);
   netboot_root = pkgs.runCommand "nginxroot" {} ''
     mkdir -pv $out
     cat <<EOF > $out/boot.php
@@ -47,8 +51,10 @@ in {
   imports =
     [
       ./hardware.nix
-    ];
-  deployment.keys."gitea-dbpass".text = secrets.gitea_dbpass;
+    ] ++ custom_modules;
+    _module.args = {
+      inherit secrets shared;
+    };
 
   nix = let
     buildMachines = import ../build-machines.nix;

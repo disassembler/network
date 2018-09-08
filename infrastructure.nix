@@ -12,22 +12,18 @@ in
     deployment = {
       targetHost = "10.40.33.20";
     };
-    _module.args = {
-      inherit secrets shared;
-    };
     imports = [
       (import ./optina )
     ] ++ custom_modules;
+    deployment.keys."gitea-dbpass".text = secrets.gitea_dbpass;
   };
   portal = { ... }: {
     deployment = {
       targetHost = "10.40.33.1";
     };
-    _module.args = {
-      inherit secrets shared;
-    };
     imports = [
       (import ./portal )
     ] ++ custom_modules;
+    deployment.keys."wg0-private".text = secrets.portal_wg0_private;
   };
 }
