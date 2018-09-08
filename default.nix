@@ -6,7 +6,7 @@ in rec {
     ghc = pkgs_mac.haskellPackages.ghcWithPackages (ps: [ ps.turtle ps.universum ps.megaparsec ]);
   in pkgs_mac.stdenv.mkDerivation {
     name = "deploy-nix-darwin";
-    buildInputs = [ ghc ];
+    buildInputs = [ ghc pkgs_mac.iconv ];
     shellHook = "eval $(egrep ^export ${ghc}/bin/ghc)";
     src = ./nix-darwin-tools;
     installPhase = ''
