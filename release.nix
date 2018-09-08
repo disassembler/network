@@ -1,8 +1,9 @@
 let
-  nixosFunc = (import <nixpkgs/nixos>);
+  nixosFuncStable = (import <nixpkgs-stable/nixos>);
+  nixosFuncUnstable = (import <nixpkgs-unstable/nixos>);
 
 in {
-  optina = (nixosFunc { configuration = ./optina; }).system;
-  portal = (nixosFunc { configuration = ./portal; }).system;
-  sarov  = (nixosFunc { configuration = ./machines/sarov.nix; }).system;
+  optina = (nixosFuncStable { configuration = ./optina; }).system;
+  portal = (nixosFuncStable { configuration = ./portal; }).system;
+  sarov  = (nixosFuncUnstable { configuration = ./machines/sarov.nix; }).system;
 }
