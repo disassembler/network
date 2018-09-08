@@ -59,6 +59,7 @@ in {
     };
     buildMachines = [
       buildMachines.darwin.ohrid
+      buildMachines.linux.optina
     ];
   };
 
@@ -855,6 +856,7 @@ in {
           hydraURL = "https://hydra.wedlake.lan";
           notificationSender = "disasm@gmail.com";
           port = 3002;
+          useSubstitutes = true;
         };
 
       };

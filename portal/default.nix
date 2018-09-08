@@ -293,7 +293,7 @@ in {
       '';
     };
     asterisk = {
-      enable = true;
+      enable = false;
       confFiles = import ./asterisk-config.nix;
     };
     tftpd = {
