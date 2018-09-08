@@ -43,3 +43,8 @@ Preliminary darwin support has been added. It's a three step process:
 2) Deployment
 
     ./deploy.hs --role ohrid/default.nix <IP>
+
+# NixOS Configs
+
+NixOS machines not managed by nixops are in `machines/hostname.nix`. Symlink that
+file to `/etc/nixos/configuration.nix`.

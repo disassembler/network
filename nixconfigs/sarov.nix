@@ -97,9 +97,9 @@ in {
     binaryCachePublicKeys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
     distributedBuilds = true;
     buildMachines = [
-      #buildMachines.darwin.ohrid
-      buildMachines.darwin.macvm
-      #buildMachines.linux.optina
+      buildMachines.darwin.ohrid
+      #buildMachines.darwin.macvm
+      buildMachines.linux.optina
     ];
     nixPath = [ "nixpkgs=/home/sam/nixpkgs/custom" "nixos-config=/etc/nixos/configuration.nix" ];
     extraOptions = ''
