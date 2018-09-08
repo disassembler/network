@@ -1,7 +1,7 @@
 let
   nixosFuncStable = (import <nixpkgs-stable/nixos>);
   nixosFuncUnstable = (import <nixpkgs-unstable/nixos>);
-  nixDarwinFuncUnstable = (import <nixdarwin>);
+  nixDarwinFuncUnstable = (import <nixdarwin-unstable>);
   nix-darwin-tools = import ./.;
 
 in {
