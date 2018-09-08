@@ -4,7 +4,7 @@ let
 in {
   imports =
   [ # Include the results of the hardware scan.
-    ../hardware-configuration.nix
+    ../hardware-configurations/sarov.nix
     # Machine specific config
     ../nixconfigs/sarov.nix
     ../legacy/sarov.nix
