@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 let
-  secrets = import ./../secrets.nix;
+  secrets = import ../load-secrets.nix;
   custom_modules = (import ./modules-list.nix);
 
 in {

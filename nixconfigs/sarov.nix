@@ -1,7 +1,7 @@
 { lib, config, pkgs, fetchgit, ... }:
 
 let
-  secrets = import ../secrets.nix;
+  secrets = import ../load-secrets.nix;
   shared = import ../shared.nix;
   machine = "sarov";
   hostId = "523b4cab";

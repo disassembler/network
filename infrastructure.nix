@@ -1,5 +1,5 @@
 let
-  secrets = import ./secrets.nix;
+  secrets = import ./load-secrets.nix;
   shared = import ./shared.nix;
   custom_modules = (import ./modules/modules-list.nix);
 in
