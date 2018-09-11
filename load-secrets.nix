@@ -2,6 +2,7 @@ if builtins.pathExists ./secrets.nix then import ./secrets.nix else {
   prophet-openvpn-config = "";
   prophet-guest-openvpn-config = "";
   centrallake-openvpn-config = "";
+  bower-openvpn-config = "";
   unifi_password_ro = "";
   alertmanager_smtp_pw = "";
   alertmanager_pushover_user = "";
