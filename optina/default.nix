@@ -892,6 +892,7 @@ in {
               disassembler = token ${secrets.github_token}
             </github_authorization>
             <githubstatus>
+              useShortContext = 1
               jobs = nixos-configs:nixos-configs.*
               inputs = nixos-configs
               excludeBuildFromContext = 1
