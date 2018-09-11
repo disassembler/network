@@ -889,7 +889,7 @@ in {
             store-uri = file:///nix/store?secret-key=/etc/nix/hydra.wedlake.lan-1/secret
             binary_cache_secret_key_file = /etc/nix/hydra.wedlake.lan-1/secret
             <github_authorization>
-              disassembler = ${secrets.github_token}
+              disassembler = token ${secrets.github_token}
             </github_authorization>
             <githubstatus>
               jobs = nixos-configs:nixos-configs.*
