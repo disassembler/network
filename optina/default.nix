@@ -893,7 +893,7 @@ in {
             </github_authorization>
             <githubstatus>
               jobs = nixos-configs:nixos-configs.*
-              inputs = jobsets
+              inputs = nixos-configs
               excludeBuildFromContext = 1
             </githubstatus>
           '';
