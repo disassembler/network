@@ -101,10 +101,10 @@ nnoremap <leader>r :call NumberToggle()<cr>
 let g:gitgutter_max_signs = 2000
 
  " deoplete.
-let g:deoplete#sources = {}
+"let g:deoplete#sources = {}
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
-let g:deoplete#sources._ = ['buffer', 'file', 'omni', 'ultisnips']
+"let g:deoplete#sources._ = ['buffer', 'file', 'omni', 'ultisnips']
 
 " Highlight trailing whitespace, remove on save/quit
 highlight ExtraWhitespace ctermbg=red guibg=red

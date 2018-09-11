@@ -8,4 +8,5 @@ if builtins.pathExists ./secrets.nix then import ./secrets.nix else {
   alertmanager_pushover_token = "";
   mpd_pw = "";
   mpd_icecast_pw = "";
+  github_token = "";
 }

@@ -30,11 +30,11 @@ in
     au BufWritePost *.hs            silent !${init-tags} %
     au FileType haskell setl sw=4 sts=4 et
 
-    let g:deoplete#sources.haskell = ['LanguageClient']
+    "let g:deoplete#sources.haskell = ['LanguageClient']
     let g:LanguageClient_serverCommands = {
     \ 'haskell': ['${hie}', '-d', '--lsp'],
     \ }
-    "let g:stylish_haskell_command = ${stylish-haskell}/bin/stylish-haskell
+    let g:stylish_haskell_command = "${stylish-haskell}/bin/stylish-haskell"
     let g:tagbar_type_haskell = {
     \ 'ctagsbin'  : '${hasktags}',
     \ 'ctagsargs' : '-x -c -o-',

@@ -125,8 +125,8 @@ in {
     name = "deoplete_nvim";
     src = fetchgit {
       url = "https://github.com/Shougo/deoplete.nvim";
-      rev = "dc86f96f4f9ccb4214f419646e42c4fbe3287ba3";
-      sha256 = "1nnzq0snxvxkh63j5k53l5clkzqb7mi371fgbbw8ag1ar3iks0ky";
+      rev = "8c2117b966a7f05091cd49609f8ee3641f260997";
+      sha256 = "0pklmb89g3hqxilv0546c21yjav26frsxb5g24ma49pii8lmzgjg";
     };
     dependencies = [];
   };

@@ -7,6 +7,23 @@ let
   secrets = import ../load-secrets.nix;
   shared = import ../shared.nix;
   custom_modules = (import ../modules/modules-list.nix);
+  hydraRev = "a4469f8b0fedbac6764778c4c3426656b44c29a1";
+  hydraSrc = pkgs.fetchFromGitHub {
+    owner = "cleverca22";
+    repo = "hydra";
+    sha256 = "0zx19macxah6b69nzgqc34fm9vl8md4sbp07p0pnqniallnmf6gg";
+    rev = hydraRev;
+  };
+  hydraSrc' = {
+    outPath = hydraSrc;
+    rev = hydraRev;
+    revCount = 1234;
+  };
+  hydra-fork = (import (hydraSrc + "/release.nix") { nixpkgs = pkgs.path; hydraSrc = hydraSrc'; }).build.x86_64-linux;
+  patched-hydra = pkgs.hydra.overrideDerivation (drv: {
+    patches = [
+    ];
+  });
   netboot_root = pkgs.runCommand "nginxroot" {} ''
     mkdir -pv $out
     cat <<EOF > $out/boot.php
@@ -67,6 +84,8 @@ in {
       buildMachines.darwin.ohrid
       buildMachines.linux.optina
     ];
+    binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" "https://hydra.wedlake.lan" ];
+    binaryCachePublicKeys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" "hydra.wedlake.lan:C3xufTQ7w2Y6VHtf+dyA6NmQPiQjwIDEavJNmr97Loo=" ];
   };
 
   # Use the systemd-boot EFI boot loader.
@@ -160,7 +179,7 @@ in {
     ncdu
     unrar
     conky
-    chromium
+    #chromium
     unzip
     zip
     gnupg
@@ -859,12 +878,51 @@ in {
         };
         hydra = {
           enable = true;
+          package = hydra-fork;
           hydraURL = "https://hydra.wedlake.lan";
           notificationSender = "disasm@gmail.com";
+          minimumDiskFree = 2;
+          minimumDiskFreeEvaluator = 1;
           port = 3002;
           useSubstitutes = true;
+          extraConfig = ''
+            store-uri = file:///nix/store?secret-key=/etc/nix/hydra.wedlake.lan-1/secret
+            binary_cache_secret_key_file = /etc/nix/hydra.wedlake.lan-1/secret
+            <github_authorization>
+              disassembler = ${secrets.github_token}
+            </github_authorization>
+            <githubstatus>
+              jobs = nixos-configs:nixos-configs.*
+              inputs = jobsets
+              excludeBuildFromContext = 1
+            </githubstatus>
+          '';
         };
 
+      };
+      systemd.services.hydra-manual-setup = {
+        description = "Create Keys for Hydra";
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          path = config.systemd.services.hydra-init.environment.PATH;
+        };
+        wantedBy = [ "multi-user.target" ];
+        requires = [ "hydra-init.service" ];
+        after = [ "hydra-init.service" ];
+        environment = builtins.removeAttrs config.systemd.services.hydra-init.environment ["PATH"];
+        script = ''
+          if [ ! -e ~hydra/.setup-is-complete ]; then
+          # create signing keys
+          /run/current-system/sw/bin/install -d -m 551 /etc/nix/hydra.wedlake.lan-1
+          /run/current-system/sw/bin/nix-store --generate-binary-cache-key hydra.wedlake.lan-1 /etc/nix/hydra.wedlake.lan-1/secret /etc/nix/hydra.wedlake.lan-1/public
+          /run/current-system/sw/bin/chown -R hydra:hydra /etc/nix/hydra.wedlake.lan-1
+          /run/current-system/sw/bin/chmod 440 /etc/nix/hydra.wedlake.lan-1/secret
+          /run/current-system/sw/bin/chmod 444 /etc/nix/hydra.wedlake.lan-1/public
+          # done
+          touch ~hydra/.setup-is-complete
+          fi
+        '';
       };
       virtualisation.docker.enable = true;
       virtualisation.docker.enableOnBoot = true;

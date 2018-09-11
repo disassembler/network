@@ -48,6 +48,8 @@ in {
     "net.ipv6.conf.enp1s0.accept_ra" = 2;
   };
 
+  security.pki.certificates = [ shared.wedlake_ca_cert ];
+
   networking = {
     hostName = "portal.wedlake.lan";
     hostId = "fa4b7394";
@@ -99,6 +101,7 @@ in {
       internalInterfaces = [ "voip" "br0" "ovpn-guest" ];
       forwardPorts = [
         { sourcePort = 32400; destination = "10.40.33.20:32400"; proto = "tcp"; }
+        { sourcePort = 80; destination = "10.40.33.165:8081"; proto = "tcp"; }
         #{ sourcePort = 1194; destination = "10.40.33.20:1194"; proto = "udp"; }
       ];
     };
@@ -199,7 +202,7 @@ in {
         ''
       ];
       allowedTCPPorts = [ 32400 5222 5060 53 ];
-      allowedUDPPorts = [ 51820 1194 1195 5060 5222 53 ];
+      allowedUDPPorts = [ 51820 1194 1195 5060 5222 53 config.services.toxvpn.port ];
     };
     wireguard.interfaces = {
       wg0 = {
@@ -229,6 +232,11 @@ in {
     };
   };
 
+  nix = {
+    binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" "https://hydra.wedlake.lan" ];
+    binaryCachePublicKeys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" "hydra.wedlake.lan:C3xufTQ7w2Y6VHtf+dyA6NmQPiQjwIDEavJNmr97Loo=" ];
+  };
+
   nixpkgs = {
     config = {
       allowUnfree = true;
@@ -248,6 +256,10 @@ in {
   ];
 
   services = {
+    toxvpn = {
+      enable = true;
+      localip = "10.40.13.1";
+    };
     unbound = {
       enable = true;
       interfaces = [ "0.0.0.0" "::" ];
@@ -255,7 +267,7 @@ in {
         "10.40.33.0/24"
         "10.39.0.0/24"
         "10.40.9.39/32"
-        "2601:98a:4101:bff0::/60"
+        "2601:98a:4101:d400::/60"
         "2601:98a:4000:3900::/64"
       ];
       extraConfig = ''
@@ -277,7 +289,7 @@ in {
       zones."wedlake.lan.".data = ''
         @ SOA ns.wedlake.lan portal.wedlake.lan 666 7200 3600 1209600 3600
         optina      A       10.40.33.20
-        optina      AAAA    2601:98a:4101:bff0:d63d:7eff:fe4d:c47f
+        optina      AAAA    2601:98a:4101:d400:d63d:7eff:fe4d:c47f
         cloud       CNAME   optina
         crate       CNAME   optina
         storage     CNAME   optina
@@ -290,9 +302,9 @@ in {
         unifi       CNAME   optina
         printer     A       10.40.33.50
         ns          A       10.40.33.1
-        ns          AAAA    2601:98a:4101:bff0::1
+        ns          AAAA    2601:98a:4101:d400::1
         portal      A       10.40.33.1
-        portal      AAAA    2601:98a:4101:bff0::1
+        portal      AAAA    2601:98a:4101:d400::1
         prod01      AAAA    fd00::2
       '';
     };
@@ -423,7 +435,7 @@ in {
           key /var/lib/openvpn/crate.wedlake.lan.key
           dh /var/lib/openvpn/dh2048.pem
           server 10.40.12.0 255.255.255.0
-          server-ipv6 2601:98a:4101:bff2::/64
+          server-ipv6 2601:98a:4101:d402::/64
           push "route 10.40.33.0 255.255.255.0"
           push "route-ipv6 2000::/3"
           push "dhcp-option DNS 10.40.33.20"

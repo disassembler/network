@@ -93,13 +93,17 @@ in {
     useSandbox = true;
     buildCores = 4;
     sandboxPaths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
-    binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" "ssh://nix-ssh@optina.wedlake.lan" ];
-    binaryCachePublicKeys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
+    binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" "https://hydra.wedlake.lan" "https://snack.cachix.org" ];
+    binaryCachePublicKeys = [
+      "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
+      "hydra.wedlake.lan:C3xufTQ7w2Y6VHtf+dyA6NmQPiQjwIDEavJNmr97Loo="
+      "snack.cachix.org-1:yWpdDCWeJzVAQUSM1Ol0E3PCVbG4k2wRAsZ/b5L3huc="
+    ];
     distributedBuilds = true;
     buildMachines = [
       buildMachines.darwin.ohrid
       #buildMachines.darwin.macvm
-      buildMachines.linux.optina
+      #buildMachines.linux.optina
     ];
     nixPath = [ "nixpkgs=/home/sam/nixpkgs/custom" "nixos-config=/etc/nixos/configuration.nix" ];
     extraOptions = ''

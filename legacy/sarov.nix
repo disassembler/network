@@ -118,6 +118,10 @@
   powerManagement.enable = true;
 
   services = {
+    toxvpn = {
+      enable = true;
+      localip = "10.40.13.3";
+    };
 
     postgresql = {
       enable = true;
@@ -234,6 +238,10 @@
         centrallake = {
           autoStart = false;
           config = secrets.centrallake-openvpn-config;
+        };
+        bower = {
+          autoStart = false;
+          config = secrets.bower-openvpn-config;
         };
       };
     };
