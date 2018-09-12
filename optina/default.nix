@@ -11,7 +11,7 @@ let
   hydraSrc = pkgs.fetchFromGitHub {
     owner = "cleverca22";
     repo = "hydra";
-    sha256 = "fzx19macxah6b69nzgqc34fm9vl8md4sbp07p0pnqniallnmf6gg";
+    sha256 = "0zx19macxah6b69nzgqc34fm9vl8md4sbp07p0pnqniallnmf6gg";
     rev = hydraRev;
   };
   hydraSrc' = {
