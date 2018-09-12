@@ -10,7 +10,7 @@ let
   hydraRev = "a4469f8b0fedbac6764778c4c3426656b44c29a1";
   hydraSrc = pkgs.fetchFromGitHub {
     owner = "cleverca22";
-    repo = "hyddra";
+    repo = "hydra";
     sha256 = "0zx19macxah6b69nzgqc34fm9vl8md4sbp07p0pnqniallnmf6gg";
     rev = hydraRev;
   };
