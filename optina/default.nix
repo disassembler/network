@@ -96,6 +96,7 @@ in {
   #};
   boot.loader.efi.canTouchEfiVariables = true;
   boot.supportedFilesystems = [ "zfs" ];
+  profiles.weechat = secrets.weechat-configs;
   profiles.vim.enable = true;
   profiles.zsh.enable = true;
   profiles.tmux.enable = true;
@@ -352,6 +353,10 @@ in {
                 fail_if_not_ssl = true;
               };
             };
+            htts_2xx = {
+              prober = "http";
+              timeout = "5s";
+            };
             ssh_banner = {
               prober = "tcp";
               timeout = "10s";
@@ -375,7 +380,7 @@ in {
             };
             icmp_v4 = {
               prober = "icmp";
-              timeout = "5s";
+              timeout = "60s";
               icmp = {
                 preferred_ip_protocol = "ip4";
               };
@@ -617,6 +622,39 @@ in {
             }
           ];
         }
+        {
+          job_name = "icmp-sarov";
+          scrape_interval = "10s";
+          metrics_path = "/probe";
+          params = {
+            module = [ "icmp_v4" ];
+          };
+          static_configs = [
+            {
+              targets = [
+                "10.40.33.165"
+                "10.40.33.167"
+              ];
+            }
+          ];
+          relabel_configs = [
+            {
+              source_labels = [ "__address__" ];
+              regex = "(.*)";
+              replacement = "\${1}";
+              target_label = "__param_target";
+            }
+            {
+              source_labels = [ "__param_target" ];
+              target_label = "instance";
+            }
+            {
+              source_labels = [];
+              target_label = "__address__";
+              replacement = "127.0.0.1:9115";
+            }
+          ];
+        }
       ];
       alertmanager = {
         enable = true;
@@ -732,6 +770,13 @@ in {
               proxy_set_header  X-Real-IP         $remote_addr;
               proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
             '';
+            locations."/weechat" = {
+              proxyPass = "http://127.0.0.1:9001/weechat";
+              proxyWebsockets = true;
+              extraConfig = ''
+                proxy_read_timeout 4h;
+              '';
+            };
           };
           "storage.wedlake.lan" = {
             forceSSL = false;
@@ -855,10 +900,12 @@ in {
           # Lock this down once we migrate away from passopolis
           authentication = ''
             local passopolis all ident map=passopolis-users
+            local gitea all ident map=gitea-users
           '';
           identMap = ''
             hydra-users sam hydra
             passopolis-users passopolis passopolis
+            gitea-users gitea gitea
           '';
         };
         postgresqlBackup.enable = true;
@@ -941,28 +988,39 @@ in {
             tmux
             sudo
           ];
-          users.extraUsers.rtorrent = {
+          users.users.rtorrent = {
             isNormalUser = true;
             uid = 10001;
           };
         };
       };
-      users.extraUsers.sam = {
+      users.users.sam = {
         isNormalUser = true;
         description = "Sam Leathers";
         uid = 1000;
         extraGroups = [ "wheel" "libvirtd" ];
         openssh.authorizedKeys.keys = shared.sam_ssh_keys;
       };
-      users.extraUsers.mitro = {
+      users.users.samchat = {
+        isNormalUser = true;
+        description = "Sam Leathers";
+        uid = 1005;
+        extraGroups = [ ];
+        shell = pkgs.bashInteractive;
+        openssh.authorizedKeys.keys = shared.sam_ssh_keys;
+      };
+      system.activationScripts.samchat-tmp =
+        let bashrc = builtins.toFile "samchat-bashrc" "export TMUX_TMPDIR=/tmp";
+      in "ln -svf ${bashrc} ${config.users.users.samchat.home}/.bash_profile";
+      users.users.mitro = {
         isNormalUser = true;
         uid = 1001;
       };
-      users.extraUsers.megan = {
+      users.users.megan = {
         isNormalUser = true;
         uid = 1002;
       };
-      users.extraUsers.nursery = {
+      users.users.nursery = {
         isNormalUser = true;
         uid = 1004;
       };

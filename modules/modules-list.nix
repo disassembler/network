@@ -9,4 +9,5 @@
   ./profiles/tmux
   ./profiles/prometheus-surfboard-exporter/service.nix
   ./profiles/hledger/service.nix
+  ./profiles/weechat.nix
 ]
