@@ -5,6 +5,8 @@
 
   in {
   environment.systemPackages = with pkgs; [
+    hledger
+    teamspeak_client
     psmisc
     hie82
     sqliteInteractive
@@ -46,6 +48,7 @@
     gnutls
     nix-prefetch-git
     gitAndTools.gitFull
+    gitAndTools.hub
     tig
     python27Packages.gnutls
     unzip
@@ -131,7 +134,10 @@
       '';
   };
     influxdb.enable = true;
-    grafana.enable = true;
+    grafana = {
+      enable = false;
+      addr = "0.0.0.0";
+    };
 
     #zfs.autoSnapshot.enable = true;
     #grafana_reporter = {
@@ -215,8 +221,12 @@
       enable = true;
       extraConfig = ''
         address=/portal.wedlake.lan/10.40.33.1
+        address=/crate.wedlake.lan/10.40.33.20
+        address=/server.lan.bower-law.com/192.168.0.254
         server=/wedlake.lan/10.40.33.1
         server=/lan.centrallakerealty.com/10.37.3.2
+        server=/lan.bower-law.com/192.168.0.254
+        server=/bower.local/192.168.0.254
       '';
       servers = [
         "8.8.4.4"
@@ -259,7 +269,7 @@
   };
   virtualisation.libvirtd.enable = true;
   #virtualisation.virtualbox.host.enable = true;
-  security.sudo.wheelNeedsPassword = false;
+  security.sudo.wheelNeedsPassword = true;
 
   # Custom dotfiles for sam user
   environment.etc."per-user/sam/gitconfig".text = import ../sam-dotfiles/git-config.nix;

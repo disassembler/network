@@ -7,7 +7,7 @@ let
     vimAlias = true;
     configure = customization;
   };
-  vim = pkgs.vim_configurable.customize { 
+  vim = pkgs.vim_configurable.customize {
     name = "vim";
     vimrcConfig.vam = customization.vam;
     vimrcConfig.customRC = customization.customRC;
@@ -22,12 +22,12 @@ in {
     };
   };
   config = {
-    environment.systemPackages = [ 
+    environment.systemPackages = [
       nvim
       pkgs.ctags
       #pkgs.python
       #pkgs.python35Packages.neovim
     ];
   };
-  
+
 }

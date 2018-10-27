@@ -23,6 +23,8 @@ in {
     device = "nodev";
     efiInstallAsRemovable = true;
   };
+
+  boot.supportedFilesystems = [ "exfat" ];
   # Uncomment to allow efi to write variables
   #boot.loader.efi.canTouchEfiVariables = true;
 
@@ -37,7 +39,6 @@ in {
 
   # Pretty broken, WiFi Crashes
   #boot.extraModulePackages = [ config.boot.kernelPackages.rtlwifi_new ];
-  boot.blacklistedKernelModules = [ "rtl8192cu" ];
 
   # Luks support
   boot.initrd.luks.devices = [{
@@ -93,10 +94,14 @@ in {
     useSandbox = true;
     buildCores = 4;
     sandboxPaths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
-    binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" "https://hydra.wedlake.lan" "https://snack.cachix.org" ];
+    binaryCaches = [
+      "https://cache.nixos.org"
+      "https://hydra.iohk.io"
+      #"https://hydra.wedlake.lan"
+      "https://snack.cachix.org" ];
     binaryCachePublicKeys = [
       "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-      "hydra.wedlake.lan:C3xufTQ7w2Y6VHtf+dyA6NmQPiQjwIDEavJNmr97Loo="
+      #"hydra.wedlake.lan:C3xufTQ7w2Y6VHtf+dyA6NmQPiQjwIDEavJNmr97Loo="
       "snack.cachix.org-1:yWpdDCWeJzVAQUSM1Ol0E3PCVbG4k2wRAsZ/b5L3huc="
     ];
     distributedBuilds = true;
@@ -107,7 +112,7 @@ in {
     ];
     nixPath = [ "nixpkgs=/home/sam/nixpkgs/custom" "nixos-config=/etc/nixos/configuration.nix" ];
     extraOptions = ''
-      allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk/nixpkgs/archive
+      #allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk/nixpkgs/archive
     '';
   };
 
