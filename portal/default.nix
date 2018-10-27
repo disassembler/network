@@ -265,9 +265,10 @@ in {
       interfaces = [ "0.0.0.0" "::" ];
       allowedAccess = [
         "10.40.33.0/24"
+        "10.40.12.0/24"
         "10.39.0.0/24"
         "10.40.9.39/32"
-        "2601:98a:4101:d400::/60"
+        "2601:98a:4101:bff0::/60"
         "2601:98a:4000:3900::/64"
       ];
       extraConfig = ''
@@ -289,7 +290,7 @@ in {
       zones."wedlake.lan.".data = ''
         @ SOA ns.wedlake.lan portal.wedlake.lan 666 7200 3600 1209600 3600
         optina      A       10.40.33.20
-        optina      AAAA    2601:98a:4101:d400:d63d:7eff:fe4d:c47f
+        optina      AAAA    2601:98a:4101:bff0:d63d:7eff:fe4d:c47f
         cloud       CNAME   optina
         crate       CNAME   optina
         storage     CNAME   optina
@@ -302,9 +303,9 @@ in {
         unifi       CNAME   optina
         printer     A       10.40.33.50
         ns          A       10.40.33.1
-        ns          AAAA    2601:98a:4101:d400::1
+        ns          AAAA    2601:98a:4101:bff0::1
         portal      A       10.40.33.1
-        portal      AAAA    2601:98a:4101:d400::1
+        portal      AAAA    2601:98a:4101:bff0::1
         prod01      AAAA    fd00::2
       '';
     };
@@ -435,10 +436,10 @@ in {
           key /var/lib/openvpn/crate.wedlake.lan.key
           dh /var/lib/openvpn/dh2048.pem
           server 10.40.12.0 255.255.255.0
-          server-ipv6 2601:98a:4101:d402::/64
+          server-ipv6 2601:98a:4101:bff2::/64
           push "route 10.40.33.0 255.255.255.0"
           push "route-ipv6 2000::/3"
-          push "dhcp-option DNS 10.40.33.20"
+          push "dhcp-option DNS 10.40.12.1"
           duplicate-cn
           keepalive 10 120
           tls-auth /var/lib/openvpn/ta.key 0
