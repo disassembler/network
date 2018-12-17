@@ -106,7 +106,7 @@ in {
     hostName = "optina.wedlake.lan";
     hostId = "1768b40b";
     bridges = {
-      br0.interfaces = [ "enp2s0" ];
+      br0.interfaces = [ "enp3s0" "enp1s0" ];
     };
     interfaces.br0.ipv4.addresses = [ { address = "10.40.33.20"; prefixLength = 24; } ];
     defaultGateway = "10.40.33.1";
@@ -175,6 +175,7 @@ in {
   };
 
   environment.systemPackages = with pkgs; [
+    kvm
     aspell
     aspellDicts.en
     ncdu
