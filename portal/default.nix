@@ -5,11 +5,11 @@ let
   custom_modules = (import ../modules/modules-list.nix);
   externalInterface = "enp1s0";
   internalInterfaces = [
-    "br0"
-    "enp3s0.3"
-    "enp3s0.9"
-    "enp3s0.12"
-    "enp3s0.40"
+    "br0.3"
+    "br0.33"
+    "br0.9"
+    "br0.12"
+    "br0.40"
     "wg0"
     "tun0"
   ];
@@ -55,27 +55,27 @@ in {
     hostId = "fa4b7394";
     nameservers = [ "10.40.33.1" "8.8.8.8" ];
     vlans = {
-      lan_port = {
-        interface = "enp3s0";
+      lan = {
+        interface = "br0";
         id = 33;
       };
       mgmt = {
-        interface = "enp3s0";
+        interface = "br0";
         id = 3;
       };
       voip = {
-        interface = "enp3s0";
+        interface = "br0";
         id = 40;
       };
     };
     bridges = {
-      br0.interfaces = [ "lan_port" "enp2s0" ];
+      br0.interfaces = [ "enp2s0" "enp3s0" ];
     };
     interfaces = {
       ${externalInterface} = {
         useDHCP = true;
       };
-      br0 = {
+      lan = {
         ipv4.addresses = [{
           address = "10.40.33.1";
           prefixLength = 24;
@@ -98,7 +98,7 @@ in {
       enable = true;
       externalInterface = "${externalInterface}";
       internalIPs = [ "10.40.33.0/24" "10.40.40.0/24" ];
-      internalInterfaces = [ "voip" "br0" "ovpn-guest" ];
+      internalInterfaces = [ "voip" "br0.33" "ovpn-guest" ];
       forwardPorts = [
         { sourcePort = 32400; destination = "10.40.33.20:32400"; proto = "tcp"; }
         { sourcePort = 80; destination = "10.40.33.165:8081"; proto = "tcp"; }
@@ -318,7 +318,7 @@ in {
       path = tftp_root;
     };
     dhcpd4 = {
-      interfaces = [ "br0" "voip" "mgmt" ];
+      interfaces = [ "lan" ];
       enable = true;
       machines = [
         { hostName = "optina"; ethernetAddress = "d4:3d:7e:4d:c4:7f"; ipAddress = "10.40.33.20"; }
@@ -358,7 +358,7 @@ in {
     radvd = {
       enable = true;
       config = ''
-        interface br0
+        interface lan
         {
            AdvSendAdvert on;
            prefix ::/64
