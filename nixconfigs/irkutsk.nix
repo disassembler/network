@@ -55,7 +55,7 @@ in {
   networking = {
     hostName = machine;
     hostId = hostId;
-    #nameservers = [ "127.0.0.1" ];
+    nameservers = [ "127.0.0.1" ];
     networkmanager.enable = true;
     networkmanager.unmanaged = [ "interface-name:ve-*" "ens9" ];
     extraHosts =
@@ -282,6 +282,8 @@ in {
     #nodejs
     haskellPackages.ghcid
     virtmanager
+    xdg_utils
+    termite
   ];
 
   hardware = {
@@ -320,6 +322,7 @@ in {
     unifont # some international languages
   ];
   programs.adb.enable = true;
+  programs.light.enable = true;
   programs.sway-beta = {
     enable = true;
   };
@@ -427,6 +430,7 @@ in {
         server=/lan.centrallakerealty.com/10.37.3.2
         server=/lan.bower-law.com/192.168.0.254
         server=/bower.local/192.168.0.254
+        server=/lan.centrallakerealty.com/10.37.3.2
       '';
       servers = [
         "8.8.4.4"
