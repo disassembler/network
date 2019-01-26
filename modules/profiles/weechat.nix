@@ -63,7 +63,8 @@ in {
     systemd.services.weechat = {
       description = "weechat tmux session";
       wantedBy = [ "multi-user.target" ];
-      path = [ weechat pkgs.tmux ];
+      path = [ weechat pkgs.tmux pkgs.conky pkgs.curl pkgs.aspell  ];
+      environment."ASPELL_CONF" = "dict-dir ${pkgs.aspellDicts.en}/lib/aspell";
       script = let
           makeWeechatDir = directory: "mkdir -p ${directory}";
           enableWeeSlack = chat-type: directory: ''

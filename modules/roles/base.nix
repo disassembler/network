@@ -7,13 +7,6 @@ with lib;
     profiles.tmux.enable = true;
     time.timeZone = mkDefault "America/New_York";
 
-    i18n = {
-      consoleFont = "Lat2-Terminus16";
-      consoleKeyMap = "us";
-      defaultLocale = "en_US.UTF-8";
-    };
-
-
     # You are allowed to manage users manually
     users.mutableUsers = mkDefault true;
 
