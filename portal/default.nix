@@ -5,11 +5,10 @@ let
   custom_modules = (import ../modules/modules-list.nix);
   externalInterface = "enp1s0";
   internalInterfaces = [
-    "br0.3"
-    "br0.33"
-    "br0.9"
-    "br0.12"
-    "br0.40"
+    "mgmt"
+    "lan"
+    "guest"
+    "voip"
     "wg0"
     "tun0"
   ];
@@ -63,6 +62,10 @@ in {
         interface = "br0";
         id = 3;
       };
+      guest = {
+        interface = "br0";
+        id = 9;
+      };
       voip = {
         interface = "br0";
         id = 40;
@@ -93,12 +96,18 @@ in {
           prefixLength = 24;
         }];
       };
+      guest = {
+        ipv4.addresses = [{
+          address = "10.40.9.1";
+          prefixLength = 24;
+        }];
+      };
     };
     nat = {
       enable = true;
       externalInterface = "${externalInterface}";
-      internalIPs = [ "10.40.33.0/24" "10.40.40.0/24" ];
-      internalInterfaces = [ "voip" "br0.33" "ovpn-guest" ];
+      internalIPs = [ "10.40.33.0/24" "10.40.40.0/24" "10.40.3.0/24" "10.40.9.0/24" ];
+      internalInterfaces = [ "voip" "lan" "guest" "mgmt" "ovpn-guest" ];
       forwardPorts = [
         { sourcePort = 32400; destination = "10.40.33.20:32400"; proto = "tcp"; }
         { sourcePort = 80; destination = "10.40.33.165:8081"; proto = "tcp"; }
@@ -111,7 +120,7 @@ in {
       noipv6rs
       interface ${externalInterface}
       ia_na 1
-      ia_pd 2/::/60 br0/0/64 voip/1/64
+      ia_pd 2/::/60 lan/0/64 mgmt/1/64 guest/2/64
     '';
     firewall = {
       enable = true;
@@ -192,7 +201,6 @@ in {
           ip46tables -A FORWARD -m state --state NEW -i ovpn-guest -o br0 -j DROP
           # allow from trusted interfaces
           ip46tables -A FORWARD -m state --state NEW -i br0 -o enp1s0 -j ACCEPT
-          ip46tables -A FORWARD -m state --state NEW -i voip -o enp1s0 -j ACCEPT
           ip46tables -A FORWARD -m state --state NEW -i wg0 -o enp1s0 -j ACCEPT
           ip46tables -A FORWARD -m state --state NEW -i tun0 -o enp1s0 -j ACCEPT
           # allow traffic with existing state
@@ -265,6 +273,7 @@ in {
       interfaces = [ "0.0.0.0" "::" ];
       allowedAccess = [
         "10.40.33.0/24"
+        "10.40.3.0/24"
         "10.40.12.0/24"
         "10.39.0.0/24"
         "10.40.9.39/32"
@@ -318,7 +327,7 @@ in {
       path = tftp_root;
     };
     dhcpd4 = {
-      interfaces = [ "lan" ];
+      interfaces = [ "lan" "mgmt" "guest" ];
       enable = true;
       machines = [
         { hostName = "optina"; ethernetAddress = "d4:3d:7e:4d:c4:7f"; ipAddress = "10.40.33.20"; }
@@ -327,6 +336,18 @@ in {
       extraConfig = ''
         option arch code 93 = unsigned integer 16;
         option rpiboot code 43 = text;
+
+        # Allow UniFi devices to locate the controller from a separate VLAN
+        option space ubnt;
+        option ubnt.UNIFI-IP-ADDRESS code 1 = ip-address;
+        option ubnt.UNIFI-IP-ADDRESS 10.40.33.20;
+
+        class "ubnt" {
+          match if substring (option vendor-class-identifier, 0, 4) = "ubnt";
+          option vendor-class-identifier "ubnt";
+          vendor-option-space ubnt;
+        }
+
         subnet 10.40.33.0 netmask 255.255.255.0 {
           option domain-search "wedlake.lan";
           option subnet-mask 255.255.255.0;
@@ -350,8 +371,22 @@ in {
           option subnet-mask 255.255.255.0;
           option broadcast-address 10.40.40.255;
           option routers 10.40.40.1;
-          option domain-name-servers 10.40.33.20;
+          option domain-name-servers 10.40.40.1;
           range 10.40.40.100 10.40.40.200;
+        }
+        subnet 10.40.9.0 netmask 255.255.255.0 {
+          option subnet-mask 255.255.255.0;
+          option broadcast-address 10.40.9.255;
+          option routers 10.40.9.1;
+          option domain-name-servers 10.40.9.1;
+          range 10.40.9.100 10.40.9.200;
+        }
+        subnet 10.40.3.0 netmask 255.255.255.0 {
+          option subnet-mask 255.255.255.0;
+          option broadcast-address 10.40.3.255;
+          option routers 10.40.3.1;
+          option domain-name-servers 10.40.3.1;
+          range 10.40.3.100 10.40.3.200;
         }
       '';
     };
@@ -359,6 +394,24 @@ in {
       enable = true;
       config = ''
         interface lan
+        {
+           AdvSendAdvert on;
+           prefix ::/64
+           {
+                AdvOnLink on;
+                AdvAutonomous on;
+           };
+        };
+        interface mgmt
+        {
+           AdvSendAdvert on;
+           prefix ::/64
+           {
+                AdvOnLink on;
+                AdvAutonomous on;
+           };
+        };
+        interface guest
         {
            AdvSendAdvert on;
            prefix ::/64
@@ -436,7 +489,7 @@ in {
           key /var/lib/openvpn/crate.wedlake.lan.key
           dh /var/lib/openvpn/dh2048.pem
           server 10.40.12.0 255.255.255.0
-          server-ipv6 2601:98a:4101:bff2::/64
+          server-ipv6 2601:98a:4101:bff3::/64
           push "route 10.40.33.0 255.255.255.0"
           push "route-ipv6 2000::/3"
           push "dhcp-option DNS 10.40.12.1"

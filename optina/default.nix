@@ -7,11 +7,11 @@ let
   secrets = import ../load-secrets.nix;
   shared = import ../shared.nix;
   custom_modules = (import ../modules/modules-list.nix);
-  hydraRev = "a4469f8b0fedbac6764778c4c3426656b44c29a1";
+  hydraRev = "1d613d05814f6074048933fe6c422ea059ce4130";
   hydraSrc = pkgs.fetchFromGitHub {
-    owner = "cleverca22";
+    owner = "input-output-hk";
     repo = "hydra";
-    sha256 = "0zx19macxah6b69nzgqc34fm9vl8md4sbp07p0pnqniallnmf6gg";
+    sha256 = "1wwy9llp10i1c793dlba2iryr54yahqxqfdsl3m1zq698v92ssw3";
     rev = hydraRev;
   };
   hydraSrc' = {
@@ -97,7 +97,7 @@ in {
   boot.loader.efi.canTouchEfiVariables = true;
   boot.supportedFilesystems = [ "zfs" ];
   profiles.weechat = secrets.weechat-configs;
-  profiles.vim.enable = true;
+  #profiles.vim.enable = false;
   profiles.zsh.enable = true;
   profiles.tmux.enable = true;
   profiles.passopolis.enable = true;
@@ -105,10 +105,7 @@ in {
   networking = {
     hostName = "optina.wedlake.lan";
     hostId = "1768b40b";
-    bridges = {
-      br0.interfaces = [ "enp3s0" "enp1s0" ];
-    };
-    interfaces.br0.ipv4.addresses = [ { address = "10.40.33.20"; prefixLength = 24; } ];
+    interfaces.enp2s0.ipv4.addresses = [ { address = "10.40.33.20"; prefixLength = 24; } ];
     defaultGateway = "10.40.33.1";
     nameservers = [ "10.40.33.1" "8.8.8.8" ];
     extraHosts =
@@ -118,7 +115,7 @@ in {
     nat = {
       enable = true;
       internalInterfaces = ["ve-+"];
-      externalInterface = "br0";
+      externalInterface = "enp2s0";
     };
     firewall = {
       enable = true;
@@ -129,6 +126,7 @@ in {
         139
         443
         445
+        631
         3000
         3001
         4444
@@ -159,19 +157,23 @@ in {
 
   security.pki.certificates = [ shared.wedlake_ca_cert ];
 
-  nixpkgs.config = {
-    allowUnfree = true;
-    packageOverrides = pkgs: rec {
-      weechat = pkgs.weechat.override {
-        configure = {availablePlugins, ...}: {
-          plugins = with availablePlugins; [
-                  (python.withPackages (ps: with ps; [ websocket_client ]))
-                  perl ruby
-          ];
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+      packageOverrides = pkgs: rec {
+        weechat = pkgs.weechat.override {
+          configure = {availablePlugins, ...}: {
+            plugins = with availablePlugins; [
+                    (python.withPackages (ps: with ps; [ websocket_client ]))
+                    perl ruby
+            ];
+          };
         };
       };
     };
-
+    overlays = [
+      (import ../overlays/plex.nix)
+    ];
   };
 
   environment.systemPackages = with pkgs; [
@@ -223,17 +225,17 @@ in {
       elasticsearch.url = "http://localhost:9200";
     };
 
-    hledger = {
-      api = {
-        enable = true;
-        listenPort = "8001";
-      };
-      web = {
-        enable = true;
-        listenPort = "8002";
-        baseURL = "https://hledger.wedlake.lan/";
-      };
-    };
+    #hledger = {
+    #  api = {
+    #    enable = true;
+    #    listenPort = "8001";
+    #  };
+    #  web = {
+    #    enable = true;
+    #    listenPort = "8002";
+    #    baseURL = "https://hledger.wedlake.lan/";
+    #  };
+    #};
 
     journalbeat = {
       enable = false;
@@ -303,7 +305,10 @@ in {
       };
     };
     mongodb.enable = true;
-    unifi.enable = true;
+    unifi = {
+      enable = true;
+      unifiPackage = pkgs.unifiStable;
+    };
     #telegraf = {
     #  enable = true;
     #  extraConfig = {
@@ -845,14 +850,20 @@ in {
           guest account = nobody
           map to guest = bad user
           '';
-          };
-          printing = {
+        };
+        printing = {
           enable = true;
-          #drivers = [ pkgs.hplip ];
+          drivers = [ pkgs.hplip ];
           defaultShared = true;
           browsing = true;
-
-          };
+          listenAddresses = [ "*:631" ];
+          extraConf = ''
+            <Location />
+            Order allow,deny
+            Allow from all
+            </Location>
+          '';
+        };
 
         mopidy = {
           enable = false;
@@ -916,17 +927,17 @@ in {
           package = pkgs.plex.overrideAttrs (x: {
             src = pkgs.fetchurl {
               url = let
-                version = "1.13.5.5332";
-                vsnHash = "21ab172de";
+                version = "1.14.1.5488";
+                vsnHash = "cc260c476";
 
               in "https://downloads.plex.tv/plex-media-server/${version}-${vsnHash}/plexmediaserver-${version}-${vsnHash}.x86_64.rpm";
-              sha256 = "05wahh7la565vjpywk8m2wz0zj6gl76k60cgzgaqz48d5g8q04r9";
+              sha256 = "0h2w5xqw8r9iinbibdwj8bi7vb72yzhvna5hrb8frp6fbkrhds4f";
             };
           });
         };
         hydra = {
           enable = true;
-          package = hydra-fork;
+          #package = hydra-fork;
           hydraURL = "https://hydra.wedlake.lan";
           notificationSender = "disasm@gmail.com";
           minimumDiskFree = 2;
@@ -940,7 +951,7 @@ in {
               disassembler = token ${secrets.github_token}
             </github_authorization>
             <githubstatus>
-              useShortContext = 1
+              #useShortContext = 1
               jobs = nixos-configs:nixos-configs.*
               inputs = nixos-configs
               excludeBuildFromContext = 1
@@ -973,9 +984,9 @@ in {
           fi
         '';
       };
-      virtualisation.docker.enable = true;
-      virtualisation.docker.enableOnBoot = true;
-      virtualisation.docker.storageDriver = "zfs";
+      #virtualisation.docker.enable = true;
+      #virtualisation.docker.enableOnBoot = true;
+      #virtualisation.docker.storageDriver = "zfs";
       virtualisation.libvirtd.enable = false;
       containers.rtorrent = {
         privateNetwork = true;

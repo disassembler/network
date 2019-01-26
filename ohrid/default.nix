@@ -33,7 +33,7 @@ in {
   # $ sysctl -n hw.ncpu
   nix.maxJobs = 4;
   nix.buildCores = 0;
-  nix.useSandbox = true;  # this seems to break things when enabled
+  nix.useSandbox = false;  # this seems to break things when enabled
   nix.extraOptions = ''
     gc-keep-derivations = true
     gc-keep-outputs = true
