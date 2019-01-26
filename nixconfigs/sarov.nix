@@ -52,19 +52,53 @@ in {
   networking = {
     hostName = machine;
     hostId = hostId;
-    nameservers = [ "127.0.0.1" ];
+    #nameservers = [ "127.0.0.1" ];
     networkmanager.enable = true;
-    networkmanager.unmanaged = [ "interface-name:ve-*" ];
+    networkmanager.unmanaged = [ "interface-name:ve-*" "ens9" ];
     extraHosts =
     ''
       # If DNS is broke, we still want to be able to deploy
       10.40.33.20 optina.wedlake.lan
+      10.40.33.20 hydra.wedlake.lan
       10.40.33.1 portal.wedlake.lan
+      127.0.0.1 wallet.samleathers.com
     '';
     nat = {
       enable = true;
       internalInterfaces = ["ve-+"];
       externalInterface = "wlp3s0";
+    };
+    vlans = {
+      lan = {
+        interface = "ens9";
+        id = 33;
+      };
+      mgmt = {
+        interface = "ens9";
+        id = 3;
+      };
+      guest = {
+        interface = "ens9";
+        id = 9;
+      };
+      voip = {
+        interface = "ens9";
+        id = 40;
+      };
+    };
+    interfaces = {
+      lan = {
+        useDHCP = true;
+      };
+      voip = {
+        useDHCP = true;
+      };
+      mgmt = {
+        useDHCP = true;
+      };
+      guest = {
+        useDHCP = true;
+      };
     };
     firewall = {
       enable = true;
@@ -116,19 +150,28 @@ in {
     '';
   };
 
-  nixpkgs.overlays = [
-    (self: super: let hie = import (super.fetchFromGitHub {
-      owner = "domenkozar";
-      repo = "hie-nix";
-      rev = "dbb89939da8997cc6d863705387ce7783d8b6958";
-      sha256 = "1bcw59zwf788wg686p3qmcq03fr7bvgbcaa83vq8gvg231bgid4m";
-    }) {};
-    in
-    { inherit (hie) hie82; })
-  ];
+  #nixpkgs.overlays = [
+  #  (self: super:
+  #  let
+  #    hie = import (super.fetchFromGitHub {
+  #      owner = "domenkozar";
+  #      repo = "hie-nix";
+  #      rev = "dbb89939da8997cc6d863705387ce7783d8b6958";
+  #      sha256 = "1bcw59zwf788wg686p3qmcq03fr7bvgbcaa83vq8gvg231bgid4m";
+  #    }) {};
+  #    hnix-lsp = import (super.fetchFromGitHub {
+  #      owner = "domenkozar";
+  #      repo = "hnix-lsp";
+  #      rev = "c69b4bdd46e7eb652f13c13e01d0da44a1491d39";
+  #      sha256 = "16w1197yl6x06a06c2x30rycgllf6r67w0b38fcia2c4cnigzalg";
+  #  });
+  #  in
+  #  { inherit (hie) hie82; inherit hnix-lsp; })
+  #];
 
   nixpkgs.config = {
     allowUnfree = true;
+    android_sdk.accept_license = true;
     packageOverrides = super: let self = super.pkgs; in {
       nixops = super.nixops.overrideDerivation (
       old: {

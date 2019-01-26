@@ -8,7 +8,7 @@
     hledger
     teamspeak_client
     psmisc
-    hie82
+    #hie82
     sqliteInteractive
     manymans
     hlint
@@ -26,7 +26,7 @@
     gnupg1compat
     docker_compose
     niff
-    androidsdk
+    androidsdk_9_0
     tmate
     htop
     i3-gaps
@@ -41,7 +41,6 @@
     tcpdump
     telnet
     xclip
-    xpra
     p11_kit
     openconnect
     openconnect_gnutls
@@ -65,7 +64,7 @@
     slack
     neomutt
     notmuch
-    pythonPackages.goobook
+    python3Packages.goobook
     taskwarrior
     jq
     cabal2nix
@@ -117,12 +116,15 @@
     unifont # some international languages
   ];
   programs.adb.enable = true;
+  programs.sway-beta = {
+    enable = false;
+  };
 
   powerManagement.enable = true;
 
   services = {
     toxvpn = {
-      enable = true;
+      enable = false;
       localip = "10.40.13.3";
     };
 
@@ -222,6 +224,8 @@
       extraConfig = ''
         address=/portal.wedlake.lan/10.40.33.1
         address=/crate.wedlake.lan/10.40.33.20
+        address=/hydra.wedlake.lan/10.40.33.20
+        address=/unifi.wedlake.lan/10.40.33.20
         address=/server.lan.bower-law.com/192.168.0.254
         server=/wedlake.lan/10.40.33.1
         server=/lan.centrallakerealty.com/10.37.3.2
@@ -267,7 +271,7 @@
     #extraOptions = "--iptables=false --ip-masq=false -b cbr0";
     #extraOptions = "--insecure-registry 10.80.0.49:5000";
   };
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd.enable = false;
   #virtualisation.virtualbox.host.enable = true;
   security.sudo.wheelNeedsPassword = true;
 
