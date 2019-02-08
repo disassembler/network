@@ -5,6 +5,8 @@
 
   in {
   environment.systemPackages = with pkgs; [
+    sway-beta
+    xdg_utils
     hledger
     teamspeak_client
     psmisc
@@ -117,7 +119,7 @@
   ];
   programs.adb.enable = true;
   programs.sway-beta = {
-    enable = false;
+    enable = true;
   };
 
   powerManagement.enable = true;
@@ -167,58 +169,58 @@
         ];
       '';
     };
-    xserver = {
-      xautolock = {
-        enable = true;
-        time = 5;
-        locker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
-        nowlocker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
-        #killer = "${pkgs.systemd}/bin/systemctl suspend";
-        #killtime = 30;
-        extraOptions = [ "-detectsleep" ];
-      };
-      videoDrivers = [ "intel" ];
-      #multitouch = {
-      #  enable = true;
-      #  invertScroll = false;
-      #  buttonsMap = [1 3 2];
-      #  ignorePalm = true;
-      #};
-      synaptics.additionalOptions = ''
-        Option "VertScrollDelta" "100"
-        Option "HorizScrollDelta" "100"
-      '';
-      synaptics.enable = true;
-      synaptics.tapButtons = true;
-      synaptics.fingersMap = [ 0 0 0 ];
-      synaptics.buttonsMap = [ 1 3 2 ];
-      synaptics.twoFingerScroll = true;
-      #libinput = {
-      #  enable = true;
-      #  disableWhileTyping = true;
-      #};
-      autorun = true;
-      enable = true;
-      layout = "us";
-      windowManager.i3 = {
-        enable = true;
-        extraSessionCommands = ''
-          ${pkgs.xlibs.xset}/bin/xset r rate 200 60 # set keyboard repeat
-          ${pkgs.feh} --bg-scale /home/sam/photos/20170503_183237.jpg
-        '';
-      };
-      windowManager.i3.package = pkgs.i3-gaps;
-      #windowManager.i3.configFile = import ../i3config.nix { inherit config; inherit pkgs; inherit parameters; };
-      windowManager.default = "i3";
-      displayManager.slim = {
-        enable = true;
-        defaultUser = "sam";
-        theme = pkgs.fetchurl {
-          url    = "https://github.com/nickjanus/nixos-slim-theme/archive/2.1.tar.gz";
-          sha256 = "8b587bd6a3621b0f0bc2d653be4e2c1947ac2d64443935af32384bf1312841d7";
-        };
-      };
-    };
+    #xserver = {
+    #  xautolock = {
+    #    enable = true;
+    #    time = 5;
+    #    locker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
+    #    nowlocker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
+    #    #killer = "${pkgs.systemd}/bin/systemctl suspend";
+    #    #killtime = 30;
+    #    extraOptions = [ "-detectsleep" ];
+    #  };
+    #  videoDrivers = [ "intel" ];
+    #  #multitouch = {
+    #  #  enable = true;
+    #  #  invertScroll = false;
+    #  #  buttonsMap = [1 3 2];
+    #  #  ignorePalm = true;
+    #  #};
+    #  synaptics.additionalOptions = ''
+    #    Option "VertScrollDelta" "100"
+    #    Option "HorizScrollDelta" "100"
+    #  '';
+    #  synaptics.enable = true;
+    #  synaptics.tapButtons = true;
+    #  synaptics.fingersMap = [ 0 0 0 ];
+    #  synaptics.buttonsMap = [ 1 3 2 ];
+    #  synaptics.twoFingerScroll = true;
+    #  #libinput = {
+    #  #  enable = true;
+    #  #  disableWhileTyping = true;
+    #  #};
+    #  autorun = true;
+    #  enable = true;
+    #  layout = "us";
+    #  windowManager.i3 = {
+    #    enable = true;
+    #    extraSessionCommands = ''
+    #      ${pkgs.xlibs.xset}/bin/xset r rate 200 60 # set keyboard repeat
+    #      ${pkgs.feh} --bg-scale /home/sam/photos/20170503_183237.jpg
+    #    '';
+    #  };
+    #  windowManager.i3.package = pkgs.i3-gaps;
+    #  #windowManager.i3.configFile = import ../i3config.nix { inherit config; inherit pkgs; inherit parameters; };
+    #  windowManager.default = "i3";
+    #  displayManager.slim = {
+    #    enable = true;
+    #    defaultUser = "sam";
+    #    theme = pkgs.fetchurl {
+    #      url    = "https://github.com/nickjanus/nixos-slim-theme/archive/2.1.tar.gz";
+    #      sha256 = "8b587bd6a3621b0f0bc2d653be4e2c1947ac2d64443935af32384bf1312841d7";
+    #    };
+    #  };
+    #};
     dnsmasq = {
       enable = true;
       extraConfig = ''

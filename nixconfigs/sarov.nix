@@ -52,7 +52,7 @@ in {
   networking = {
     hostName = machine;
     hostId = hostId;
-    #nameservers = [ "127.0.0.1" ];
+    nameservers = [ "127.0.0.1" ];
     networkmanager.enable = true;
     networkmanager.unmanaged = [ "interface-name:ve-*" "ens9" ];
     extraHosts =
@@ -150,24 +150,24 @@ in {
     '';
   };
 
-  #nixpkgs.overlays = [
-  #  (self: super:
-  #  let
-  #    hie = import (super.fetchFromGitHub {
-  #      owner = "domenkozar";
-  #      repo = "hie-nix";
-  #      rev = "dbb89939da8997cc6d863705387ce7783d8b6958";
-  #      sha256 = "1bcw59zwf788wg686p3qmcq03fr7bvgbcaa83vq8gvg231bgid4m";
-  #    }) {};
-  #    hnix-lsp = import (super.fetchFromGitHub {
-  #      owner = "domenkozar";
-  #      repo = "hnix-lsp";
-  #      rev = "c69b4bdd46e7eb652f13c13e01d0da44a1491d39";
-  #      sha256 = "16w1197yl6x06a06c2x30rycgllf6r67w0b38fcia2c4cnigzalg";
-  #  });
-  #  in
-  #  { inherit (hie) hie82; inherit hnix-lsp; })
-  #];
+  nixpkgs.overlays = [
+    (self: super:
+    let
+      hie = import (super.fetchFromGitHub {
+        owner = "domenkozar";
+        repo = "hie-nix";
+        rev = "dbb89939da8997cc6d863705387ce7783d8b6958";
+        sha256 = "1bcw59zwf788wg686p3qmcq03fr7bvgbcaa83vq8gvg231bgid4m";
+      }) {};
+      hnix-lsp = import (super.fetchFromGitHub {
+        owner = "domenkozar";
+        repo = "hnix-lsp";
+        rev = "c69b4bdd46e7eb652f13c13e01d0da44a1491d39";
+        sha256 = "16w1197yl6x06a06c2x30rycgllf6r67w0b38fcia2c4cnigzalg";
+    });
+    in
+    { inherit (hie) hie82; inherit hnix-lsp; })
+  ];
 
   nixpkgs.config = {
     allowUnfree = true;
@@ -204,7 +204,7 @@ in {
   profiles.zsh.autosuggest = true;
   profiles.vim = {
       enable = true;
-      dev = true;
+      dev = false;
   };
 
 }
