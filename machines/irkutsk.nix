@@ -11,7 +11,7 @@ in {
     ../hardware-configurations/irkutsk.nix
     # Machine specific config
     ../nixconfigs/irkutsk.nix
-    (import (nixosHardware + "/dell/xps/13-9370"))
+    #(import (nixosHardware + "/dell/xps/13-9370"))
   ] ++ custom_modules;
 
 }

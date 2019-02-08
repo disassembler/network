@@ -17,55 +17,17 @@
       fsType = "zfs";
     };
 
-  fileSystems."/nix" =
-    { device = "zpool/nix";
-      fsType = "zfs";
-    };
-
   fileSystems."/home" =
     { device = "zpool/home";
       fsType = "zfs";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/04F6-2233";
+    { device = "/dev/disk/by-uuid/C643-53CB";
       fsType = "vfat";
     };
 
-  fileSystems."/ubuntu" =
-    { device = "zpool/root/ubuntu";
-      fsType = "zfs";
-    };
-
-  fileSystems."/ubuntu/boot" =
-    { device = "/boot";
-      fsType = "none";
-      options = [ "bind" ];
-    };
-
-  fileSystems."/ubuntu/dev" =
-    { device = "devtmpfs";
-      fsType = "devtmpfs";
-    };
-
-  fileSystems."/ubuntu/proc" =
-    { device = "proc";
-      fsType = "proc";
-    };
-
-  fileSystems."/ubuntu/sys" =
-    { device = "sysfs";
-      fsType = "sysfs";
-    };
-
-  fileSystems."/ubuntu/run" =
-    { device = "tmpfs";
-      fsType = "tmpfs";
-    };
-
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/903ca9fa-bbc8-4c18-8cc6-befdd6789778"; }
-    ];
+  swapDevices = [ ];
 
   nix.maxJobs = lib.mkDefault 8;
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";

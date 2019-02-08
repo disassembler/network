@@ -22,8 +22,11 @@ in {
     gfxmodeEfi = "1024x768";
     device = "nodev";
   };
+  boot.zfs.enableUnstable = true;
 
   boot.supportedFilesystems = [ "exfat" ];
+
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Splash screen to make boot look nice
   boot.plymouth.enable = true;
@@ -38,7 +41,7 @@ in {
   # Luks support
   boot.initrd.luks.devices = [{
     name = "linuxroot";
-    device = "/dev/disk/by-uuid/45c5626d-228b-41a2-8f2b-7d1e941332ec";
+    device = "/dev/disk/by-uuid/47a5b911-4dfe-4bf5-8a5c-c911e211cda0";
   }];
   systemd.additionalUpstreamSystemUnits = [
     "debug-shell.service"
@@ -71,38 +74,38 @@ in {
       internalInterfaces = ["ve-+"];
       externalInterface = "wlp2s0";
     };
-    vlans = {
-      lan = {
-        interface = "ens9";
-        id = 33;
-      };
-      mgmt = {
-        interface = "ens9";
-        id = 3;
-      };
-      guest = {
-        interface = "ens9";
-        id = 9;
-      };
-      voip = {
-        interface = "ens9";
-        id = 40;
-      };
-    };
-    interfaces = {
-      lan = {
-        useDHCP = true;
-      };
-      voip = {
-        useDHCP = true;
-      };
-      mgmt = {
-        useDHCP = true;
-      };
-      guest = {
-        useDHCP = true;
-      };
-    };
+    #vlans = {
+    #  lan = {
+    #    interface = "ens9";
+    #    id = 33;
+    #  };
+    #  mgmt = {
+    #    interface = "ens9";
+    #    id = 3;
+    #  };
+    #  guest = {
+    #    interface = "ens9";
+    #    id = 9;
+    #  };
+    #  voip = {
+    #    interface = "ens9";
+    #    id = 40;
+    #  };
+    #};
+    #interfaces = {
+    #  lan = {
+    #    useDHCP = true;
+    #  };
+    #  voip = {
+    #    useDHCP = true;
+    #  };
+    #  mgmt = {
+    #    useDHCP = true;
+    #  };
+    #  guest = {
+    #    useDHCP = true;
+    #  };
+    #};
     firewall = {
       enable = true;
       allowedUDPPorts = [ 53 4919 ];
@@ -381,15 +384,15 @@ in {
       '';
     };
     #xserver = {
-    #  #xautolock = {
-    #  #  enable = true;
-    #  #  time = 5;
-    #  #  locker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
-    #  #  nowlocker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
-    #  #  #killer = "${pkgs.systemd}/bin/systemctl suspend";
-    #  #  #killtime = 30;
-    #  #  extraOptions = [ "-detectsleep" ];
-    #  #};
+    #  xautolock = {
+    #    enable = true;
+    #    time = 5;
+    #    locker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
+    #    nowlocker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
+    #    #killer = "${pkgs.systemd}/bin/systemctl suspend";
+    #    #killtime = 30;
+    #    extraOptions = [ "-detectsleep" ];
+    #  };
     #  libinput = {
     #    enable = true;
     #    tapping = true;
@@ -401,8 +404,7 @@ in {
     #  enable = true;
     #  #layout = "us";
     #  desktopManager = {
-    #    gnome3.enable = true;
-    #    #default = "gnome3";
+    #    default = "none";
     #  };
     #  windowManager.i3 = {
     #    enable = true;
@@ -412,9 +414,9 @@ in {
     #    '';
     #  };
     #  windowManager.i3.package = pkgs.i3-gaps;
-    #  #windowManager.i3.configFile = import ../i3config.nix { inherit config; inherit pkgs; inherit parameters; };
+    #  windowManager.i3.configFile = "/home/sam/.config/i3/config";
     #  #windowManager.default = "i3";
-    #  displayManager.gdm = {
+    #  displayManager.lightdm = {
     #    enable = true;
     #  };
     #};

@@ -18,7 +18,7 @@ let
           "vim-docbk-snippets"
           "vim_stylish_haskell"
           #"haskell_vim"
-          "wakatime"
+          #"wakatime"
           "LanguageClient-neovim"
   ];
 in
