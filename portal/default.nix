@@ -9,6 +9,7 @@ let
     "lan"
     "guest"
     "voip"
+    "iot"
     "wg0"
     "tun0"
   ];
@@ -62,6 +63,10 @@ in {
         interface = "br0";
         id = 3;
       };
+      iot = {
+        interface = "br0";
+        id = 8;
+      };
       guest = {
         interface = "br0";
         id = 9;
@@ -81,6 +86,12 @@ in {
       lan = {
         ipv4.addresses = [{
           address = "10.40.33.1";
+          prefixLength = 24;
+        }];
+      };
+      iot = {
+        ipv4.addresses = [{
+          address = "10.40.8.1";
           prefixLength = 24;
         }];
       };
@@ -107,7 +118,7 @@ in {
       enable = true;
       externalInterface = "${externalInterface}";
       internalIPs = [ "10.40.33.0/24" "10.40.40.0/24" "10.40.3.0/24" "10.40.9.0/24" ];
-      internalInterfaces = [ "voip" "lan" "guest" "mgmt" "ovpn-guest" ];
+      internalInterfaces = [ "iot" "voip" "lan" "guest" "mgmt" "ovpn-guest" ];
       forwardPorts = [
         { sourcePort = 32400; destination = "10.40.33.20:32400"; proto = "tcp"; }
         { sourcePort = 80; destination = "10.40.33.165:8081"; proto = "tcp"; }
@@ -116,11 +127,12 @@ in {
     };
     enableIPv6 = true;
     dhcpcd.persistent = true;
+    # NOTE: 3 is taken by openvpn
     dhcpcd.extraConfig = ''
       noipv6rs
       interface ${externalInterface}
       ia_na 1
-      ia_pd 2/::/60 lan/0/64 mgmt/1/64 guest/2/64
+      ia_pd 2/::/60 lan/0/64 mgmt/1/64 guest/2/64 iot/4/64
     '';
     firewall = {
       enable = true;
@@ -268,8 +280,43 @@ in {
       enable = true;
       localip = "10.40.13.1";
     };
-    unbound = {
+    dnsmasq = {
       enable = true;
+      extraConfig = let
+        portal_cnames = [
+          "portal"
+          "ns"
+        ];
+        portal_ipv4 = "10.40.33.1";
+        portal_ipv6 = "2601:98a:4100:3567::1";
+        optina_cnames = [
+          "optina"
+          "cloud"
+          "crate"
+          "storage"
+          "git"
+          "hledger"
+          "hydra"
+          "mpd"
+          "netboot"
+          "plex"
+          "unifi"
+        ];
+        optina_ipv4 = "10.40.33.20";
+        optina_ipv6 = "2601:98a:4100:3567:d63d:7eff:fe4d:c47f";
+        createAddress = domain: ipv4: ipv6: name: ''
+          address=/${name}.${domain}/${ipv4}
+          address=/${name}.${domain}/${ipv6}
+        '';
+      in ''
+        ${lib.concatMapStrings (createAddress "wedlake.lan" optina_ipv4 optina_ipv6) optina_cnames}
+        ${lib.concatMapStrings (createAddress "wedlake.lan" portal_ipv4 portal_ipv6) portal_cnames}
+        address=/printer.wedlake.lan/10.40.33.50
+        address=/prod01.wedlake.lan/fd00::2
+      '';
+    };
+    unbound = {
+      enable = false;
       interfaces = [ "0.0.0.0" "::" ];
       allowedAccess = [
         "10.40.33.0/24"
@@ -293,7 +340,7 @@ in {
       '';
     };
     nsd = {
-      enable = true;
+      enable = false;
       interfaces = [ "127.0.0.1" "::1" ];
       port = 5353;
       zones."wedlake.lan.".data = ''
@@ -327,7 +374,7 @@ in {
       path = tftp_root;
     };
     dhcpd4 = {
-      interfaces = [ "lan" "mgmt" "guest" ];
+      interfaces = [ "lan" "mgmt" "guest" "iot" ];
       enable = true;
       machines = [
         { hostName = "optina"; ethernetAddress = "d4:3d:7e:4d:c4:7f"; ipAddress = "10.40.33.20"; }
@@ -381,6 +428,13 @@ in {
           option domain-name-servers 10.40.9.1;
           range 10.40.9.100 10.40.9.200;
         }
+        subnet 10.40.8.0 netmask 255.255.255.0 {
+          option subnet-mask 255.255.255.0;
+          option broadcast-address 10.40.8.255;
+          option routers 10.40.8.1;
+          option domain-name-servers 10.40.8.1;
+          range 10.40.8.100 10.40.8.200;
+        }
         subnet 10.40.3.0 netmask 255.255.255.0 {
           option subnet-mask 255.255.255.0;
           option broadcast-address 10.40.3.255;
@@ -421,6 +475,15 @@ in {
            };
         };
         interface voip
+        {
+           AdvSendAdvert on;
+           prefix ::/64
+           {
+                AdvOnLink on;
+                AdvAutonomous on;
+           };
+        };
+        interface iot
         {
            AdvSendAdvert on;
            prefix ::/64
