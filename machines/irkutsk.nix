@@ -1,8 +1,8 @@
 let
   custom_modules = import ../modules/modules-list.nix;
   nixosHardware = builtins.fetchTarball {
-    url = "https://github.com/NixOS/nixos-hardware/archive/2b8807f75b02cdc7541022cfb0f704af715481dc.tar.gz";
-    sha256 = "0zsw7alwf4wqqawrldklmmmgcp55wbk44js952m9x8qcwl4f47zs";
+    url = "https://github.com/NixOS/nixos-hardware/archive/36d8bd88cd72cfa8ee4162e6580f0a8e7de132ba.tar.gz";
+    sha256 = "00w075mlap81m82ria1s4z6aki3sgdap84lzfkxx747w2as7i1sv";
   };
 
 in {
@@ -11,7 +11,7 @@ in {
     ../hardware-configurations/irkutsk.nix
     # Machine specific config
     ../nixconfigs/irkutsk.nix
-    #(import (nixosHardware + "/dell/xps/13-9370"))
+    (import (nixosHardware + "/dell/xps/13-9380"))
   ] ++ custom_modules;
 
 }
