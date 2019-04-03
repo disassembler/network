@@ -84,6 +84,7 @@
   sl = stash list                   # list stashes
   sa = stash apply                  # apply stash (restore changes)
   sd = stash drop                   # drop stashes (destory changes)
+  su = stash --include-untracked --keep-index     # stash only what's not in index
 
   # status
   s = status                        # status
