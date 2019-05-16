@@ -331,6 +331,7 @@ in {
   };
 
   services = {
+    byron-proxy.enable = true;
     toxvpn = {
       enable = false;
       localip = "10.40.13.3";
