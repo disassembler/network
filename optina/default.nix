@@ -24,6 +24,8 @@ let
     patches = [
     ];
   });
+  herculesCIAgent =
+    builtins.fetchTarball "https://github.com/hercules-ci/hercules-ci-agent/archive/stable.tar.gz";
   netboot_root = pkgs.runCommand "nginxroot" {} ''
     mkdir -pv $out
     cat <<EOF > $out/boot.php
@@ -68,6 +70,7 @@ in {
   imports =
     [
       ./hardware.nix
+      (herculesCIAgent + "/module.nix")
     ] ++ custom_modules;
     _module.args = {
       inherit secrets shared;
@@ -84,17 +87,26 @@ in {
       buildMachines.darwin.ohrid
       buildMachines.linux.optina
     ];
-    binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" "https://hydra.wedlake.lan" ];
+    binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" ]; # "https://hydra.wedlake.lan" ];
     binaryCachePublicKeys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" "hydra.wedlake.lan:C3xufTQ7w2Y6VHtf+dyA6NmQPiQjwIDEavJNmr97Loo=" ];
+    extraOptions = ''
+      allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk
+    '';
   };
 
   # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
-  #boot.loader.grub = {
-  #  efiSupport = true;
-  #  device = "nodev";
-  #};
-  boot.loader.efi.canTouchEfiVariables = true;
+  #boot.loader.systemd-boot.enable = true;
+  boot.loader = {
+    grub = {
+      efiSupport = true;
+      device = "nodev";
+      memtest86.enable = true;
+      efiInstallAsRemovable = true;
+    };
+    efi = {
+      canTouchEfiVariables = false;
+    };
+  };
   boot.supportedFilesystems = [ "zfs" ];
   profiles.weechat = secrets.weechat-configs;
   #profiles.vim.enable = false;
@@ -202,6 +214,13 @@ in {
   ];
 
   services = {
+    hercules-ci-agent = {
+      enable = true;
+      clusterJoinTokenPath = "/tmp/hercules-ci.token";
+    };
+    udev.extraRules = ''
+      ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="74:d4:35:9b:84:62", NAME="enp2s0"
+    '';
     zookeeper = {
       enable = false;
     };
@@ -427,7 +446,7 @@ in {
           ];
         };
         unifi = {
-          enable = true;
+          enable = false;
           unifiAddress = "https://unifi.wedlake.lan";
           unifiUsername = "prometheus";
           unifiPassword = secrets.unifi_password_ro;
@@ -1015,7 +1034,7 @@ in {
       };
       users.users.samchat = {
         isNormalUser = true;
-        description = "Sam Leathers";
+        description = "Sam Leathers (chat)";
         uid = 1005;
         extraGroups = [ ];
         shell = pkgs.bashInteractive;

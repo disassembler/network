@@ -21,6 +21,7 @@ in {
     efiSupport = true;
     gfxmodeEfi = "1024x768";
     device = "nodev";
+    memtest86.enable = true;
   };
   boot.zfs.enableUnstable = true;
 
@@ -68,6 +69,8 @@ in {
       10.40.33.20 hydra.wedlake.lan
       10.40.33.1 portal.wedlake.lan
       127.0.0.1 wallet.samleathers.com
+      127.0.0.1 dev.ocf.net
+      127.0.0.1 wp.dev
     '';
     nat = {
       enable = true;
@@ -138,11 +141,12 @@ in {
       "https://cache.nixos.org"
       "https://hydra.iohk.io"
       #"https://hydra.wedlake.lan"
-      "https://snack.cachix.org" ];
+      #"https://snack.cachix.org"
+    ];
     binaryCachePublicKeys = [
       "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
       #"hydra.wedlake.lan:C3xufTQ7w2Y6VHtf+dyA6NmQPiQjwIDEavJNmr97Loo="
-      "snack.cachix.org-1:yWpdDCWeJzVAQUSM1Ol0E3PCVbG4k2wRAsZ/b5L3huc="
+      #"snack.cachix.org-1:yWpdDCWeJzVAQUSM1Ol0E3PCVbG4k2wRAsZ/b5L3huc="
     ];
     distributedBuilds = true;
     buildMachines = [
@@ -179,16 +183,17 @@ in {
 
   nixpkgs.config = {
     allowUnfree = true;
+    allowBroken = true;
     android_sdk.accept_license = true;
     packageOverrides = super: let self = super.pkgs; in {
-      nixops = super.nixops.overrideDerivation (
-      old: {
-        patchPhase = ''
-            substituteInPlace nix/eval-machine-info.nix \
-                --replace 'system.nixosVersion' 'system.nixos.version'
-        '';
-      }
-      );
+      #nixops = super.nixops.overrideDerivation (
+      #old: {
+      #  patchPhase = ''
+      #      substituteInPlace nix/eval-machine-info.nix \
+      #          --replace 'system.nixosVersion' 'system.nixos.version'
+      #  '';
+      #}
+      #);
       manymans = with pkgs; buildEnv {
         name = "manymans";
         ignoreCollisions = true;
@@ -220,8 +225,8 @@ in {
     hledger
     teamspeak_client
     psmisc
-    sway-beta
-    #hie82
+    sway
+    hie82
     sqliteInteractive
     manymans
     hlint
@@ -253,7 +258,6 @@ in {
     keepassx2
     tcpdump
     telnet
-    xclip
     p11_kit
     openconnect
     openconnect_gnutls
@@ -287,6 +291,8 @@ in {
     virtmanager
     xdg_utils
     termite
+    wine-staging
+    inotifyTools
   ];
 
   hardware = {
@@ -297,6 +303,7 @@ in {
 
     };
     opengl.enable = true;
+    opengl.driSupport32Bit = true;
     opengl.extraPackages = [ pkgs.vaapiIntel ];
     facetimehd.enable = true;
     bluetooth = {
@@ -326,12 +333,119 @@ in {
   ];
   programs.adb.enable = true;
   programs.light.enable = true;
-  programs.sway-beta = {
+  programs.sway = {
     enable = true;
   };
 
   services = {
-    byron-proxy.enable = true;
+    byron-proxy = {
+      environment = "staging";
+      enable = true;
+    };
+    prometheus = {
+      enable = true;
+      scrapeConfigs = [
+        {
+          job_name = "byron-proxy";
+          scrape_interval = "5s";
+          static_configs = [
+            {
+              targets = [
+                "localhost:12799"
+              ];
+
+            }
+          ];
+        }
+      ];
+    };
+    mysql = {
+      enable = true;
+      package = pkgs.mariadb;
+    };
+    phpfpm = {
+      phpPackage = pkgs.php71;
+      poolConfigs = {
+        mypool = ''
+          listen = 127.0.0.1:9000
+          user = nginx
+          pm = dynamic
+          pm.max_children = 5
+          pm.start_servers = 1
+          pm.min_spare_servers = 1
+          pm.max_spare_servers = 2
+          pm.max_requests = 50
+        '';
+      };
+      phpOptions =
+        ''
+          display_errors = On
+          [opcache]
+          opcache.enable=0
+          opcache.memory_consumption=128
+          opcache.interned_strings_buffer=8
+          opcache.max_accelerated_files=4000
+          opcache.revalidate_freq=60
+          opcache.fast_shutdown=1
+        '';
+    };
+    nginx = {
+      enable = true;
+      virtualHosts = {
+        "dev.ocf.net" = {
+          root = "/var/www/ocf";
+          extraConfig = ''
+            index index.php index.html index.htm;
+            location / {
+                    # try_files $uri $uri/ =404;
+                    try_files $uri $uri/ /index.php?q=$uri&$args;
+            }
+
+            error_page 404 /404.html;
+
+            location ~ \.php$ {
+                    try_files $uri =404;
+                    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                    fastcgi_pass 127.0.0.1:9000;
+                    fastcgi_index index.php;
+            }
+          '';
+        };
+        "wp.dev" = {
+          root = "/var/www/wpdev";
+          extraConfig = ''
+            index index.php;
+            location = /favicon.ico {
+                log_not_found off;
+                access_log off;
+        }
+
+        location = /robots.txt {
+                allow all;
+                log_not_found off;
+                access_log off;
+        }
+
+        location / {
+                # This is cool because no php is touched for static content.
+                # include the "?$args" part so non-default permalinks doesn't break when using query string
+                try_files $uri $uri/ /index.php?$args;
+        }
+
+        location ~ \.php$ {
+                #NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
+                fastcgi_intercept_errors on;
+                fastcgi_pass 127.0.0.1:9000;
+        }
+
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+                expires max;
+                log_not_found off;
+        }
+          '';
+        };
+      };
+    };
     toxvpn = {
       enable = false;
       localip = "10.40.13.3";
@@ -346,8 +460,9 @@ in {
   };
     influxdb.enable = true;
     grafana = {
-      enable = false;
+      enable = true;
       addr = "0.0.0.0";
+      port = 8085;
     };
 
     #zfs.autoSnapshot.enable = true;
@@ -358,7 +473,7 @@ in {
     #  };
     #};
     offlineimap = {
-      enable = true;
+      enable = false;
       path = [ pkgs.notmuch ];
     };
     printing = {
@@ -384,43 +499,43 @@ in {
         ];
       '';
     };
-    #xserver = {
-    #  xautolock = {
-    #    enable = true;
-    #    time = 5;
-    #    locker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
-    #    nowlocker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
-    #    #killer = "${pkgs.systemd}/bin/systemctl suspend";
-    #    #killtime = 30;
-    #    extraOptions = [ "-detectsleep" ];
-    #  };
-    #  libinput = {
-    #    enable = true;
-    #    tapping = true;
-    #    disableWhileTyping = true;
-    #    scrollMethod = "twofinger";
-    #    naturalScrolling = false;
-    #  };
-    #  #autorun = true;
-    #  enable = true;
-    #  #layout = "us";
-    #  desktopManager = {
-    #    default = "none";
-    #  };
-    #  windowManager.i3 = {
-    #    enable = true;
-    #    extraSessionCommands = ''
-    #      ${pkgs.xlibs.xset}/bin/xset r rate 200 60 # set keyboard repeat
-    #      ${pkgs.feh} --bg-scale /home/sam/photos/20170503_183237.jpg
-    #    '';
-    #  };
-    #  windowManager.i3.package = pkgs.i3-gaps;
-    #  windowManager.i3.configFile = "/home/sam/.config/i3/config";
-    #  #windowManager.default = "i3";
-    #  displayManager.lightdm = {
-    #    enable = true;
-    #  };
-    #};
+    xserver = {
+      xautolock = {
+        enable = true;
+        time = 5;
+        locker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
+        nowlocker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
+        #killer = "${pkgs.systemd}/bin/systemctl suspend";
+        #killtime = 30;
+        extraOptions = [ "-detectsleep" ];
+      };
+      libinput = {
+        enable = true;
+        tapping = true;
+        disableWhileTyping = true;
+        scrollMethod = "twofinger";
+        naturalScrolling = false;
+      };
+      #autorun = true;
+      enable = false;
+      #layout = "us";
+      desktopManager = {
+        default = "none";
+      };
+      windowManager.i3 = {
+        enable = true;
+        extraSessionCommands = ''
+          ${pkgs.xlibs.xset}/bin/xset r rate 200 60 # set keyboard repeat
+          ${pkgs.feh} --bg-scale /home/sam/photos/20170503_183237.jpg
+        '';
+      };
+      windowManager.i3.package = pkgs.i3-gaps;
+      windowManager.i3.configFile = "/home/sam/.config/i3/config";
+      #windowManager.default = "i3";
+      #displayManager.lightdm = {
+      #  enable = false;
+      #};
+    };
     dnsmasq = {
       enable = true;
       extraConfig = ''

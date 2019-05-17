@@ -3,7 +3,7 @@ let
   pkgs_native = import <nixpkgs> {};
 in rec {
   darwin-tools = let
-    ghc = pkgs_mac.haskellPackages.ghcWithPackages (ps: [ ps.turtle ps.universum ps.megaparsec ]);
+    ghc = pkgs_mac.haskellPackages.ghcWithPackages (ps: [ ps.turtle (pkgs_mac.haskell.lib.dontCheck ps.universum) ps.megaparsec ]);
   in pkgs_mac.stdenv.mkDerivation {
     name = "deploy-nix-darwin";
     buildInputs = [ ghc  ];
@@ -26,7 +26,7 @@ in rec {
     ssh -t $1 "darwin-tools/prepare"
   '';
   deploy-darwin = let
-    ghc = pkgs_native.haskellPackages.ghcWithPackages (ps: [ ps.turtle ps.universum ps.megaparsec ]);
+    ghc = pkgs_native.haskellPackages.ghcWithPackages (ps: [ ps.turtle (pkgs_native.haskell.lib.dontCheck ps.universum) ps.megaparsec ]);
   in pkgs_native.stdenv.mkDerivation {
     name = "deploy-darwin";
     buildInputs = [ ghc ];

@@ -21,17 +21,17 @@
     };
 
   fileSystems."/var" =
-    { device = "zroot/root/var";
+    { device = "zroot/var";
       fsType = "zfs";
     };
 
   fileSystems."/nix" =
-    { device = "zroot/root/nix";
+    { device = "zroot/nix";
       fsType = "zfs";
     };
 
   fileSystems."/home" =
-    { device = "zroot/root/home";
+    { device = "zroot/home";
       fsType = "zfs";
     };
 

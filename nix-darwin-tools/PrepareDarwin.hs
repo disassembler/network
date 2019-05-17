@@ -37,7 +37,9 @@ checkNix = sh $ which "nix-build" >>= \case
     echo "nix-build was not found. Installing nix"
     -- Nix fails to install if these backup files exist
     mapM_ restoreFile ["/etc/bashrc", "/etc/zshrc"]
-    empty & inproc "curl" ["https://nixos.org/nix/install"] & inproc "sh" [] & stdout
+    empty & inproc "curl" ["https://nixos.org/nix/install", "-o", "install-nix"] & stdout
+    chmod executable  "install-nix"
+    empty & inproc "./install-nix" ["--daemon"] & stdout
 
 -- | This is a workaround for nix curl on Darwin.
 setupSSLCert :: Shell ()
