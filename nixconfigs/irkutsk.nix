@@ -342,6 +342,10 @@ in {
       environment = "staging";
       enable = true;
     };
+    byron-validator = {
+      environment = "staging";
+      enable = true;
+    };
     prometheus = {
       enable = true;
       scrapeConfigs = [
