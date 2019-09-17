@@ -150,7 +150,7 @@ in {
     ];
     distributedBuilds = true;
     buildMachines = [
-      buildMachines.darwin.ohrid
+      buildMachines.darwin.sarov-mac
       #buildMachines.darwin.macvm
       #buildMachines.linux.optina
     ];
@@ -220,7 +220,20 @@ in {
       dev = true;
   };
 
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs; let
+    #nixopsSrc = pkgs.fetchFromGitHub {
+    #  owner = "input-output-hk";
+    #  repo = "nixops";
+    #  rev = "dba45d750199147f857b14dadbb29811c9baf97d";
+    #  sha256 = "0z9w66vwlr7l6qvyj2p1lv98k3f8h3jd4dzxmwhqmln2py8wq4zb";
+    #};
+    #nixopsSrc = /home/sam/nixops;
+    #packet = "/home/sam/nixops-packet";
+    #nixops = (import (nixopsSrc + "/release.nix") {
+    #  p = (p: [ packet ]);
+    #}).build.x86_64-linux;
+  in [
+    opensc
     pavucontrol
     hledger
     teamspeak_client
@@ -291,7 +304,7 @@ in {
     virtmanager
     xdg_utils
     termite
-    wine-staging
+    #wine-staging
     inotifyTools
   ];
 
@@ -338,13 +351,17 @@ in {
   };
 
   services = {
-    byron-proxy = {
-      environment = "staging";
-      enable = true;
+    pcscd.enable = true;
+    jormungandr = {
+      enable = false;
     };
-    byron-validator = {
-      environment = "staging";
-      enable = true;
+    byron-proxy = {
+      environment = "mainnet";
+      enable = false;
+    };
+    cardano-node = {
+      environment = "mainnet";
+      enable = false;
     };
     prometheus = {
       enable = true;
@@ -368,18 +385,19 @@ in {
       package = pkgs.mariadb;
     };
     phpfpm = {
-      phpPackage = pkgs.php71;
-      poolConfigs = {
-        mypool = ''
-          listen = 127.0.0.1:9000
-          user = nginx
-          pm = dynamic
-          pm.max_children = 5
-          pm.start_servers = 1
-          pm.min_spare_servers = 1
-          pm.max_spare_servers = 2
-          pm.max_requests = 50
-        '';
+      pools = {
+        mypool = {
+          user = "nginx";
+          listen = "127.0.0.1:9000";
+          settings = {
+            "pm" = "dynamic";
+            "pm.max_children" = 5;
+            "pm.start_servers" = 1;
+            "pm.min_spare_servers" = 1;
+            "pm.max_spare_servers" = 2;
+            "pm.max_requests" = 50;
+          };
+        };
       };
       phpOptions =
         ''
@@ -457,11 +475,46 @@ in {
 
     postgresql = {
       enable = true;
-      authentication = ''
-        local all all trust
-        host  all all 127.0.0.1/32 trust
+      enableTCPIP = false;
+      extraConfig = ''
+        max_connections = 200
+        shared_buffers = 2GB
+        effective_cache_size = 6GB
+        maintenance_work_mem = 512MB
+        checkpoint_completion_target = 0.7
+        wal_buffers = 16MB
+        default_statistics_target = 100
+        random_page_cost = 1.1
+        effective_io_concurrency = 200
+        work_mem = 10485kB
+        min_wal_size = 1GB
+        max_wal_size = 2GB
       '';
-  };
+      identMap = ''
+        explorer-users /root cexplorer
+        explorer-users /postgres postgres
+        explorer-users /sam cexplorer
+      '';
+      authentication = ''
+        local all all ident map=explorer-users
+        local all all trust
+      '';
+      ensureDatabases = [
+        "explorer_python_api"
+        "cexplorer"
+      ];
+      ensureUsers = [
+        {
+          name = "cexplorer";
+          ensurePermissions = {
+            "DATABASE explorer_python_api" = "ALL PRIVILEGES";
+            "DATABASE cexplorer" = "ALL PRIVILEGES";
+            "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
+            #"ALL TABLES IN SCHEMA scraper" = "ALL PRIVILEGES";
+          };
+        }
+      ];
+    };
     influxdb.enable = true;
     grafana = {
       enable = true;
@@ -496,12 +549,10 @@ in {
     compton = {
       enable = true;
       shadowExclude = [''"_NET_WM_STATE@:32a *= '_NET_WM_STATE_HIDDEN'"''];
-      extraOptions = ''
-        opacity-rule = [
-        "95:class_g = 'URxvt' && !_NET_WM_STATE@:32a",
+      opacityRules = [
+        "95:class_g = 'URxvt' && !_NET_WM_STATE@:32a"
         "0:_NET_WM_STATE@:32a *= '_NET_WM_STATE_HIDDEN'"
-        ];
-      '';
+      ];
     };
     xserver = {
       xautolock = {
