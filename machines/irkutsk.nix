@@ -21,9 +21,9 @@ in {
     # Machine specific config
     ../nixconfigs/irkutsk.nix
     (import (nixosHardware + "/dell/xps/13-9380"))
-    /home/sam/work/iohk/cardano-node/master/nix/nixos
+    /home/sam/work/iohk/cardano-node/scratch/nix/nixos
     /home/sam/work/iohk/cardano-byron-proxy/master/nix/nixos
-    (jormungandr + "/jormungandr-service.nix")
+    /home/sam/work/iohk/jormungandr-nix/nixos
   ] ++ custom_modules;
 
 }

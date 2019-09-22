@@ -112,7 +112,7 @@ in {
     firewall = {
       enable = true;
       allowedUDPPorts = [ 53 4919 ];
-      allowedTCPPorts = [ 4444 8081 3478 3000 8080 5900 ];
+      allowedTCPPorts = [ 4444 8081 3478 3000 8080 5900 3100 ];
     };
     #bridges = {
     #  cbr0.interfaces = [ ];
@@ -353,7 +353,32 @@ in {
   services = {
     pcscd.enable = true;
     jormungandr = {
-      enable = false;
+      enable = true;
+      enableExplorer = false;
+      genesisBlockHash = "f40001894fec0a93a754ff7cdc125ed64fc88260f575f9971b98ee85a35750b6";
+      trustedPeersAddresses = [
+        "/ip4/3.123.177.192/tcp/3000"
+        "/ip4/52.57.157.167/tcp/3000"
+        "/ip4/3.123.155.47/tcp/3000"
+        "/ip4/3.115.57.216/tcp/3000"
+        "/ip4/3.112.185.217/tcp/3000"
+        "/ip4/18.139.40.4/tcp/3000"
+        "/ip4/18.140.134.230/tcp/3000"
+      ];
+      publicAddress = "/ip4/73.52.25.31/tcp/3100";
+      topicsOfInterest = {
+        messages = "high";
+        blocks = "high";
+      };
+      withBackTraces = true;
+      rest.listenAddress = "127.0.0.1:3101";
+      logger = {
+        level = "debug";
+        output = "stderr";
+        #backend = "monitoring.stakepool.cardano-testnet.iohkdev.io:12201";
+        #logs-id = "disasm";
+      };
+
     };
     byron-proxy = {
       environment = "mainnet";
