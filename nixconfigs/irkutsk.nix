@@ -355,7 +355,7 @@ in {
     jormungandr = {
       enable = true;
       enableExplorer = false;
-      genesisBlockHash = "f40001894fec0a93a754ff7cdc125ed64fc88260f575f9971b98ee85a35750b6";
+      genesisBlockHash = "1f077794039a53309576b35dcd1121375d548db0aeb0b3770a7956cba1a44201";
       trustedPeersAddresses = [
         "/ip4/3.123.177.192/tcp/3000"
         "/ip4/52.57.157.167/tcp/3000"
@@ -366,6 +366,7 @@ in {
         "/ip4/18.140.134.230/tcp/3000"
       ];
       publicAddress = "/ip4/73.52.25.31/tcp/3100";
+      listenAddress = "/ip4/0.0.0.0/tcp/3100";
       topicsOfInterest = {
         messages = "high";
         blocks = "high";
