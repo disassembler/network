@@ -23,7 +23,12 @@ in
     };
     imports = [
       (import ./portal )
+      /home/sam/work/iohk/jormungandr-nix/nixos
     ] ++ custom_modules;
     deployment.keys."wg0-private".text = secrets.portal_wg0_private;
+    deployment.keys."jormungandr-secret.yaml" = {
+      keyFile = ./. + "/keys/jormungandr-secret.yaml";
+      user = "jormungandr";
+    };
   };
 }

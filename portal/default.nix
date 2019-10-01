@@ -54,6 +54,10 @@ in {
     hostName = "portal.wedlake.lan";
     hostId = "fa4b7394";
     nameservers = [ "10.40.33.1" "8.8.8.8" ];
+    hosts = lib.mkForce {
+      "127.0.0.1" = [ "localhost" ];
+      "::1" = [ "localhost" ];
+    };
     vlans = {
       lan = {
         interface = "br0";
@@ -109,7 +113,7 @@ in {
       };
       guest = {
         ipv4.addresses = [{
-          address = "10.40.9.1";
+          address = "10.40.10.1";
           prefixLength = 24;
         }];
       };
@@ -117,7 +121,7 @@ in {
     nat = {
       enable = true;
       externalInterface = "${externalInterface}";
-      internalIPs = [ "10.40.33.0/24" "10.40.40.0/24" "10.40.3.0/24" "10.40.9.0/24" ];
+      internalIPs = [ "10.40.33.0/24" "10.40.40.0/24" "10.40.3.0/24" "10.40.10.0/24" ];
       internalInterfaces = [ "iot" "voip" "lan" "guest" "mgmt" "ovpn-guest" ];
       forwardPorts = [
         { sourcePort = 32400; destination = "10.40.33.20:32400"; proto = "tcp"; }
@@ -198,6 +202,8 @@ in {
             546   # DHCPv6
             547   # DHCPv6
             9100  # prometheus
+            3101  # jormungandr-api
+            3102  # jormungandr-prometheus
           ])
         (lib.concatMapStrings dropPortNoLog
           [
@@ -221,7 +227,7 @@ in {
           ip6tables -A FORWARD -i enp1s0 -j DROP
         ''
       ];
-      allowedTCPPorts = [ 32400 5222 5060 53 ];
+      allowedTCPPorts = [ 32400 5222 5060 53 3100 ];
       allowedUDPPorts = [ 51820 1194 1195 5060 5222 53 config.services.toxvpn.port ];
     };
     wireguard.interfaces = {
@@ -245,6 +251,17 @@ in {
           {
             publicKey = "eR6I+LI/BayJ90Kjt0wJyfJUsoSmayD+cb6Kb7qdCV4=";
             allowedIPs = [ "10.37.4.0/24" "10.37.6.1/32" "fd00::37/128" ];
+          }
+          {
+            # clever
+            publicKey = "oycbQ1DhtRh0hhD5gpyiKTUh0USkAwbjMer6/h/aHg8=";
+            allowedIPs = [ "10.40.9.3/32" "fd00::3/128" ];
+            endpoint = "nas.earthtools.ca:51821";
+          }
+          {
+            # johnalotoski
+            publicKey = "MRowDI1eC9B5Hx/zgPk5yyq2eWSq6kYFW5Sjm7w52AY=";
+            allowedIPs = [ "10.40.9.4/32" "fd00::4/128" ];
           }
         ];
 
@@ -276,6 +293,52 @@ in {
   ];
 
   services = {
+    jormungandr = {
+      enable = true;
+      enableExplorer = false;
+      genesisBlockHash = "adbdd5ede31637f6c9bad5c271eec0bc3d0cb9efb86a5b913bb55cba549d0770";
+      trustedPeersAddresses = [
+        #"/ip4/209.209.238.36/tcp/14509"
+        #"/ip4/136.244.106.95/tcp/3000"
+        #"/ip4/3.122.73.200/tcp/3000"
+        #"/ip4/142.163.140.47/tcp/3002"
+        #"/ip4/52.57.157.167/tcp/3000"
+        #"/ip4/3.123.155.47/tcp/3000"
+        #"/ip4/52.14.204.162/tcp/3100"
+        #"/ip4/3.115.57.216/tcp/3000"
+        #"/ip4/3.112.185.217/tcp/3000"
+
+        "/ip4/3.123.177.192/tcp/3000"
+        "/ip4/52.57.157.167/tcp/3000"
+        "/ip4/3.123.155.47/tcp/3000"
+        "/ip4/3.115.57.216/tcp/3000"
+        "/ip4/3.112.185.217/tcp/3000"
+        "/ip4/18.139.40.4/tcp/3000"
+        "/ip4/18.140.134.230/tcp/3000"
+      ];
+      publicAddress = "/ip4/73.52.25.31/tcp/3100";
+      listenAddress = "/ip4/73.52.25.31/tcp/3100";
+      topicsOfInterest = {
+        messages = "high";
+        blocks = "high";
+      };
+      withBackTraces = true;
+      withValgrind = false;
+      secrets-paths = [ "/run/keys/jormungandr-secret.yaml" ];
+      rest.listenAddress = "10.40.33.1:3101";
+      logger = {
+        level = "info";
+        output = "journald";
+        #backend = "monitoring.stakepool.cardano-testnet.iohkdev.io:12201";
+        #logs-id = "disasm";
+      };
+
+    };
+    jormungandr-monitor = {
+      enable = true;
+      port = 3102;
+      monitorAddresses = [ ];
+    };
     toxvpn = {
       enable = true;
       localip = "10.40.13.1";
@@ -421,12 +484,12 @@ in {
           option domain-name-servers 10.40.40.1;
           range 10.40.40.100 10.40.40.200;
         }
-        subnet 10.40.9.0 netmask 255.255.255.0 {
+        subnet 10.40.10.0 netmask 255.255.255.0 {
           option subnet-mask 255.255.255.0;
-          option broadcast-address 10.40.9.255;
-          option routers 10.40.9.1;
-          option domain-name-servers 10.40.9.1;
-          range 10.40.9.100 10.40.9.200;
+          option broadcast-address 10.40.10.255;
+          option routers 10.40.10.1;
+          option domain-name-servers 10.40.10.1;
+          range 10.40.10.100 10.40.10.200;
         }
         subnet 10.40.8.0 netmask 255.255.255.0 {
           option subnet-mask 255.255.255.0;
@@ -597,7 +660,7 @@ in {
       };
     };
   };
-
+  users.users.jormungandr.extraGroups = [ "keys" ];
   users.extraUsers.sam = {
     isNormalUser = true;
     description = "Sam Leathers";

@@ -236,7 +236,6 @@ in {
     opensc
     pavucontrol
     hledger
-    teamspeak_client
     psmisc
     sway
     hie82
@@ -353,9 +352,9 @@ in {
   services = {
     pcscd.enable = true;
     jormungandr = {
-      enable = true;
+      enable = false;
       enableExplorer = false;
-      genesisBlockHash = "1f077794039a53309576b35dcd1121375d548db0aeb0b3770a7956cba1a44201";
+      genesisBlockHash = "adbdd5ede31637f6c9bad5c271eec0bc3d0cb9efb86a5b913bb55cba549d0770";
       trustedPeersAddresses = [
         "/ip4/3.123.177.192/tcp/3000"
         "/ip4/52.57.157.167/tcp/3000"
@@ -372,9 +371,11 @@ in {
         blocks = "high";
       };
       withBackTraces = true;
+      withValgrind = false;
+      secrets-paths = [ "/var/lib/jormungandr/secret.yaml" ];
       rest.listenAddress = "127.0.0.1:3101";
       logger = {
-        level = "debug";
+        level = "info";
         output = "stderr";
         #backend = "monitoring.stakepool.cardano-testnet.iohkdev.io:12201";
         #logs-id = "disasm";

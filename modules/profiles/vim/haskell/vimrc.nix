@@ -7,9 +7,9 @@ let
   fast-tags = "${pkgs.haskellPackages.fast-tags}/bin/fast-tags";
   hie = "${pkgs.hie82}/bin/hie";
   mytags = hasktags;
-  stylish-haskell = pkgs.haskellPackages.stylish-haskell.overrideAttrs (oldAttrs: rec {
-    doCheck = false;
-  });
+  #stylish-haskell = pkgs.haskellPackages.stylish-haskell.overrideAttrs (oldAttrs: rec {
+  #  doCheck = false;
+  #});
   init-tags = pkgs.writeScript "init-tags" ''
       #!${pkgs.zsh}/bin/zsh
       # fast-tags wrapper to generate tags automatically if there are none.
@@ -34,7 +34,6 @@ in
     let g:LanguageClient_serverCommands = {
     \ 'haskell': ['${hie}', '-d', '--lsp'],
     \ }
-    let g:stylish_haskell_command = "${stylish-haskell}/bin/stylish-haskell"
     let g:tagbar_type_haskell = {
     \ 'ctagsbin'  : '${hasktags}',
     \ 'ctagsargs' : '-x -c -o-',

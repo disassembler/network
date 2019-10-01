@@ -24,8 +24,6 @@ let
     patches = [
     ];
   });
-  herculesCIAgent =
-    builtins.fetchTarball "https://github.com/hercules-ci/hercules-ci-agent/archive/stable.tar.gz";
   netboot_root = pkgs.runCommand "nginxroot" {} ''
     mkdir -pv $out
     cat <<EOF > $out/boot.php
@@ -70,7 +68,6 @@ in {
   imports =
     [
       ./hardware.nix
-      (herculesCIAgent + "/module.nix")
     ] ++ custom_modules;
     _module.args = {
       inherit secrets shared;
@@ -84,7 +81,6 @@ in {
       keys = [ "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6A3QRIK9XfLf/eDYb9Z4UO7iTmH7Gy3xwHphDx/ZEF9xZ6NuSsotihNZCpGIq2W3G7lx+3TlJW4WuI2GUHr9LZRsI+Z7T2+tSEtQZ1sE4p4rvlkNBzORobfrjXWs32Wd4ZH1i9unJRY6sFouWHt0ejjpnH49F8q5grTZALzrwh+Rz+Wj7Z1No7FccVMB15EtROq9jFQjP1Yqc+jScSFhgurHBpQbyJZXHXaelwVwLLM7DfDyLCDLgkB+1PDDMmfCMFEdV4oTMWmN6kZb52ko4B5ygzFg/RgOe73yYv9FRxUZK3kQQQfl4/VOIB8DhJieD/2VfmjCI0Q46xnia0rdz root@sarov" ];
     };
     buildMachines = [
-      buildMachines.darwin.ohrid
       buildMachines.linux.optina
     ];
     binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" ]; # "https://hydra.wedlake.lan" ];
@@ -214,10 +210,6 @@ in {
   ];
 
   services = {
-    hercules-ci-agent = {
-      enable = true;
-      clusterJoinTokenPath = "/tmp/hercules-ci.token";
-    };
     udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="74:d4:35:9b:84:62", NAME="enp2s0"
     '';
@@ -354,200 +346,228 @@ in {
     #    };
     #  };
     #};
-    prometheus = {
-      enable = true;
-      extraFlags = [
-        "-storage.local.retention 8760h"
-        "-storage.local.series-file-shrink-ratio 0.3"
-        "-storage.local.memory-chunks 2097152"
-        "-storage.local.max-chunks-to-persist 1048576"
-        "-storage.local.index-cache-size.fingerprint-to-metric 2097152"
-        "-storage.local.index-cache-size.fingerprint-to-timerange 1048576"
-        "-storage.local.index-cache-size.label-name-to-label-values 2097152"
-        "-storage.local.index-cache-size.label-pair-to-fingerprints 41943040"
-      ];
-      exporters = {
-        blackbox = {
-          enable = true;
-          configFile = pkgs.writeText "blackbox-exporter.yaml" (builtins.toJSON {
-          modules = {
-            https_2xx = {
-              prober = "http";
-              timeout = "5s";
-              http = {
-                fail_if_not_ssl = true;
-              };
-            };
-            htts_2xx = {
-              prober = "http";
-              timeout = "5s";
-            };
-            ssh_banner = {
-              prober = "tcp";
-              timeout = "10s";
-              tcp = {
-                query_response = [ { expect = "^SSH-2.0-"; } ];
-              };
-            };
-            tcp_v4 = {
-              prober = "tcp";
-              timeout = "5s";
-              tcp = {
-                preferred_ip_protocol = "ip4";
-              };
-            };
-            tcp_v6 = {
-              prober = "tcp";
-              timeout = "5s";
-              tcp = {
-                preferred_ip_protocol = "ip6";
-              };
-            };
-            icmp_v4 = {
-              prober = "icmp";
-              timeout = "60s";
-              icmp = {
-                preferred_ip_protocol = "ip4";
-              };
-            };
-            icmp_v6 = {
-              prober = "icmp";
-              timeout = "5s";
-              icmp = {
-                preferred_ip_protocol = "ip6";
-              };
+    prometheus.exporters = {
+      blackbox = {
+        enable = true;
+        configFile = pkgs.writeText "blackbox-exporter.yaml" (builtins.toJSON {
+        modules = {
+          https_2xx = {
+            prober = "http";
+            timeout = "5s";
+            http = {
+              fail_if_not_ssl = true;
             };
           };
-        });
+          htts_2xx = {
+            prober = "http";
+            timeout = "5s";
+          };
+          ssh_banner = {
+            prober = "tcp";
+            timeout = "10s";
+            tcp = {
+              query_response = [ { expect = "^SSH-2.0-"; } ];
+            };
+          };
+          tcp_v4 = {
+            prober = "tcp";
+            timeout = "5s";
+            tcp = {
+              preferred_ip_protocol = "ip4";
+            };
+          };
+          tcp_v6 = {
+            prober = "tcp";
+            timeout = "5s";
+            tcp = {
+              preferred_ip_protocol = "ip6";
+            };
+          };
+          icmp_v4 = {
+            prober = "icmp";
+            timeout = "60s";
+            icmp = {
+              preferred_ip_protocol = "ip4";
+            };
+          };
+          icmp_v6 = {
+            prober = "icmp";
+            timeout = "5s";
+            icmp = {
+              preferred_ip_protocol = "ip6";
+            };
+          };
         };
-        #surfboard = {
-        #  enable = true;
-        #};
-        node = {
-          enable = true;
-          enabledCollectors = [
-            "systemd"
-            "tcpstat"
-            "conntrack"
-            "diskstats"
-            "entropy"
-            "filefd"
-            "filesystem"
-            "loadavg"
-            "meminfo"
-            "netdev"
-            "netstat"
-            "stat"
-            "time"
-            "vmstat"
-            "logind"
-            "interrupts"
-            "ksmd"
-          ];
-        };
-        unifi = {
-          enable = false;
-          unifiAddress = "https://unifi.wedlake.lan";
-          unifiUsername = "prometheus";
-          unifiPassword = secrets.unifi_password_ro;
-          openFirewall = true;
-        };
+      });
       };
-      alertmanagerURL = [ "http://optina.wedlake.lan:9093" ];
-      rules = [
-        ''
-          ALERT node_down
-          IF up == 0
-          FOR 5m
-          LABELS {
-            severity="page"
-          }
-          ANNOTATIONS {
-            summary = "{{$labels.alias}}: Node is down.",
-            description = "{{$labels.alias}} has been down for more than 5 minutes."
-          }
-          ALERT node_systemd_service_failed
-          IF node_systemd_unit_state{state="failed"} == 1
-          FOR 4m
-          LABELS {
-            severity="page"
-          }
-          ANNOTATIONS {
-            summary = "{{$labels.alias}}: Service {{$labels.name}} failed to start.",
-            description = "{{$labels.alias}} failed to (re)start service {{$labels.name}}."
-          }
-          ALERT node_filesystem_full_90percent
-          IF sort(node_filesystem_free{device!="ramfs"} < node_filesystem_size{device!="ramfs"} * 0.1) / 1024^3
-          FOR 5m
-          LABELS {
-            severity="page"
-          }
-          ANNOTATIONS {
-            summary = "{{$labels.alias}}: Filesystem is running out of space soon.",
-            description = "{{$labels.alias}} device {{$labels.device}} on {{$labels.mountpoint}} got less than 10% space left on its filesystem."
-          }
-          ALERT node_filesystem_full_in_4h
-          IF predict_linear(node_filesystem_free{device!="ramfs"}[1h], 4*3600) <= 0
-          FOR 5m
-          LABELS {
-            severity="page"
-          }
-          ANNOTATIONS {
-            summary = "{{$labels.alias}}: Filesystem is running out of space in 4 hours.",
-            description = "{{$labels.alias}} device {{$labels.device}} on {{$labels.mountpoint}} is running out of space of in approx. 4 hours"
-          }
-          ALERT node_filedescriptors_full_in_3h
-          IF predict_linear(node_filefd_allocated[1h], 3*3600) >= node_filefd_maximum
-          FOR 20m
-          LABELS {
-            severity="page"
-          }
-          ANNOTATIONS {
-            summary = "{{$labels.alias}} is running out of available file descriptors in 3 hours.",
-            description = "{{$labels.alias}} is running out of available file descriptors in approx. 3 hours"
-          }
-          ALERT node_load1_90percent
-          IF node_load1 / on(alias) count(node_cpu{mode="system"}) by (alias) >= 0.9
-          FOR 1h
-          LABELS {
-            severity="page"
-          }
-          ANNOTATIONS {
-            summary = "{{$labels.alias}}: Running on high load.",
-            description = "{{$labels.alias}} is running with > 90% total load for at least 1h."
-          }
-          ALERT node_cpu_util_90percent
-          IF 100 - (avg by (alias) (irate(node_cpu{mode="idle"}[5m])) * 100) >= 90
-          FOR 1h
-          LABELS {
-            severity="page"
-          }
-          ANNOTATIONS {
-            summary = "{{$labels.alias}}: High CPU utilization.",
-            description = "{{$labels.alias}} has total CPU utilization over 90% for at least 1h."
-          }
-          ALERT node_ram_using_99percent
-          IF node_memory_MemFree + node_memory_Buffers + node_memory_Cached < node_memory_MemTotal * 0.01
-          FOR 30m
-          LABELS {
-            severity="page"
-          }
-          ANNOTATIONS {
-            summary="{{$labels.alias}}: Using lots of RAM.",
-            description="{{$labels.alias}} is using at least 90% of its RAM for at least 30 minutes now.",
-          }
-          ALERT node_swap_using_80percent
-          IF node_memory_SwapTotal - (node_memory_SwapFree + node_memory_SwapCached) > node_memory_SwapTotal * 0.8
-          FOR 10m
-          LABELS {
-            severity="page"
-          }
-          ANNOTATIONS {
-            summary="{{$labels.alias}}: Running out of swap soon.",
-            description="{{$labels.alias}} is using 80% of its swap space for at least 10 minutes now."
-          }
-        ''
+      #surfboard = {
+      #  enable = true;
+      #};
+      node = {
+        enable = true;
+        enabledCollectors = [
+          "systemd"
+          "tcpstat"
+          "conntrack"
+          "diskstats"
+          "entropy"
+          "filefd"
+          "filesystem"
+          "loadavg"
+          "meminfo"
+          "netdev"
+          "netstat"
+          "stat"
+          "time"
+          "vmstat"
+          "logind"
+          "interrupts"
+          "ksmd"
+        ];
+      };
+      unifi = {
+        enable = false;
+        unifiAddress = "https://unifi.wedlake.lan";
+        unifiUsername = "prometheus";
+        unifiPassword = secrets.unifi_password_ro;
+        openFirewall = true;
+      };
+    };
+    prometheus2 = {
+      enable = true;
+      extraFlags = [
+        "--storage.tsdb.retention.time 8760h"
       ];
+      alertmanagerURL = [ "optina.wedlake.lan:9093" ];
+      rules = [ (builtins.toJSON {
+        groups = [
+          {
+            name = "system";
+            rules = [
+              {
+                alert = "node_down";
+                expr = "up == 0";
+                for = "5m";
+                labels = {
+                  severity = "page";
+                };
+                annotations = {
+                  summary = "{{$labels.alias}}: Node is down.";
+                  description = "{{$labels.alias}} has been down for more than 5 minutes.";
+                };
+              }
+              {
+                alert = "node_systemd_service_failed";
+                expr = "node_systemd_unit_state{state=\"failed\"} == 1";
+                for = "4m";
+                labels = {
+                  severity = "page";
+                };
+                annotations = {
+                  summary = "{{$labels.alias}}: Service {{$labels.name}} failed to start.";
+                  description = "{{$labels.alias}} failed to (re)start service {{$labels.name}}.";
+                };
+              }
+              {
+                alert = "node_filesystem_full_90percent";
+                expr = "sort(node_filesystem_free_bytes{device!=\"ramfs\"} < node_filesystem_size_bytes{device!=\"ramfs\"} * 0.1) / 1024^3";
+                for = "5m";
+                labels = {
+                  severity = "page";
+                };
+                annotations = {
+                  summary = "{{$labels.alias}}: Filesystem is running out of space soon.";
+                  description = "{{$labels.alias}} device {{$labels.device}} on {{$labels.mountpoint}} got less than 10% space left on its filesystem.";
+                };
+              }
+              {
+                alert = "node_filesystem_full_in_4h";
+                expr = "predict_linear(node_filesystem_free_bytes{device!=\"ramfs\",device!=\"tmpfs\",fstype!=\"autofs\",fstype!=\"cd9660\"}[4h], 4*3600) <= 0";
+                for = "5m";
+                labels = {
+                  severity = "page";
+                };
+                annotations = {
+                  summary = "{{$labels.alias}}: Filesystem is running out of space in 4 hours.";
+                  description = "{{$labels.alias}} device {{$labels.device}} on {{$labels.mountpoint}} is running out of space of in approx. 4 hours";
+                };
+              }
+              {
+                alert = "node_filedescriptors_full_in_3h";
+                expr = "predict_linear(node_filefd_allocated[1h], 3*3600) >= node_filefd_maximum";
+                for = "20m";
+                labels = {
+                  severity = "page";
+                };
+                annotations = {
+                  summary = "{{$labels.alias}} is running out of available file descriptors in 3 hours.";
+                  description = "{{$labels.alias}} is running out of available file descriptors in approx. 3 hours";
+                };
+              }
+              {
+                alert = "node_load1_90percent";
+                expr = "node_load1 / on(alias) count(node_cpu_seconds_total{mode=\"system\"}) by (alias) >= 0.9";
+                for = "1h";
+                labels = {
+                  severity = "page";
+                };
+                annotations = {
+                  summary = "{{$labels.alias}}: Running on high load.";
+                  description = "{{$labels.alias}} is running with > 90% total load for at least 1h.";
+                };
+              }
+              {
+                alert = "node_cpu_util_90percent";
+                expr = "100 - (avg by (alias) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100) >= 90";
+                for = "1h";
+                labels = {
+                  severity = "page";
+                };
+                annotations = {
+                  summary = "{{$labels.alias}}: High CPU utilization.";
+                  description = "{{$labels.alias}} has total CPU utilization over 90% for at least 1h.";
+                };
+              }
+              {
+                alert = "node_ram_using_99percent";
+                expr = "node_memory_MemFree_bytes + node_memory_Buffers_bytes + node_memory_Cached_bytes < node_memory_MemTotal_bytes * 0.01";
+                for = "30m";
+                labels = {
+                  severity = "page";
+                };
+                annotations = {
+                  summary = "{{$labels.alias}}: Using lots of RAM.";
+                  description = "{{$labels.alias}} is using at least 90% of its RAM for at least 30 minutes now.";
+                };
+              }
+              {
+                alert = "node_swap_using_80percent";
+                expr = "node_memory_SwapTotal_bytes - (node_memory_SwapFree_bytes + node_memory_SwapCached_bytes) > node_memory_SwapTotal_bytes * 0.8";
+                for = "10m";
+                labels = {
+                  severity = "page";
+                };
+                annotations = {
+                  summary = "{{$labels.alias}}: Running out of swap soon.";
+                  description = "{{$labels.alias}} is using 80% of its swap space for at least 10 minutes now.";
+                };
+              }
+              {
+                alert = "node_time_unsync";
+                expr = "abs(node_timex_offset_seconds) > 0.050 or node_timex_sync_status != 1";
+                for = "1m";
+                labels = {
+                  severity = "page";
+                };
+                annotations = {
+                  summary = "{{$labels.alias}}: Clock out of sync with NTP";
+                  description = "{{$labels.alias}} Local clock offset is too large or out of sync with NTP";
+                };
+              }
+            ];
+          }
+        ];
+      })];
       scrapeConfigs = [
         {
           job_name = "prometheus";
@@ -557,6 +577,16 @@ in {
               targets = [
                 "localhost:9090"
               ];
+            }
+          ];
+        }
+        {
+          job_name = "jormungandr";
+          scrape_interval = "10s";
+          static_configs = [
+            {
+              targets = [ "portal.wedlake.lan:3102" ];
+              labels = { alias = "jormungandr"; };
             }
           ];
         }
@@ -681,47 +711,40 @@ in {
           ];
         }
       ];
-      alertmanager = {
-        enable = true;
-        listenAddress = "0.0.0.0";
-        configuration = {
-          "global" = {
-            "smtp_smarthost" = "smtp.gmail.com:587";
-            "smtp_from" = "alertmanager@samleathers.com";
-            "smtp_auth_username" = "disasm@gmail.com";
-            "smtp_auth_password" = secrets.alertmanager_smtp_pw;
-          };
-          "route" = {
-            "group_by" = [ "alertname" "alias" ];
-            "group_wait" = "30s";
-            "group_interval" = "2m";
-            "repeat_interval" = "4h";
-            "receiver" = "team-admins";
-          };
-          "receivers" = [
-            {
-              "name" = "team-admins";
-              "email_configs" = [
-              {
-                  "to"            = "disasm@gmail.com";
-                  "send_resolved" = true;
-                }
-              ];
-              "webhook_configs" = [
-                {
-                  "url" = "https://crate.wedlake.lan/prometheus-alerts";
-                  "send_resolved" = true;
-                }
-              ];
-              "pushover_configs" = [
-                {
-                  "user_key" = secrets.alertmanager_pushover_user;
-                  "token" = secrets.alertmanager_pushover_token;
-                }
-              ];
-            }
-          ];
+    };
+    prometheus.alertmanager = {
+      enable = true;
+      listenAddress = "0.0.0.0";
+      configuration = {
+        "global" = {
+          "smtp_smarthost" = "smtp.gmail.com:587";
+          "smtp_from" = "alertmanager@samleathers.com";
+          "smtp_auth_username" = "disasm@gmail.com";
+          "smtp_auth_password" = secrets.alertmanager_smtp_pw;
         };
+        "route" = {
+          "group_by" = [ "alertname" "alias" ];
+          "group_wait" = "30s";
+          "group_interval" = "2m";
+          "repeat_interval" = "4h";
+          "receiver" = "team-admins";
+        };
+        "receivers" = [
+          {
+            "name" = "team-admins";
+            "email_configs" = [
+            {
+                "to"            = "disasm@gmail.com";
+                "send_resolved" = true;
+              }
+            ];
+            "pagerduty_configs" = [
+              {
+                "service_key" = secrets.pagerduty_token;
+              }
+            ];
+          }
+        ];
       };
     };
     grafana = {
