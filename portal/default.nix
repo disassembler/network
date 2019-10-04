@@ -295,7 +295,7 @@ in {
   services = {
     jormungandr = {
       enable = true;
-      enableExplorer = false;
+      enableExplorer = true;
       genesisBlockHash = "adbdd5ede31637f6c9bad5c271eec0bc3d0cb9efb86a5b913bb55cba549d0770";
       trustedPeersAddresses = [
         #"/ip4/209.209.238.36/tcp/14509"

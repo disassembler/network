@@ -70,6 +70,7 @@ in {
       10.40.33.1 portal.wedlake.lan
       127.0.0.1 wallet.samleathers.com
       127.0.0.1 dev.ocf.net
+      127.0.0.1 explorer.jormungandr
       127.0.0.1 wp.dev
     '';
     nat = {
@@ -441,6 +442,16 @@ in {
     nginx = {
       enable = true;
       virtualHosts = {
+        "explorer.jormungandr" = {
+          root = (import /home/sam/work/iohk/jormungandr-explorer).jormungandr-explorer;
+          locations."/explorer/".extraConfig = ''
+            proxy_pass http://10.40.33.1:3101/explorer/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header  X-Real-IP         $remote_addr;
+            proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+          '';
+        };
         "dev.ocf.net" = {
           root = "/var/www/ocf";
           extraConfig = ''
