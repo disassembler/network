@@ -135,8 +135,7 @@ in {
         443
         445
         631
-        3000
-        3001
+        3001   # cardano-node
         4444
         5601   # kibana
         5900
@@ -212,6 +211,37 @@ in {
   ];
 
   services = {
+    cardano-node = {
+      enable = true;
+      environment = "ff";
+      hostAddr = "0.0.0.0";
+      topology =  builtins.toFile "topology.json" (builtins.toJSON {
+        Producers = [
+          {
+            addr = "10.40.33.1";
+            port = 3001;
+            valency = 1;
+          }
+        ];
+      });
+      nodeConfig = config.services.cardano-node.environments.alpha1.nodeConfig // {
+        hasPrometheus = [ "127.0.0.1" 12798 ];
+        setupScribes = [{
+          scKind = "JournalSK";
+          scName = "cardano";
+          scFormat = "ScText";
+        }];
+        defaultScribes = [
+          [
+            "JournalSK"
+            "cardano"
+          ]
+        ];
+      };
+      kesKey = "/var/lib/keys/cardano-kes";
+      vrfKey = "/var/lib/keys/cardano-vrf";
+      operationalCertificate = "/var/lib/keys/cardano-opcert";
+    };
     udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="74:d4:35:9b:84:62", NAME="enp2s0"
     '';
@@ -589,12 +619,16 @@ in {
           ];
         }
         {
-          job_name = "jormungandr";
+          job_name = "cardano-node";
           scrape_interval = "10s";
           static_configs = [
             {
-              targets = [ "portal.wedlake.lan:3102" ];
-              labels = { alias = "jormungandr"; };
+              targets = [ "10.40.33.20:12798" ];
+              labels = { alias = "portal"; };
+            }
+            {
+              targets = [ "127.0.0.1:12798" ];
+              labels = { alias = "optina"; };
             }
           ];
         }
