@@ -35,7 +35,7 @@ in
           "vim-markdown"
           "gitgutter"
           "vim-nix"
-          "deoplete_nvim"
+          #"deoplete_nvim"
           "repeat"
           "nerdtree"
           "UltiSnips"
@@ -46,6 +46,7 @@ in
           "splice_vim"
           "markdown_wiki"
           "tagbar"
+          "confluence"
         ] ++ (pkgs.lib.optionals dev dev_plugin_names);
       }
     ];

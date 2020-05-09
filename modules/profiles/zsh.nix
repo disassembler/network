@@ -4,9 +4,7 @@ with lib;
 
 let
   cfg = config.profiles.zsh;
-  zsh_config = import ./zsh/config.nix {
-    inherit (pkgs) writeText zsh-prezto less;
-  };
+  zsh_config = pkgs.callPackage ./zsh/config.nix {};
 in {
   options.profiles.zsh = {
     enable = mkEnableOption "enable zsh profile";

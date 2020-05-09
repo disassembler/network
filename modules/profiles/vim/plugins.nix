@@ -1,4 +1,4 @@
-{ pkgs, fetchgit }:
+{ pkgs, fetchgit, fetchFromGitHub, python3 }:
 
 let
   buildVimPlugin = pkgs.vimUtils.buildVimPluginFrom2Nix;
@@ -137,6 +137,17 @@ in {
       rev = "eb0ba24a1683f871952d395d1537fc39e096d16a";
       sha256 = "19ff3bwxkrb3ad52jknbwhjgyhg6gnap38qsll9qlb2zn040l073";
     };
+    dependencies = [];
+  };
+  "confluence" = buildVimPlugin {
+    name = "confluence";
+    #src = fetchFromGitHub {
+    #  owner = "lusis";
+    #  repo = "confluence-vim";
+    #  rev = "8dd36c41ba79f3d1888555b777159129c94165f9";
+    #  sha256 = "1q2j1bn8izyzr3g8jsn9rcpcw02acvgg8r4f5m5kmqzk9kww558m";
+    #};
+    src = /home/sam/work/iohk/confluence-vim;
     dependencies = [];
   };
 }

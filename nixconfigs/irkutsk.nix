@@ -32,21 +32,27 @@ in {
   # Splash screen to make boot look nice
   boot.plymouth.enable = true;
 
+  console.keyMap = "us";
+  console.packages = with pkgs; [ terminus_font ];
+  console.font = "ter-i32b";
   i18n = {
-    consoleFont = "sun12x22";
-    consoleKeyMap = "us";
     defaultLocale = "en_US.UTF-8";
   };
 
-
   # Luks support
-  boot.initrd.luks.devices = [{
-    name = "linuxroot";
-    device = "/dev/disk/by-uuid/47a5b911-4dfe-4bf5-8a5c-c911e211cda0";
-  }];
+  boot.initrd.luks.devices = {
+    linuxroot = {
+      device = "/dev/disk/by-uuid/47a5b911-4dfe-4bf5-8a5c-c911e211cda0";
+    };
+  };
   systemd.additionalUpstreamSystemUnits = [
     "debug-shell.service"
   ];
+
+  location = {
+    latitude = 40.8681;
+    longitude = -77.9574;
+  };
 
   powerManagement = {
     enable = true;
@@ -55,6 +61,7 @@ in {
       echo XHC > /proc/acpi/wakeup
     '';
   };
+  time.timeZone = "America/New_York";
 
   networking = {
     hostName = machine;
@@ -71,6 +78,7 @@ in {
       127.0.0.1 wallet.samleathers.com
       127.0.0.1 dev.ocf.net
       127.0.0.1 explorer.jormungandr
+      127.0.0.1 explorer.cardano
       127.0.0.1 wp.dev
     '';
     nat = {
@@ -151,7 +159,7 @@ in {
     ];
     distributedBuilds = true;
     buildMachines = [
-      buildMachines.darwin.sarov-mac
+      buildMachines.darwin.ohrid
       #buildMachines.darwin.macvm
       #buildMachines.linux.optina
     ];
@@ -184,7 +192,7 @@ in {
 
   nixpkgs.config = {
     allowUnfree = true;
-    allowBroken = true;
+    allowBroken = false;
     android_sdk.accept_license = true;
     packageOverrides = super: let self = super.pkgs; in {
       #nixops = super.nixops.overrideDerivation (
@@ -209,7 +217,7 @@ in {
     isNormalUser = true;
     description = "Sam Leathers";
     uid = 1000;
-    extraGroups = [ "wheel" "docker" "disk" "video" "libvirtd" "adbusers" ];
+    extraGroups = [ "wheel" "docker" "disk" "video" "libvirtd" "adbusers" "dialout" ];
     openssh.authorizedKeys.keys = shared.sam_ssh_keys;
   };
 
@@ -222,6 +230,19 @@ in {
   };
 
   environment.systemPackages = with pkgs; let
+    startSway = pkgs.writeTextFile {
+        name = "startsway";
+        destination = "/bin/startsway";
+        executable = true;
+        text = ''
+          #! ${pkgs.bash}/bin/bash
+
+          # first import environment variables from the login manager
+          systemctl --user import-environment
+          # then start the service
+          exec systemctl --user start sway.service
+        '';
+      };
     #nixopsSrc = pkgs.fetchFromGitHub {
     #  owner = "input-output-hk";
     #  repo = "nixops";
@@ -234,11 +255,24 @@ in {
     #  p = (p: [ packet ]);
     #}).build.x86_64-linux;
   in [
+    heimdall-gui
+    #dnscontrol
+    gopass
+    arduino
+    startSway
+    avidemux
+    mplayer
+    gpgme.dev
+    yubioath-desktop
+    yubikey-manager
+    bat
+    slurp
+    grim
+    ripgrep
     opensc
     pavucontrol
     hledger
     psmisc
-    sway
     hie82
     sqliteInteractive
     manymans
@@ -260,11 +294,9 @@ in {
     #androidsdk
     tmate
     htop
-    i3-gaps
-    xlockmore
-    i3status
     feh
     imagemagick
+    magic-wormhole
     weechat
     rxvt_unicode-with-plugins
     xsel
@@ -283,7 +315,7 @@ in {
     unzip
     aws
     awscli
-    aws_shell
+    #aws_shell
     p7zip
     zip
     scrot
@@ -306,6 +338,7 @@ in {
     termite
     #wine-staging
     inotifyTools
+    #(import (builtins.fetchTarball "https://github.com/hercules-ci/ghcide-nix/tarball/master") {}).ghcide-ghc865
   ];
 
   hardware = {
@@ -321,14 +354,14 @@ in {
     facetimehd.enable = true;
     bluetooth = {
       enable = true;
-      extraConfig = ''
-        [general]
-        Enable=Source,Sink,Media,Socket
-      '';
+      config = {
+        general = {
+          Enable = "Source,Sink,Media,Socket";
+        };
+      };
     };
   };
   fonts.enableFontDir = true;
-  fonts.enableCoreFonts = true;
   fonts.enableGhostscriptFonts = true;
   fonts.fontconfig.dpi=150;
   fonts.fonts = with pkgs; [
@@ -344,53 +377,62 @@ in {
     terminus_font
     unifont # some international languages
   ];
-  programs.adb.enable = true;
-  programs.light.enable = true;
-  programs.sway = {
-    enable = true;
+  programs = {
+    mosh.enable = true;
+    adb.enable = true;
+    light.enable = true;
+    sway = {
+      enable = true;
+      extraPackages = with pkgs; [
+        swaylock
+        swayidle
+        xwayland
+        waybar
+        mako
+        kanshi
+      ];
+    };
+    waybar.enable = true;
+    ssh.startAgent = lib.mkForce false;
+    gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
+    };
   };
 
-  services = {
-    pcscd.enable = true;
-    jormungandr = {
-      enable = false;
-      enableExplorer = false;
-      genesisBlockHash = "adbdd5ede31637f6c9bad5c271eec0bc3d0cb9efb86a5b913bb55cba549d0770";
-      trustedPeersAddresses = [
-        "/ip4/3.123.177.192/tcp/3000"
-        "/ip4/52.57.157.167/tcp/3000"
-        "/ip4/3.123.155.47/tcp/3000"
-        "/ip4/3.115.57.216/tcp/3000"
-        "/ip4/3.112.185.217/tcp/3000"
-        "/ip4/18.139.40.4/tcp/3000"
-        "/ip4/18.140.134.230/tcp/3000"
-      ];
-      publicAddress = "/ip4/73.52.25.31/tcp/3100";
-      listenAddress = "/ip4/0.0.0.0/tcp/3100";
-      topicsOfInterest = {
-        messages = "high";
-        blocks = "high";
-      };
-      withBackTraces = true;
-      withValgrind = false;
-      secrets-paths = [ "/var/lib/jormungandr/secret.yaml" ];
-      rest.listenAddress = "127.0.0.1:3101";
-      logger = {
-        level = "info";
-        output = "stderr";
-        #backend = "monitoring.stakepool.cardano-testnet.iohkdev.io:12201";
-        #logs-id = "disasm";
-      };
 
-    };
-    byron-proxy = {
-      environment = "mainnet";
-      enable = false;
-    };
-    cardano-node = {
-      environment = "mainnet";
-      enable = false;
-    };
+  services = {
+    resolved.enable = false;
+    pcscd.enable = true;
+    #jormungandr-explorer = {
+    #  #package = (import /home/sam/work/iohk/shelley-testnet-explorer/override.nix {}).overrideAttrs (oldAttrs: {
+    #  #  GATSBY_JORMUNGANDR_URL = "http://explorer.jormungandr";
+    #  #  GATSBY_URL = "http://explorer.jormungandr";
+    #  #});
+    #  enable = true;
+    #  virtualHost = "explorer.jormungandr";
+    #  enableSSL = false;
+    #  jormungandrApi = "http://explorer.jormungandr:3101/explorer/graphql";
+    #};
+    #jormungandr = {
+    #  enable = false;
+    #  environment = "itn_rewards_v1";
+    #  enableExplorer = true;
+    #  rest.listenAddress = "127.0.0.1:3201";
+    #  rest.cors.allowedOrigins = [ "http://127.0.0.1:3201" ];
+    #};
+    #byron-proxy = {
+    #  environment = "mainnet";
+    #  enable = false;
+    #};
+    #cardano-node = {
+    #  environment = "mainnet";
+    #  enable = false;
+    #};
+    #cardano-cluster = {
+    #  enable = true;
+    #  node-count = 1;
+    #};
     prometheus = {
       enable = true;
       scrapeConfigs = [
@@ -416,7 +458,6 @@ in {
       pools = {
         mypool = {
           user = "nginx";
-          listen = "127.0.0.1:9000";
           settings = {
             "pm" = "dynamic";
             "pm.max_children" = 5;
@@ -442,67 +483,13 @@ in {
     nginx = {
       enable = true;
       virtualHosts = {
-        "explorer.jormungandr" = {
-          root = (import /home/sam/work/iohk/jormungandr-explorer).jormungandr-explorer;
-          locations."/explorer/".extraConfig = ''
-            proxy_pass http://10.40.33.1:3101/explorer/;
-            proxy_set_header Host $host;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header  X-Real-IP         $remote_addr;
-            proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
-          '';
-        };
-        "dev.ocf.net" = {
-          root = "/var/www/ocf";
-          extraConfig = ''
-            index index.php index.html index.htm;
-            location / {
-                    # try_files $uri $uri/ =404;
-                    try_files $uri $uri/ /index.php?q=$uri&$args;
-            }
-
-            error_page 404 /404.html;
-
-            location ~ \.php$ {
-                    try_files $uri =404;
-                    fastcgi_split_path_info ^(.+\.php)(/.+)$;
-                    fastcgi_pass 127.0.0.1:9000;
-                    fastcgi_index index.php;
-            }
-          '';
-        };
-        "wp.dev" = {
-          root = "/var/www/wpdev";
-          extraConfig = ''
-            index index.php;
-            location = /favicon.ico {
-                log_not_found off;
-                access_log off;
-        }
-
-        location = /robots.txt {
-                allow all;
-                log_not_found off;
-                access_log off;
-        }
-
-        location / {
-                # This is cool because no php is touched for static content.
-                # include the "?$args" part so non-default permalinks doesn't break when using query string
-                try_files $uri $uri/ /index.php?$args;
-        }
-
-        location ~ \.php$ {
-                #NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
-                fastcgi_intercept_errors on;
-                fastcgi_pass 127.0.0.1:9000;
-        }
-
-        location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
-                expires max;
-                log_not_found off;
-        }
-          '';
+        "explorer.cardano" = {
+          locations."/" = {
+            proxyPass = "http://localhost:4000";
+          };
+          locations."/graphql" = {
+            proxyPass = "https://explorer.staging-shelley.dev.iohkdev.io/graphql";
+          };
         };
       };
     };
@@ -540,6 +527,7 @@ in {
       ensureDatabases = [
         "explorer_python_api"
         "cexplorer"
+        "hdb_catalog"
       ];
       ensureUsers = [
         {
@@ -547,6 +535,7 @@ in {
           ensurePermissions = {
             "DATABASE explorer_python_api" = "ALL PRIVILEGES";
             "DATABASE cexplorer" = "ALL PRIVILEGES";
+            "DATABASE hdb_catalog" = "ALL PRIVILEGES";
             "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
             #"ALL TABLES IN SCHEMA scraper" = "ALL PRIVILEGES";
           };
@@ -580,9 +569,29 @@ in {
     acpid.enable = true;
     upower.enable = true;
 
-    udev.extraRules = ''
-      ATTR{idVendor}=="1d50", ATTR{idProduct}=="6089", SYMLINK+="hackrf-one-%k", MODE="660", GROUP="plugdev"
+    udev.extraRules = let
+      dependencies = with pkgs; [ coreutils gnupg gawk gnugrep ];
+      clearYubikey = pkgs.writeScript "clear-yubikey" ''
+        #!${pkgs.stdenv.shell}
+        export PATH=${pkgs.lib.makeBinPath dependencies};
+        keygrips=$(
+          gpg-connect-agent 'keyinfo --list' /bye 2>/dev/null \
+            | grep -v OK \
+            | awk '{if ($4 == "T") { print $3 ".key" }}')
+        for f in $keygrips; do
+          rm -v ~/.gnupg/private-keys-v1.d/$f
+        done
+        gpg --card-status 2>/dev/null 1>/dev/null || true
+      '';
+      clearYubikeySam = pkgs.writeScript "clear-yubikey-sam" ''
+        #!${pkgs.stdenv.shell}
+        ${pkgs.sudo}/bin/sudo -u sam ${clearYubikey}
+      '';
+    in ''
+      ACTION=="add|change", SUBSYSTEM=="usb", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0407", RUN+="${clearYubikeySam}"
+
     '';
+    udev.packages = [ pkgs.yubikey-personalization ];
 
     compton = {
       enable = true;
@@ -592,43 +601,43 @@ in {
         "0:_NET_WM_STATE@:32a *= '_NET_WM_STATE_HIDDEN'"
       ];
     };
-    xserver = {
-      xautolock = {
-        enable = true;
-        time = 5;
-        locker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
-        nowlocker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
-        #killer = "${pkgs.systemd}/bin/systemctl suspend";
-        #killtime = 30;
-        extraOptions = [ "-detectsleep" ];
-      };
-      libinput = {
-        enable = true;
-        tapping = true;
-        disableWhileTyping = true;
-        scrollMethod = "twofinger";
-        naturalScrolling = false;
-      };
-      #autorun = true;
-      enable = false;
-      #layout = "us";
-      desktopManager = {
-        default = "none";
-      };
-      windowManager.i3 = {
-        enable = true;
-        extraSessionCommands = ''
-          ${pkgs.xlibs.xset}/bin/xset r rate 200 60 # set keyboard repeat
-          ${pkgs.feh} --bg-scale /home/sam/photos/20170503_183237.jpg
-        '';
-      };
-      windowManager.i3.package = pkgs.i3-gaps;
-      windowManager.i3.configFile = "/home/sam/.config/i3/config";
-      #windowManager.default = "i3";
-      #displayManager.lightdm = {
-      #  enable = false;
-      #};
-    };
+    #xserver = {
+    #  xautolock = {
+    #    enable = true;
+    #    time = 5;
+    #    locker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
+    #    nowlocker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
+    #    #killer = "${pkgs.systemd}/bin/systemctl suspend";
+    #    #killtime = 30;
+    #    extraOptions = [ "-detectsleep" ];
+    #  };
+    #  libinput = {
+    #    enable = true;
+    #    tapping = true;
+    #    disableWhileTyping = true;
+    #    scrollMethod = "twofinger";
+    #    naturalScrolling = false;
+    #  };
+    #  #autorun = true;
+    #  enable = false;
+    #  #layout = "us";
+    #  desktopManager = {
+    #    default = "none";
+    #  };
+    #  #windowManager.i3 = {
+    #  #  enable = true;
+    #  #  extraSessionCommands = ''
+    #  #    ${pkgs.xlibs.xset}/bin/xset r rate 200 60 # set keyboard repeat
+    #  #    ${pkgs.feh} --bg-scale /home/sam/photos/20170503_183237.jpg
+    #  #  '';
+    #  #};
+    #  #windowManager.i3.package = pkgs.i3-gaps;
+    #  #windowManager.i3.configFile = "/home/sam/.config/i3/config";
+    #  #windowManager.default = "i3";
+    #  #displayManager.lightdm = {
+    #  #  enable = false;
+    #  #};
+    #};
     dnsmasq = {
       enable = true;
       extraConfig = ''
@@ -675,6 +684,10 @@ in {
       enable = true;
       mountPoint = "/keybase";
     };
+    redshift = {
+      enable = true;
+      package = pkgs.redshift-wlr;
+    };
   };
   virtualisation.docker = {
     enable = true;
@@ -687,11 +700,107 @@ in {
   security.sudo.wheelNeedsPassword = true;
 
   # Custom dotfiles for sam user
-  environment.etc."per-user/sam/gitconfig".text = import ../sam-dotfiles/git-config.nix;
+  environment = {
+    etc = {
+      "per-user/sam/gitconfig".text = import ../sam-dotfiles/git-config.nix;
+      "sway/config".source = ../sam-dotfiles/sway/config;
+      "xdg/waybar/config".source = ../sam-dotfiles/waybar/config;
+      "xdg/waybar/style.css".source = ../sam-dotfiles/waybar/style.css;
+    };
+
+    shellInit = ''
+      export GPG_TTY="$(tty)"
+      gpg-connect-agent /bye
+      export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"
+    '';
+  };
 
   system.activationScripts.samdotfiles = {
-    text = "ln -sfn /etc/per-user/sam/gitconfig /home/sam/.gitconfig";
+    text = ''
+      mkdir -p /home/sam/.config/sway
+      ln -sfn /etc/per-user/sam/gitconfig /home/sam/.gitconfig
+      ln -sfn /etc/xdg/waybar /home/sam/.config/waybar
+    '';
     deps = [];
   };
+
+  systemd.user.services = {
+    #mbsync = {
+    #  description = "IMAP mailbox sync";
+    #  path = [ pkgs.isync ];
+    #  script = "mbsync -c /home/sam/.mutt/mbsyncrc -q -a";
+    #  startAt = "*:0/3";
+    #  wantedBy = [ "timers.target" ];
+    #  serviceConfig = {
+    #    TimeoutStartSec = "2min";
+    #  };
+    #  preStart = ''
+    #    mkdir -p /home/sam/mail/EEVA
+    #    mkdir -p /home/sam/mail/MPO
+    #    mkdir -p /home/sam/mail/LACL
+    #  '';
+    #};
+
+    #mu = {
+    #  description = "Updating mail database";
+    #  path = [ mu-light ];
+    #  script = "mu index --quiet -m ~/mail";
+    #  startAt = "daily";
+    #  wantedBy = [ "timers.target" ];
+    #};
+
+    #msmtp-runqueue = {
+    #  description = "Flushing mail queue";
+    #  script = builtins.readFile "/home/sam/prefix/bin/msmtp-runqueue";
+    #  preStart = "mkdir -p /home/sam/.msmtpqueue";
+    #  postStop = "rm -f /home/sam/.msmtpqueue/.lock";
+    #  startAt = "*:0/10";
+    #  serviceConfig = {
+    #    TimeoutStartSec = "2min";
+    #  };
+    #  path = [ pkgs.msmtp ];
+    #};
+    #sway = {
+    #  description = "Sway - Wayland window manager";
+    #  documentation = [ "man:sway(5)" ];
+    #  bindsTo = [ "graphical-session.target" ];
+    #  wants = [ "graphical-session-pre.target" ];
+    #  after = [ "graphical-session-pre.target" ];
+    #  # We explicitly unset PATH here, as we want it to be set by
+    #  # systemctl --user import-environment in startsway
+    #  environment.PATH = lib.mkForce null;
+    #  serviceConfig = {
+    #    Type = "simple";
+    #    ExecStart = ''
+    #      ${pkgs.dbus}/bin/dbus-run-session ${pkgs.sway}/bin/sway --debug --config /etc/sway/config
+    #    '';
+    #    Restart = "on-failure";
+    #    RestartSec = 1;
+    #    TimeoutStopSec = 10;
+    #  };
+    #};
+    #kanshi = {
+    #  description = "Kanshi output autoconfig ";
+    #  wantedBy = [ "graphical-session.target" ];
+    #  partOf = [ "graphical-session.target" ];
+    #  serviceConfig = {
+    #    # kanshi doesn't have an option to specifiy config file yet, so it looks
+    #    # at .config/kanshi/config
+    #    ExecStart = ''
+    #      ${pkgs.kanshi}/bin/kanshi
+    #    '';
+    #    RestartSec = 5;
+    #    Restart = "always";
+    #  };
+    #};
+  };
+  #systemd.user.targets.sway-session = {
+  #  description = "Sway compositor session";
+  #  documentation = [ "man:systemd.special(7)" ];
+  #  bindsTo = [ "graphical-session.target" ];
+  #  wants = [ "graphical-session-pre.target" ];
+  #  after = [ "graphical-session-pre.target" ];
+  #};
+
 
 }

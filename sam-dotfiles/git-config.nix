@@ -5,7 +5,7 @@
 [user]
   name = Samuel Leathers
   email = samuel.leathers@iohk.io
-  signingkey = 9BCE91C969768E0F
+  signingkey = F919BF40EACEF923
 
 [commit]
   gpgsign = true

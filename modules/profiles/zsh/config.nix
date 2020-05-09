@@ -1,4 +1,4 @@
-{ writeText, zsh-prezto, less }:
+{ writeText, zsh-prezto, less, coreutils }:
 
 let
   self = writeText "zsh-config"
@@ -100,6 +100,7 @@ let
       alias ssht="TERM=screen-256color ssh"
       alias nshell="nix-shell --run zsh"
       alias vi="nvim"
+      alias cpf="${coreutils}/bin/cp"
       # only init if installed.
       fasd_cache="$HOME/.fasd-init-bash"
       if [ "$(command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then
@@ -137,24 +138,24 @@ let
       alias -g G='| grep' # now you can do: ls foo G something
     '';
 in {
-  environment_etc =
-    [ { source = "${zsh-prezto}/runcoms/zlogin";
-        target = "zlogin";
-      }
-      { source = "${zsh-prezto}/runcoms/zlogout";
-        target = "zlogout";
-      }
-      { source = self;
-        target = "zpreztorc";
-      }
-      { source = "${zsh-prezto}/runcoms/zprofile";
-        target = "zprofile.local";
-      }
-      { source = "${zsh-prezto}/runcoms/zshenv";
-        target = "zshenv.local";
-      }
-      { source = "${zsh-prezto}/runcoms/zshrc";
-        target = "zshrc.local";
-      }
-    ];
+  environment_etc = {
+    zlogin = {
+      source = "${zsh-prezto}/runcoms/zlogin";
+    };
+    zlogout = {
+      source = "${zsh-prezto}/runcoms/zlogout";
+    };
+    zpreztorc = {
+      source = self;
+    };
+    "zprofile.local" = {
+      source = "${zsh-prezto}/runcoms/zprofile";
+    };
+    "zshenv.local" = {
+      source = "${zsh-prezto}/runcoms/zshenv";
+    };
+    "zshrc.local" = {
+      source = "${zsh-prezto}/runcoms/zshrc";
+    };
+  };
 }

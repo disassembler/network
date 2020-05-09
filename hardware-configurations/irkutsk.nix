@@ -17,6 +17,15 @@
       fsType = "zfs";
     };
 
+  fileSystems."/nix" = { device = "zpool/nix";
+      fsType = "zfs";
+    };
+  fileSystems."/var/lib/docker" = { device = "zpool/docker";
+      fsType = "zfs";
+    };
+  fileSystems."/var/lib/containers" = { device = "zpool/containers";
+      fsType = "zfs";
+    };
   fileSystems."/home" =
     { device = "zpool/home";
       fsType = "zfs";

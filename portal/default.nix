@@ -253,6 +253,11 @@ in {
             allowedIPs = [ "10.37.4.0/24" "10.37.6.1/32" "fd00::37/128" ];
           }
           {
+            # greenacres
+            publicKey = "NhywNZQlIJitXta1V+HCLSiOTYlgxWOQGvxh2Tvinmk=";
+            allowedIPs = [ "10.36.9.0/24" "10.36.3.0/24" "fd00::36/128" "192.168.254.0/24" ];
+          }
+          {
             # clever
             publicKey = "oycbQ1DhtRh0hhD5gpyiKTUh0USkAwbjMer6/h/aHg8=";
             allowedIPs = [ "10.40.9.3/32" "fd00::3/128" ];
@@ -284,6 +289,7 @@ in {
   };
 
   environment.systemPackages = with pkgs; [
+    jq
     wget
     vim
     tmux
@@ -376,6 +382,7 @@ in {
         ${lib.concatMapStrings (createAddress "wedlake.lan" portal_ipv4 portal_ipv6) portal_cnames}
         address=/printer.wedlake.lan/10.40.33.50
         address=/prod01.wedlake.lan/fd00::2
+        rebind-domain-ok=/plex.direct/
       '';
     };
     unbound = {

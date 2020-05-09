@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }: 
+{ config, pkgs, lib, ... }:
 
 with lib;
 
@@ -9,7 +9,7 @@ with lib;
     programs.tmux = {
       enable = true;
       newSession = true;
-      extraTmuxConf = builtins.readFile ./tmux.conf;
+      extraConfig = builtins.readFile ./tmux.conf;
       terminal = "screen-256color";
     };
 

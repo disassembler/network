@@ -168,6 +168,8 @@ in {
   nixpkgs = {
     config = {
       allowUnfree = true;
+      # required for mongodb 3.4
+      permittedInsecurePackages = ["openssl-1.0.2u"];
       packageOverrides = pkgs: rec {
         weechat = pkgs.weechat.override {
           configure = {availablePlugins, ...}: {
@@ -180,7 +182,7 @@ in {
       };
     };
     overlays = [
-      (import ../overlays/plex.nix)
+      #(import ../overlays/plex.nix)
     ];
   };
 
@@ -204,7 +206,7 @@ in {
     git
     fasd
     dnsutils
-    openssl
+    #openssl
     powerdns
     virtmanager
   ];
@@ -288,7 +290,6 @@ in {
       autorun = true;
       enable = true;
       layout = "us";
-      windowManager.default = "i3";
       windowManager.i3 = {
         enable = true;
         #extraSessionCommands = ''
@@ -296,6 +297,7 @@ in {
         #'';
         package = pkgs.i3-gaps;
       };
+      displayManager.defaultSession = "none+i3";
       displayManager.lightdm = {
         enable = true;
         background = "/etc/lightdm/background.jpg";
@@ -433,12 +435,18 @@ in {
         openFirewall = true;
       };
     };
-    prometheus2 = {
+    prometheus = {
       enable = true;
       extraFlags = [
         "--storage.tsdb.retention.time 8760h"
       ];
-      alertmanagerURL = [ "optina.wedlake.lan:9093" ];
+      alertmanagers = [ {
+        scheme = "http";
+        path_prefix = "/";
+        static_configs = [ {
+          targets = [ "optina.wedlake.lan:9093" ];
+        } ];
+      } ];
       rules = [ (builtins.toJSON {
         groups = [
           {
@@ -752,19 +760,19 @@ in {
       addr = "0.0.0.0";
     };
     phpfpm = {
-      phpPackage = pkgs.php71;
-      poolConfigs = {
-        mypool = ''
-          listen = 127.0.0.1:9000
-          user = nginx
-          pm = dynamic
-          pm.max_children = 5
-          pm.start_servers = 1
-          pm.min_spare_servers = 1
-          pm.max_spare_servers = 2
-          pm.max_requests = 50
-          env[NEXTCLOUD_CONFIG_DIR] = "/var/nextcloud/config"
-        '';
+      #phpPackage = pkgs.php71;
+      pools = {
+        mypool = {
+          user = "nginx";
+          settings = {
+            "pm" = "dynamic";
+            "pm.max_children" = 5;
+            "pm.start_servers" = 1;
+            "pm.min_spare_servers" = 1;
+            "pm.max_spare_servers" = 2;
+            "pm.max_requests" = 50;
+          };
+        };
       };
       phpOptions =
       ''
@@ -784,7 +792,7 @@ in {
             root = netboot_root;
             extraConfig = ''
               location ~ [^/]\.php(/|$) {
-                fastcgi_pass 127.0.0.1:9000;
+                fastcgi_pass unix:${config.services.phpfpm.pools.mypool.socket};
               }
             '';
           };
@@ -966,16 +974,16 @@ in {
         # Plex
         plex = {
           enable = true;
-          package = pkgs.plex.overrideAttrs (x: {
-            src = pkgs.fetchurl {
-              url = let
-                version = "1.14.1.5488";
-                vsnHash = "cc260c476";
+          #package = pkgs.plex.overrideAttrs (x: {
+          #  src = pkgs.fetchurl {
+          #    url = let
+          #      version = "1.18.8.2527";
+          #      vsnHash = "740d4c206";
 
-              in "https://downloads.plex.tv/plex-media-server/${version}-${vsnHash}/plexmediaserver-${version}-${vsnHash}.x86_64.rpm";
-              sha256 = "0h2w5xqw8r9iinbibdwj8bi7vb72yzhvna5hrb8frp6fbkrhds4f";
-            };
-          });
+          #    in "https://downloads.plex.tv/plex-media-server-new/${version}-${vsnHash}/plexmediaserver-${version}-${vsnHash}.x86_64.rpm";
+          #    sha256 = "0h2w5xqw8rffffbibdwj8bi7vb72yzhvna5hrb8frp6fbkrhds4f";
+          #  };
+          #});
         };
         hydra = {
           enable = true;

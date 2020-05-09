@@ -6,6 +6,7 @@ let
   nvim = pkgs.neovim.override {
     vimAlias = true;
     configure = customization;
+    extraPython3Packages = ps: [ ps.requests ps.html2text ps.markdown ];
   };
   vim = pkgs.vim_configurable.customize {
     name = "vim";
