@@ -238,9 +238,9 @@ in {
           ]
         ];
       };
-      kesKey = "/var/lib/keys/cardano-kes";
-      vrfKey = "/var/lib/keys/cardano-vrf";
-      operationalCertificate = "/var/lib/keys/cardano-opcert";
+      kesKey = "/var/run/keys/cardano-kes";
+      vrfKey = "/var/run/keys/cardano-vrf";
+      operationalCertificate = "/var/run/keys/cardano-opcert";
     };
     udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="74:d4:35:9b:84:62", NAME="enp2s0"
@@ -1090,6 +1090,7 @@ in {
           };
         };
       };
+      users.users.cardano-node.extraGroups = [ "keys" ];
       users.users.sam = {
         isNormalUser = true;
         description = "Sam Leathers";
