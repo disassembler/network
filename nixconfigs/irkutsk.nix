@@ -425,14 +425,25 @@ in {
     #  environment = "mainnet";
     #  enable = false;
     #};
-    #cardano-node = {
-    #  environment = "mainnet";
-    #  enable = false;
-    #};
-    #cardano-cluster = {
-    #  enable = true;
-    #  node-count = 1;
-    #};
+    cardano-node = {
+      environment = "shelley_testnet";
+      enable = false;
+      systemdSocketActivation = true;
+    };
+    cardano-db-sync = {
+      cluster = "shelley_testnet";
+      enable = false;
+      socketPath = "/run/cardano-node/node.socket";
+      user = "cexplorer";
+      extended = true;
+      postgres = {
+        database = "cexplorer";
+      };
+    };
+    graphql-engine.enable = false;
+    cardano-graphql = {
+      enable = false;
+    };
     prometheus = {
       enable = true;
       scrapeConfigs = [
@@ -519,6 +530,7 @@ in {
         explorer-users /root cexplorer
         explorer-users /postgres postgres
         explorer-users /sam cexplorer
+        explorer-users /cexplorer cexplorer
       '';
       authentication = ''
         local all all ident map=explorer-users
@@ -688,6 +700,11 @@ in {
       enable = true;
       package = pkgs.redshift-wlr;
     };
+  };
+  systemd.services.cardano-db-sync.serviceConfig = {
+    SupplementaryGroups = "cardano-node";
+    Restart = "always";
+    RestartSec = "30s";
   };
   virtualisation.docker = {
     enable = true;
