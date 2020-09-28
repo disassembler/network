@@ -30,7 +30,7 @@ in {
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Splash screen to make boot look nice
-  boot.plymouth.enable = true;
+  boot.plymouth.enable = false;
 
   console.keyMap = "us";
   console.packages = with pkgs; [ terminus_font ];
@@ -66,7 +66,7 @@ in {
   networking = {
     hostName = machine;
     hostId = hostId;
-    nameservers = [ "127.0.0.1" ];
+    #nameservers = [ "127.0.0.1" ];
     networkmanager.enable = true;
     networkmanager.unmanaged = [ "interface-name:ve-*" "ens9" ];
     extraHosts =
@@ -168,27 +168,29 @@ in {
       binary-caches-parallel-connections = 3
       connect-timeout = 5
       #allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk/nixpkgs/archive
+      experimental-features = nix-command flakes
     '';
+    package = pkgs.nixFlakes;
   };
 
-  nixpkgs.overlays = [
-    (self: super:
-    let
-      hie = import (super.fetchFromGitHub {
-        owner = "domenkozar";
-        repo = "hie-nix";
-        rev = "dbb89939da8997cc6d863705387ce7783d8b6958";
-        sha256 = "1bcw59zwf788wg686p3qmcq03fr7bvgbcaa83vq8gvg231bgid4m";
-      }) {};
-      hnix-lsp = import (super.fetchFromGitHub {
-        owner = "domenkozar";
-        repo = "hnix-lsp";
-        rev = "c69b4bdd46e7eb652f13c13e01d0da44a1491d39";
-        sha256 = "16w1197yl6x06a06c2x30rycgllf6r67w0b38fcia2c4cnigzalg";
-    });
-    in
-    { inherit (hie) hie82; inherit hnix-lsp; })
-  ];
+  #nixpkgs.overlays = [
+  #  (self: super:
+  #  let
+  #    hie = import (super.fetchFromGitHub {
+  #      owner = "domenkozar";
+  #      repo = "hie-nix";
+  #      rev = "dbb89939da8997cc6d863705387ce7783d8b6958";
+  #      sha256 = "1bcw59zwf788wg686p3qmcq03fr7bvgbcaa83vq8gvg231bgid4m";
+  #    }) {};
+  #    hnix-lsp = import (super.fetchFromGitHub {
+  #      owner = "domenkozar";
+  #      repo = "hnix-lsp";
+  #      rev = "c69b4bdd46e7eb652f13c13e01d0da44a1491d39";
+  #      sha256 = "16w1197yl6x06a06c2x30rycgllf6r67w0b38fcia2c4cnigzalg";
+  #  });
+  #  in
+  #  { inherit (hie) hie82; inherit hnix-lsp; })
+  #];
 
   nixpkgs.config = {
     allowUnfree = true;
@@ -213,11 +215,12 @@ in {
     };
   };
 
+  users.groups.plugdev = {};
   users.extraUsers.sam = {
     isNormalUser = true;
     description = "Sam Leathers";
     uid = 1000;
-    extraGroups = [ "wheel" "docker" "disk" "video" "libvirtd" "adbusers" "dialout" ];
+    extraGroups = [ "wheel" "docker" "disk" "video" "libvirtd" "adbusers" "dialout" "plugdev" ];
     openssh.authorizedKeys.keys = shared.sam_ssh_keys;
   };
 
@@ -243,6 +246,13 @@ in {
           exec systemctl --user start sway.service
         '';
       };
+      trezor = python3Packages.trezor.overrideAttrs (oldAttrs: {
+        src = python3Packages.fetchPypi {
+          pname = "trezor";
+          version = "0.12.1";
+          sha256 = "sha256-KTz8PF0T+mKkLSP4XaoMmOPrLjxEqwylTrMUzWmqKfA=";
+        };
+      });
     #nixopsSrc = pkgs.fetchFromGitHub {
     #  owner = "input-output-hk";
     #  repo = "nixops";
@@ -257,10 +267,13 @@ in {
   in [
     heimdall-gui
     #dnscontrol
+    ledger-live-desktop
+    trezor
     gopass
     arduino
     startSway
     avidemux
+    strace
     mplayer
     gpgme.dev
     yubioath-desktop
@@ -273,7 +286,7 @@ in {
     pavucontrol
     hledger
     psmisc
-    hie82
+    #hie82
     sqliteInteractive
     manymans
     hlint
@@ -316,7 +329,6 @@ in {
     aws
     awscli
     #aws_shell
-    p7zip
     zip
     scrot
     remmina
@@ -402,6 +414,7 @@ in {
 
 
   services = {
+    trezord.enable = true;
     resolved.enable = false;
     pcscd.enable = true;
     #jormungandr-explorer = {
@@ -426,12 +439,12 @@ in {
     #  enable = false;
     #};
     cardano-node = {
-      environment = "shelley_testnet";
+      environment = "mainnet";
       enable = false;
       systemdSocketActivation = true;
     };
     cardano-db-sync = {
-      cluster = "shelley_testnet";
+      cluster = "mainnet";
       enable = false;
       socketPath = "/run/cardano-node/node.socket";
       user = "cexplorer";
@@ -445,7 +458,7 @@ in {
       enable = false;
     };
     prometheus = {
-      enable = true;
+      enable = false;
       scrapeConfigs = [
         {
           job_name = "byron-proxy";
@@ -512,20 +525,20 @@ in {
     postgresql = {
       enable = true;
       enableTCPIP = false;
-      extraConfig = ''
-        max_connections = 200
-        shared_buffers = 2GB
-        effective_cache_size = 6GB
-        maintenance_work_mem = 512MB
-        checkpoint_completion_target = 0.7
-        wal_buffers = 16MB
-        default_statistics_target = 100
-        random_page_cost = 1.1
-        effective_io_concurrency = 200
-        work_mem = 10485kB
-        min_wal_size = 1GB
-        max_wal_size = 2GB
-      '';
+      settings = {
+        max_connections = 200;
+        shared_buffers = "2GB";
+        effective_cache_size = "6GB";
+        maintenance_work_mem = "512MB";
+        checkpoint_completion_target = 0.7;
+        wal_buffers = "16MB";
+        default_statistics_target = 100;
+        random_page_cost = 1.1;
+        effective_io_concurrency = 200;
+        work_mem = "10485kB";
+        min_wal_size = "1GB";
+        max_wal_size = "2GB";
+      };
       identMap = ''
         explorer-users /root cexplorer
         explorer-users /postgres postgres
@@ -554,9 +567,9 @@ in {
         }
       ];
     };
-    influxdb.enable = true;
+    influxdb.enable = false;
     grafana = {
-      enable = true;
+      enable = false;
       addr = "0.0.0.0";
       port = 8085;
     };
@@ -601,7 +614,17 @@ in {
       '';
     in ''
       ACTION=="add|change", SUBSYSTEM=="usb", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0407", RUN+="${clearYubikeySam}"
-
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="2b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="3b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="4b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1807", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1808", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0000", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0001", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0004", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2c97"
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2581"
     '';
     udev.packages = [ pkgs.yubikey-personalization ];
 

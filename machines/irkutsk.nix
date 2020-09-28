@@ -8,7 +8,9 @@ in {
     # Machine specific config
     ../nixconfigs/irkutsk.nix
     <nixos-hardware/dell/xps/13-9380>
-    #/home/sam/work/iohk/cardano-node/fix-defaults/nix/nixos
+    /home/sam/work/iohk/cardano-graphql/nix/nixos
+    /home/sam/work/iohk/cardano-node/local-service/nix/nixos
+    /home/sam/work/iohk/cardano-db-sync/master/nix/nixos
     #/home/sam/work/iohk/cardano-byron-proxy/master/nix/nixos
     #/home/sam/work/iohk/jormungandr-nix/reward-api/nixos
     ../cachix.nix
