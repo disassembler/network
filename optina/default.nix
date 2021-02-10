@@ -111,7 +111,8 @@ in {
   profiles.passopolis.enable = true;
 
   networking = {
-    hostName = "optina.wedlake.lan";
+    hostName = "optina";
+    domain = "wedlake.lan";
     hostId = "1768b40b";
     interfaces.enp2s0.ipv4.addresses = [ { address = "10.40.33.20"; prefixLength = 24; } ];
     defaultGateway = "10.40.33.1";
@@ -135,6 +136,7 @@ in {
         443
         445
         631
+        3000   # grafana
         3001   # cardano-node
         4444
         5601   # kibana
@@ -212,7 +214,7 @@ in {
 
   services = {
     cardano-node = {
-      enable = true;
+      enable = false;
       environment = "ff";
       hostAddr = "0.0.0.0";
       topology =  builtins.toFile "topology.json" (builtins.toJSON {
@@ -618,20 +620,20 @@ in {
             }
           ];
         }
-        {
-          job_name = "cardano-node";
-          scrape_interval = "10s";
-          static_configs = [
-            {
-              targets = [ "10.40.33.20:12798" ];
-              labels = { alias = "portal"; };
-            }
-            {
-              targets = [ "127.0.0.1:12798" ];
-              labels = { alias = "optina"; };
-            }
-          ];
-        }
+        #{
+        #  job_name = "cardano-node";
+        #  scrape_interval = "10s";
+        #  static_configs = [
+        #    {
+        #      targets = [ "10.40.33.1:12798" ];
+        #      labels = { alias = "portal"; };
+        #    }
+        #    {
+        #      targets = [ "127.0.0.1:12798" ];
+        #      labels = { alias = "optina"; };
+        #    }
+        #  ];
+        #}
         {
           job_name = "node";
           scrape_interval = "10s";
@@ -673,20 +675,20 @@ in {
         #    }
         #  ];
         #}
-        {
-          job_name = "unifi";
-          scrape_interval = "10s";
-          static_configs = [
-            {
-              targets = [
-                "localhost:9130"
-              ];
-              labels = {
-                alias = "unifi.wedlake.lan";
-              };
-            }
-          ];
-        }
+        #{
+        #  job_name = "unifi";
+        #  scrape_interval = "10s";
+        #  static_configs = [
+        #    {
+        #      targets = [
+        #        "localhost:9130"
+        #      ];
+        #      labels = {
+        #        alias = "unifi.wedlake.lan";
+        #      };
+        #    }
+        #  ];
+        #}
         {
           job_name = "blackbox";
           scrape_interval = "60s";

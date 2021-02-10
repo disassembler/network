@@ -5,7 +5,7 @@ let
   # doCheck fails
   hasktags = "${pkgs.haskell.lib.justStaticExecutables (pkgs.haskellPackages.hasktags.overrideAttrs (attrs: { doCheck = false; }))}/bin/hasktags";
   fast-tags = "${pkgs.haskellPackages.fast-tags}/bin/fast-tags";
-  hie = "${pkgs.hie82}/bin/hie";
+  #hie = "${pkgs.hie82}/bin/hie";
   mytags = hasktags;
   #stylish-haskell = pkgs.haskellPackages.stylish-haskell.overrideAttrs (oldAttrs: rec {
   #  doCheck = false;
@@ -32,8 +32,8 @@ in
 
     "let g:deoplete#sources.haskell = ['LanguageClient']
     let g:LanguageClient_serverCommands = {
-    \ 'haskell': ['${hie}', '-d', '--lsp'],
-    \ }
+    "\ 'haskell': ['$hie}', '-d', '--lsp'],
+    "\ }
     let g:tagbar_type_haskell = {
     \ 'ctagsbin'  : '${hasktags}',
     \ 'ctagsargs' : '-x -c -o-',

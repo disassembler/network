@@ -1,14 +1,14 @@
 {
-    "cardano-node": {
-        "branch": "ff-environment",
-        "description": "The core component that is used to participate in a Cardano decentralised blockchain.",
-        "homepage": "https://cardano.org",
+    "iohk-nix": {
+        "branch": "master",
+        "description": "nix scripts shared across projects",
+        "homepage": null,
         "owner": "input-output-hk",
-        "repo": "cardano-node",
-        "rev": "bf8ab6e8e4468a8c3f6f4ea04f69314c057d6fb5",
-        "sha256": "0jk34cqbm6caxhw987gif4fxm4j3szzd1rhmxzbln90a97w7ypr4",
+        "repo": "iohk-nix",
+        "rev": "5b86d63a0b59b7666d19901b654d8fbde27d9500",
+        "sha256": "1mfb93nnw0x4gyq93v6lh6h7imliw4j0wp5l9gpdafy3rw621xzb",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/cardano-node/archive/bf8ab6e8e4468a8c3f6f4ea04f69314c057d6fb5.tar.gz",
+        "url": "https://github.com/input-output-hk/iohk-nix/archive/5b86d63a0b59b7666d19901b654d8fbde27d9500.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {

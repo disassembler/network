@@ -5,6 +5,8 @@ let
   shared = import ../shared.nix;
   machine = "irkutsk";
   hostId = "e66682e1";
+  sources = import ../nix/sources.nix;
+  iohkNix = import sources.iohk-nix {};
 
 in {
   _module.args = {
@@ -86,56 +88,11 @@ in {
       internalInterfaces = ["ve-+"];
       externalInterface = "wlp2s0";
     };
-    #vlans = {
-    #  lan = {
-    #    interface = "ens9";
-    #    id = 33;
-    #  };
-    #  mgmt = {
-    #    interface = "ens9";
-    #    id = 3;
-    #  };
-    #  guest = {
-    #    interface = "ens9";
-    #    id = 9;
-    #  };
-    #  voip = {
-    #    interface = "ens9";
-    #    id = 40;
-    #  };
-    #};
-    #interfaces = {
-    #  lan = {
-    #    useDHCP = true;
-    #  };
-    #  voip = {
-    #    useDHCP = true;
-    #  };
-    #  mgmt = {
-    #    useDHCP = true;
-    #  };
-    #  guest = {
-    #    useDHCP = true;
-    #  };
-    #};
     firewall = {
       enable = true;
       allowedUDPPorts = [ 53 4919 ];
       allowedTCPPorts = [ 4444 8081 3478 3000 8080 5900 3100 ];
     };
-    #bridges = {
-    #  cbr0.interfaces = [ ];
-    #};
-    #interfaces = {
-    #  cbr0 = {
-    #    ipv4.addresses = [
-    #      {
-    #        address = "10.38.0.1";
-    #        prefixLength = 24;
-    #      }
-    #    ];
-    #  };
-    #};
   };
 
   security.pki.certificates = [ shared.wedlake_ca_cert ];
@@ -149,62 +106,33 @@ in {
     binaryCaches = [
       "https://cache.nixos.org"
       "https://hydra.iohk.io"
-      #"https://hydra.wedlake.lan"
-      #"https://snack.cachix.org"
+      "https://mantis-ops.cachix.org"
+      "https://vit-ops.cachix.org"
     ];
     binaryCachePublicKeys = [
       "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-      #"hydra.wedlake.lan:C3xufTQ7w2Y6VHtf+dyA6NmQPiQjwIDEavJNmr97Loo="
-      #"snack.cachix.org-1:yWpdDCWeJzVAQUSM1Ol0E3PCVbG4k2wRAsZ/b5L3huc="
+      "mantis-ops.cachix.org-1:SornDcX8/9rFrpTjU+mAAb26sF8mUpnxgXNjmKGcglQ="
+      "vit-ops.cachix.org-1:LY84nIKdW7g1cvhJ6LsupHmGtGcKAlUXo+l1KByoDho="
     ];
     distributedBuilds = true;
     buildMachines = [
-      buildMachines.darwin.ohrid
-      #buildMachines.darwin.macvm
-      #buildMachines.linux.optina
     ];
-    #nixPath = [ "nixpkgs=/home/sam/nixpkgs/custom" "nixos-config=/etc/nixos/configuration.nix" ];
     extraOptions = ''
       binary-caches-parallel-connections = 3
       connect-timeout = 5
       #allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk/nixpkgs/archive
       experimental-features = nix-command flakes
     '';
-    package = pkgs.nixFlakes;
+    package = pkgs.nixUnstable;
   };
 
-  #nixpkgs.overlays = [
-  #  (self: super:
-  #  let
-  #    hie = import (super.fetchFromGitHub {
-  #      owner = "domenkozar";
-  #      repo = "hie-nix";
-  #      rev = "dbb89939da8997cc6d863705387ce7783d8b6958";
-  #      sha256 = "1bcw59zwf788wg686p3qmcq03fr7bvgbcaa83vq8gvg231bgid4m";
-  #    }) {};
-  #    hnix-lsp = import (super.fetchFromGitHub {
-  #      owner = "domenkozar";
-  #      repo = "hnix-lsp";
-  #      rev = "c69b4bdd46e7eb652f13c13e01d0da44a1491d39";
-  #      sha256 = "16w1197yl6x06a06c2x30rycgllf6r67w0b38fcia2c4cnigzalg";
-  #  });
-  #  in
-  #  { inherit (hie) hie82; inherit hnix-lsp; })
-  #];
+  nixpkgs.overlays = [];
 
   nixpkgs.config = {
     allowUnfree = true;
     allowBroken = false;
     android_sdk.accept_license = true;
     packageOverrides = super: let self = super.pkgs; in {
-      #nixops = super.nixops.overrideDerivation (
-      #old: {
-      #  patchPhase = ''
-      #      substituteInPlace nix/eval-machine-info.nix \
-      #          --replace 'system.nixosVersion' 'system.nixos.version'
-      #  '';
-      #}
-      #);
       manymans = with pkgs; buildEnv {
         name = "manymans";
         ignoreCollisions = true;
@@ -220,13 +148,20 @@ in {
     isNormalUser = true;
     description = "Sam Leathers";
     uid = 1000;
-    extraGroups = [ "wheel" "docker" "disk" "video" "libvirtd" "adbusers" "dialout" "plugdev" ];
+    extraGroups = [ "wheel" "docker" "disk" "video" "libvirtd" "adbusers" "dialout" "plugdev" "cexplorer" ];
     openssh.authorizedKeys.keys = shared.sam_ssh_keys;
   };
 
-  # move to host system
-  profiles.zsh.enable = true;
-  profiles.zsh.autosuggest = true;
+  profiles.zsh = {
+    enable = true;
+    autosuggest = true;
+  };
+  programs.bash = {
+    interactiveShellInit = ''
+      eval "$(direnv hook bash)"
+      eval "$(starship init bash)"
+    '';
+  };
   profiles.vim = {
       enable = true;
       dev = true;
@@ -249,24 +184,14 @@ in {
       trezor = python3Packages.trezor.overrideAttrs (oldAttrs: {
         src = python3Packages.fetchPypi {
           pname = "trezor";
-          version = "0.12.1";
-          sha256 = "sha256-KTz8PF0T+mKkLSP4XaoMmOPrLjxEqwylTrMUzWmqKfA=";
+          version = "0.12.2";
+          sha256 = "sha256:0r0j0y0ii62ppawc8qqjyaq0fkmmb0zk1xb3f9navxp556w2dljv";
         };
       });
-    #nixopsSrc = pkgs.fetchFromGitHub {
-    #  owner = "input-output-hk";
-    #  repo = "nixops";
-    #  rev = "dba45d750199147f857b14dadbb29811c9baf97d";
-    #  sha256 = "0z9w66vwlr7l6qvyj2p1lv98k3f8h3jd4dzxmwhqmln2py8wq4zb";
-    #};
-    #nixopsSrc = /home/sam/nixops;
-    #packet = "/home/sam/nixops-packet";
-    #nixops = (import (nixopsSrc + "/release.nix") {
-    #  p = (p: [ packet ]);
-    #}).build.x86_64-linux;
   in [
+    starship
+    direnv
     heimdall-gui
-    #dnscontrol
     ledger-live-desktop
     trezor
     gopass
@@ -290,21 +215,16 @@ in {
     sqliteInteractive
     manymans
     hlint
-    dysnomia
-    disnix
-    disnixos
     nixops
     dropbox
     gist
     dropbox-cli
     dmenu
     chromium
-    #vimb
     gnupg
     gnupg1compat
     docker_compose
     niff
-    #androidsdk
     tmate
     htop
     feh
@@ -312,6 +232,7 @@ in {
     magic-wormhole
     weechat
     rxvt_unicode-with-plugins
+    termite
     xsel
     keepassx2
     tcpdump
@@ -326,9 +247,6 @@ in {
     tig
     python27Packages.gnutls
     unzip
-    aws
-    awscli
-    #aws_shell
     zip
     scrot
     remmina
@@ -338,19 +256,14 @@ in {
     slack
     neomutt
     notmuch
-    #python3Packages.goobook
     taskwarrior
     jq
     cabal2nix
-    #nodePackages.eslint
-    #nodejs
     haskellPackages.ghcid
     virtmanager
     xdg_utils
-    termite
-    #wine-staging
     inotifyTools
-    #(import (builtins.fetchTarball "https://github.com/hercules-ci/ghcide-nix/tarball/master") {}).ghcide-ghc865
+    zoom-us
   ];
 
   hardware = {
@@ -373,10 +286,12 @@ in {
       };
     };
   };
-  fonts.enableFontDir = true;
+  fonts.fontDir.enable= true;
   fonts.enableGhostscriptFonts = true;
   fonts.fontconfig.dpi=150;
   fonts.fonts = with pkgs; [
+    # Used by starship for fonts
+    (nerdfonts.override { fonts = [ "FiraCode" ]; })
     corefonts
     fira # monospaced
     powerline-fonts
@@ -414,34 +329,15 @@ in {
 
 
   services = {
+    lorri.enable = true;
     trezord.enable = true;
     resolved.enable = false;
     pcscd.enable = true;
-    #jormungandr-explorer = {
-    #  #package = (import /home/sam/work/iohk/shelley-testnet-explorer/override.nix {}).overrideAttrs (oldAttrs: {
-    #  #  GATSBY_JORMUNGANDR_URL = "http://explorer.jormungandr";
-    #  #  GATSBY_URL = "http://explorer.jormungandr";
-    #  #});
-    #  enable = true;
-    #  virtualHost = "explorer.jormungandr";
-    #  enableSSL = false;
-    #  jormungandrApi = "http://explorer.jormungandr:3101/explorer/graphql";
-    #};
-    #jormungandr = {
-    #  enable = false;
-    #  environment = "itn_rewards_v1";
-    #  enableExplorer = true;
-    #  rest.listenAddress = "127.0.0.1:3201";
-    #  rest.cors.allowedOrigins = [ "http://127.0.0.1:3201" ];
-    #};
-    #byron-proxy = {
-    #  environment = "mainnet";
-    #  enable = false;
-    #};
     cardano-node = {
       environment = "mainnet";
       enable = false;
       systemdSocketActivation = true;
+      environments = iohkNix.cardanoLib.environments;
     };
     cardano-db-sync = {
       cluster = "mainnet";
@@ -475,7 +371,7 @@ in {
       ];
     };
     mysql = {
-      enable = true;
+      enable = false;
       package = pkgs.mariadb;
     };
     phpfpm = {
@@ -523,7 +419,7 @@ in {
     };
 
     postgresql = {
-      enable = true;
+      enable = false;
       enableTCPIP = false;
       settings = {
         max_connections = 200;
@@ -540,9 +436,10 @@ in {
         max_wal_size = "2GB";
       };
       identMap = ''
-        explorer-users /root cexplorer
+        #explorer-users /root cexplorer
         explorer-users /postgres postgres
         explorer-users /sam cexplorer
+        explorer-users /smash smash
         explorer-users /cexplorer cexplorer
       '';
       authentication = ''
@@ -552,6 +449,7 @@ in {
       ensureDatabases = [
         "explorer_python_api"
         "cexplorer"
+        "smash"
         "hdb_catalog"
       ];
       ensureUsers = [
@@ -562,7 +460,21 @@ in {
             "DATABASE cexplorer" = "ALL PRIVILEGES";
             "DATABASE hdb_catalog" = "ALL PRIVILEGES";
             "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
-            #"ALL TABLES IN SCHEMA scraper" = "ALL PRIVILEGES";
+          };
+        }
+        {
+          name = "smash";
+          ensurePermissions = {
+            "DATABASE smash" = "ALL PRIVILEGES";
+            "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
+          };
+        }
+        {
+          name = "sam";
+          ensurePermissions = {
+            "DATABASE smash" = "ALL PRIVILEGES";
+            #"DATABASE cexplorer" = "ALL PRIVILEGES";
+            "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
           };
         }
       ];
@@ -574,13 +486,6 @@ in {
       port = 8085;
     };
 
-    #zfs.autoSnapshot.enable = true;
-    #grafana_reporter = {
-    #  enable = true;
-    #  grafana = {
-    #    addr = "optina.wedlake.lan";
-    #  };
-    #};
     offlineimap = {
       enable = false;
       path = [ pkgs.notmuch ];
@@ -636,43 +541,6 @@ in {
         "0:_NET_WM_STATE@:32a *= '_NET_WM_STATE_HIDDEN'"
       ];
     };
-    #xserver = {
-    #  xautolock = {
-    #    enable = true;
-    #    time = 5;
-    #    locker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
-    #    nowlocker = "${pkgs.xtrlock-pam}/bin/xtrlock-pam";
-    #    #killer = "${pkgs.systemd}/bin/systemctl suspend";
-    #    #killtime = 30;
-    #    extraOptions = [ "-detectsleep" ];
-    #  };
-    #  libinput = {
-    #    enable = true;
-    #    tapping = true;
-    #    disableWhileTyping = true;
-    #    scrollMethod = "twofinger";
-    #    naturalScrolling = false;
-    #  };
-    #  #autorun = true;
-    #  enable = false;
-    #  #layout = "us";
-    #  desktopManager = {
-    #    default = "none";
-    #  };
-    #  #windowManager.i3 = {
-    #  #  enable = true;
-    #  #  extraSessionCommands = ''
-    #  #    ${pkgs.xlibs.xset}/bin/xset r rate 200 60 # set keyboard repeat
-    #  #    ${pkgs.feh} --bg-scale /home/sam/photos/20170503_183237.jpg
-    #  #  '';
-    #  #};
-    #  #windowManager.i3.package = pkgs.i3-gaps;
-    #  #windowManager.i3.configFile = "/home/sam/.config/i3/config";
-    #  #windowManager.default = "i3";
-    #  #displayManager.lightdm = {
-    #  #  enable = false;
-    #  #};
-    #};
     dnsmasq = {
       enable = true;
       extraConfig = ''
@@ -732,11 +600,8 @@ in {
   virtualisation.docker = {
     enable = true;
     storageDriver = "zfs";
-    #extraOptions = "--iptables=false --ip-masq=false -b cbr0";
-    #extraOptions = "--insecure-registry 10.80.0.49:5000";
   };
   virtualisation.libvirtd.enable = false;
-  #virtualisation.virtualbox.host.enable = true;
   security.sudo.wheelNeedsPassword = true;
 
   # Custom dotfiles for sam user
@@ -764,83 +629,49 @@ in {
     deps = [];
   };
 
-  systemd.user.services = {
-    #mbsync = {
-    #  description = "IMAP mailbox sync";
-    #  path = [ pkgs.isync ];
-    #  script = "mbsync -c /home/sam/.mutt/mbsyncrc -q -a";
-    #  startAt = "*:0/3";
-    #  wantedBy = [ "timers.target" ];
-    #  serviceConfig = {
-    #    TimeoutStartSec = "2min";
-    #  };
-    #  preStart = ''
-    #    mkdir -p /home/sam/mail/EEVA
-    #    mkdir -p /home/sam/mail/MPO
-    #    mkdir -p /home/sam/mail/LACL
-    #  '';
-    #};
-
-    #mu = {
-    #  description = "Updating mail database";
-    #  path = [ mu-light ];
-    #  script = "mu index --quiet -m ~/mail";
-    #  startAt = "daily";
-    #  wantedBy = [ "timers.target" ];
-    #};
-
-    #msmtp-runqueue = {
-    #  description = "Flushing mail queue";
-    #  script = builtins.readFile "/home/sam/prefix/bin/msmtp-runqueue";
-    #  preStart = "mkdir -p /home/sam/.msmtpqueue";
-    #  postStop = "rm -f /home/sam/.msmtpqueue/.lock";
-    #  startAt = "*:0/10";
-    #  serviceConfig = {
-    #    TimeoutStartSec = "2min";
-    #  };
-    #  path = [ pkgs.msmtp ];
-    #};
-    #sway = {
-    #  description = "Sway - Wayland window manager";
-    #  documentation = [ "man:sway(5)" ];
-    #  bindsTo = [ "graphical-session.target" ];
-    #  wants = [ "graphical-session-pre.target" ];
-    #  after = [ "graphical-session-pre.target" ];
-    #  # We explicitly unset PATH here, as we want it to be set by
-    #  # systemctl --user import-environment in startsway
-    #  environment.PATH = lib.mkForce null;
-    #  serviceConfig = {
-    #    Type = "simple";
-    #    ExecStart = ''
-    #      ${pkgs.dbus}/bin/dbus-run-session ${pkgs.sway}/bin/sway --debug --config /etc/sway/config
-    #    '';
-    #    Restart = "on-failure";
-    #    RestartSec = 1;
-    #    TimeoutStopSec = 10;
-    #  };
-    #};
-    #kanshi = {
-    #  description = "Kanshi output autoconfig ";
-    #  wantedBy = [ "graphical-session.target" ];
-    #  partOf = [ "graphical-session.target" ];
-    #  serviceConfig = {
-    #    # kanshi doesn't have an option to specifiy config file yet, so it looks
-    #    # at .config/kanshi/config
-    #    ExecStart = ''
-    #      ${pkgs.kanshi}/bin/kanshi
-    #    '';
-    #    RestartSec = 5;
-    #    Restart = "always";
-    #  };
-    #};
+    system.activationScripts.starship = let
+    starshipConfig = pkgs.writeText "starship.toml" ''
+      [username]
+      show_always = true
+      [hostname]
+      ssh_only = true
+      [git_commit]
+      tag_disabled = false
+      only_detached = false
+      [memory_usage]
+      format = "via $symbol[''${ram_pct}]($style) "
+      disabled = false
+      threshold = -1
+      [time]
+      format = '[\[ $time \]]($style) '
+      disabled = false
+      [[battery.display]]
+      threshold = 100
+      style = "bold green"
+      [[battery.display]]
+      threshold = 50
+      style = "bold orange"
+      [[battery.display]]
+      threshold = 20
+      style = "bold red"
+      [status]
+      map_symbol = true
+      disabled = false
+    '';
+  in {
+    text = ''
+      mkdir -p /etc/per-user/shared
+      cp ${starshipConfig} /etc/per-user/shared/starship.toml
+      mkdir -p /home/sam/.config
+      mkdir -p /root/.config
+      chown sam:users /home/sam/.config
+      chown root /root/.config
+      ln -sf /etc/per-user/shared/starship.toml /home/sam/.config/starship.toml
+      ln -sf /etc/per-user/shared/starship.toml /root/.config/starship.toml
+    '';
+    deps = [];
   };
-  #systemd.user.targets.sway-session = {
-  #  description = "Sway compositor session";
-  #  documentation = [ "man:systemd.special(7)" ];
-  #  bindsTo = [ "graphical-session.target" ];
-  #  wants = [ "graphical-session-pre.target" ];
-  #  after = [ "graphical-session-pre.target" ];
-  #};
 
-
+  systemd.user.services = {
+  };
 }

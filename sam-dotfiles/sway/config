@@ -14,7 +14,7 @@ set $up k
 set $right l
 
 # Your preferred terminal emulator
-set $term urxvt
+set $term termite
 
 # Your preferred application launcher
 # Note: it's recommended that you pass the final command to sway
@@ -222,7 +222,11 @@ bindsym $mod+r mode "resize"
 #}
 
 # gaps
-gaps inner 10
+gaps inner 4
+gaps outer 4
+smart_gaps on
+default_border pixel 1
+hide_edge_borders both
 
 # Pulse Audio controls
 # run pactl list sinks

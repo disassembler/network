@@ -51,7 +51,8 @@ in {
   security.pki.certificates = [ shared.wedlake_ca_cert ];
 
   networking = {
-    hostName = "portal.wedlake.lan";
+    hostName = "portal";
+    domain = "wedlake.lan";
     hostId = "fa4b7394";
     nameservers = [ "10.40.33.1" "8.8.8.8" ];
     hosts = lib.mkForce {
@@ -244,6 +245,10 @@ in {
             allowedIPs = [ "10.40.9.2/32" "fd00::2/128" ];
           }
           {
+            publicKey = "V6iLYqTiCzv/zoluqhfWDV49eIIISoZgN30IbS4XZCw=";
+            allowedIPs = [ "10.42.1.1/32" ];
+          }
+          {
             publicKey = "dCKIaTC40Y5sQqbdsYw1adSgVDmV+1SZMV4DVx1ctSk=";
             allowedIPs = [ "10.38.0.0/24" "fd00::38/128" ];
           }
@@ -274,8 +279,8 @@ in {
   };
 
   nix = {
-    binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" "https://hydra.wedlake.lan" ];
-    binaryCachePublicKeys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" "hydra.wedlake.lan:C3xufTQ7w2Y6VHtf+dyA6NmQPiQjwIDEavJNmr97Loo=" ];
+    binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
+    binaryCachePublicKeys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
   };
 
   nixpkgs = {
@@ -299,7 +304,7 @@ in {
 
   services = {
     cardano-node = {
-      enable = true;
+      enable = false;
       environment = "ff";
       hostAddr = "0.0.0.0";
       topology =  builtins.toFile "topology.json" (builtins.toJSON {
@@ -332,7 +337,7 @@ in {
       };
     };
     toxvpn = {
-      enable = true;
+      enable = false;
       localip = "10.40.13.1";
     };
     dnsmasq = {
@@ -659,6 +664,9 @@ in {
     description = "Sam Leathers";
     uid = 1000;
     extraGroups = [ "wheel" ];
+    openssh.authorizedKeys.keys = shared.sam_ssh_keys;
+  };
+  users.extraUsers.root = {
     openssh.authorizedKeys.keys = shared.sam_ssh_keys;
   };
   users.extraUsers.openvpn = {
