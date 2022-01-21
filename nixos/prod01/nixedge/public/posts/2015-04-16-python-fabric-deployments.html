@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fabric Deployments for fun and profit - Environments and a Web Application - styx@styx ~ $</title>
+<link href="http://samleathers.com/feed.xml" rel="alternate" type="application/atom+xml" />
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link href="//fonts.googleapis.com/css?family=Inconsolata|Open+Sans|Roboto|Montserrat|Concert+One" rel="stylesheet" type="text/css" />
+<link href="http://samleathers.com/css/nix.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top font-header" id="navbar">
+<div class="container-fluid">
+<div class="navbar-header">
+  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+    <span class="sr-only">Toggle navigation</span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+  </button>
+  <a class="navbar-brand" id="green-terminal" href="http://samleathers.com/">styx@styx ~ $</a>
+</div>
+<div class="collapse navbar-collapse" id="navbar-collapse">
+<ul class="nav navbar-nav navbar-right">
+<li><a href="http://samleathers.com/about.html">~/about</a></li>
+<li><a href="http://samleathers.com/posts/index.html">~/posts</a></li>
+</ul>
+</div>
+</div>
+</nav>
+<div class="container wrapper">
+<h1>Fabric Deployments for fun and profit - Environments and a Web Application</h1>
+<span class="post-date">16 Apr, 2015</span>
+<div class="post-content">
+<p>If you haven&#8217;t read the (first blog post) I highly recommend you start there.
+In this post we&#8217;ll be digging deeper into some more intermediate tasks with
+fabric. We&#8217;re going to start out talking about roles. From there we&#8217;re going to
+move environment specific configuration into a YAML config file. We&#8217;re then
+going to delve into building a deployment script for a simple python
+application with a pip install for requirements into a virtualenv and
+a deployment strategy that simplifies rollbacks.</p>
+
+<h1 id="serverroles">Server Roles</h1>
+
+<p>The basis of any fabric deployment script is defining what server&#8217;s get what
+tasks. We do this using the <code>@roles</code> decorator on a task. This then will run the
+commands in that task on every server in the group. A list of servers getting
+what roles is in the <code>env.roledefs</code> variable.</p>
+
+<p>Here&#8217;s a simple example:</p>
+
+<pre><code>env.roledefs = {
+    'application': [ 'web.example.com' ],
+}
+
+@roles('application')
+def deploy():
+    sudo('echo deploying application to webserver')
+</code></pre>
+
+<p>To run a deploy to the webservers, all we do now is run <code>fab deploy</code></p>
+
+<h1 id="environmentconfigurationfiles-usingyamlwithfabric">Environment Configuration files - Using YAML with fabric</h1>
+
+<p>You very well could specifiy all your roledefs in your fabfile.py for all your environments, but a trick I like to do is load this from a YAML file. In addition to roledefs, this pattern also allows you to have environment specific variables, such as environment name, some credentials, etc&#8230;</p>
+
+<p>To do this, we create a task for loading our environment. This task then parses the yaml file with the configuration and then sets that configuration in a new variable, <code>env.config</code>. This config variable is then accessible in any other tasks. Finally, we set <code>env.roledefs</code> to <code>env.config['roledefs']</code></p>
+
+<p>Here&#8217;s the code:</p>
+
+<pre><code>def loadenv(environment = ''):
+    &quot;&quot;&quot;Loads an environment config file for role definitions&quot;&quot;&quot;
+    with open(config_dir + environment + '.yaml', 'r') as f:
+        env.config = yaml.load(f)
+        env.roledefs = env.config['roledefs']
+</code></pre>
+
+<p>And the associated configuration file <code>staging.yaml</code>:</p>
+
+<pre><code>roledefs:
+    application:
+      - 'web.example.com'
+</code></pre>
+
+<h1 id="contextmanagers">Context managers</h1>
+
+<p>Context managers are useful concept. They run a command within a certain
+context on the remote server. A simple example is the <code>cd()</code> context manager. This changes the directory before running a specific command. It&#8217;s used as follows:</p>
+
+<pre><code>with cd('/opt/myapp'):
+    run('echo running from `pwd`')
+</code></pre>
+
+<p>Other context managers that we&#8217;ll be using for this example is <code>lcd()</code> to cd on the system we&#8217;re running fabric from and <code>exists()</code> to check if a file or directory exists on the remote host before running a command.</p>
+
+<h1 id="usingprefixforpythonvirtualenv">Using Prefix for python virtualenv</h1>
+
+<p>With fabric, we can prefix any command with the <code>prefix()</code> context manager. We
+can also create our own context managers buy decorating a function as
+<code>@_contextmanager</code>. We aren&#8217;t going to go into huge details on these commands right now (they&#8217;re much more advanced usage), but we are going to use them to create a context manager for loading a python virtualenv using the following code:</p>
+
+<pre><code>env.activate = 'source /opt/myapp/python/bin/activate'
+@_contextmanager
+def virtualenv():
+    with prefix(env.activate):
+        yield
+</code></pre>
+
+<p>This context manager can then be used in your tasks similar to the built-in
+<code>cd()</code> context manager as follows:</p>
+
+<pre><code>def deploy():
+    with virtualenv():
+        run('pip install -r requirements.txt')
+</code></pre>
+
+<h1 id="runningprivilegedcommands">Running privileged commands</h1>
+
+<p>Sometimes you need to run a command as root, for example, to create an initial directory and chown it to the user. This can be done replacing <code>run()</code> with <code>sudo()</code>. Just remember, always follow the least privilege security pattern. It&#8217;s always better to not use <code>sudo()</code> if you don&#8217;t have to! In this example, <code>sudo()</code> is only used to create the initial directory for the application and the python virtualenv.</p>
+
+<h1 id="letsdeployanapplication">Lets deploy an application!</h1>
+
+<p>Ok, so now that we have the basics, lets work on deploying an application from a git repository! We&#8217;ll start with the code and staging/production config files and then explain what they&#8217;re doing. You can find the fabric file at https://github.com/disassembler/fabric-example/fabfile.py and configuration for staging at https://github.com/disassembler/fabric-example/config/staging.yml.</p>
+
+<p>To break down the deploy process, here are the steps we are trying to accomplish with the deploy task:</p>
+
+<ol>
+<li>if this is the first run on this server, run the <code>setup()</code> process</li>
+<li>remove previous local builds use git to clone the application locally</li>
+<li>create a binary release tarball for the application</li>
+<li>copy tarball to application server</li>
+<li>on application server, extract to /opt/application/builds/<timestamp></li>
+<li>symlink above directory to /opt/application/current</li>
+<li>run pip install to get any requirements that have changed for the app</li>
+</ol>
+
+<p>And our initial setup is:</p>
+
+<ol>
+<li>if virtualenv for application doesn&#8217;t exist, create it</li>
+<li>if /opt/application/builds doesn&#8217;t exist, create it</li>
+</ol>
+
+<p>Here is the output of our deployment:</p>
+
+<pre><code>fab loadenv:environment=staging deploy
+[10.211.55.17] Executing task 'deploy'
+[10.211.55.17] sudo: mkdir -p /opt/virtualenvs/application
+[10.211.55.17] sudo: chown -R vagrant /opt/virtualenvs/application
+[10.211.55.17] run: virtualenv /opt/virtualenvs/application
+[10.211.55.17] out: New python executable in /opt/virtualenvs/application/bin/python
+[10.211.55.17] out: Installing distribute.............................................................................................................................................................................................done.
+[10.211.55.17] out: Installing pip...............done.
+[10.211.55.17] out:
+
+[10.211.55.17] sudo: mkdir -p /opt/application/builds
+[10.211.55.17] sudo: chown -R vagrant /opt/application
+[localhost] local: mkdir -p /tmp/work
+[localhost] local: rm -rf *.tar.gz fabric-example
+[localhost] local: /usr/bin/git clone https://github.com/disassembler/fabric-example.git fabric-example
+Cloning into 'fabric-example'...
+remote: Counting objects: 21, done.
+remote: Compressing objects: 100% (15/15), done.
+remote: Total 21 (delta 7), reused 18 (delta 4), pack-reused 0
+Unpacking objects: 100% (21/21), done.
+Checking connectivity... done.
+[localhost] local: git checkout master
+Already on 'master'
+Your branch is up-to-date with 'origin/master'.
+[localhost] local: git archive --format=tar master | gzip &gt; ../application-20150416080436.tar.gz
+[10.211.55.17] put: /tmp/work/application-20150416080436.tar.gz -&gt; /tmp/application-20150416080436.tar.gz
+[10.211.55.17] run: mkdir -p /opt/application/builds/20150416080436
+[10.211.55.17] run: tar -zxf /tmp/application-20150416080436.tar.gz
+[10.211.55.17] run: rm -f /opt/application/current
+[10.211.55.17] run: ln -sf /opt/application/builds/20150416080436 /opt/application/current
+[10.211.55.17] run: pip install -q -U -r requirements.txt
+
+Done.
+Disconnecting from 10.211.55.17... done.
+</code></pre>
+
+<p>I hope this blog post will help you get started with doing your own deployments
+with fabric. One thing we didn&#8217;t do in this case is create a production
+environment, but that is as simple as creating a new production.yml file
+containing the <code>roledefs</code> for production servers, and specifying
+<code>environment=production</code> in the <code>loadenv</code> task. In a future post we&#8217;ll discuss
+adding new roles, using <code>execute</code> for ordering tasks across multiple servers,
+as well as hiding the implementation details inside a class so our fabric file
+can be nice and clean. I&#8217;ll also be doing a separate blog post not related to
+fabric on how we can take a flask python application and use supervisord to
+launch it with a proxy behind nginx. Keep an eye on the OpsBot Blog for these
+upcoming posts!</p>
+
+
+ 
+</div>
+
+</div>
+<footer class="footer text-center">
+  <p>&copy; 2017. All rights reserved. 
+</p>
+</footer>
+<script crossorigin="anonymous" src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+<script crossorigin="anonymous" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

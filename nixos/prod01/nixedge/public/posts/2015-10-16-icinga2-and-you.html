@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Icinga2 and you - styx@styx ~ $</title>
+<link href="http://samleathers.com/feed.xml" rel="alternate" type="application/atom+xml" />
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link href="//fonts.googleapis.com/css?family=Inconsolata|Open+Sans|Roboto|Montserrat|Concert+One" rel="stylesheet" type="text/css" />
+<link href="http://samleathers.com/css/nix.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top font-header" id="navbar">
+<div class="container-fluid">
+<div class="navbar-header">
+  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+    <span class="sr-only">Toggle navigation</span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+  </button>
+  <a class="navbar-brand" id="green-terminal" href="http://samleathers.com/">styx@styx ~ $</a>
+</div>
+<div class="collapse navbar-collapse" id="navbar-collapse">
+<ul class="nav navbar-nav navbar-right">
+<li><a href="http://samleathers.com/about.html">~/about</a></li>
+<li><a href="http://samleathers.com/posts/index.html">~/posts</a></li>
+</ul>
+</div>
+</div>
+</nav>
+<div class="container wrapper">
+<h1>Icinga2 and you</h1>
+<span class="post-date">16 Oct, 2015</span>
+<div class="post-content">
+<p>You got that fancy new Drupal website ready to go live! Now what? Well, if this
+is a production site, it&#8217;s probably time to start planning how your going to
+monitor it. In this post, we&#8217;re going to talk about the complete rewrite to
+icinga (a nagios fork), icinga2! This blog post will assume systemd is already
+your init daemon.</p>
+
+<p>Lets get started. First your going to need to install icinga2 on your
+monitoring server. This is pretty straight forward if your using debian or
+ubuntu. We&#8217;re going to assume your using debian wheezy in this example:</p>
+
+<p>wget -O - http://debmon.org/debmon/repo.key 2&gt;/dev/null | sudo apt-key add -
+echo &#8216;deb http://debmon.org/debmon debmon-wheezy main&#8217; &gt; /etc/apt/sources.list.d/debmon.list
+apt-get update
+apt-get install icinga2</p>
+
+<p>This step will be done on all your clients and your server. We need to install
+some more dependencies on the server to setup the database:</p>
+
+<p>sudo apt-get -y install python-software-properties
+sudo apt-key adv &#8211;recv-keys &#8211;keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+sudo add-apt-repository &#8216;deb http://mirror.jmu.edu/pub/mariadb/repo/10.1/debian wheezy main&#8217;
+sudo apt-get update
+sudo apt-get install mariadb-server
+sudo apt-get install icinga2-ido-mysql</p>
+
+<p>The above will prompt you to setup root credentials and credentials for
+icinga2 to the IDO MySQL database. Next step is to enable the feature and
+restart the service:</p>
+
+<p>sudo icinga2 feature enable ido-mysql
+sudo systemctl restart icinga2.service</p>
+
+<p>At this point, the server is setup and able to do checks and store results in
+the database, but you probably are going to want a web interface to interact
+with icinga2, so lets set it up:</p>
+
+<p>sudo apt-get install icingaweb2 apache2 php5 php5-cli</p>
+
+<p>Make sure your password and username for connecting to the icinga_ido db is the
+same as the one you setup prior in /etc/icingaweb2/resources.ini.</p>
+
+<p>The rest of the configuration for icingaweb2 is in the browser, but we need
+a token, so run:</p>
+
+<p>sudo icingacli setup token create</p>
+
+<p>Copy that token for later setup steps.</p>
+
+<p>At this point we have an icinga2 server monitoring itself, but we still need to
+setup notifications and setup other servers to be monitored by it.</p>
+
+
+ 
+</div>
+
+</div>
+<footer class="footer text-center">
+  <p>&copy; 2017. All rights reserved. 
+</p>
+</footer>
+<script crossorigin="anonymous" src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+<script crossorigin="anonymous" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upcoming Drupal 8 Release (and beyond) - styx@styx ~ $</title>
+<link href="http://samleathers.com/feed.xml" rel="alternate" type="application/atom+xml" />
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link href="//fonts.googleapis.com/css?family=Inconsolata|Open+Sans|Roboto|Montserrat|Concert+One" rel="stylesheet" type="text/css" />
+<link href="http://samleathers.com/css/nix.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top font-header" id="navbar">
+<div class="container-fluid">
+<div class="navbar-header">
+  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+    <span class="sr-only">Toggle navigation</span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+  </button>
+  <a class="navbar-brand" id="green-terminal" href="http://samleathers.com/">styx@styx ~ $</a>
+</div>
+<div class="collapse navbar-collapse" id="navbar-collapse">
+<ul class="nav navbar-nav navbar-right">
+<li><a href="http://samleathers.com/about.html">~/about</a></li>
+<li><a href="http://samleathers.com/posts/index.html">~/posts</a></li>
+</ul>
+</div>
+</div>
+</nav>
+<div class="container wrapper">
+<h1>Upcoming Drupal 8 Release (and beyond)</h1>
+<span class="post-date">26 May, 2015</span>
+<div class="post-content">
+<p>Drupal 8 is coming! No really, it is this time. As of today there are 9
+critical tasks and 13 critical bugs remaining in 8.x. Once both of those
+numbers go to 0, assuming no more criticals are filed or reclassified, a Drupal
+8 release candidate will become available. At that time, security issues with
+Drupal 8 will no longer be public in the issue queues and site builders and
+developer alike can be confidant Drupal 8 is ready to start implementing in
+production.</p>
+
+<p>So what&#8217;s this mean for your Drupal project your working on now (or getting
+ready to work on soon). If you&#8217;re release date is at 3 - 6 months out and you
+can get by without a bunch of contrib modules, now&#8217;s a good time to start
+looking at if the site or web application could be implemented using Drupal 8.
+If you need to release before then, I&#8217;d recommend holding off on Drupal 8.</p>
+
+<p>Drupal 8 brings a number of advantages to developers and site builders alike.
+If you haven&#8217;t heard yet, Drupal is now Object Oriented built on top of the
+Symfony Framework. This means a lot of the drupalism&#8217;s developers dealt with in
+the past, like hook_menu (replaced with the new D8 router built on top of
+symfony). Also, CMI (Config Management Initiative) brings the ability to define
+module default configurations through simplified YAML syntax.</p>
+
+<p>One of my favorite new features, which elevates Drupal from your average CMS to
+a fully mobile-ready service handler is the WSCCI (Web Services and Context
+Core Initiative). Built on top of Symfony responses, Drupal 8 can now natively
+handle non-html responses (without really hacky tricks like
+<code>die(json_encode($var))</code>). Everything returned to the user in Drupal 8 is now
+a response. In addition to the ones provided by Symfony and the Zend Framework,
+Drupal adds some really cool response types you can use in your code, such as
+AjaxResponse and viewAjaxResponse (used for ajax responses specific to views).</p>
+
+<p>Speaking of Views, it&#8217;s now part of core! That means a lot of simple Drupal
+sites that only had contrib modules for views, can run views out of the box!
+Based on historical data of the Drupal 7 release, most adoption trailed behind
+views being available, which is no longer the case with Drupal 8.</p>
+
+<p>Finally, Entities with full CRUD (Create, Read, Update and Delete) are not only
+available in Core, but used as the basic building block of every piece of
+content in Drupal. Everything from a Node to a taxonomy term is now an Entity
+and you have the tools with Drupal 8 to build your own custom entities.</p>
+
+<p>If your more interested in creating themes for Drupal, there&#8217;s much to rejoice
+about Drupal 8 as well. Drupal 8 templates are now using <code>twig</code> which means
+themers for Drupal 8 can do simple logic statements without having to write
+templates and hooks in PHP.</p>
+
+<p>This just scratches the surface with all the new things being added to Drupal
+8. If you want to know more checkout http://www.drupal.org/8. This took years
+in the making, and a lot of people in the community volunteering their time
+and effort. My thanks goes out to all those that helped, whether it was writing
+documentation, reviewing patches, or contributing as part of one of the major
+Drupal 8 initiatives. If you&#8217;re interested in helping make Drupal 8 better,
+we&#8217;re always looking for new people to help. The community helps new people
+get started with contribution on Wednesdays 16:00 UTC. You probably won&#8217;t want
+to jump in on fixing one of those criticals I mentioned above, but working on
+major and minor bugs are valuable to the community as well.</p>
+
+<p>Finally I want to wrap up with what future releases for Drupal are going to
+look like. The Drupal Community is looking at switching to a 6 month minor
+release cycle with only releases that break backwards compatibility being
+classified as major. Prior to a major release, a LTS (Long Term Support)
+release will be made available to give developers plenty of time to update
+their code to support the new features being added. Even major releases are
+planned to take less than a year from code freeze. This is very exciting and
+means things that don&#8217;t break compatibility can be added to improve Drupal
+8 much faster than they have in the past.</p>
+
+<p>If you haven&#8217;t looked at Drupal 8 yet, it&#8217;s getting close enough to release
+that you might want to consider doing so. Drupal 8 is a huge advancement from
+Drupal 7 and in my opinion is way ahead of where competing content management
+systems and platforms are right now. Having the power of Symyfony at it&#8217;s core
+with all the entities we&#8217;ve come to love with Drupal 7 makes Drupal 8 your
+choice for building your next website or application.</p>
+
+
+ 
+</div>
+
+</div>
+<footer class="footer text-center">
+  <p>&copy; 2017. All rights reserved. 
+</p>
+</footer>
+<script crossorigin="anonymous" src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+<script crossorigin="anonymous" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

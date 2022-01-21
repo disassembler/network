@@ -56,40 +56,40 @@ in {
       rev = "eb4b3ca";
       sha256 = "1xvwrd59a0xj0jhk0y61fwvzfzf51s95haqykk14gb3d49w3hx88";
     };
-    wee-slack = import "${slack_plugin_src}/wee-slack.nix";
+    #wee-slack = import "${slack_plugin_src}/wee-slack.nix";
 
   in lib.mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.tmux weechat ];
-    systemd.services.weechat = {
-      description = "weechat tmux session";
-      wantedBy = [ "multi-user.target" ];
-      path = [ weechat pkgs.tmux pkgs.conky pkgs.curl pkgs.aspell  ];
-      environment."ASPELL_CONF" = "dict-dir ${pkgs.aspellDicts.en}/lib/aspell";
-      script = let
-          makeWeechatDir = directory: "mkdir -p ${directory}";
-          enableWeeSlack = chat-type: directory: ''
-            mkdir -p ${directory}/python/autoload
-            cp -vf ${wee-slack}/wee_slack.py ${directory}/python/autoload/wee_slack.py
-            '';
-          startTmuxWindow = session: name: chat-type: directory: "tmux new-window -d -t ${session} -n ${lib.optionalString (chat-type != "default") "${chat-type}-"}${name} 'weechat -d ${directory}'";
-          weechat-start-all = lib.concatStringsSep "\n" (lib.mapAttrsToList ( name: value: ''
-            ${makeWeechatDir value.directory}
-            ${lib.optionalString (value.chat-type == "slack") (enableWeeSlack value.chat-type value.directory)}
-            ${startTmuxWindow cfg.tmux-session name value.chat-type value.directory}'') cfg.configs);
-        in ''
-        tmux new-session -d -s ${cfg.tmux-session}
-        ${weechat-start-all}
-      '';
-      preStop = ''
-        tmux kill-session -t ${cfg.tmux-session}
-      '';
-      serviceConfig = {
-        User = cfg.user;
-        KillMode = "process";
-        Restart = "always";
-        RemainAfterExit = "yes";
-      };
-    };
+    environment.systemPackages = [ pkgs.tmux ];
+    #systemd.services.weechat = {
+    #  description = "weechat tmux session";
+    #  wantedBy = [ "multi-user.target" ];
+    #  path = [ weechat pkgs.tmux pkgs.conky pkgs.curl pkgs.aspell  ];
+    #  environment."ASPELL_CONF" = "dict-dir ${pkgs.aspellDicts.en}/lib/aspell";
+    #  script = let
+    #      makeWeechatDir = directory: "mkdir -p ${directory}";
+    #      enableWeeSlack = chat-type: directory: ''
+    #        mkdir -p ${directory}/python/autoload
+    #        cp -vf ${wee-slack}/wee_slack.py ${directory}/python/autoload/wee_slack.py
+    #        '';
+    #      startTmuxWindow = session: name: chat-type: directory: "tmux new-window -d -t ${session} -n ${lib.optionalString (chat-type != "default") "${chat-type}-"}${name} 'weechat -d ${directory}'";
+    #      weechat-start-all = lib.concatStringsSep "\n" (lib.mapAttrsToList ( name: value: ''
+    #        ${makeWeechatDir value.directory}
+    #        ${lib.optionalString (value.chat-type == "slack") (enableWeeSlack value.chat-type value.directory)}
+    #        ${startTmuxWindow cfg.tmux-session name value.chat-type value.directory}'') cfg.configs);
+    #    in ''
+    #    tmux new-session -d -s ${cfg.tmux-session}
+    #    ${weechat-start-all}
+    #  '';
+    #  preStop = ''
+    #    tmux kill-session -t ${cfg.tmux-session}
+    #  '';
+    #  serviceConfig = {
+    #    User = cfg.user;
+    #    KillMode = "process";
+    #    Restart = "always";
+    #    RemainAfterExit = "yes";
+    #  };
+    #};
 
   };
 }

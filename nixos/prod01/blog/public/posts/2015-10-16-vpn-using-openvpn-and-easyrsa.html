@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenVPN and easyrsa - styx@styx ~ $</title>
+<link href="http://samleathers.com/feed.xml" rel="alternate" type="application/atom+xml" />
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link href="//fonts.googleapis.com/css?family=Inconsolata|Open+Sans|Roboto|Montserrat|Concert+One" rel="stylesheet" type="text/css" />
+<link href="http://samleathers.com/css/nix.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top font-header" id="navbar">
+<div class="container-fluid">
+<div class="navbar-header">
+  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+    <span class="sr-only">Toggle navigation</span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+  </button>
+  <a class="navbar-brand" id="green-terminal" href="http://samleathers.com/">styx@styx ~ $</a>
+</div>
+<div class="collapse navbar-collapse" id="navbar-collapse">
+<ul class="nav navbar-nav navbar-right">
+<li><a href="http://samleathers.com/about.html">~/about</a></li>
+<li><a href="http://samleathers.com/posts/index.html">~/posts</a></li>
+</ul>
+</div>
+</div>
+</nav>
+<div class="container wrapper">
+<h1>OpenVPN and easyrsa</h1>
+<span class="post-date">16 Oct, 2015</span>
+<div class="post-content">
+<p>There are many different technologies for setting up a client-server VPN. Most
+of them are proprietary that have the server running on a piece of hardware
+(Cisco ASA, Dell SonicWall, Juniper Router, etc&#8230;) but if you have a linux
+server, it&#8217;s really easy to setup your own VPN using openvpn, and this post
+will show you how!</p>
+
+<p>The requirements to setup openvpn are:</p>
+
+<p>1) A linux server
+2) Access to your border router to setup port forwarding
+3) A local CA to issue/sign certificates (we&#8217;ll be using easy-rsa)</p>
+
+<p>Additional assumptions you&#8217;ll want to change to your settings are:</p>
+
+<p>1) Server LAN is on 10.0.0.0/24 subnet
+2) VPN is going to be configured to use 10.0.1.0/24 subnet
+3) DNS server and default gateway is 10.0.0.1</p>
+
+<p>Lets get started!</p>
+
+<p>First, lets install the packages we need. This blog post assumes your using
+debian:</p>
+
+<p>sudo apt-get install openvpn
+sudo apt-get install easy-rsa</p>
+
+<p>Now, lets create a CA in /opt/easy-rsa:</p>
+
+<p>sudo cp /path/to/easy-rsa /opt/easy-rsa</p>
+
+<p>Now for the easy part of easy-rsa, lets generate a CA!</p>
+
+<p>commands</p>
+
+<p>Create key and cert for server and sign certificate using CA</p>
+
+<p>commands</p>
+
+<p>Create key and cert for client and sign certificate using CA</p>
+
+<p>commands</p>
+
+<p>Configure server.conf</p>
+
+<p>Optionally, uncomment and set your IPV6 prefix to be able to reach IPV6 hosts
+behind your VPN:</p>
+
+<p>Configure client.ovpn</p>
+
+<p>Copy keys to server</p>
+
+<p>Generate client tblk for use with tunnelblick on OSX</p>
+
+<p>If you need to revoke a client certificate
+commands</p>
+
+<p>That&#8217;s all there is to it. This example shows a certificate only based
+approach, but you can also setup openvpn to require a cert and user/pass coming
+from LDAP or PAM. The possibilities for your own VPN are endless.</p>
+
+
+ 
+</div>
+
+</div>
+<footer class="footer text-center">
+  <p>&copy; 2017. All rights reserved. 
+</p>
+</footer>
+<script crossorigin="anonymous" src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+<script crossorigin="anonymous" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

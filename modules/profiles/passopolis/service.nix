@@ -1,8 +1,10 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 
 with lib;
 
 let
+  sources = import nix/sources.nix {};
+  pkgs = import sources.nixpkgs-passopolis {};
   cfg = config.services.passopolis;
 in {
   ###### interface
@@ -12,6 +14,12 @@ in {
     services.passopolis = {
 
       enable = mkEnableOption "Passopolis";
+
+      package = mkOption {
+        type = types.package;
+        default = pkgs.callPackage ./pkg.nix { antBuild = pkgs.releaseTools.antBuild; };
+        description = "Passopolis package";
+      };
 
       user = mkOption {
         type = types.str;
@@ -45,12 +53,14 @@ in {
   ###### implementation
 
   config = mkIf cfg.enable {
-
-    users.extraUsers.passopolis =
+    users.users.passopolis =
     {
+      isSystemUser = true;
       name = cfg.user;
       description = "Passopolis service user";
+      group = "passopolis";
     };
+    users.groups.passopolis = {};
 
     systemd.services.passopolis =
     {
@@ -75,7 +85,7 @@ in {
       serviceConfig = {
         PermissionsStartOnly = true; # preStart must be run as root
         Type = "simple";
-        ExecStart = "${pkgs.jre}/bin/java -DgenerateSecretsForTest=true -Dhttp_port=8089 -Dhttps_port=8445 -Ddatabase_url=jdbc:postgresql://${cfg.databaseHost}:5432/${cfg.databaseName} -ea -jar ${pkgs.passopolis}/share/java/mitrocore.jar";
+        ExecStart = "${pkgs.jre}/bin/java -DgenerateSecretsForTest=true -Dhttp_port=8089 -Dhttps_port=8445 -Ddatabase_url=jdbc:postgresql://${cfg.databaseHost}:5432/${cfg.databaseName} -ea -jar ${cfg.package}/share/java/mitrocore.jar";
         User = cfg.user;
       };
     };

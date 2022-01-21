@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docker Networking with Pipework - styx@styx ~ $</title>
+<link href="http://samleathers.com/feed.xml" rel="alternate" type="application/atom+xml" />
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link href="//fonts.googleapis.com/css?family=Inconsolata|Open+Sans|Roboto|Montserrat|Concert+One" rel="stylesheet" type="text/css" />
+<link href="http://samleathers.com/css/nix.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top font-header" id="navbar">
+<div class="container-fluid">
+<div class="navbar-header">
+  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+    <span class="sr-only">Toggle navigation</span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+  </button>
+  <a class="navbar-brand" id="green-terminal" href="http://samleathers.com/">styx@styx ~ $</a>
+</div>
+<div class="collapse navbar-collapse" id="navbar-collapse">
+<ul class="nav navbar-nav navbar-right">
+<li><a href="http://samleathers.com/about.html">~/about</a></li>
+<li><a href="http://samleathers.com/posts/index.html">~/posts</a></li>
+</ul>
+</div>
+</div>
+</nav>
+<div class="container wrapper">
+<h1>Docker Networking with Pipework</h1>
+<span class="post-date">10 Sep, 2014</span>
+<div class="post-content">
+<h1 id="whatispipework">What is Pipework</h1>
+
+<p>Pipework is a script that adds an IP to LXC containers. It takes as arguments
+the host interface, which is normally a bridge device, the name of the guest to
+add the interface to, and an ip address. The guest name can either be an LXC
+cgroup, a docker instance id, or a docker name. The ip address parameter can be
+a bridge, or an IP address with a n optional netmask and gateway parameter.</p>
+
+<h1 id="whyyoushoulduseit">Why you should use it</h1>
+
+<p>Normailly with docker, the IP address given to a container is randomly
+generated and not publically accessible. If you want to have a container
+externally accessible, you setup the networking in the host system, and
+&#8220;expose&#8221;, or map the port from the container to the host system. This is
+great in theory, but, say you want three separate web servers all
+listening on 80. In this case, the docker host needs to have 3 separate
+IP&#8217;s configured, and docker needs to map the container to the correct IP.</p>
+
+<p>With pipework, you can assign an IP on the network, and any ports
+exposed in the dockerfile are available from that IP address. This allows
+setting up docker instances much like you would a normal virtual machine, where
+the docker instance can have a static IP that is directly accessible. Also, by
+setting the gateway, you can enforce all traffic exits the docker instance
+through that IP, and can create EGRESS firewall rules for that docker instance.
+Whereas, when mapping ports to the host, it&#8217;s impossible to know the IP ahead
+of time of the instance that traffic will originate from.</p>
+
+<h1 id="installingpipework">Installing pipework</h1>
+
+<p>Pipework is a single shell script and can be installed using the following command:
+<code>sudo bash -c &quot;curl https://raw.githubusercontent.com/jpetazzo/pipework/master/pipework &gt; /usr/local/bin/pipework&quot;</code></p>
+
+<p>The only required dependencies are bash and iproute2 utilities, docker
+integration will require docker being installed and dhcp option requires a dhcp
+client being available. You&#8217;ll also need to setup your ethernet interface in
+linux as a bridge (not discussed here).</p>
+
+<h1 id="usingpipeworkwithdocker">Using pipework with docker</h1>
+
+<p>If you are using named docker instances, adding the ip address 10.40.33.21 to
+a docker instance bind is as simple as:
+<code>pipework br0 bind 10.40.33.21/24</code></p>
+
+<p>If you want to route out of 10.40.33.1 change it to:
+<code>pipework br0 bind 10.40.33.21/24@10.40.33.1</code></p>
+
+<p>If you aren&#8217;t naming your docker containers, replace the name with the docker
+instance id (can be found with <code>docker ps</code>)</p>
+
+<p>Also, pipework can execute docker itself since docker returns the instance id
+like so:
+<code>pipework br0 $(/usr/bin/docker run -d bind) 10.40.33.21/24@10.40.33.1</code></p>
+
+<h1 id="automatingstartupofyourdockerinstancewithpipeworkandsystemd">Automating startup of your docker instance with pipework and systemd</h1>
+
+<p>If you&#8217;re system uses systemd, it&#8217;s really simple to setup docker instances to
+start on boot with pipework. Here&#8217;s a simple service file:</p>
+
+<p>/etc/systemd/system/docker-bind.service:</p>
+
+<pre><code>[Unit]
+Description=Docker BIND DNS Server
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=/usr/bin/docker kill bind
+ExecStartPre=/usr/bin/docker rm bind
+ExecStart=/usr/bin/docker run --name bind bind
+ExecStartPost=/usr/bin/pipework br0 bind 10.40.33.21/24@10.40.33.1
+ExecStop=/usr/bin/docker stop bind
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<p>This service can then be started manually with
+<code>systemctl start docker-bind.service</code></p>
+
+<p>It can also be configured to start on boot with:
+<code>systemctl enable docker-bind.service</code></p>
+
+
+ 
+</div>
+
+</div>
+<footer class="footer text-center">
+  <p>&copy; 2017. All rights reserved. 
+</p>
+</footer>
+<script crossorigin="anonymous" src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+<script crossorigin="anonymous" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

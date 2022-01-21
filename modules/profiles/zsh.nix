@@ -14,6 +14,9 @@ in {
     };
   };
   config = mkIf cfg.enable {
+    environment.systemPackages = [
+      pkgs.starship
+    ];
     programs = {
       zsh = {
         enable = true;
@@ -35,6 +38,11 @@ in {
           export EDITOR='nvim'
           export VISUAL='nvim'
           export KEYTIMEOUT=1
+          case $TERM in
+            xterm*)
+               precmd () {print -Pn "\e]0;%n@%m: %~\a"}
+            ;;
+          esac
           eval "$(direnv hook zsh)"
           # ctrl-v to edit command-line in vim
           autoload edit-command-line

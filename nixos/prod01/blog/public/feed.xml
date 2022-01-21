@@ -1,0 +1,855 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Feed</title>
+  
+  <generator>Styx</generator>
+  <updated>2015-10-16T00:00:00Z</updated>
+  <id>http://samleathers.com/feed.xml</id>
+  <link href="http://samleathers.com/feed.xml" rel="self" type="application/atom+xml"/>
+  <link href="http://samleathers.com/" rel="alternate"/>
+  <author>
+  <name>Styx</name>
+</author>
+
+  
+  
+  <entry>
+  <id>http://samleathers.com/posts/2015-10-16-icinga2-and-you.html</id>
+  <title>Icinga2 and you</title>
+  <updated>2015-10-16T00:00:00Z</updated>
+  <link href="http://samleathers.com/posts/2015-10-16-icinga2-and-you.html" rel="alternate" type="text/html"/>
+  <summary type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>Icinga2 is a rewrite of icinga, a fork of nagios. Find out what&#8217;s new</p>
+
+      </div>
+    </summary>
+  <content type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>You got that fancy new Drupal website ready to go live! Now what? Well, if this
+is a production site, it&#8217;s probably time to start planning how your going to
+monitor it. In this post, we&#8217;re going to talk about the complete rewrite to
+icinga (a nagios fork), icinga2! This blog post will assume systemd is already
+your init daemon.</p>
+
+<p>Lets get started. First your going to need to install icinga2 on your
+monitoring server. This is pretty straight forward if your using debian or
+ubuntu. We&#8217;re going to assume your using debian wheezy in this example:</p>
+
+<p>wget -O - http://debmon.org/debmon/repo.key 2&gt;/dev/null | sudo apt-key add -
+echo &#8216;deb http://debmon.org/debmon debmon-wheezy main&#8217; &gt; /etc/apt/sources.list.d/debmon.list
+apt-get update
+apt-get install icinga2</p>
+
+<p>This step will be done on all your clients and your server. We need to install
+some more dependencies on the server to setup the database:</p>
+
+<p>sudo apt-get -y install python-software-properties
+sudo apt-key adv &#8211;recv-keys &#8211;keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+sudo add-apt-repository &#8216;deb http://mirror.jmu.edu/pub/mariadb/repo/10.1/debian wheezy main&#8217;
+sudo apt-get update
+sudo apt-get install mariadb-server
+sudo apt-get install icinga2-ido-mysql</p>
+
+<p>The above will prompt you to setup root credentials and credentials for
+icinga2 to the IDO MySQL database. Next step is to enable the feature and
+restart the service:</p>
+
+<p>sudo icinga2 feature enable ido-mysql
+sudo systemctl restart icinga2.service</p>
+
+<p>At this point, the server is setup and able to do checks and store results in
+the database, but you probably are going to want a web interface to interact
+with icinga2, so lets set it up:</p>
+
+<p>sudo apt-get install icingaweb2 apache2 php5 php5-cli</p>
+
+<p>Make sure your password and username for connecting to the icinga_ido db is the
+same as the one you setup prior in /etc/icingaweb2/resources.ini.</p>
+
+<p>The rest of the configuration for icingaweb2 is in the browser, but we need
+a token, so run:</p>
+
+<p>sudo icingacli setup token create</p>
+
+<p>Copy that token for later setup steps.</p>
+
+<p>At this point we have an icinga2 server monitoring itself, but we still need to
+setup notifications and setup other servers to be monitored by it.</p>
+
+      </div>
+    </content>
+</entry>
+
+<entry>
+  <id>http://samleathers.com/posts/2015-10-16-nix-a-package-manager-that-does-not-suck.html</id>
+  <title>Nix - a package manager that doesn't suck</title>
+  <updated>2015-10-16T00:00:00Z</updated>
+  <link href="http://samleathers.com/posts/2015-10-16-nix-a-package-manager-that-does-not-suck.html" rel="alternate" type="text/html"/>
+  <summary type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>Nix is a package manager like yum, apt-get and pacman. Find out what makes it
+better than any one you&#8217;ve used before</p>
+
+      </div>
+    </summary>
+  <content type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>If you&#8217;re reading this post, you&#8217;re probably familiar with the shortcomings of many
+linux package managers, whether that be rpm&#8217;s on redhat, deb&#8217;s on debian, or
+source/binary tarballs on gentoo or even bottles and source using homebrew on
+OSX, it never fails that you eventually get to
+a point where you need a package with a different library version than your
+system provides, and you end up building something from source.</p>
+
+<p>But what if there was a better way? Enter nix. Nix package manager came about
+as a university research project to handle many of the shortcomings of typical
+package managers. Theoretically, every package on your system could use
+a different set of dependencies, because every package (even a new version of
+an already existing package) exists as hash in a directory. Even if the default
+libc version on the system is 2.3, if your package needs 2.2, all you need to
+do is point to the libc 2.2 directory. This allows for the following features:</p>
+
+<p>1) Test package upgrades on a system while leaving the existing package in place
+2) Rollback a package upgrade without affecting any other package on the system
+3) Different versions used by different users on the same system</p>
+
+<p>Lets talk about how this works at a low level. When we install a package in nix
+using <code>nix-env some command</code>, that package is placed into a directory in the
+nix store named by a hash that is generated using the package name, version and
+dependency tree. When another package depends on a package, it is built against
+that packages directory instead of /usr/lib or /usr/local/lib. When a package
+is upgraded, the other package remains, and a new directory hash is generated
+for the upgraded package. To free up disk space on the system, a garbage
+collector is ran that only removes packages that are not depended by any active
+existing packages. When a package is rolled back, all that is changed is the
+symlinks in <code>the nix store directory</code> to the hash of the old package. Also,
+since the hash is based on the dependency tree, this also means the same
+version of a package can be installed on the system depending on a different
+version of a package. This means even if the dependency is upgraded, this
+package will continue to rely on the older version until the package is rebuilt
+against the new dependency version.</p>
+
+<p>So, this is great on a single user system, but what if you have multiple users
+on the system? Do you have to give write access to the nix store to all users
+on that system? Absolutely not! Nix provides the nix daemon for multi-user
+systems. What this does is instead of having the user running the command to
+install the package, it tells the daemon to fire off a job to install the
+package which keeps the entire nix store owned by the user the daemon is
+running as. Each user has a profile directory in the nix store they source to
+get their own personal set of packages they are using in the nix store. In this
+way some packages can be shared across users, and other ones can be
+specifically installed for that specific user.</p>
+
+<p>So, now that we understand what nix is, lets setup our own nix store. We&#8217;ll
+work with the simpler nix store owned by a single user for this example:</p>
+
+<p>curl nix|bash</p>
+
+<p>ln -s /nix/profile ~/.profile-nix</p>
+
+<p>That&#8217;s it, you now have your own nix store. Lets install some packages:</p>
+
+<p>nix-env -i blah&#8230;</p>
+
+<p>now lets install a specific version of X:</p>
+
+<p>nix-env -i X
+ls -hal /nix/foo</p>
+
+<p>now lets install the latest one:</p>
+
+<p>nix-env -i X
+ls -hal /nix/foo
+ls -hal /nix/store/4wjx372kx9djqqlywqscp21z8b17v7bl-X</p>
+
+<p>You can see that X is now the latest, but the old version of X still exists</p>
+
+<p>That&#8217;s pretty much the basics of nix. Stay tuned for another blog post on an OS
+built completely around nix, nixos!</p>
+
+      </div>
+    </content>
+</entry>
+
+<entry>
+  <id>http://samleathers.com/posts/2015-10-16-vpn-using-openvpn-and-easyrsa.html</id>
+  <title>OpenVPN and easyrsa</title>
+  <updated>2015-10-16T00:00:00Z</updated>
+  <link href="http://samleathers.com/posts/2015-10-16-vpn-using-openvpn-and-easyrsa.html" rel="alternate" type="text/html"/>
+  <summary type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>OpenVPN is an easy way to setup a VPN server. Find out how.</p>
+
+      </div>
+    </summary>
+  <content type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>There are many different technologies for setting up a client-server VPN. Most
+of them are proprietary that have the server running on a piece of hardware
+(Cisco ASA, Dell SonicWall, Juniper Router, etc&#8230;) but if you have a linux
+server, it&#8217;s really easy to setup your own VPN using openvpn, and this post
+will show you how!</p>
+
+<p>The requirements to setup openvpn are:</p>
+
+<p>1) A linux server
+2) Access to your border router to setup port forwarding
+3) A local CA to issue/sign certificates (we&#8217;ll be using easy-rsa)</p>
+
+<p>Additional assumptions you&#8217;ll want to change to your settings are:</p>
+
+<p>1) Server LAN is on 10.0.0.0/24 subnet
+2) VPN is going to be configured to use 10.0.1.0/24 subnet
+3) DNS server and default gateway is 10.0.0.1</p>
+
+<p>Lets get started!</p>
+
+<p>First, lets install the packages we need. This blog post assumes your using
+debian:</p>
+
+<p>sudo apt-get install openvpn
+sudo apt-get install easy-rsa</p>
+
+<p>Now, lets create a CA in /opt/easy-rsa:</p>
+
+<p>sudo cp /path/to/easy-rsa /opt/easy-rsa</p>
+
+<p>Now for the easy part of easy-rsa, lets generate a CA!</p>
+
+<p>commands</p>
+
+<p>Create key and cert for server and sign certificate using CA</p>
+
+<p>commands</p>
+
+<p>Create key and cert for client and sign certificate using CA</p>
+
+<p>commands</p>
+
+<p>Configure server.conf</p>
+
+<p>Optionally, uncomment and set your IPV6 prefix to be able to reach IPV6 hosts
+behind your VPN:</p>
+
+<p>Configure client.ovpn</p>
+
+<p>Copy keys to server</p>
+
+<p>Generate client tblk for use with tunnelblick on OSX</p>
+
+<p>If you need to revoke a client certificate
+commands</p>
+
+<p>That&#8217;s all there is to it. This example shows a certificate only based
+approach, but you can also setup openvpn to require a cert and user/pass coming
+from LDAP or PAM. The possibilities for your own VPN are endless.</p>
+
+      </div>
+    </content>
+</entry>
+
+<entry>
+  <id>http://samleathers.com/posts/2015-05-26-drupal-8.html</id>
+  <title>Upcoming Drupal 8 Release (and beyond)</title>
+  <updated>2015-05-26T00:00:00Z</updated>
+  <link href="http://samleathers.com/posts/2015-05-26-drupal-8.html" rel="alternate" type="text/html"/>
+  <summary type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>Drupal 8 is drastically different from Drupal 7. Learn more about why.</p>
+
+      </div>
+    </summary>
+  <content type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>Drupal 8 is coming! No really, it is this time. As of today there are 9
+critical tasks and 13 critical bugs remaining in 8.x. Once both of those
+numbers go to 0, assuming no more criticals are filed or reclassified, a Drupal
+8 release candidate will become available. At that time, security issues with
+Drupal 8 will no longer be public in the issue queues and site builders and
+developer alike can be confidant Drupal 8 is ready to start implementing in
+production.</p>
+
+<p>So what&#8217;s this mean for your Drupal project your working on now (or getting
+ready to work on soon). If you&#8217;re release date is at 3 - 6 months out and you
+can get by without a bunch of contrib modules, now&#8217;s a good time to start
+looking at if the site or web application could be implemented using Drupal 8.
+If you need to release before then, I&#8217;d recommend holding off on Drupal 8.</p>
+
+<p>Drupal 8 brings a number of advantages to developers and site builders alike.
+If you haven&#8217;t heard yet, Drupal is now Object Oriented built on top of the
+Symfony Framework. This means a lot of the drupalism&#8217;s developers dealt with in
+the past, like hook_menu (replaced with the new D8 router built on top of
+symfony). Also, CMI (Config Management Initiative) brings the ability to define
+module default configurations through simplified YAML syntax.</p>
+
+<p>One of my favorite new features, which elevates Drupal from your average CMS to
+a fully mobile-ready service handler is the WSCCI (Web Services and Context
+Core Initiative). Built on top of Symfony responses, Drupal 8 can now natively
+handle non-html responses (without really hacky tricks like
+<code>die(json_encode($var))</code>). Everything returned to the user in Drupal 8 is now
+a response. In addition to the ones provided by Symfony and the Zend Framework,
+Drupal adds some really cool response types you can use in your code, such as
+AjaxResponse and viewAjaxResponse (used for ajax responses specific to views).</p>
+
+<p>Speaking of Views, it&#8217;s now part of core! That means a lot of simple Drupal
+sites that only had contrib modules for views, can run views out of the box!
+Based on historical data of the Drupal 7 release, most adoption trailed behind
+views being available, which is no longer the case with Drupal 8.</p>
+
+<p>Finally, Entities with full CRUD (Create, Read, Update and Delete) are not only
+available in Core, but used as the basic building block of every piece of
+content in Drupal. Everything from a Node to a taxonomy term is now an Entity
+and you have the tools with Drupal 8 to build your own custom entities.</p>
+
+<p>If your more interested in creating themes for Drupal, there&#8217;s much to rejoice
+about Drupal 8 as well. Drupal 8 templates are now using <code>twig</code> which means
+themers for Drupal 8 can do simple logic statements without having to write
+templates and hooks in PHP.</p>
+
+<p>This just scratches the surface with all the new things being added to Drupal
+8. If you want to know more checkout http://www.drupal.org/8. This took years
+in the making, and a lot of people in the community volunteering their time
+and effort. My thanks goes out to all those that helped, whether it was writing
+documentation, reviewing patches, or contributing as part of one of the major
+Drupal 8 initiatives. If you&#8217;re interested in helping make Drupal 8 better,
+we&#8217;re always looking for new people to help. The community helps new people
+get started with contribution on Wednesdays 16:00 UTC. You probably won&#8217;t want
+to jump in on fixing one of those criticals I mentioned above, but working on
+major and minor bugs are valuable to the community as well.</p>
+
+<p>Finally I want to wrap up with what future releases for Drupal are going to
+look like. The Drupal Community is looking at switching to a 6 month minor
+release cycle with only releases that break backwards compatibility being
+classified as major. Prior to a major release, a LTS (Long Term Support)
+release will be made available to give developers plenty of time to update
+their code to support the new features being added. Even major releases are
+planned to take less than a year from code freeze. This is very exciting and
+means things that don&#8217;t break compatibility can be added to improve Drupal
+8 much faster than they have in the past.</p>
+
+<p>If you haven&#8217;t looked at Drupal 8 yet, it&#8217;s getting close enough to release
+that you might want to consider doing so. Drupal 8 is a huge advancement from
+Drupal 7 and in my opinion is way ahead of where competing content management
+systems and platforms are right now. Having the power of Symyfony at it&#8217;s core
+with all the entities we&#8217;ve come to love with Drupal 7 makes Drupal 8 your
+choice for building your next website or application.</p>
+
+      </div>
+    </content>
+</entry>
+
+<entry>
+  <id>http://samleathers.com/posts/2015-05-17-systemd-primer.html</id>
+  <title>systemd - A new init daemon for Linux</title>
+  <updated>2015-05-17T00:00:00Z</updated>
+  <link href="http://samleathers.com/posts/2015-05-17-systemd-primer.html" rel="alternate" type="text/html"/>
+  <summary type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>systemd is replacing all linux init systems (sysv, upstart, etc&#8230;)</p>
+
+      </div>
+    </summary>
+  <content type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>If you use Linux and you haven&#8217;t heard of <code>systemd</code> yet, it won&#8217;t be long. With
+most of the major distributions having adopted systemd already or planning to
+adopt it within the next year ( RedHat, Debian, Ubuntu, Archlinux, etc&#8230;). So
+since you can&#8217;t ignore and avoid it anymore, this blog post is going to discuss
+what it is, why it&#8217;s an improvement on System V init, and how to interact with
+it using <code>systemctl</code>.</p>
+
+<p><code>systemd</code> is a replacement init daemon for linux. The init daemon is the process
+that the kernel launches on startup that manages starting everything else. At
+it&#8217;s heart, it mainly is used for stopping/starting services and getting the
+current status of a service.</p>
+
+<p>It supports some awesome new kernel features, such as cgroups where every process
+started by systemd gets it&#8217;s own <code>cgroup</code>, so it&#8217;s easy to identify all the
+processes associated with a service. It also allows <code>systemd</code> to assign
+a cgroup a max amount of memory, a higher CPU priority, Block I/O read/write
+bandwidth and even some really nitty gritty values such as swappiness.</p>
+
+<p>One of the things systemd excels at over System V init scripts is service
+dependencies. If you aren&#8217;t familiar with how
+<code>/sbin/init</code> works, when it starts, it sets the <code>runlevel</code> and first executes
+all the K scripts in <code>/etc/rcN.d/</code> (where N is the runlevel) with the stop
+argument, followed by all the S scripts with the start argument. Everything is
+done numerically, so if process foo needs to start before process bar, it would
+be S02foo and S03bar. You can see how this could get unruly when you need to
+insert process baz between foo and bar and there isn&#8217;t a number available. Now
+you have to go about and renumber foo and bar, which means altering the RPM of
+foo and bar to get baz to start at the right time. With systemd, we can specify
+a service to require or even want (like require but if service doesn&#8217;t exist is
+ignored) another service in the unit file. So when baz and bar 2.0 are
+released, baz can require foo, and bar 2.0 can want baz.</p>
+
+<p>Starting and stopping services with systemd is pretty simple. We use the
+<code>systemctl</code> command to interact with services. A service unit ends in .service
+to distinguish between different types of systemd units. For this example,
+we&#8217;ll stop/start/restart the httpd.service unit. To start our service, we run
+<code>systemctl start httpd.service</code>. Similarly, to stop the servce we run
+<code>systemctl stop httpd.service</code>. To restart, the command is:
+<code>systemctl restart httpd.service</code>.</p>
+
+<p>Another benefit to systemd is monitoring of services. With System V, to get the
+status of a service, the init script needed to be written to support it. We get
+this &#8220;Out of the box&#8221; with systemd with all services. Here&#8217;s an example output
+of a stopped service:</p>
+
+<pre><code>sam@myvm:~$ sudo systemctl status -n 50 apache2.service
+apache2.service - LSB: Start/stop apache2 web server
+    Loaded: loaded (/etc/init.d/apache2)
+    Active: inactive (dead)
+    CGroup: name=systemd:/system/apache2.service
+</code></pre>
+
+<p>And of a started service:</p>
+
+<pre><code>sam@myvm:~$ sudo systemctl status ssh.service
+ssh.service - LSB: OpenBSD Secure Shell server
+    Loaded: loaded (/etc/init.d/ssh)
+    Active: active (running) since Fri, 13 Mar 2015 14:23:33 -0400; 3 days ago
+    CGroup: name=systemd:/system/ssh.service
+      └ 1183 /usr/sbin/sshd
+
+Mar 16 22:04:52 myvm sshd[12496]: Accepted publickey for sam from 10.211.55.2 port 53061 ssh2
+Mar 16 22:04:52 myvm sshd[12496]: pam_unix(sshd:session): session opened for user sam by (uid=0)
+Mar 16 22:55:27 myvm sshd[12577]: Accepted publickey for sam from 10.211.55.2 port 53362 ssh2
+Mar 16 22:55:27 myvm sshd[12577]: pam_unix(sshd:session): session opened for user sam by (uid=0)
+Mar 16 23:18:48 myvm sshd[12593]: Accepted publickey for sam from 10.211.55.2 port 53766 ssh2
+Mar 16 23:18:48 myvm sshd[12593]: pam_unix(sshd:session): session opened for user sam by (uid=0)
+Mar 17 10:17:07 myvm sshd[18117]: Accepted publickey for sam from 10.211.55.2 port 52378 ssh2
+Mar 17 10:17:07 myvm sshd[18117]: pam_unix(sshd:session): session opened for user sam by (uid=0)
+Mar 17 10:45:42 myvm sshd[30694]: Accepted publickey for sam from 10.211.55.2 port 52716 ssh2
+Mar 17 10:45:42 myvm sshd[30694]: pam_unix(sshd:session): session opened for user sam by (uid=0)
+</code></pre>
+
+<p>There&#8217;s a hidden gem in the status command above. Because systemd by
+default sends all stdout/stderr output to journalctl, we can get the most
+recent logs via the status command. If we want more, we can use the -n
+parameter to specify the number of lines of logs we want to see. In this case,
+we haven&#8217;t even created a systemd unit file. systemd is starting the old LSB
+init script without any new systemd features being setup in unit files.</p>
+
+<p>This is the basic usage of systemd. In future blog posts we&#8217;ll look at some
+more advanced features like writing your own unit script (to see an example of
+how easy it is, see my blog post on Advanced Docker Networking with Pipework),
+integrating with dbus, using other unit types like timers and taking advantage of
+cgroups to control your processes resource usage. Until next time, enjoy
+playing with <code>systemd</code>.</p>
+
+      </div>
+    </content>
+</entry>
+
+<entry>
+  <id>http://samleathers.com/posts/2015-04-16-python-fabric-deployments.html</id>
+  <title>Fabric Deployments for fun and profit - Environments and a Web Application</title>
+  <updated>2015-04-16T00:00:00Z</updated>
+  <link href="http://samleathers.com/posts/2015-04-16-python-fabric-deployments.html" rel="alternate" type="text/html"/>
+  <summary type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>Building on the last post, python fabric here is refined to use
+environments defined in yaml and setup role definitions</p>
+
+      </div>
+    </summary>
+  <content type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>If you haven&#8217;t read the (first blog post) I highly recommend you start there.
+In this post we&#8217;ll be digging deeper into some more intermediate tasks with
+fabric. We&#8217;re going to start out talking about roles. From there we&#8217;re going to
+move environment specific configuration into a YAML config file. We&#8217;re then
+going to delve into building a deployment script for a simple python
+application with a pip install for requirements into a virtualenv and
+a deployment strategy that simplifies rollbacks.</p>
+
+<h1 id="serverroles">Server Roles</h1>
+
+<p>The basis of any fabric deployment script is defining what server&#8217;s get what
+tasks. We do this using the <code>@roles</code> decorator on a task. This then will run the
+commands in that task on every server in the group. A list of servers getting
+what roles is in the <code>env.roledefs</code> variable.</p>
+
+<p>Here&#8217;s a simple example:</p>
+
+<pre><code>env.roledefs = {
+    'application': [ 'web.example.com' ],
+}
+
+@roles('application')
+def deploy():
+    sudo('echo deploying application to webserver')
+</code></pre>
+
+<p>To run a deploy to the webservers, all we do now is run <code>fab deploy</code></p>
+
+<h1 id="environmentconfigurationfiles-usingyamlwithfabric">Environment Configuration files - Using YAML with fabric</h1>
+
+<p>You very well could specifiy all your roledefs in your fabfile.py for all your environments, but a trick I like to do is load this from a YAML file. In addition to roledefs, this pattern also allows you to have environment specific variables, such as environment name, some credentials, etc&#8230;</p>
+
+<p>To do this, we create a task for loading our environment. This task then parses the yaml file with the configuration and then sets that configuration in a new variable, <code>env.config</code>. This config variable is then accessible in any other tasks. Finally, we set <code>env.roledefs</code> to <code>env.config['roledefs']</code></p>
+
+<p>Here&#8217;s the code:</p>
+
+<pre><code>def loadenv(environment = ''):
+    &quot;&quot;&quot;Loads an environment config file for role definitions&quot;&quot;&quot;
+    with open(config_dir + environment + '.yaml', 'r') as f:
+        env.config = yaml.load(f)
+        env.roledefs = env.config['roledefs']
+</code></pre>
+
+<p>And the associated configuration file <code>staging.yaml</code>:</p>
+
+<pre><code>roledefs:
+    application:
+      - 'web.example.com'
+</code></pre>
+
+<h1 id="contextmanagers">Context managers</h1>
+
+<p>Context managers are useful concept. They run a command within a certain
+context on the remote server. A simple example is the <code>cd()</code> context manager. This changes the directory before running a specific command. It&#8217;s used as follows:</p>
+
+<pre><code>with cd('/opt/myapp'):
+    run('echo running from `pwd`')
+</code></pre>
+
+<p>Other context managers that we&#8217;ll be using for this example is <code>lcd()</code> to cd on the system we&#8217;re running fabric from and <code>exists()</code> to check if a file or directory exists on the remote host before running a command.</p>
+
+<h1 id="usingprefixforpythonvirtualenv">Using Prefix for python virtualenv</h1>
+
+<p>With fabric, we can prefix any command with the <code>prefix()</code> context manager. We
+can also create our own context managers buy decorating a function as
+<code>@_contextmanager</code>. We aren&#8217;t going to go into huge details on these commands right now (they&#8217;re much more advanced usage), but we are going to use them to create a context manager for loading a python virtualenv using the following code:</p>
+
+<pre><code>env.activate = 'source /opt/myapp/python/bin/activate'
+@_contextmanager
+def virtualenv():
+    with prefix(env.activate):
+        yield
+</code></pre>
+
+<p>This context manager can then be used in your tasks similar to the built-in
+<code>cd()</code> context manager as follows:</p>
+
+<pre><code>def deploy():
+    with virtualenv():
+        run('pip install -r requirements.txt')
+</code></pre>
+
+<h1 id="runningprivilegedcommands">Running privileged commands</h1>
+
+<p>Sometimes you need to run a command as root, for example, to create an initial directory and chown it to the user. This can be done replacing <code>run()</code> with <code>sudo()</code>. Just remember, always follow the least privilege security pattern. It&#8217;s always better to not use <code>sudo()</code> if you don&#8217;t have to! In this example, <code>sudo()</code> is only used to create the initial directory for the application and the python virtualenv.</p>
+
+<h1 id="letsdeployanapplication">Lets deploy an application!</h1>
+
+<p>Ok, so now that we have the basics, lets work on deploying an application from a git repository! We&#8217;ll start with the code and staging/production config files and then explain what they&#8217;re doing. You can find the fabric file at https://github.com/disassembler/fabric-example/fabfile.py and configuration for staging at https://github.com/disassembler/fabric-example/config/staging.yml.</p>
+
+<p>To break down the deploy process, here are the steps we are trying to accomplish with the deploy task:</p>
+
+<ol>
+<li>if this is the first run on this server, run the <code>setup()</code> process</li>
+<li>remove previous local builds use git to clone the application locally</li>
+<li>create a binary release tarball for the application</li>
+<li>copy tarball to application server</li>
+<li>on application server, extract to /opt/application/builds/<timestamp></li>
+<li>symlink above directory to /opt/application/current</li>
+<li>run pip install to get any requirements that have changed for the app</li>
+</ol>
+
+<p>And our initial setup is:</p>
+
+<ol>
+<li>if virtualenv for application doesn&#8217;t exist, create it</li>
+<li>if /opt/application/builds doesn&#8217;t exist, create it</li>
+</ol>
+
+<p>Here is the output of our deployment:</p>
+
+<pre><code>fab loadenv:environment=staging deploy
+[10.211.55.17] Executing task 'deploy'
+[10.211.55.17] sudo: mkdir -p /opt/virtualenvs/application
+[10.211.55.17] sudo: chown -R vagrant /opt/virtualenvs/application
+[10.211.55.17] run: virtualenv /opt/virtualenvs/application
+[10.211.55.17] out: New python executable in /opt/virtualenvs/application/bin/python
+[10.211.55.17] out: Installing distribute.............................................................................................................................................................................................done.
+[10.211.55.17] out: Installing pip...............done.
+[10.211.55.17] out:
+
+[10.211.55.17] sudo: mkdir -p /opt/application/builds
+[10.211.55.17] sudo: chown -R vagrant /opt/application
+[localhost] local: mkdir -p /tmp/work
+[localhost] local: rm -rf *.tar.gz fabric-example
+[localhost] local: /usr/bin/git clone https://github.com/disassembler/fabric-example.git fabric-example
+Cloning into 'fabric-example'...
+remote: Counting objects: 21, done.
+remote: Compressing objects: 100% (15/15), done.
+remote: Total 21 (delta 7), reused 18 (delta 4), pack-reused 0
+Unpacking objects: 100% (21/21), done.
+Checking connectivity... done.
+[localhost] local: git checkout master
+Already on 'master'
+Your branch is up-to-date with 'origin/master'.
+[localhost] local: git archive --format=tar master | gzip &gt; ../application-20150416080436.tar.gz
+[10.211.55.17] put: /tmp/work/application-20150416080436.tar.gz -&gt; /tmp/application-20150416080436.tar.gz
+[10.211.55.17] run: mkdir -p /opt/application/builds/20150416080436
+[10.211.55.17] run: tar -zxf /tmp/application-20150416080436.tar.gz
+[10.211.55.17] run: rm -f /opt/application/current
+[10.211.55.17] run: ln -sf /opt/application/builds/20150416080436 /opt/application/current
+[10.211.55.17] run: pip install -q -U -r requirements.txt
+
+Done.
+Disconnecting from 10.211.55.17... done.
+</code></pre>
+
+<p>I hope this blog post will help you get started with doing your own deployments
+with fabric. One thing we didn&#8217;t do in this case is create a production
+environment, but that is as simple as creating a new production.yml file
+containing the <code>roledefs</code> for production servers, and specifying
+<code>environment=production</code> in the <code>loadenv</code> task. In a future post we&#8217;ll discuss
+adding new roles, using <code>execute</code> for ordering tasks across multiple servers,
+as well as hiding the implementation details inside a class so our fabric file
+can be nice and clean. I&#8217;ll also be doing a separate blog post not related to
+fabric on how we can take a flask python application and use supervisord to
+launch it with a proxy behind nginx. Keep an eye on the OpsBot Blog for these
+upcoming posts!</p>
+
+      </div>
+    </content>
+</entry>
+
+<entry>
+  <id>http://samleathers.com/posts/2014-09-10-advanced-docker-networking-with-pipework.html</id>
+  <title>Docker Networking with Pipework</title>
+  <updated>2014-09-10T00:00:00Z</updated>
+  <link href="http://samleathers.com/posts/2014-09-10-advanced-docker-networking-with-pipework.html" rel="alternate" type="text/html"/>
+  <summary type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>Pipework is a script that lets you add IP&#8217;s to containers</p>
+
+      </div>
+    </summary>
+  <content type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <h1 id="whatispipework">What is Pipework</h1>
+
+<p>Pipework is a script that adds an IP to LXC containers. It takes as arguments
+the host interface, which is normally a bridge device, the name of the guest to
+add the interface to, and an ip address. The guest name can either be an LXC
+cgroup, a docker instance id, or a docker name. The ip address parameter can be
+a bridge, or an IP address with a n optional netmask and gateway parameter.</p>
+
+<h1 id="whyyoushoulduseit">Why you should use it</h1>
+
+<p>Normailly with docker, the IP address given to a container is randomly
+generated and not publically accessible. If you want to have a container
+externally accessible, you setup the networking in the host system, and
+&#8220;expose&#8221;, or map the port from the container to the host system. This is
+great in theory, but, say you want three separate web servers all
+listening on 80. In this case, the docker host needs to have 3 separate
+IP&#8217;s configured, and docker needs to map the container to the correct IP.</p>
+
+<p>With pipework, you can assign an IP on the network, and any ports
+exposed in the dockerfile are available from that IP address. This allows
+setting up docker instances much like you would a normal virtual machine, where
+the docker instance can have a static IP that is directly accessible. Also, by
+setting the gateway, you can enforce all traffic exits the docker instance
+through that IP, and can create EGRESS firewall rules for that docker instance.
+Whereas, when mapping ports to the host, it&#8217;s impossible to know the IP ahead
+of time of the instance that traffic will originate from.</p>
+
+<h1 id="installingpipework">Installing pipework</h1>
+
+<p>Pipework is a single shell script and can be installed using the following command:
+<code>sudo bash -c &quot;curl https://raw.githubusercontent.com/jpetazzo/pipework/master/pipework &gt; /usr/local/bin/pipework&quot;</code></p>
+
+<p>The only required dependencies are bash and iproute2 utilities, docker
+integration will require docker being installed and dhcp option requires a dhcp
+client being available. You&#8217;ll also need to setup your ethernet interface in
+linux as a bridge (not discussed here).</p>
+
+<h1 id="usingpipeworkwithdocker">Using pipework with docker</h1>
+
+<p>If you are using named docker instances, adding the ip address 10.40.33.21 to
+a docker instance bind is as simple as:
+<code>pipework br0 bind 10.40.33.21/24</code></p>
+
+<p>If you want to route out of 10.40.33.1 change it to:
+<code>pipework br0 bind 10.40.33.21/24@10.40.33.1</code></p>
+
+<p>If you aren&#8217;t naming your docker containers, replace the name with the docker
+instance id (can be found with <code>docker ps</code>)</p>
+
+<p>Also, pipework can execute docker itself since docker returns the instance id
+like so:
+<code>pipework br0 $(/usr/bin/docker run -d bind) 10.40.33.21/24@10.40.33.1</code></p>
+
+<h1 id="automatingstartupofyourdockerinstancewithpipeworkandsystemd">Automating startup of your docker instance with pipework and systemd</h1>
+
+<p>If you&#8217;re system uses systemd, it&#8217;s really simple to setup docker instances to
+start on boot with pipework. Here&#8217;s a simple service file:</p>
+
+<p>/etc/systemd/system/docker-bind.service:</p>
+
+<pre><code>[Unit]
+Description=Docker BIND DNS Server
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=/usr/bin/docker kill bind
+ExecStartPre=/usr/bin/docker rm bind
+ExecStart=/usr/bin/docker run --name bind bind
+ExecStartPost=/usr/bin/pipework br0 bind 10.40.33.21/24@10.40.33.1
+ExecStop=/usr/bin/docker stop bind
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<p>This service can then be started manually with
+<code>systemctl start docker-bind.service</code></p>
+
+<p>It can also be configured to start on boot with:
+<code>systemctl enable docker-bind.service</code></p>
+
+      </div>
+    </content>
+</entry>
+
+<entry>
+  <id>http://samleathers.com/posts/2014-09-10-python-fabric-basics.html</id>
+  <title>Fabric Deployments for fun and profit - The Basics</title>
+  <updated>2014-09-10T00:00:00Z</updated>
+  <link href="http://samleathers.com/posts/2014-09-10-python-fabric-basics.html" rel="alternate" type="text/html"/>
+  <summary type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>Python fabric is a tool for automating tasks that use SSH</p>
+
+      </div>
+    </summary>
+  <content type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <h1 id="whatisfabric">What is Fabric</h1>
+
+<p>Fabric is an autmation tool that lets you orchestrate commands
+ran on servers via ssh using python. It can be used to help
+automate deployments, run a single or multiple commands on multiple
+servers in parallel, or pretty much anything else you can think of that
+involves remote logging into a server, copying files, etc&#8230;</p>
+
+<p>Fabric uses the python paramiko library to ssh into a server and run a command.
+Fabric core includes a number of functions for basic tasks like push, get, run,
+local (run on server where your running fabric script), sudo, execute and in
+contrib has more complex commands such as rsync_project and exists. We&#8217;ll talk
+more about these commands in this article and future parts.</p>
+
+<h1 id="whyyoushoulduseit">Why you should use it</h1>
+
+<p>Most sytem administrators have &#8220;cheat sheets&#8221; that they use to remember how to
+do a task that is frequently repeated. Most of these tasks involve using ssh to
+login to a server and run a series of commands. Fabric allows the &#8220;cheat
+sheets&#8221; to be converted into code that can be ran. This prevents system
+administrators from making typos in commands they are running, logging into
+the wrong server accidentally or forgetting to do a critical step. It also
+allows changes to processes to be peer reviewed when a version control tool
+like git is being used.</p>
+
+<p>Fabric also provides the configuration for setting up these logins via ssh with
+minimal boilerplate code as will be seen below. To be able to do similar tasks
+with bash scripts requires complex for loops, manual reading of password for
+sudo commands/logins, and complex output printing to determine what host
+a command is being ran on. With fabric, looping hosts is automated in the API,
+passwords are cached for the entire script run, and it outputs
+[host1.example.com] before every line of output in the script.</p>
+
+<p>Another tool system administrators use for running a task on multiple servers
+at once is clusterssh. This tool allows you to give a list of a bunch of
+servers and run the exact same commands in real time across all servers. In
+theory, this is great, but troubleshooting errors when one server doesn&#8217;t
+respond correctly can be really difficult because you need to look through
+every servers output to find them. Also, clusterssh doesn&#8217;t allow you to
+orchestrate commands against different types of servers like would be used in
+a deployment. With fabric, checking error codes is possible via the array
+returned from the run command, and orchestrating is really simple as well which
+we will revisit in a later post.</p>
+
+<p>The tool that most resembles fabric is probably capistrano, written originally
+for deploying ruby on rails. capistrano requires a decent amount of boilerplate
+code to do simple tasks. With fabric, as will be shown below a small short file
+can be created in minutes with very little learning curve. As you get familiar
+with fabric, most of the features capistrano has can also be implemented.
+Capistrano also makes a number of decisions for you on &#8220;how something should be
+done&#8221;, such as what version control system you need to use and your release
+structure. With fabric, the tools are provided to do common tasks, such as run,
+put, get, etc&#8230;, but deployment structure is up to the user to define.</p>
+
+<p>An automation tool that works very well with fabric is jenkins. Jenkins allows
+fabric, or any other script you want to be ran on triggers, whether that be
+a specific day/time in cron fashion, a commit to a version control system,
+a hook such as an e-mail or web, or a manual push of a button. Where jenkins
+handles the when something is done, fabric shines at the how it&#8217;s done. Jenkins
+and fabric work very well, especially if you have non-technical people on your
+team you want to delegate tasks to. In short, jenkins gives fabric a nice web
+interface for automation.</p>
+
+<h1 id="installation">Installation</h1>
+
+<p>On most operating systems you can install fabric using the command
+<code>pip install fabric</code></p>
+
+<p>Once fabric is installed, you can make sure it works by running <code>fab help</code></p>
+
+<p>Since a fabric file hasn&#8217;t been written yet, you&#8217;ll see an error message</p>
+
+<pre><code>Fatal error: Couldn't find any fabfiles!
+Remember that -f can be used to specify fabfile path, and use -h for help.
+Aborting.
+</code></pre>
+
+<h1 id="gettingstarted-helloservers">Getting Started - Hello Server(s)</h1>
+
+<p>Now that fabric is installed, it&#8217;s time to write your first fabric file!
+(make sure to set your user name in env.user)</p>
+
+<p>fabfile.py:</p>
+
+<pre><code>from fabric.api import *
+env.user = 'john'
+def hello():
+    run('echo &quot;hello from `hostname`&quot;')
+</code></pre>
+
+<p>To run this script on myhost.mydomain.com <code>fab -H myhost.mydomain.com hello</code></p>
+
+<p>If you have an ssh key setup to login to this host, it will run it without
+prompting for a password. Otherwise, fabric will prompt for your password.</p>
+
+<p>To run this script on mutliple hosts, separate them with a <code>,</code>
+<code>fab -H host1.mydomain.com,host2.mydomain.com hello</code></p>
+
+<p>Expected Output:</p>
+
+<pre><code>fab -H prod01.samleathers.com,prod02.samleathers.com hello
+[prod01.samleathers.com] Executing task 'hello'
+[prod01.samleathers.com] run: echo &quot;hello from `hostname`&quot;
+[prod01.samleathers.com] out: hello from prod01.samleathers.com
+[prod01.samleathers.com] out:
+[prod02.samleathers.com] Executing task 'hello'
+[prod02.samleathers.com] run: echo &quot;hello from `hostname`&quot;
+[prod02.samleathers.com] out: hello from prod02.samleathers.com
+[prod02.samleathers.com] out:
+</code></pre>
+
+<p>With this one example using the <code>run</code> function there are hundreds of things you
+can start automating. Check back next month for Part 2: organizing your hosts
+in your fabric files where you will learn how to use role definitions in fabric
+to specify which hosts a command is ran on.</p>
+
+      </div>
+    </content>
+</entry>
+
+</feed>

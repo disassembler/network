@@ -39,7 +39,7 @@ in
           "repeat"
           "nerdtree"
           "UltiSnips"
-          "vim-colorschemes"
+          #"vim-colorschemes"
           "vim-colors_atelier-schemes"
           "vim-lastplace"
           #"yankring"

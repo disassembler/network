@@ -1,6 +1,14 @@
 # Home Network
 
-* secrets.nix is just an attribute set that isn't committed to the repo
+## Secrets
+
+* secrets are stored encrypted based on host SSH key
+* Following command allows you to add a key:
+```
+ssh root@host "cat /etc/ssh/ssh_host_rsa_key" | ssh-to-pgp -o nixos/secrets/keys/host.asc
+```
+
+
 
 ## Portal
 

@@ -141,13 +141,12 @@ in {
   };
   "confluence" = buildVimPlugin {
     name = "confluence";
-    #src = fetchFromGitHub {
-    #  owner = "lusis";
-    #  repo = "confluence-vim";
-    #  rev = "8dd36c41ba79f3d1888555b777159129c94165f9";
-    #  sha256 = "1q2j1bn8izyzr3g8jsn9rcpcw02acvgg8r4f5m5kmqzk9kww558m";
-    #};
-    src = /home/sam/work/iohk/confluence-vim;
+    src = fetchFromGitHub {
+      owner = "input-output-hk";
+      repo = "confluence-vim";
+      rev = "c0e077179308b07d637273a397f197a311d78973";
+      sha256 = "sha256-MJW7IZJ3t4x0uRJlnQ0x/sUcdiT5QpiO0ZFF6KqmeME=";
+    };
     dependencies = [];
   };
 }
