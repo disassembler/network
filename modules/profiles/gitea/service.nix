@@ -193,45 +193,47 @@ in
       wantedBy = [ "multi-user.target" ];
       path = [ pkgs.gitea.bin ];
 
-      preStart = let
-        runConfig = "${cfg.stateDir}/custom/conf/app.ini";
-        secretKey = "${cfg.stateDir}/custom/conf/secret_key";
-      in ''
-        mkdir -p ${cfg.stateDir}
+      preStart =
+        let
+          runConfig = "${cfg.stateDir}/custom/conf/app.ini";
+          secretKey = "${cfg.stateDir}/custom/conf/secret_key";
+        in
+        ''
+          mkdir -p ${cfg.stateDir}
 
-        # copy custom configuration and generate a random secret key if needed
-        ${optionalString (cfg.useWizard == false) ''
-          mkdir -p ${cfg.stateDir}/custom/conf
-          cp -f ${configFile} ${runConfig}
+          # copy custom configuration and generate a random secret key if needed
+          ${optionalString (cfg.useWizard == false) ''
+            mkdir -p ${cfg.stateDir}/custom/conf
+            cp -f ${configFile} ${runConfig}
 
-          if [ ! -e ${secretKey} ]; then
-              head -c 16 /dev/urandom | base64 > ${secretKey}
+            if [ ! -e ${secretKey} ]; then
+                head -c 16 /dev/urandom | base64 > ${secretKey}
+            fi
+
+            KEY=$(head -n1 ${secretKey})
+            DBPASS=$(head -n1 ${cfg.database.passwordFile})
+            sed -e "s,#secretkey#,$KEY,g" \
+                -e "s,#dbpass#,$DBPASS,g" \
+                -i ${runConfig}
+            chmod 640 ${runConfig} ${secretKey}
+          ''}
+
+          mkdir -p ${cfg.repositoryRoot}
+          # update all hooks' binary paths
+          HOOKS=$(find ${cfg.repositoryRoot} -mindepth 4 -maxdepth 4 -type f -wholename "*git/hooks/*")
+          if [ "$HOOKS" ]
+          then
+            sed -ri 's,/nix/store/[a-z0-9.-]+/bin/gitea,${pkgs.gitea.bin}/bin/gitea,g' $HOOKS
+            sed -ri 's,/nix/store/[a-z0-9.-]+/bin/env,${pkgs.coreutils}/bin/env,g' $HOOKS
+            sed -ri 's,/nix/store/[a-z0-9.-]+/bin/bash,${pkgs.bash}/bin/bash,g' $HOOKS
+            sed -ri 's,/nix/store/[a-z0-9.-]+/bin/perl,${pkgs.perl}/bin/perl,g' $HOOKS
           fi
-
-          KEY=$(head -n1 ${secretKey})
-          DBPASS=$(head -n1 ${cfg.database.passwordFile})
-          sed -e "s,#secretkey#,$KEY,g" \
-              -e "s,#dbpass#,$DBPASS,g" \
-              -i ${runConfig}
-          chmod 640 ${runConfig} ${secretKey}
-        ''}
-
-        mkdir -p ${cfg.repositoryRoot}
-        # update all hooks' binary paths
-        HOOKS=$(find ${cfg.repositoryRoot} -mindepth 4 -maxdepth 4 -type f -wholename "*git/hooks/*")
-        if [ "$HOOKS" ]
-        then
-          sed -ri 's,/nix/store/[a-z0-9.-]+/bin/gitea,${pkgs.gitea.bin}/bin/gitea,g' $HOOKS
-          sed -ri 's,/nix/store/[a-z0-9.-]+/bin/env,${pkgs.coreutils}/bin/env,g' $HOOKS
-          sed -ri 's,/nix/store/[a-z0-9.-]+/bin/bash,${pkgs.bash}/bin/bash,g' $HOOKS
-          sed -ri 's,/nix/store/[a-z0-9.-]+/bin/perl,${pkgs.perl}/bin/perl,g' $HOOKS
-        fi
-        if [ ! -d ${cfg.stateDir}/conf/locale ]
-        then
-          mkdir -p ${cfg.stateDir}/conf
-          cp -r ${pkgs.gitea.out}/locale ${cfg.stateDir}/conf/locale
-        fi
-      '';
+          if [ ! -d ${cfg.stateDir}/conf/locale ]
+          then
+            mkdir -p ${cfg.stateDir}/conf
+            cp -r ${pkgs.gitea.out}/locale ${cfg.stateDir}/conf/locale
+          fi
+        '';
 
       serviceConfig = {
         Type = "simple";

@@ -4,7 +4,7 @@
 , inputs
 , nixos-hardware
 , cardano-node
-#, cardano-db-sync
+  #, cardano-db-sync
 , ...
 }:
 let

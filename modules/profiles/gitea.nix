@@ -4,12 +4,13 @@ with lib;
 
 let
   cfg = config.profiles.gitea;
-in {
+in
+{
   options.profiles.gitea = {
     enable = mkEnableOption "enable gitea profile.";
   };
 
-  config = mkIf (cfg.enable)  {
+  config = mkIf (cfg.enable) {
     services = {
       gitea = {
         enable = true;

@@ -1,5 +1,12 @@
-{ stdenv, buildGoPackage, fetchFromGitHub, makeWrapper
-, git, coreutils, bash, gzip, openssh
+{ stdenv
+, buildGoPackage
+, fetchFromGitHub
+, makeWrapper
+, git
+, coreutils
+, bash
+, gzip
+, openssh
 , sqliteSupport ? true
 }:
 

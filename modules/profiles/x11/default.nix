@@ -4,7 +4,8 @@ with lib;
 
 let
   cfg = config.profiles.x11;
-in {
+in
+{
   options.profiles.x11 = {
     enable = mkEnableOption "x11 server profile";
 
@@ -94,7 +95,10 @@ in {
     };
 
     environment.systemPackages = with pkgs; [
-      xorg.xauth xorg.xev xsel xfontsel
+      xorg.xauth
+      xorg.xev
+      xsel
+      xfontsel
 
       # needed for gtk config saving
       gnome3.dconf
@@ -110,30 +114,32 @@ in {
 
     environment.variables = {
       # Set GTK_PATH so that GTK+ can find the Xfce theme engines
-      GTK_PATH = ["${config.system.path}/lib/gtk-2.0"];
+      GTK_PATH = [ "${config.system.path}/lib/gtk-2.0" ];
 
       # GTK3: add /etc/xdg/gtk-3.0 to search path for settings.ini
       # We use /etc/xdg/gtk-3.0/settings.ini to set the icon and theme name for GTK 3
-      XDG_CONFIG_DIRS = ["/etc/xdg"];
+      XDG_CONFIG_DIRS = [ "/etc/xdg" ];
 
       # GTK3: add themes to search path
-      XDG_DATA_DIRS = ["${config.system.path}/share"];
+      XDG_DATA_DIRS = [ "${config.system.path}/share" ];
 
       # Find the cursors
-      XCURSOR_PATH = ["${config.system.path}/share/icons"];
+      XCURSOR_PATH = [ "${config.system.path}/share/icons" ];
 
       # SVG loader for pixbuf (needed for GTK svg icon themes)
       GDK_PIXBUF_MODULE_FILE = "${pkgs.librsvg.out}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache";
 
-			# Set GTK_DATA_PREFIX so that GTK+ can find the themes 
-      GTK_DATA_PREFIX = ["${config.system.path}"];
+      # Set GTK_DATA_PREFIX so that GTK+ can find the themes 
+      GTK_DATA_PREFIX = [ "${config.system.path}" ];
 
       # Set gtk2 rc file
-      GTK2_RC_FILES = [(toString (pkgs.writeText "iconrc" ''
-        gtk-theme-name="${cfg.gtk2.theme}"
-        gtk-icon-theme-name="${cfg.iconTheme}"
-        ${cfg.gtk2.settings}
-      ''))];
+      GTK2_RC_FILES = [
+        (toString (pkgs.writeText "iconrc" ''
+          gtk-theme-name="${cfg.gtk2.theme}"
+          gtk-icon-theme-name="${cfg.iconTheme}"
+          ${cfg.gtk2.settings}
+        ''))
+      ];
 
       GIO_EXTRA_MODULES = [ "${pkgs.gnome3.dconf}/lib/gio/modules" ];
     };

@@ -2,24 +2,24 @@
 
 let
   # this is the vimrc.nix from above
-  vimrc   = pkgs.callPackage ./vimrc.nix { inherit dev;};
+  vimrc = pkgs.callPackage ./vimrc.nix { inherit dev; };
 
   # and the plugins.nix from above
   plugins = pkgs.callPackage ./plugins.nix { };
   dev_plugin_names = [
-          "ale"
-          #"deoplete-go"
-          #"deoplete-rust"
-          "vim-go"
-          "vim_jsx"
-          "vim_javascript"
-          "vim-docbk"
-          "vim-hoogle"
-          "vim-docbk-snippets"
-          "vim_stylish_haskell"
-          #"haskell_vim"
-          #"wakatime"
-          "LanguageClient-neovim"
+    "ale"
+    #"deoplete-go"
+    #"deoplete-rust"
+    "vim-go"
+    "vim_jsx"
+    "vim_javascript"
+    "vim-docbk"
+    "vim-hoogle"
+    "vim-docbk-snippets"
+    "vim_stylish_haskell"
+    #"haskell_vim"
+    #"wakatime"
+    "LanguageClient-neovim"
   ];
 in
 {

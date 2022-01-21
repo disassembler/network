@@ -4,10 +4,11 @@ let
   nixDarwinFuncUnstable = (import <nixdarwin-unstable>);
   nix-darwin-tools = import ./.;
 
-in {
+in
+{
   inherit nix-darwin-tools;
   optina = (nixosFuncStable { configuration = ./optina; }).system;
   portal = (nixosFuncStable { configuration = ./portal; }).system;
-  sarov  = (nixosFuncUnstable { configuration = ./machines/sarov.nix; }).system;
-  ohrid  = (nixDarwinFuncUnstable { configuration = ./ohrid; }).system;
+  sarov = (nixosFuncUnstable { configuration = ./machines/sarov.nix; }).system;
+  ohrid = (nixDarwinFuncUnstable { configuration = ./ohrid; }).system;
 }

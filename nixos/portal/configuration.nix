@@ -20,7 +20,7 @@ let
       cp -v bin-i386-efi/ipxe.efi $out/i386-ipxe.efi
     '';
   });
-  tftp_root = pkgs.runCommand "tftproot" {} ''
+  tftp_root = pkgs.runCommand "tftproot" { } ''
     mkdir -pv $out
     cp -vi ${ipxe'}/undionly.kpxe $out/undionly.kpxe
     cp -vi ${ipxe'}/x86_64-ipxe.efi $out/x86_64-ipxe.efi
@@ -28,17 +28,18 @@ let
   '';
 
 
-in {
+in
+{
   sops.defaultSopsFile = ./secrets.yaml;
-  sops.secrets.portal_wg0_private = {};
+  sops.secrets.portal_wg0_private = { };
   imports =
     [
       ./hardware-configuration.nix
     ];
-    # TODO: move up
-    _module.args = {
-      inherit shared;
-    };
+  # TODO: move up
+  _module.args = {
+    inherit shared;
+  };
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
@@ -145,91 +146,93 @@ in {
     firewall = {
       enable = true;
       allowPing = true;
-      extraCommands = let
-        dropPortNoLog = port:
-          ''
-            ip46tables -A nixos-fw -p tcp \
-              --dport ${toString port} -j nixos-fw-refuse
-            ip46tables -A nixos-fw -p udp \
-              --dport ${toString port} -j nixos-fw-refuse
-          '';
+      extraCommands =
+        let
+          dropPortNoLog = port:
+            ''
+              ip46tables -A nixos-fw -p tcp \
+                --dport ${toString port} -j nixos-fw-refuse
+              ip46tables -A nixos-fw -p udp \
+                --dport ${toString port} -j nixos-fw-refuse
+            '';
 
-        dropPortIcmpLog =
-          ''
-            iptables -A nixos-fw -p icmp \
-              -j LOG --log-prefix "iptables[icmp]: "
-            ip6tables -A nixos-fw -p ipv6-icmp \
-              -j LOG --log-prefix "iptables[icmp-v6]: "
-          '';
+          dropPortIcmpLog =
+            ''
+              iptables -A nixos-fw -p icmp \
+                -j LOG --log-prefix "iptables[icmp]: "
+              ip6tables -A nixos-fw -p ipv6-icmp \
+                -j LOG --log-prefix "iptables[icmp-v6]: "
+            '';
 
-        refusePortOnInterface = port: interface:
-          ''
-            ip46tables -A nixos-fw -i ${interface} -p tcp \
-              --dport ${toString port} -j nixos-fw-log-refuse
-            ip46tables -A nixos-fw -i ${interface} -p udp \
-              --dport ${toString port} -j nixos-fw-log-refuse
-          '';
-        acceptPortOnInterface = port: interface:
-          ''
-            ip46tables -A nixos-fw -i ${interface} -p tcp \
-              --dport ${toString port} -j nixos-fw-accept
-            ip46tables -A nixos-fw -i ${interface} -p udp \
-              --dport ${toString port} -j nixos-fw-accept
-          '';
-        # IPv6 flat forwarding. For ipv4, see nat.forwardPorts
-        forwardPortToHost = port: interface: proto: host:
-          ''
-            ip6tables -A FORWARD -i ${interface} \
-              -p ${proto} -d ${host} \
-              --dport ${toString port} -j ACCEPT
+          refusePortOnInterface = port: interface:
+            ''
+              ip46tables -A nixos-fw -i ${interface} -p tcp \
+                --dport ${toString port} -j nixos-fw-log-refuse
+              ip46tables -A nixos-fw -i ${interface} -p udp \
+                --dport ${toString port} -j nixos-fw-log-refuse
+            '';
+          acceptPortOnInterface = port: interface:
+            ''
+              ip46tables -A nixos-fw -i ${interface} -p tcp \
+                --dport ${toString port} -j nixos-fw-accept
+              ip46tables -A nixos-fw -i ${interface} -p udp \
+                --dport ${toString port} -j nixos-fw-accept
+            '';
+          # IPv6 flat forwarding. For ipv4, see nat.forwardPorts
+          forwardPortToHost = port: interface: proto: host:
+            ''
+              ip6tables -A FORWARD -i ${interface} \
+                -p ${proto} -d ${host} \
+                --dport ${toString port} -j ACCEPT
 
-          '';
+            '';
 
-        privatelyAcceptPort = port:
-          lib.concatMapStrings
-            (interface: acceptPortOnInterface port interface)
-            internalInterfaces;
+          privatelyAcceptPort = port:
+            lib.concatMapStrings
+              (interface: acceptPortOnInterface port interface)
+              internalInterfaces;
 
-        publiclyRejectPort = port:
-          refusePortOnInterface port externalInterface;
+          publiclyRejectPort = port:
+            refusePortOnInterface port externalInterface;
 
-        allowPortOnlyPrivately = port:
+          allowPortOnlyPrivately = port:
+            ''
+              ${privatelyAcceptPort port}
+              ${publiclyRejectPort port}
+            '';
+        in
+        lib.concatStrings [
+          (lib.concatMapStrings allowPortOnlyPrivately
+            [
+              67 # DHCP
+              69 # TFTP
+              546 # DHCPv6
+              547 # DHCPv6
+              9100 # prometheus
+              5201 # iperf
+            ])
+          (lib.concatMapStrings dropPortNoLog
+            [
+              23 # Common from public internet
+              143 # Common from public internet
+              139 # From RT AP
+              515 # From RT AP
+              9100 # From RT AP
+            ])
+          (dropPortIcmpLog)
           ''
-            ${privatelyAcceptPort port}
-            ${publiclyRejectPort port}
-          '';
-      in lib.concatStrings [
-        (lib.concatMapStrings allowPortOnlyPrivately
-          [
-            67    # DHCP
-            69    # TFTP
-            546   # DHCPv6
-            547   # DHCPv6
-            9100  # prometheus
-            5201  # iperf
-          ])
-        (lib.concatMapStrings dropPortNoLog
-          [
-            23   # Common from public internet
-            143  # Common from public internet
-            139  # From RT AP
-            515  # From RT AP
-            9100 # From RT AP
-          ])
-        (dropPortIcmpLog)
-        ''
-          # block internal traffic from guest vpn
-          ip46tables -A FORWARD -m state --state NEW -i ovpn-guest -o br0 -j DROP
-          # allow from trusted interfaces
-          ip46tables -A FORWARD -m state --state NEW -i br0 -o enp1s0 -j ACCEPT
-          ip46tables -A FORWARD -m state --state NEW -i wg0 -o enp1s0 -j ACCEPT
-          ip46tables -A FORWARD -m state --state NEW -i tun0 -o enp1s0 -j ACCEPT
-          # allow traffic with existing state
-          ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
-          # block forwarding from external interface
-          ip6tables -A FORWARD -i enp1s0 -j DROP
-        ''
-      ];
+            # block internal traffic from guest vpn
+            ip46tables -A FORWARD -m state --state NEW -i ovpn-guest -o br0 -j DROP
+            # allow from trusted interfaces
+            ip46tables -A FORWARD -m state --state NEW -i br0 -o enp1s0 -j ACCEPT
+            ip46tables -A FORWARD -m state --state NEW -i wg0 -o enp1s0 -j ACCEPT
+            ip46tables -A FORWARD -m state --state NEW -i tun0 -o enp1s0 -j ACCEPT
+            # allow traffic with existing state
+            ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+            # block forwarding from external interface
+            ip6tables -A FORWARD -i enp1s0 -j DROP
+          ''
+        ];
       allowedTCPPorts = [ 32400 5222 5060 53 3001 ];
       allowedUDPPorts = [ 51820 1194 1195 5060 5222 53 config.services.toxvpn.port 19132 ];
     };
@@ -298,7 +301,7 @@ in {
     binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
     binaryCachePublicKeys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
     extraOptions = ''
-    experimental-features = nix-command flakes
+      experimental-features = nix-command flakes
     '';
     package = pkgs.nixUnstable;
   };
@@ -326,39 +329,41 @@ in {
     };
     dnsmasq = {
       enable = true;
-      extraConfig = let
-        portal_cnames = [
-          "portal"
-          "ns"
-        ];
-        portal_ipv4 = "10.40.33.1";
-        portal_ipv6 = "2601:98a:4100:3567::1";
-        optina_cnames = [
-          "optina"
-          "cloud"
-          "crate"
-          "storage"
-          "git"
-          "hledger"
-          "hydra"
-          "mpd"
-          "netboot"
-          "plex"
-          "unifi"
-        ];
-        optina_ipv4 = "10.40.33.20";
-        optina_ipv6 = "2601:98a:4100:3567:d63d:7eff:fe4d:c47f";
-        createAddress = domain: ipv4: ipv6: name: ''
-          address=/${name}.${domain}/${ipv4}
-          address=/${name}.${domain}/${ipv6}
+      extraConfig =
+        let
+          portal_cnames = [
+            "portal"
+            "ns"
+          ];
+          portal_ipv4 = "10.40.33.1";
+          portal_ipv6 = "2601:98a:4100:3567::1";
+          optina_cnames = [
+            "optina"
+            "cloud"
+            "crate"
+            "storage"
+            "git"
+            "hledger"
+            "hydra"
+            "mpd"
+            "netboot"
+            "plex"
+            "unifi"
+          ];
+          optina_ipv4 = "10.40.33.20";
+          optina_ipv6 = "2601:98a:4100:3567:d63d:7eff:fe4d:c47f";
+          createAddress = domain: ipv4: ipv6: name: ''
+            address=/${name}.${domain}/${ipv4}
+            address=/${name}.${domain}/${ipv6}
+          '';
+        in
+        ''
+          ${lib.concatMapStrings (createAddress "wedlake.lan" optina_ipv4 optina_ipv6) optina_cnames}
+          ${lib.concatMapStrings (createAddress "wedlake.lan" portal_ipv4 portal_ipv6) portal_cnames}
+          address=/printer.wedlake.lan/10.40.33.50
+          address=/prod01.wedlake.lan/fd00::2
+          rebind-domain-ok=/plex.direct/
         '';
-      in ''
-        ${lib.concatMapStrings (createAddress "wedlake.lan" optina_ipv4 optina_ipv6) optina_cnames}
-        ${lib.concatMapStrings (createAddress "wedlake.lan" portal_ipv4 portal_ipv6) portal_cnames}
-        address=/printer.wedlake.lan/10.40.33.50
-        address=/prod01.wedlake.lan/fd00::2
-        rebind-domain-ok=/plex.direct/
-      '';
     };
     tftpd = {
       enable = true;
@@ -494,18 +499,18 @@ in {
     journalbeat = {
       enable = false;
       extraConfig = ''
-      journalbeat:
-        seek_position: cursor
-        cursor_seek_fallback: tail
-        write_cursor_state: true
-        cursor_flush_period: 5s
-        clean_field_names: true
-        convert_to_numbers: false
-        move_metadata_to_field: journal
-        default_type: journal
-      output.kafka:
-        hosts: ["optina.wedlake.lan:9092"]
-        topic: KAFKA-LOGSTASH-ELASTICSEARCH
+        journalbeat:
+          seek_position: cursor
+          cursor_seek_fallback: tail
+          write_cursor_state: true
+          cursor_flush_period: 5s
+          clean_field_names: true
+          convert_to_numbers: false
+          move_metadata_to_field: journal
+          default_type: journal
+        output.kafka:
+          hosts: ["optina.wedlake.lan:9092"]
+          topic: KAFKA-LOGSTASH-ELASTICSEARCH
       '';
     };
     prometheus.exporters = {
@@ -531,60 +536,60 @@ in {
           "ksmd"
         ];
       };
-     };
+    };
     openvpn = {
       servers = {
         wedlake = {
           config = ''
-          dev tun
-          proto udp
-          port 1194
-          tun-ipv6
-          ca /var/lib/openvpn/ca.crt
-          cert /var/lib/openvpn/crate.wedlake.lan.crt
-          key /var/lib/openvpn/crate.wedlake.lan.key
-          dh /var/lib/openvpn/dh2048.pem
-          server 10.40.12.0 255.255.255.0
-          server-ipv6 2601:98a:4101:bff3::/64
-          push "route 10.40.33.0 255.255.255.0"
-          push "route-ipv6 2000::/3"
-          push "dhcp-option DNS 10.40.12.1"
-          duplicate-cn
-          keepalive 10 120
-          tls-auth /var/lib/openvpn/ta.key 0
-          comp-lzo
-          user openvpn
-          group root
-          persist-key
-          persist-tun
-          status openvpn-status.log
-          verb 3
+            dev tun
+            proto udp
+            port 1194
+            tun-ipv6
+            ca /var/lib/openvpn/ca.crt
+            cert /var/lib/openvpn/crate.wedlake.lan.crt
+            key /var/lib/openvpn/crate.wedlake.lan.key
+            dh /var/lib/openvpn/dh2048.pem
+            server 10.40.12.0 255.255.255.0
+            server-ipv6 2601:98a:4101:bff3::/64
+            push "route 10.40.33.0 255.255.255.0"
+            push "route-ipv6 2000::/3"
+            push "dhcp-option DNS 10.40.12.1"
+            duplicate-cn
+            keepalive 10 120
+            tls-auth /var/lib/openvpn/ta.key 0
+            comp-lzo
+            user openvpn
+            group root
+            persist-key
+            persist-tun
+            status openvpn-status.log
+            verb 3
           '';
         };
         guest = {
           config = ''
-          dev ovpn-guest
-          dev-type tun
-          proto udp
-          port 1195
-          tun-ipv6
-          ca /var/lib/openvpn/ca.crt
-          cert /var/lib/openvpn/crate.wedlake.lan.crt
-          key /var/lib/openvpn/crate.wedlake.lan.key
-          dh /var/lib/openvpn/dh2048.pem
-          server 10.40.13.0 255.255.255.0
-          push "redirect-gateway def1"
-          push "dhcp-option DNS 8.8.8.8"
-          duplicate-cn
-          keepalive 10 120
-          tls-auth /var/lib/openvpn/ta-guest.key 0
-          comp-lzo
-          user openvpn
-          group root
-          persist-key
-          persist-tun
-          status openvpn-status.log
-          verb 3
+            dev ovpn-guest
+            dev-type tun
+            proto udp
+            port 1195
+            tun-ipv6
+            ca /var/lib/openvpn/ca.crt
+            cert /var/lib/openvpn/crate.wedlake.lan.crt
+            key /var/lib/openvpn/crate.wedlake.lan.key
+            dh /var/lib/openvpn/dh2048.pem
+            server 10.40.13.0 255.255.255.0
+            push "redirect-gateway def1"
+            push "dhcp-option DNS 8.8.8.8"
+            duplicate-cn
+            keepalive 10 120
+            tls-auth /var/lib/openvpn/ta-guest.key 0
+            comp-lzo
+            user openvpn
+            group root
+            persist-key
+            persist-tun
+            status openvpn-status.log
+            verb 3
           '';
         };
       };

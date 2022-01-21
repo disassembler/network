@@ -2,7 +2,8 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, inputs, ... }: let
+{ config, pkgs, lib, inputs, ... }:
+let
   inherit (inputs) cardano-node;
   pkgs' = pkgs;
   #baseCardanoContainer = {
@@ -88,9 +89,11 @@
   #  };
   #};
 
-in {
+in
+{
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
 
@@ -135,7 +138,7 @@ in {
     networkmanager.enable = false;
     nat = {
       enable = true;
-      internalInterfaces = ["ve-+"];
+      internalInterfaces = [ "ve-+" ];
       externalInterface = "enp4s0";
     };
     #wireless = {
@@ -151,28 +154,28 @@ in {
   };
 
   environment.systemPackages = with pkgs; [
-     #cncli
-     docker_compose
-     wget
-     vim
-     screen
-     gitMinimal
-     pinentry
-     gnupg
-     pinentry-curses
-     #adawallet
-     bech32
-     cardano-node.packages.x86_64-linux.cardano-node
-     cardano-cli
-     #cardano-address
-     #cardano-completions
-     #cardano-hw-cli
-     #cardano-rosetta-py
-     python3Packages.ipython
-     python3Packages.trezor
-     sqliteInteractive
-     srm
-     jq
+    #cncli
+    docker_compose
+    wget
+    vim
+    screen
+    gitMinimal
+    pinentry
+    gnupg
+    pinentry-curses
+    #adawallet
+    bech32
+    cardano-node.packages.x86_64-linux.cardano-node
+    cardano-cli
+    #cardano-address
+    #cardano-completions
+    #cardano-hw-cli
+    #cardano-rosetta-py
+    python3Packages.ipython
+    python3Packages.trezor
+    sqliteInteractive
+    srm
+    jq
   ];
 
   programs.gnupg.agent = { enable = true; enableSSHSupport = false; };
@@ -264,55 +267,55 @@ in {
         blackbox = {
           enable = true;
           configFile = pkgs.writeText "blackbox-exporter.yaml" (builtins.toJSON {
-          modules = {
-            https_2xx = {
-              prober = "http";
-              timeout = "5s";
-              http = {
-                fail_if_not_ssl = true;
+            modules = {
+              https_2xx = {
+                prober = "http";
+                timeout = "5s";
+                http = {
+                  fail_if_not_ssl = true;
+                };
+              };
+              htts_2xx = {
+                prober = "http";
+                timeout = "5s";
+              };
+              ssh_banner = {
+                prober = "tcp";
+                timeout = "10s";
+                tcp = {
+                  query_response = [{ expect = "^SSH-2.0-"; }];
+                };
+              };
+              tcp_v4 = {
+                prober = "tcp";
+                timeout = "5s";
+                tcp = {
+                  preferred_ip_protocol = "ip4";
+                };
+              };
+              tcp_v6 = {
+                prober = "tcp";
+                timeout = "5s";
+                tcp = {
+                  preferred_ip_protocol = "ip6";
+                };
+              };
+              icmp_v4 = {
+                prober = "icmp";
+                timeout = "60s";
+                icmp = {
+                  preferred_ip_protocol = "ip4";
+                };
+              };
+              icmp_v6 = {
+                prober = "icmp";
+                timeout = "5s";
+                icmp = {
+                  preferred_ip_protocol = "ip6";
+                };
               };
             };
-            htts_2xx = {
-              prober = "http";
-              timeout = "5s";
-            };
-            ssh_banner = {
-              prober = "tcp";
-              timeout = "10s";
-              tcp = {
-                query_response = [ { expect = "^SSH-2.0-"; } ];
-              };
-            };
-            tcp_v4 = {
-              prober = "tcp";
-              timeout = "5s";
-              tcp = {
-                preferred_ip_protocol = "ip4";
-              };
-            };
-            tcp_v6 = {
-              prober = "tcp";
-              timeout = "5s";
-              tcp = {
-                preferred_ip_protocol = "ip6";
-              };
-            };
-            icmp_v4 = {
-              prober = "icmp";
-              timeout = "60s";
-              icmp = {
-                preferred_ip_protocol = "ip4";
-              };
-            };
-            icmp_v6 = {
-              prober = "icmp";
-              timeout = "5s";
-              icmp = {
-                preferred_ip_protocol = "ip6";
-              };
-            };
-          };
-        });
+          });
         };
         node = {
           enable = true;
@@ -379,60 +382,60 @@ in {
 
         server = { http_listen_port = 3100; };
 
-                  storage_config = {
-                    boltdb = { directory = "/var/lib/loki/index"; };
-                    filesystem = { directory = "/var/lib/loki/chunks"; };
-                  };
-                };
-              };
-                                     grafana = {
-                                       enable = true;
-                                       addr = "0.0.0.0";
-                                     };
-                                              xserver = {
-                                               enable = true;
-                                               desktopManager.gnome.enable = true;
-                                               displayManager.gdm.enable = true;
-                                              };
-          };
-            # Open ports in the firewall.
-            networking.firewall.allowedTCPPorts = [ 3001 9090 3000 3100 ];
-            users.groups.cardano-node.gid = 10016;
-            # TODO: pull users from secrets.nix instead
-            users.users.sam = {
-              uid = 10016;
-              isNormalUser = true;
-              extraGroups = [ "wheel" "cardano-node" ]; # Enable ‘sudo’ for the user.
-              openssh.authorizedKeys.keys = [ "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDEPOLnk4+mWNGOXd309PPxal8wgMzKXHnn7Jbu/SpSUYEc1EmjgnrVBcR0eDxgDmGD9zJ69wEH/zLQLPWjaTusiuF+bqAM/x7z7wwy1nZ48SYJw3Q+Xsgzeb0nvmNsPzb0mfnpI6av8MTHNt+xOqDnpC5B82h/voQ4m5DGMQz60ok2hMeh+sy4VIvX5zOVTOFPQqFR6BGDwtALiP5PwMfyScYXlebWHhDRdX9B0j9t+cqiy5utBUsl4cIUInE0KW7Z8Kf6gIsmQnfSZadqI857kdozU3IbaLoJc1C6LyVjzPFyC4+KUC11BmemTGdCjwcoqEZ0k5XtJaKFXacYYXi1l5MS7VdfHldFDZmMEMvfJG/PwvXN4prfOIjpy1521MJHGBNXRktvWhlNBgI1NUQlx7rGmPZmtrYdeclVnnY9Y4HIpkhm0iEt/XUZTMQpXhedd1BozpMp0h135an4uorIEUQnotkaGDwZIV3mSL8x4n6V02Qe2CYvqf4DcCSBv7D91N3JplJJKt7vV4ltwrseDPxDtCxXrQfSIQd0VGmwu1D9FzzDOuk/MGCiCMFCKIKngxZLzajjgfc9+rGLZ94iDz90jfk6GF4hgF78oFNfPEwoGl0soyZM7960QdBcHgB5QF9+9Yd6QhCb/6+ENM9sz6VLdAY7f/9hj/3Aq0Lm4Q==" ];
-            };
-            users.users.root = {
-              openssh.authorizedKeys.keys = [
-                "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDEPOLnk4+mWNGOXd309PPxal8wgMzKXHnn7Jbu/SpSUYEc1EmjgnrVBcR0eDxgDmGD9zJ69wEH/zLQLPWjaTusiuF+bqAM/x7z7wwy1nZ48SYJw3Q+Xsgzeb0nvmNsPzb0mfnpI6av8MTHNt+xOqDnpC5B82h/voQ4m5DGMQz60ok2hMeh+sy4VIvX5zOVTOFPQqFR6BGDwtALiP5PwMfyScYXlebWHhDRdX9B0j9t+cqiy5utBUsl4cIUInE0KW7Z8Kf6gIsmQnfSZadqI857kdozU3IbaLoJc1C6LyVjzPFyC4+KUC11BmemTGdCjwcoqEZ0k5XtJaKFXacYYXi1l5MS7VdfHldFDZmMEMvfJG/PwvXN4prfOIjpy1521MJHGBNXRktvWhlNBgI1NUQlx7rGmPZmtrYdeclVnnY9Y4HIpkhm0iEt/XUZTMQpXhedd1BozpMp0h135an4uorIEUQnotkaGDwZIV3mSL8x4n6V02Qe2CYvqf4DcCSBv7D91N3JplJJKt7vV4ltwrseDPxDtCxXrQfSIQd0VGmwu1D9FzzDOuk/MGCiCMFCKIKngxZLzajjgfc9+rGLZ94iDz90jfk6GF4hgF78oFNfPEwoGl0soyZM7960QdBcHgB5QF9+9Yd6QhCb/6+ENM9sz6VLdAY7f/9hj/3Aq0Lm4Q== samuel.leathers@iohk.io"
-              ];
-              shell = pkgs.lib.mkOverride 50 "${pkgs.bashInteractive}/bin/bash";
-            };
+        storage_config = {
+          boltdb = { directory = "/var/lib/loki/index"; };
+          filesystem = { directory = "/var/lib/loki/chunks"; };
+        };
+      };
+    };
+    grafana = {
+      enable = true;
+      addr = "0.0.0.0";
+    };
+    xserver = {
+      enable = true;
+      desktopManager.gnome.enable = true;
+      displayManager.gdm.enable = true;
+    };
+  };
+  # Open ports in the firewall.
+  networking.firewall.allowedTCPPorts = [ 3001 9090 3000 3100 ];
+  users.groups.cardano-node.gid = 10016;
+  # TODO: pull users from secrets.nix instead
+  users.users.sam = {
+    uid = 10016;
+    isNormalUser = true;
+    extraGroups = [ "wheel" "cardano-node" ]; # Enable ‘sudo’ for the user.
+    openssh.authorizedKeys.keys = [ "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDEPOLnk4+mWNGOXd309PPxal8wgMzKXHnn7Jbu/SpSUYEc1EmjgnrVBcR0eDxgDmGD9zJ69wEH/zLQLPWjaTusiuF+bqAM/x7z7wwy1nZ48SYJw3Q+Xsgzeb0nvmNsPzb0mfnpI6av8MTHNt+xOqDnpC5B82h/voQ4m5DGMQz60ok2hMeh+sy4VIvX5zOVTOFPQqFR6BGDwtALiP5PwMfyScYXlebWHhDRdX9B0j9t+cqiy5utBUsl4cIUInE0KW7Z8Kf6gIsmQnfSZadqI857kdozU3IbaLoJc1C6LyVjzPFyC4+KUC11BmemTGdCjwcoqEZ0k5XtJaKFXacYYXi1l5MS7VdfHldFDZmMEMvfJG/PwvXN4prfOIjpy1521MJHGBNXRktvWhlNBgI1NUQlx7rGmPZmtrYdeclVnnY9Y4HIpkhm0iEt/XUZTMQpXhedd1BozpMp0h135an4uorIEUQnotkaGDwZIV3mSL8x4n6V02Qe2CYvqf4DcCSBv7D91N3JplJJKt7vV4ltwrseDPxDtCxXrQfSIQd0VGmwu1D9FzzDOuk/MGCiCMFCKIKngxZLzajjgfc9+rGLZ94iDz90jfk6GF4hgF78oFNfPEwoGl0soyZM7960QdBcHgB5QF9+9Yd6QhCb/6+ENM9sz6VLdAY7f/9hj/3Aq0Lm4Q==" ];
+  };
+  users.users.root = {
+    openssh.authorizedKeys.keys = [
+      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDEPOLnk4+mWNGOXd309PPxal8wgMzKXHnn7Jbu/SpSUYEc1EmjgnrVBcR0eDxgDmGD9zJ69wEH/zLQLPWjaTusiuF+bqAM/x7z7wwy1nZ48SYJw3Q+Xsgzeb0nvmNsPzb0mfnpI6av8MTHNt+xOqDnpC5B82h/voQ4m5DGMQz60ok2hMeh+sy4VIvX5zOVTOFPQqFR6BGDwtALiP5PwMfyScYXlebWHhDRdX9B0j9t+cqiy5utBUsl4cIUInE0KW7Z8Kf6gIsmQnfSZadqI857kdozU3IbaLoJc1C6LyVjzPFyC4+KUC11BmemTGdCjwcoqEZ0k5XtJaKFXacYYXi1l5MS7VdfHldFDZmMEMvfJG/PwvXN4prfOIjpy1521MJHGBNXRktvWhlNBgI1NUQlx7rGmPZmtrYdeclVnnY9Y4HIpkhm0iEt/XUZTMQpXhedd1BozpMp0h135an4uorIEUQnotkaGDwZIV3mSL8x4n6V02Qe2CYvqf4DcCSBv7D91N3JplJJKt7vV4ltwrseDPxDtCxXrQfSIQd0VGmwu1D9FzzDOuk/MGCiCMFCKIKngxZLzajjgfc9+rGLZ94iDz90jfk6GF4hgF78oFNfPEwoGl0soyZM7960QdBcHgB5QF9+9Yd6QhCb/6+ENM9sz6VLdAY7f/9hj/3Aq0Lm4Q== samuel.leathers@iohk.io"
+    ];
+    shell = pkgs.lib.mkOverride 50 "${pkgs.bashInteractive}/bin/bash";
+  };
 
 
-            containers = {
-              #pool = lib.mkMerge [ baseCardanoContainer {
-              #  hostAddress = "10.10.1.1";
-              #  localAddress = "10.10.1.2";
-              #  bindMounts."/pool-keys" = { hostPath = "/var/leder-keys"; isReadOnly = false; };
-              #  config = {
-              #    services.cardano-node = {
-              #      hostAddr = "10.10.1.2";
-              #      topology = __toFile "topology.json" (__toJSON {
-              #        Producers = [
-              #          { addr = "10.10.1.4"; port = 3001; valency = 1; }
-              #        ];
-              #      });
-              #      operationalCertificate = "/pool-keys/leder.opcert";
-              #      kesKey = "/pool-keys/leder-kes.skey";
-              #      vrfKey = "/pool-keys/leder-vrf.skey";
-              #    };
+  containers = {
+    #pool = lib.mkMerge [ baseCardanoContainer {
+    #  hostAddress = "10.10.1.1";
+    #  localAddress = "10.10.1.2";
+    #  bindMounts."/pool-keys" = { hostPath = "/var/leder-keys"; isReadOnly = false; };
+    #  config = {
+    #    services.cardano-node = {
+    #      hostAddr = "10.10.1.2";
+    #      topology = __toFile "topology.json" (__toJSON {
+    #        Producers = [
+    #          { addr = "10.10.1.4"; port = 3001; valency = 1; }
+    #        ];
+    #      });
+    #      operationalCertificate = "/pool-keys/leder.opcert";
+    #      kesKey = "/pool-keys/leder-kes.skey";
+    #      vrfKey = "/pool-keys/leder-vrf.skey";
+    #    };
 
-              #  };
-              #}];
+    #  };
+    #}];
     #relay = lib.mkMerge [ baseCardanoContainer {
     #  hostAddress = "10.10.1.3";
     #  localAddress = "10.10.1.4";

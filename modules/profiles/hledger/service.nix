@@ -86,45 +86,48 @@ in
     };
   };
 
-  config = mkMerge [ (mkIf (cfg.web.enable || cfg.api.enable) {
-    users.extraUsers = optionalAttrs (cfg.user == "hledger") (singleton {
-      name = "hledger";
-      group = cfg.group;
-      uid = 292;
-      home = cfg.statePath;
-      createHome = true;
-    });
+  config = mkMerge [
+    (mkIf (cfg.web.enable || cfg.api.enable) {
+      users.extraUsers = optionalAttrs (cfg.user == "hledger") (singleton {
+        name = "hledger";
+        group = cfg.group;
+        uid = 292;
+        home = cfg.statePath;
+        createHome = true;
+      });
 
-    users.extraGroups = optionalAttrs (cfg.group == "hledger") (singleton {
-    name = "hledger";
-    gid = 292;
-    });
+      users.extraGroups = optionalAttrs (cfg.group == "hledger") (singleton {
+        name = "hledger";
+        gid = 292;
+      });
 
-  }) (mkIf cfg.web.enable {
-    systemd.services.hledger-web = {
-      description = "hledger-web accounting";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" ];
-      preStart = ''
-        touch ${cfg.statePath}/${cfg.stateFileName}
-      '';
-      serviceConfig = {
-        User = cfg.user;
-        Group = cfg.group;
-        ExecStart = "${pkgs.hledger-web}/bin/hledger-web --serve --base-url=${cfg.web.baseURL} --host ${cfg.web.listenHost} --port ${cfg.web.listenPort} --file ${cfg.statePath}/${cfg.stateFileName}";
-        WorkingDirectory = "${cfg.statePath}";
-        Restart = "always";
-        RestartSec = "10";
+    })
+    (mkIf cfg.web.enable {
+      systemd.services.hledger-web = {
+        description = "hledger-web accounting";
+        wantedBy = [ "multi-user.target" ];
+        after = [ "network.target" ];
+        preStart = ''
+          touch ${cfg.statePath}/${cfg.stateFileName}
+        '';
+        serviceConfig = {
+          User = cfg.user;
+          Group = cfg.group;
+          ExecStart = "${pkgs.hledger-web}/bin/hledger-web --serve --base-url=${cfg.web.baseURL} --host ${cfg.web.listenHost} --port ${cfg.web.listenPort} --file ${cfg.statePath}/${cfg.stateFileName}";
+          WorkingDirectory = "${cfg.statePath}";
+          Restart = "always";
+          RestartSec = "10";
+        };
       };
-    };
-  }) (mkIf cfg.api.enable {
+    })
+    (mkIf cfg.api.enable {
       systemd.services.hledger-api = {
         description = "hledger-api accounting";
         wantedBy = [ "multi-user.target" ];
         after = [ "network.target" ];
 
         preStart = ''
-        touch ${cfg.statePath}/${cfg.stateFileName}
+          touch ${cfg.statePath}/${cfg.stateFileName}
         '';
         serviceConfig = {
           User = cfg.user;
@@ -134,6 +137,7 @@ in
           Restart = "always";
           RestartSec = "10";
         };
-    };
-  })];
+      };
+    })
+  ];
 }

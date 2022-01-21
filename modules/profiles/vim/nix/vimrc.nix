@@ -5,7 +5,7 @@ let
   hnix-lsp = "/bin/false";
 in
 ''
-let g:LanguageClient_serverCommands = {
-\ 'nix': ['${hnix-lsp}', '-d', '--lsp'],
-\ }
+  let g:LanguageClient_serverCommands = {
+  \ 'nix': ['${hnix-lsp}', '-d', '--lsp'],
+  \ }
 ''

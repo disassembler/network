@@ -11,8 +11,8 @@
 
   items = [
     {
-      img   = "/img/team/sam.jpg";
-      name  = "Samuel Leathers";
+      img = "/img/team/sam.jpg";
+      name = "Samuel Leathers";
       title = "Owner and Lead Nix Engineer";
       social = [
         { type = "twitter"; link = "#"; }
@@ -20,8 +20,8 @@
       ];
     }
     {
-      img   = "/img/team/sam.jpg";
-      name  = "Josiah Berkebile";
+      img = "/img/team/sam.jpg";
+      name = "Josiah Berkebile";
       title = "Nix Engineer and Software Design Expert";
       social = [
         { type = "twitter"; link = "#"; }
@@ -29,8 +29,8 @@
       ];
     }
     {
-      img   = "/img/team/sam.jpg";
-      name  = "Nick Morelli";
+      img = "/img/team/sam.jpg";
+      name = "Nick Morelli";
       title = "Engineer";
       social = [
         { type = "twitter"; link = "#"; }

@@ -9,28 +9,31 @@
   boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
 
   fileSystems."/" =
-    { device = "sarov/root";
+    {
+      device = "sarov/root";
       fsType = "zfs";
     };
 
   fileSystems."/home" =
-    { device = "sarov/home";
+    {
+      device = "sarov/home";
       fsType = "zfs";
     };
 
   fileSystems."/nix" =
-    { device = "sarov/nix";
+    {
+      device = "sarov/nix";
       fsType = "zfs";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/67E3-17ED";
+    {
+      device = "/dev/disk/by-uuid/67E3-17ED";
       fsType = "vfat";
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/a76f74a6-d2ab-4b71-8514-5e7faa14f3dd"; }
-    ];
+    [{ device = "/dev/disk/by-uuid/a76f74a6-d2ab-4b71-8514-5e7faa14f3dd"; }];
 
   nix.maxJobs = lib.mkDefault 4;
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";

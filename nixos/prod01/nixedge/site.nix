@@ -1,24 +1,24 @@
 /*-----------------------------------------------------------------------------
-   Init
+  Init
 
-   Initialization of Styx, should not be edited
------------------------------------------------------------------------------*/
+  Initialization of Styx, should not be edited
+  -----------------------------------------------------------------------------*/
 { styx
 , styxLib
 , styx-themes
-, extraConf ? {}
+, extraConf ? { }
 }@args:
 
 rec {
 
 
-/*-----------------------------------------------------------------------------
-   Themes setup
+  /*-----------------------------------------------------------------------------
+    Themes setup
 
------------------------------------------------------------------------------*/
+    -----------------------------------------------------------------------------*/
 
   /* list the themes to load, paths or packages can be used
-     items at the end of the list have higher priority
+    items at the end of the list have higher priority
   */
   themes = [
     styx-themes.generic-templates
@@ -29,7 +29,7 @@ rec {
   */
   themesData = styxLib.themes.load {
     inherit styxLib themes;
-    extraEnv  = { inherit data pages; };
+    extraEnv = { inherit data pages; };
     extraConf = [ ./conf.nix extraConf ];
   };
 
@@ -38,61 +38,64 @@ rec {
   inherit (themesData) conf lib files templates env;
 
 
-/*-----------------------------------------------------------------------------
-   Data
+  /*-----------------------------------------------------------------------------
+    Data
 
-   This section declares the data used by the site
------------------------------------------------------------------------------*/
+    This section declares the data used by the site
+    -----------------------------------------------------------------------------*/
 
   data = with lib; {
 
     /* Menu using blocks
     */
-    menu = let
-      mkBlockSet = blocks:
-        map (id:
-          (lib.find { inherit id; } blocks) // { navbarClass = "page-scroll"; url = "/#${id}"; }
-        );
-    in
+    menu =
+      let
+        mkBlockSet = blocks:
+          map (id:
+            (lib.find { inherit id; } blocks) // { navbarClass = "page-scroll"; url = "/#${id}"; }
+          );
+      in
       (mkBlockSet pages.index.blocks [ "services" "portfolio" "about" "team" "contact" ])
-      ++ [
+        ++ [
         { title = "Styx"; url = "https://styx-static.github.io/styx-site/"; }
       ];
 
   } // (lib.loadDir { dir = ./data; inherit env; asAttrs = true; });
 
 
-/*-----------------------------------------------------------------------------
-   Pages
+  /*-----------------------------------------------------------------------------
+    Pages
 
-   This section declares the pages that will be generated
------------------------------------------------------------------------------*/
+    This section declares the pages that will be generated
+    -----------------------------------------------------------------------------*/
 
   pages = rec {
     index = {
-      title    = "Home";
-      path     = "/index.html";
+      title = "Home";
+      path = "/index.html";
       template = templates.block-page.full;
-      layout   = templates.layout;
-      blocks   = let
-        darken = d: d // { class = "bg-light-gray"; };
-      in with templates.blocks; [
-        (banner            data.main-banner)
-        (services          data.services)
-        (portfolio (darken data.portfolio))
-        (timeline          data.about)
-        (team      (darken data.team))
-        (clients           data.clients)
-        (contact           data.contact)
-      ];
+      layout = templates.layout;
+      blocks =
+        let
+          darken = d: d // { class = "bg-light-gray"; };
+        in
+        with templates.blocks; [
+          (banner data.main-banner)
+          (services data.services)
+          (portfolio (darken data.portfolio))
+          (timeline data.about)
+          (team (darken data.team))
+          (clients data.clients)
+          (contact data.contact)
+        ];
     };
   };
 
 
-/*-----------------------------------------------------------------------------
-   Site rendering
+  /*-----------------------------------------------------------------------------
+    Site rendering
 
------------------------------------------------------------------------------*/
+    -----------------------------------------------------------------------------*/
 
   # converting pages attribute set to a list
   pageList = lib.pagesToList {

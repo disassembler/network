@@ -1,9 +1,12 @@
-{ config, pkgs, lib, inputs, ... }: let
+{ config, pkgs, lib, inputs, ... }:
+let
   inherit (inputs) cardano-node;
   #inherit (inputs) adawallet;
-in {
+in
+{
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
       #cardano-node.nixosModules.cardano-node
     ];
@@ -13,20 +16,20 @@ in {
   boot.loader.efi.canTouchEfiVariables = true;
 
   nix = {
-      useSandbox = true;
-      buildCores = 4;
-      sandboxPaths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
-      binaryCaches = [
-        "https://cache.nixos.org"
-        "https://hydra.iohk.io"
-      ];
-      binaryCachePublicKeys = [
-        "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-      ];
-      package = pkgs.nixUnstable;
-      extraOptions = ''
-        experimental-features = nix-command flakes
-      '';
+    useSandbox = true;
+    buildCores = 4;
+    sandboxPaths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
+    binaryCaches = [
+      "https://cache.nixos.org"
+      "https://hydra.iohk.io"
+    ];
+    binaryCachePublicKeys = [
+      "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
+    ];
+    package = pkgs.nixUnstable;
+    extraOptions = ''
+      experimental-features = nix-command flakes
+    '';
   };
 
   nixpkgs.config.allowUnfree = true;
@@ -59,27 +62,27 @@ in {
     #CARDANO_NODE_SOCKET_PATH = config.services.cardano-node.socketPath;
   };
   environment.systemPackages = with pkgs; [
-     #cncli
-     wget
-     vim
-     screen
-     git
-     #pinentry
-     gnupg
-     pinentry-curses
-     #adawallet
-     bech32
-     cardano-node.packages.x86_64-linux.cardano-node
-     cardano-cli
-     #cardano-address
-     #cardano-completions
-     #cardano-hw-cli
-     #cardano-rosetta-py
-     python3Packages.ipython
-     #python3Packages.trezor
-     sqliteInteractive
-     srm
-     jq
+    #cncli
+    wget
+    vim
+    screen
+    git
+    #pinentry
+    gnupg
+    pinentry-curses
+    #adawallet
+    bech32
+    cardano-node.packages.x86_64-linux.cardano-node
+    cardano-cli
+    #cardano-address
+    #cardano-completions
+    #cardano-hw-cli
+    #cardano-rosetta-py
+    python3Packages.ipython
+    #python3Packages.trezor
+    sqliteInteractive
+    srm
+    jq
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

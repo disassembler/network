@@ -11,18 +11,19 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/5dd06337-f568-4cf9-b72d-6f1c637e8445";
+    {
+      device = "/dev/disk/by-uuid/5dd06337-f568-4cf9-b72d-6f1c637e8445";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/afa53491-c49a-436e-9632-1df86ddc0b6f";
+    {
+      device = "/dev/disk/by-uuid/afa53491-c49a-436e-9632-1df86ddc0b6f";
       fsType = "ext2";
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/9024e237-e028-4d71-8428-8b2b4ff01002"; }
-    ];
+    [{ device = "/dev/disk/by-uuid/9024e237-e028-4d71-8428-8b2b4ff01002"; }];
 
   nix.maxJobs = lib.mkDefault 4;
   powerManagement.cpuFreqGovernor = "ondemand";

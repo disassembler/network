@@ -2,7 +2,8 @@
 
 let
   version = "unstable-2016-05-07";
-in antBuild {
+in
+antBuild {
   name = "passopolis-${version}";
 
   src = fetchgit {

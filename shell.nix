@@ -6,7 +6,8 @@
 , deploy-rs
 , nixpkgs-fmt
 , lefthook
-, python3 }:
+, python3
+}:
 
 mkShell {
   sopsPGPKeyDirs = [ "./nixos/secrets/keys" ];

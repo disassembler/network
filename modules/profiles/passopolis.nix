@@ -4,12 +4,13 @@ with lib;
 
 let
   cfg = config.profiles.passopolis;
-in {
+in
+{
   options.profiles.passopolis = {
     enable = mkEnableOption "enable passopolis profile.";
   };
 
-  config = mkIf (cfg.enable)  {
+  config = mkIf (cfg.enable) {
     services = {
       passopolis = {
         enable = true;

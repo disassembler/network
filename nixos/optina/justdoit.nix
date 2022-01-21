@@ -4,7 +4,8 @@ with lib;
 let
   cfg = config.kexec.justdoit;
   x = if cfg.nvme then "p" else "";
-in {
+in
+{
   options = {
     kexec.justdoit = {
       rootDevice = mkOption {

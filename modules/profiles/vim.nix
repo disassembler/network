@@ -13,7 +13,8 @@ let
     vimrcConfig.vam = customization.vam;
     vimrcConfig.customRC = customization.customRC;
   };
-in {
+in
+{
   options.profiles.vim = with lib; {
     enable = mkEnableOption "enable vim profile";
     dev = mkOption {

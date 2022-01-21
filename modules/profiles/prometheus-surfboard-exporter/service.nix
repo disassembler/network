@@ -4,9 +4,10 @@ with lib;
 
 let
   cfg = config.services.prometheus.surfboardExporter;
-  pkg = pkgs.callPackage ./pkg.nix {};
-  
-in {
+  pkg = pkgs.callPackage ./pkg.nix { };
+
+in
+{
   options = {
     services.prometheus.surfboardExporter = {
       enable = mkEnableOption "prometheus surfboard exporter";
@@ -29,7 +30,7 @@ in {
 
       extraFlags = mkOption {
         type = types.listOf types.str;
-        default = [];
+        default = [ ];
         description = ''
           Extra commandline options when launching the surfboard exporter.
         '';

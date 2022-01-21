@@ -4,7 +4,8 @@ with lib;
 
 let
   cfg = config.profiles.zsh;
-in {
+in
+{
   options.profiles.zsh = {
     enable = mkEnableOption "enable zsh profile";
     autosuggest = mkOption {
