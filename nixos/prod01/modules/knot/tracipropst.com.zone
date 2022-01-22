@@ -1,0 +1,20 @@
+@ 3600 IN SOA samleathers.com. root.samleathers.com. 2022012200 7200 3600 86400 3600
+
+$TTL 600
+
+; NS records
+@ 300 IN NS ns1.samleathers.com.
+@ 300 IN NS ns2.samleathers.com.
+@ 300 IN NS ns1.disasm.us.
+@ 300 IN NS ns2.disasm.us.
+@	300	IN	NS	ns1.tracipropst.com.
+@	300	IN	NS	ns2.tracipropst.com.
+
+@	300	IN	A	45.40.149.34
+
+localhost	300	IN	A	127.0.0.1
+ns1	300	IN	A	45.76.4.212
+ns2	300	IN	A	45.76.4.212
+resume	300	IN	CNAME	www.tracipropst.com.
+staging	300	IN	A	45.76.4.212
+www	300	IN	A	45.40.149.34

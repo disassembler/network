@@ -1,0 +1,33 @@
+@ 3600 IN SOA bower-law.com. root.bower-law.com. 2022012200 7200 3600 86400 3600
+
+; Warning - every name in this file is ABSOLUTE!
+@	7200	IN	NS	ns1.bower-law.com.
+@	7200	IN	NS	ns2.bower-law.com.
+@ 300 IN NS ns1.samleathers.com.
+@ 300 IN NS ns2.samleathers.com.
+@ 300 IN NS ns1.disasm.us.
+@ 300 IN NS ns2.disasm.us.
+
+; Google records
+@	300	IN	MX	1 aspmx.l.google.com.
+@	300	IN	MX	3 alt1.aspmx.l.google.com.
+@	300	IN	MX	3 alt2.aspmx.l.google.com.
+@	300	IN	MX	5 aspmx2.googlemail.com.
+@	300	IN	MX	5 aspmx3.googlemail.com.
+@	300	IN	MX	5 aspmx4.googlemail.com.
+@	300	IN	MX	5 aspmx5.googlemail.com.
+@	3600	IN	TXT	"google-site-verification=pPhTSyhUqwImQ75gaWm6QG36cqGO3q-mh5hhXdHRI6E"
+calendar	300	IN	CNAME	ghs.google.com.
+docs	300	IN	CNAME	ghs.google.com.
+mail	300	IN	CNAME	ghs.google.com.
+sites	300	IN	CNAME	ghs.google.com.
+start	300	IN	CNAME	ghs.google.com.
+
+*.lan	7200	IN	A	73.230.94.119
+localhost	7200	IN	A	127.0.0.1
+ns1	300	IN	A	45.76.4.212
+ns2	300	IN	A	45.63.23.13
+old	7200	IN	A	199.15.252.153
+
+@	7200	IN	A	23.236.62.147
+www	7200	IN	CNAME	www12.wixdns.net.

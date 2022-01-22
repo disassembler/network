@@ -1,0 +1,37 @@
+@ 3600 IN SOA disasm.us. root.disasm.us. 2022012200 7200 3600 86400 3600
+
+$TTL 600
+
+; NS records
+@ 300 IN NS ns1.samleathers.com.
+@ 300 IN NS ns2.samleathers.com.
+@ 300 IN NS ns1.disasm.us.
+@ 300 IN NS ns2.disasm.us.
+
+; letsencrypt rules
+@ IN CAA 0 issue "letsencrypt.org"
+@ IN CAA 0 iodef "mailto:sam@nixedge.com"
+
+@	300	IN	A	45.76.4.212
+
+; Google records
+@	300	IN	MX	1 aspmx.l.google.com.
+@	300	IN	MX	3 alt1.aspmx.l.google.com.
+@	300	IN	MX	3 alt2.aspmx.l.google.com.
+@	300	IN	MX	5 aspmx2.googlemail.com.
+@	300	IN	MX	5 aspmx3.googlemail.com.
+@	300	IN	MX	5 aspmx4.googlemail.com.
+@	300	IN	MX	5 aspmx5.googlemail.com.
+@	10800	IN	TXT	"google-site-verification=7qHsbQ1rdlFiMWL080OeAv7uGddX_-8E-Qc-WiUU_L8"
+calendar	300	IN	CNAME	ghs.google.com.
+docs	300	IN	CNAME	ghs.google.com.
+in	300	IN	TXT	"v=spf1" "include:_spf.google.com" "~all"
+mail	300	IN	CNAME	ghs.google.com.
+sites	300	IN	CNAME	ghs.google.com.
+start	300	IN	CNAME	ghs.google.com.
+
+localhost	300	IN	A	127.0.0.1
+ns1	300	IN	A	45.76.4.212
+ns2	300	IN	A	45.76.4.212
+www	300	IN	A	45.76.4.212
+resume	300	IN	CNAME	www

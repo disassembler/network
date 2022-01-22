@@ -570,6 +570,7 @@ in
       package = pkgs.gammastep;
     };
   };
+  location.provider = "geoclue2";
   #systemd.services.cardano-db-sync.serviceConfig = {
   #  SupplementaryGroups = "cardano-node";
   #  Restart = "always";

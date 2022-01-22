@@ -1,0 +1,32 @@
+@ 3600 IN SOA nixedge.com. root.nixedge.com. 2022012200 7200 3600 86400 3600
+
+$TTL 600
+
+; NS records
+@	3600	IN	NS	ns1.nixedge.com.
+@	3600	IN	NS	ns2.nixedge.com.
+@ 300 IN NS ns1.samleathers.com.
+@ 300 IN NS ns2.samleathers.com.
+@ 300 IN NS ns1.disasm.us.
+@ 300 IN NS ns2.disasm.us.
+
+@	3600	IN	A	45.76.4.212
+
+; Google records
+@	300	IN	MX	1 aspmx.l.google.com.
+@	300	IN	MX	3 alt1.aspmx.l.google.com.
+@	300	IN	MX	3 alt2.aspmx.l.google.com.
+@	300	IN	MX	5 aspmx2.googlemail.com.
+@	300	IN	MX	5 aspmx3.googlemail.com.
+@	300	IN	MX	5 aspmx4.googlemail.com.
+@	300	IN	MX	5 aspmx5.googlemail.com.
+@	3600	IN	TXT	"google-site-verification=Y2wWRulzKQ1kSYY_VJEzogP1bZjHHuh2gFimbCioxok"
+@	3600	IN	TXT	"v=spf1 include:_spf.google.com ~all"
+calendar	300	IN	CNAME	ghs.google.com.
+docs	300	IN	CNAME	ghs.google.com.
+mail	300	IN	CNAME	ghs.google.com.
+sites	300	IN	CNAME	ghs.google.com.
+
+ns1	3600	IN	A	45.76.4.212
+ns2	3600	IN	A	45.63.23.13
+www	3600	IN	A	45.76.4.212

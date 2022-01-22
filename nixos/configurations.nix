@@ -73,10 +73,10 @@ in
   #    ./valaam/configuration.nix
   #  ];
   #};
-  #prod01 = nixosSystem {
-  #  system = "x86_64-linux";
-  #  modules = defaultModules ++ [
-  #    ./prod01/configuration.nix
-  #  ];
-  #};
+  prod01 = nixosSystem {
+    system = "x86_64-linux";
+    modules = defaultModules ++ [
+      ./prod01/configuration.nix
+    ];
+  };
 }

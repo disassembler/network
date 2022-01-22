@@ -19,6 +19,6 @@ in
     portal = mkNode "portal" "10.40.33.1" true;
     #sarov  = mkNode "sarov" "10.40.33.189" true;
     #valaam = mkNode "valaam" "10.40.33.165" true;
-    #prod01 = mkNode "prod01" "45.76.4.212" false;
+    prod01 = mkNode "prod01" "45.76.4.212" false;
   };
 }

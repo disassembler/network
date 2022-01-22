@@ -1,0 +1,12 @@
+@ 3600 IN SOA meadowsinternet.us. root.meadowsinternet.us. 2022012200 7200 3600 86400 3600
+
+@	300	IN	A	45.63.23.13
+@	300	IN	NS	ns1.meadowsinternet.us.
+@	300	IN	NS	ns2.meadowsinternet.us.
+@	300	IN	MX	10 mail.meadowsinternet.us.
+
+localhost	300	IN	A	127.0.0.1
+mail	300	IN	A	45.63.23.13
+ns1	300	IN	A	45.63.23.13
+ns2	300	IN	A	45.63.23.13
+www	300	IN	A	45.63.23.13

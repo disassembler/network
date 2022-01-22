@@ -1,0 +1,55 @@
+@ 3600 IN SOA samleathers.com. root.samleathers.com. 2022012200 7200 3600 86400 3600
+
+$TTL 600
+
+; NS records
+@ 300 IN NS ns1.samleathers.com.
+@ 300 IN NS ns2.samleathers.com.
+@ 300 IN NS ns1.disasm.us.
+@ 300 IN NS ns2.disasm.us.
+
+; letsencrypt rules
+@ IN CAA 0 issue "letsencrypt.org"
+@ IN CAA 0 iodef "mailto:sam@nixedge.com"
+
+@	300	IN	A	45.76.4.212
+
+@	300	IN	A	45.76.4.212
+
+
+; Google records
+@	300	IN	MX	1 aspmx.l.google.com.
+@	300	IN	MX	3 alt1.aspmx.l.google.com.
+@	300	IN	MX	3 alt2.aspmx.l.google.com.
+@	300	IN	MX	5 aspmx2.googlemail.com.
+@	300	IN	MX	5 aspmx3.googlemail.com.
+@	300	IN	MX	5 aspmx4.googlemail.com.
+@	300	IN	MX	5 aspmx5.googlemail.com.
+@	10800	IN	TXT	"google-site-verification=VR5iE1A-iOSvc7rjbub2gyhyBgaMHflqnMXBOQbgawg"
+calendar	300	IN	CNAME	ghs.google.com.
+docs	300	IN	CNAME	ghs.google.com.
+mail	300	IN	CNAME	ghs.google.com.
+in	300	IN	TXT	"v=spf1" "include:_spf.google.com" "~all"
+sites	300	IN	CNAME	ghs.google.com.
+start	300	IN	CNAME	ghs.google.com.
+
+brewblogger	300	IN	CNAME	www
+devops	300	IN	A	192.241.147.81
+devops	300	IN	AAAA	2604:a880:400:d0::168d:a001
+hg	300	IN	CNAME	www
+lithium	300	IN	CNAME	www
+localhost	300	IN	A	127.0.0.1
+nixos	300	IN	A	45.76.4.212
+ns1	300	IN	A	45.76.4.212
+ns2	300	IN	A	45.63.23.13
+pass	300	IN	CNAME	www
+prod01	300	IN	A	45.76.4.212
+prod01-do	300	IN	A	192.241.211.237
+prod02	300	IN	A	199.15.252.153
+prod03	300	IN	A	45.63.23.13
+prophet	300	IN	A	73.52.25.31
+resume	300	IN	A	45.76.4.212
+secure	300	IN	CNAME	www
+util	300	IN	CNAME	www
+wrestling	300	IN	CNAME	www
+www	300	IN	A	45.76.4.212
