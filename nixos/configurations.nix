@@ -79,4 +79,16 @@ in
       ./prod01/configuration.nix
     ];
   };
+  prod03 = nixosSystem {
+    system = "x86_64-linux";
+    modules = defaultModules ++ [
+      ./prod03/configuration.nix
+    ];
+  };
+  installer = nixosSystem {
+    system = "x86_64-linux";
+    modules = [
+      ./installer/configuration.nix
+    ];
+  };
 }

@@ -8,6 +8,7 @@ keys:
   - &portal 0B54B499CC18453BF12C99AEBB64B397254C4EDA
   - &pskov 644573797e98e918dfc599913b826939ef917e99
   - &prod01 3d773929692a08fa37a311b389fd40790a6817a1
+  - &prod03 57e2079f23192ec7a2d1451c1390d0ea9c007a56
 creation_rules:
   - path_regex: secrets.yaml$
     key_groups:
@@ -17,3 +18,4 @@ creation_rules:
       - *portal
       - *pskov
       - *prod01
+      - *prod03

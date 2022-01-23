@@ -20,5 +20,6 @@ in
     #sarov  = mkNode "sarov" "10.40.33.189" true;
     #valaam = mkNode "valaam" "10.40.33.165" true;
     prod01 = mkNode "prod01" "45.76.4.212" false;
+    prod03 = mkNode "prod03" "45.63.23.13" false;
   };
 }
