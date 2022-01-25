@@ -92,4 +92,10 @@ in
       ./installer/configuration.nix
     ];
   };
+  airgap = nixosSystem {
+    system = "x86_64-linux";
+    modules = baseModules ++ [
+      ./airgap/configuration.nix
+    ];
+  };
 }

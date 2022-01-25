@@ -2,7 +2,7 @@
   description = "Disassembler Network";
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs.url = "github:NixOS/nixpkgs/fd0aaa15e7d34dbe0cae29fc278339bec23426c3";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     cardano-node.url = "github:input-output-hk/cardano-node/1.33.0";
     #cardano-db-sync.url = "github:input-output-hk/cardano-db-sync";
     haskellNix.url = "github:input-output-hk/haskell.nix";
