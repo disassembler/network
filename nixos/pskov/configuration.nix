@@ -71,7 +71,7 @@ in
 
   networking = {
     hostName = machine;
-    hostId = hostId;
+    inherit hostId;
     #nameservers = [ "127.0.0.1" ];
     networkmanager.enable = true;
     networkmanager.unmanaged = [ "interface-name:ve-*" "ens9" ];

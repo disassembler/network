@@ -1,10 +1,7 @@
 { config, pkgs, lib, inputs, ... }:
 let
   cfg = config.profiles.vim;
-  inherit (cfg) dev;
-  nvim = inputs.neovim-flake.packages.x86_64-linux.neovim;
-in
-{
+in {
   options.profiles.vim = with lib; {
     enable = mkEnableOption "enable vim profile";
     dev = mkOption {
@@ -13,7 +10,11 @@ in
       description = "Whether to enable development plugins like haskell/js";
     };
   };
-  config = {
+  config = let
+    nvim = if cfg.dev
+      then inputs.neovim-flake.packages.x86_64-linux.neovim-dev
+      else inputs.neovim-flake.packages.x86_64-linux.neovim;
+  in lib.mkIf cfg.enable {
     environment.systemPackages = [
       nvim
     ];

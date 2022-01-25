@@ -10,7 +10,7 @@
 let
   nixosSystem = nixpkgs.lib.makeOverridable nixpkgs.lib.nixosSystem;
   customModules = import ../modules/modules-list.nix;
-  defaultModules = [
+  baseModules = [
     # make flake inputs accessiable in NixOS
     { _module.args.inputs = inputs; }
     {
@@ -28,51 +28,52 @@ let
         #./modules/nix-daemon.nix
         #./modules/minimal-docs.nix
         sops-nix.nixosModules.sops
-      ] ++ customModules;
+      ];
     }
   ];
+  defaultModules = baseModules ++ customModules;
 in
 {
-  #irkutsk = nixosSystem {
-  #  system = "x86_64-linux";
-  #  modules = defaultModules ++ [
-  #    nixos-hardware.nixosModules.dell-xps-13-9380
-  #    ./irkutsk/configuration.nix
-  #  ];
-  #};
+  irkutsk = nixosSystem {
+    system = "x86_64-linux";
+    modules = defaultModules ++ [
+      nixos-hardware.nixosModules.dell-xps-13-9380
+      ./irkutsk/configuration.nix
+    ];
+  };
   pskov = nixosSystem {
     system = "x86_64-linux";
     modules = defaultModules ++ [
       ./pskov/configuration.nix
     ];
   };
-  #optina = nixosSystem {
-  #  system = "x86_64-linux";
-  #  modules = defaultModules ++ [
-  #    ./optina/configuration.nix
-  #  ];
-  #};
+  optina = nixosSystem {
+    system = "x86_64-linux";
+    modules = defaultModules ++ [
+      ./optina/configuration.nix
+    ];
+  };
   portal = nixosSystem {
     system = "x86_64-linux";
     modules = defaultModules ++ [
       ./portal/configuration.nix
     ];
   };
-  #sarov = nixosSystem {
-  #  system = "x86_64-linux";
-  #  modules = defaultModules ++ [
-  #    cardano-node.nixosModules.cardano-node # no idea why this works here but not in sarov/configuration.nix
-  #    ./sarov/configuration.nix
-  #  ];
-  #};
-  #valaam = nixosSystem {
-  #  system = "x86_64-linux";
-  #  modules = defaultModules ++ [
-  #    cardano-node.nixosModules.cardano-node
-  #    #cardano-db-sync.nixosModules.cardano-db-sync
-  #    ./valaam/configuration.nix
-  #  ];
-  #};
+  sarov = nixosSystem {
+    system = "x86_64-linux";
+    modules = defaultModules ++ [
+      cardano-node.nixosModules.cardano-node # no idea why this works here but not in sarov/configuration.nix
+      ./sarov/configuration.nix
+    ];
+  };
+  valaam = nixosSystem {
+    system = "x86_64-linux";
+    modules = defaultModules ++ [
+      cardano-node.nixosModules.cardano-node
+      #cardano-db-sync.nixosModules.cardano-db-sync
+      ./valaam/configuration.nix
+    ];
+  };
   prod01 = nixosSystem {
     system = "x86_64-linux";
     modules = defaultModules ++ [
