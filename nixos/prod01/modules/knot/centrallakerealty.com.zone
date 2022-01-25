@@ -1,4 +1,4 @@
-@ 3600 IN SOA centrallakerealty.com. root.centrallakerealty.com. 2022012200 7200 3600 86400 3600
+@ 3600 IN SOA centrallakerealty.com. root.centrallakerealty.com. 2022012500 7200 3600 86400 3600
 
 @	300	IN	NS	ns1.centrallakerealty.com.
 @	300	IN	NS	ns2.centrallakerealty.com.
@@ -8,14 +8,14 @@
 @ 300 IN NS ns2.disasm.us.
 
 ; Google records
-centrallakerealty.com	300	IN	MX	1 aspmx.l.google.com.
-centrallakerealty.com	300	IN	MX	3 alt1.aspmx.l.google.com.
-centrallakerealty.com	300	IN	MX	3 alt2.aspmx.l.google.com.
-centrallakerealty.com	300	IN	MX	5 aspmx2.googlemail.com.
-centrallakerealty.com	300	IN	MX	5 aspmx3.googlemail.com.
-centrallakerealty.com	300	IN	MX	5 aspmx4.googlemail.com.
-centrallakerealty.com	300	IN	MX	5 aspmx5.googlemail.com.
-centrallakerealty.com	10800	IN	TXT	"google-site-verification=G03uYe68sXL5CLyFwVWjsIOKPfd2RPWGGusfzwEi4i0"
+@	300	IN	MX	1 aspmx.l.google.com.
+@	300	IN	MX	3 alt1.aspmx.l.google.com.
+@	300	IN	MX	3 alt2.aspmx.l.google.com.
+@	300	IN	MX	5 aspmx2.googlemail.com.
+@	300	IN	MX	5 aspmx3.googlemail.com.
+@	300	IN	MX	5 aspmx4.googlemail.com.
+@	300	IN	MX	5 aspmx5.googlemail.com.
+@	10800	IN	TXT	"google-site-verification=G03uYe68sXL5CLyFwVWjsIOKPfd2RPWGGusfzwEi4i0"
 calendar	300	IN	CNAME	ghs.google.com.
 docs	300	IN	CNAME	ghs.google.com.
 in	300	IN	TXT	"v=spf1" "include:_spf.google.com" "~all"
