@@ -15,6 +15,7 @@
     fenix.url = "github:nix-community/fenix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     styx.url = "github:disassembler/styx";
+    neovim-flake.url = "github:disassembler/neovim-flake";
   };
   outputs = { ... } @ args: import ./outputs.nix args;
 }
