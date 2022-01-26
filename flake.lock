@@ -109,11 +109,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1643134431,
-        "narHash": "sha256-zRt5NYZFRgOg7xgWfZUMSVjj/FK9pnxQUuWIBrYBA1s=",
+        "lastModified": 1643208989,
+        "narHash": "sha256-ACkPTIZXMxoejvb8KT2MFMq3y5zN9bmXrwiA3w6jNV8=",
         "owner": "input-output-hk",
         "repo": "adawallet",
-        "rev": "1c0beb266aaef4a6a35d7a5c69c04df0d0eef327",
+        "rev": "f10df6a15279ddc5f597b1c2e9ab4cc5971444da",
         "type": "github"
       },
       "original": {
