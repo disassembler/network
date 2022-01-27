@@ -16,6 +16,8 @@
     ./modules/knot
   ];
 
+  security.polkit.enable = false;
+
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;
   services.journald = {

@@ -4,6 +4,7 @@
 , inputs
 , nixos-hardware
 , cardano-node
+, nix
   #, cardano-db-sync
 , ...
 }:
@@ -19,6 +20,8 @@ let
           nix.nixPath = [
             "nixpkgs=${pkgs.path}"
           ];
+          # TODO: remove when switching to 22.05
+          nix.package = nixpkgs.lib.mkForce nix.packages.x86_64-linux.nix;
           nix.extraOptions = ''
             experimental-features = nix-command flakes
           '';

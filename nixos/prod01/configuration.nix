@@ -19,9 +19,12 @@ in
   ];
 
   nixpkgs.overlays = [ styxOverlay ];
+  security.polkit.enable = false;
+  # TODO: Use this when switching to 22.05
+  #security.acme.defaults.email = "disasm@gmail.com";
   security.acme = {
-    email = "disasm@gmail.com";
     acceptTerms = true;
+    email = "disasm@gmail.com";
   };
   fileSystems."/" = {
     device = "/dev/vda1";
