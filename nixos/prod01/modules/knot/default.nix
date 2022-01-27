@@ -30,11 +30,15 @@ in
         listen: ${ip4}@53
         listen: ${ip6}@53
 
-      # to generate TSIG key
-      # for i in host; do keymgr -t $i; done
-      acl:
-        - id: address_rule
+      remote:
+        - id: prod03
+          key: prod03
           address: 45.63.23.13
+
+      acl:
+        - id: prod03_acl
+          address: 45.63.23.13
+          key: prod03
           action: [transfer, notify]
 
       mod-rrl:
@@ -49,11 +53,12 @@ in
 
         - id: master
           semantic-checks: on
-          dnssec-signing: off
+          dnssec-signing: on
           zonefile-sync: -1
           zonefile-load: difference
           journal-content: changes
-          acl: [address_rule]
+          notify: prod03
+          acl: prod03_acl
 
       zone:
         - domain: disasm.us

@@ -22,6 +22,7 @@ in {
 
       remote:
         - id: prod01
+          key: prod03
           address: 45.76.4.212
 
       template:
@@ -30,7 +31,7 @@ in {
           global-module: mod-rrl/default
 
         - id: slave
-          master: [ prod01 ]
+          master: prod01
 
       zone:
         - domain: disasm.us

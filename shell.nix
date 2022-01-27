@@ -5,6 +5,7 @@
 , sops
 , deploy-rs
 , nixpkgs-fmt
+, knot-dns
 , lefthook
 , python3
 }:
@@ -20,5 +21,6 @@ mkShell {
     deploy-rs
     nixpkgs-fmt
     lefthook
+    knot-dns
   ];
 }
