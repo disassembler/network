@@ -55,7 +55,7 @@ in
 
   networking = {
     hostName = "portal";
-    domain = "wedlake.lan";
+    domain = "lan.disasm.us";
     hostId = "fa4b7394";
     nameservers = [ "10.40.33.1" "8.8.8.8" ];
     hosts = lib.mkForce {
@@ -130,8 +130,6 @@ in
       forwardPorts = [
         { sourcePort = 32400; destination = "10.40.33.20:32400"; proto = "tcp"; }
         { sourcePort = 19132; destination = "10.40.33.20:19132"; proto = "udp"; }
-        { sourcePort = 80; destination = "10.40.33.165:8081"; proto = "tcp"; }
-        #{ sourcePort = 1194; destination = "10.40.33.20:1194"; proto = "udp"; }
       ];
     };
     enableIPv6 = true;
@@ -349,6 +347,10 @@ in
             "netboot"
             "plex"
             "unifi"
+            "stg"
+            "noc"
+            "plex"
+            "hass"
           ];
           optina_ipv4 = "10.40.33.20";
           optina_ipv6 = "2601:98a:4100:3567:d63d:7eff:fe4d:c47f";
@@ -358,9 +360,9 @@ in
           '';
         in
         ''
-          ${lib.concatMapStrings (createAddress "wedlake.lan" optina_ipv4 optina_ipv6) optina_cnames}
-          ${lib.concatMapStrings (createAddress "wedlake.lan" portal_ipv4 portal_ipv6) portal_cnames}
-          address=/printer.wedlake.lan/10.40.33.50
+          ${lib.concatMapStrings (createAddress "lan.disasm.us" optina_ipv4 optina_ipv6) optina_cnames}
+          ${lib.concatMapStrings (createAddress "lan.disasm.us" portal_ipv4 portal_ipv6) portal_cnames}
+          address=/printer.lan.disasm.us/10.40.33.50
           address=/prod01.wedlake.lan/fd00::2
           rebind-domain-ok=/plex.direct/
         '';
@@ -374,8 +376,9 @@ in
       enable = true;
       machines = [
         { hostName = "optina"; ethernetAddress = "d4:3d:7e:4d:c4:7f"; ipAddress = "10.40.33.20"; }
+        { hostName = "valaam"; ethernetAddress = "00:c0:08:9d:ba:42"; ipAddress = "10.40.33.21"; }
         { hostName = "atari"; ethernetAddress = "94:08:53:84:9b:9d"; ipAddress = "10.40.33.22"; }
-        { hostName = "pskov"; ethernetAddress = "3c:58:c2:f9:87:5b"; ipAddress = "10.40.33.21"; }
+        { hostName = "valaam-wifi"; ethernetAddress = "3c:58:c2:f9:87:5b"; ipAddress = "10.40.33.31"; }
         { hostName = "printer"; ethernetAddress = "a4:5d:36:d6:22:d9"; ipAddress = "10.40.33.50"; }
       ];
       extraConfig = ''
@@ -394,7 +397,7 @@ in
         }
 
         subnet 10.40.33.0 netmask 255.255.255.0 {
-          option domain-search "wedlake.lan";
+          option domain-search "lan.disasm.us";
           option subnet-mask 255.255.255.0;
           option broadcast-address 10.40.33.255;
           option routers 10.40.33.1;
@@ -402,7 +405,7 @@ in
           range 10.40.33.100 10.40.33.200;
           next-server 10.40.33.1;
           if exists user-class and option user-class = "iPXE" {
-            filename "http://netboot.wedlake.lan/boot.php?mac=''${net0/mac}&asset=''${asset:uristring}&version=''${builtin/version}";
+            filename "http://netboot.lan.disasm.us/boot.php?mac=''${net0/mac}&asset=''${asset:uristring}&version=''${builtin/version}";
           } else {
             if option arch = 00:07 or option arch = 00:09 {
               filename = "x86_64-ipxe.efi";
@@ -509,7 +512,7 @@ in
           move_metadata_to_field: journal
           default_type: journal
         output.kafka:
-          hosts: ["optina.wedlake.lan:9092"]
+          hosts: ["optina.lan.disasm.us:9092"]
           topic: KAFKA-LOGSTASH-ELASTICSEARCH
       '';
     };

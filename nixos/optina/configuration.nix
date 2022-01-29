@@ -55,6 +55,7 @@ in
     mpd_pw = { };
     mpd_icecast_pw = { };
     alertmanager = { };
+    lego-knot-credentials.owner = "acme";
   };
   imports =
     [
@@ -104,7 +105,7 @@ in
 
   networking = {
     hostName = "optina";
-    domain = "wedlake.lan";
+    domain = "lan.disasm.us";
     hostId = "1768b40b";
     interfaces.enp2s0.ipv4.addresses = [{ address = "10.40.33.20"; prefixLength = 24; }];
     defaultGateway = "10.40.33.1";
@@ -112,7 +113,7 @@ in
     extraHosts =
       ''
         10.233.1.2 rtorrent.optina.local
-        10.40.33.20 crate.wedlake.lan
+        10.40.33.20 crate.lan.disasm.us
       '';
     nat = {
       enable = true;
@@ -157,6 +158,16 @@ in
     };
   };
 
+  security.acme.acceptTerms = true;
+  security.acme.email = "disasm@gmail.com";
+  security.acme.certs."lan.disasm.us" = {
+    domain = "*.lan.disasm.us";
+    postRun = "systemctl reload nginx.service";
+    group = "nginx";
+    keyType = "ec384";
+    dnsProvider = "rfc2136";
+    credentialsFile = config.sops.secrets.lego-knot-credentials.path;
+  };
   security.pki.certificates = [ shared.wedlake_ca_cert ];
 
   nixpkgs = {
@@ -209,12 +220,14 @@ in
     home-assistant = {
       enable = true;
       package = (pkgs.home-assistant.override {
-        extraComponents = [ "sense" "roku" "homekit" "sense_energy" ];
+        extraComponents = [ "sense" "roku" "homekit" ];
       }).overrideAttrs (oldAttrs: { doInstallCheck = false; });
       config = {
         default_config = { };
         met = { };
         sense = { };
+        roku = { };
+        homekit = { };
       };
     };
     matterbridge = {
@@ -222,13 +235,13 @@ in
       configPath = "/etc/nixos/matterbridge.toml";
     };
     minecraft-bedrock-server.enable = true;
-    #vaultwarden = {
-    #  enable = true;
-    #  config = {
-    #    signupsAllowed = true;
-    #    domain = "http://optina.wedlake.lan:8085";
-    #  };
-    #};
+    vaultwarden = {
+      enable = true;
+      config = {
+        signupsAllowed = false;
+        domain = "https://vw.lan.disasm.us";
+      };
+    };
     udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="74:d4:35:9b:84:62", NAME="enp2s0"
     '';
@@ -240,7 +253,7 @@ in
       extraProperties = ''
         offsets.topic.replication.factor = 1
       '';
-      hostname = "optina.wedlake.lan";
+      hostname = "optina.lan.disasm.us";
       zookeeper = "localhost:2181";
     };
     elasticsearch = {
@@ -251,7 +264,7 @@ in
 
     kibana = {
       enable = false;
-      listenAddress = "optina.wedlake.lan";
+      listenAddress = "optina.lan.disasm.us";
       elasticsearch.url = "http://localhost:9200";
     };
 
@@ -263,7 +276,7 @@ in
     #  web = {
     #    enable = true;
     #    listenPort = "8002";
-    #    baseURL = "https://hledger.wedlake.lan/";
+    #    baseURL = "https://hledger.lan.disasm.us/";
     #  };
     #};
 
@@ -280,7 +293,7 @@ in
           move_metadata_to_field: journal
           default_type: journal
         output.kafka:
-          hosts: ["optina.wedlake.lan:9092"]
+          hosts: ["optina.lan.disasm.us:9092"]
           topic: KAFKA-LOGSTASH-ELASTICSEARCH
       '';
     };
@@ -323,10 +336,10 @@ in
     bitlbee.enable = true;
     gitea = {
       enable = false;
-      domain = "git.wedlake.lan";
+      domain = "git.lan.disasm.us";
       appName = "Personal Git Server";
       httpAddress = "127.0.0.1";
-      rootUrl = "https://git.wedlake.lan";
+      rootUrl = "https://git.lan.disasm.us";
       httpPort = 3001;
       database = {
         type = "postgres";
@@ -446,7 +459,7 @@ in
       };
       #unifi = {
       #  enable = false;
-      #  unifiAddress = "https://unifi.wedlake.lan";
+      #  unifiAddress = "https://unifi.lan.disasm.us";
       #  unifiUsername = "prometheus";
       #  unifiPassword = secrets.unifi_password_ro;
       #  openFirewall = true;
@@ -461,7 +474,7 @@ in
         scheme = "http";
         path_prefix = "/";
         static_configs = [{
-          targets = [ "optina.wedlake.lan:9093" ];
+          targets = [ "optina.lan.disasm.us:9093" ];
         }];
       }];
       rules = [
@@ -613,18 +626,18 @@ in
           static_configs = [
             {
               targets = [
-                "portal.wedlake.lan:9100"
+                "portal.lan.disasm.us:9100"
               ];
               labels = {
-                alias = "portal.wedlake.lan";
+                alias = "portal.lan.disasm.us";
               };
             }
             {
               targets = [
-                "optina.wedlake.lan:9100"
+                "optina.lan.disasm.us:9100"
               ];
               labels = {
-                alias = "optina.wedlake.lan";
+                alias = "optina.lan.disasm.us";
               };
             }
             {
@@ -657,7 +670,7 @@ in
         #        "localhost:9130"
         #      ];
         #      labels = {
-        #        alias = "unifi.wedlake.lan";
+        #        alias = "unifi.lan.disasm.us";
         #      };
         #    }
         #  ];
@@ -798,7 +811,7 @@ in
     nginx = {
       enable = true;
       virtualHosts = {
-        "netboot.wedlake.lan" = {
+        "netboot.lan.disasm.us" = {
           root = netboot_root;
           extraConfig = ''
             location ~ [^/]\.php(/|$) {
@@ -806,10 +819,41 @@ in
             }
           '';
         };
-        "hledger.wedlake.lan" = {
+        "hass.lan.disasm.us" = {
+          useACMEHost = "lan.disasm.us";
           forceSSL = true;
-          sslCertificate = "/data/ssl/hledger.wedlake.lan.crt";
-          sslCertificateKey = "/data/ssl/hledger.wedlake.lan.key";
+          locations."/" = {
+            proxyPass = "http://optina.lan.disasm.us:8123";
+            extraConfig = ''
+              proxy_set_header Host $host;
+              proxy_set_header X-Forwarded-Proto $scheme;
+            '';
+          };
+          locations."/api/websocket" = {
+            proxyPass = "http://optina.lan.disasm.us:8123";
+            extraConfig = ''
+              proxy_http_version 1.1;
+              proxy_set_header Host $host;
+              proxy_set_header X-Forwarded-Proto $scheme;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection "Upgrade";
+            '';
+          };
+        };
+        "vw.lan.disasm.us" = {
+          useACMEHost = "lan.disasm.us";
+          forceSSL = true;
+          locations."/" = {
+            proxyPass = "http://optina.lan.disasm.us:8000";
+            extraConfig = ''
+              proxy_set_header Host $host;
+              proxy_set_header X-Forwarded-Proto $scheme;
+            '';
+          };
+        };
+        "hledger.lan.disasm.us" = {
+          useACMEHost = "lan.disasm.us";
+          forceSSL = true;
           locations."/api".extraConfig = ''
             proxy_pass http://localhost:8001/api;
             proxy_set_header Host $host;
@@ -825,33 +869,14 @@ in
             proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
           '';
         };
-        "crate.wedlake.lan" = {
+        "stg.lan.disasm.us" = {
+          useACMEHost = "lan.disasm.us";
           forceSSL = true;
-          sslCertificate = "/data/ssl/nginx.crt";
-          sslCertificateKey = "/data/ssl/nginx.key";
-          locations."/".extraConfig = ''
-            proxy_pass http://localhost:8089/;
-            proxy_set_header Host $host;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header  X-Real-IP         $remote_addr;
-            proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
-          '';
-          #locations."/weechat" = {
-          #  proxyPass = "http://127.0.0.1:9001/weechat";
-          #  proxyWebsockets = true;
-          #  extraConfig = ''
-          #    proxy_read_timeout 4h;
-          #  '';
-          #};
-        };
-        "storage.wedlake.lan" = {
-          forceSSL = false;
           root = "/var/storage";
         };
-        "unifi.wedlake.lan" = {
+        "unifi.lan.disasm.us" = {
+          useACMEHost = "lan.disasm.us";
           forceSSL = true;
-          sslCertificate = "/data/ssl/unifi.wedlake.lan.crt";
-          sslCertificateKey = "/data/ssl/unifi.wedlake.lan.key";
           locations."/".extraConfig = ''
             proxy_set_header Referer "";
             proxy_pass https://localhost:8443/;
@@ -863,18 +888,18 @@ in
             proxy_set_header Connection "upgrade";
           '';
         };
-        "git.wedlake.lan" = {
-          forceSSL = true;
-          sslCertificate = "/data/ssl/git.wedlake.lan.crt";
-          sslCertificateKey = "/data/ssl/git.wedlake.lan.key";
-          locations."/".extraConfig = ''
-            proxy_pass http://localhost:3001/;
-            proxy_set_header Host $host;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header  X-Real-IP         $remote_addr;
-            proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
-          '';
-        };
+        #"git.lan.disasm.us" = {
+        #  forceSSL = true;
+        #  sslCertificate = "/data/ssl/git.lan.disasm.us.crt";
+        #  sslCertificateKey = "/data/ssl/git.lan.disasm.us.key";
+        #  locations."/".extraConfig = ''
+        #    proxy_pass http://localhost:3001/;
+        #    proxy_set_header Host $host;
+        #    proxy_set_header X-Forwarded-Proto $scheme;
+        #    proxy_set_header  X-Real-IP         $remote_addr;
+        #    proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        #  '';
+        #};
       };
     };
 

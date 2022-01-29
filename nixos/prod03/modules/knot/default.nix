@@ -25,6 +25,12 @@ in {
           key: prod03
           address: 45.76.4.212
 
+      acl:
+        - id: prod01_acl
+          address: 45.76.4.212
+          key: prod03
+          action: [transfer, notify]
+
       template:
         - id: default
           semantic-checks: on
@@ -32,6 +38,7 @@ in {
 
         - id: slave
           master: prod01
+          acl: [ prod01_acl ]
 
       zone:
         - domain: disasm.us
@@ -59,6 +66,8 @@ in {
         - domain: nixedge.com
           template: slave
         - domain: rats.fail
+          template: slave
+        - domain: _acme-challenge.lan.disasm.us
           template: slave
     '';
   };
