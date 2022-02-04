@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2022012803 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 2022020401 7200 3600 86400 3600
 
 $TTL 600
 
@@ -39,13 +39,13 @@ resume	300	IN	CNAME	www
 
 ; lan
 optina.lan 300 IN A 10.40.33.20
-optina.lan 300 IN AAAA 2601:98a:4100:3567:d63d:7eff:fe4d:c47f
+optina.lan 300 IN AAAA 2601:98a:4102:ef0:d63d:7eff:fe4d:c47f
 valaam.lan 300 IN A 10.40.33.21
-valaam.lan 300 IN AAAA 2601:98a:4100:3567:de92:4044:f1ca:5fad
+valaam.lan 300 IN AAAA 2601:98a:4102:ef0:de92:4044:f1ca:5fad
 atari.lan 300 IN A 10.40.33.22
-atari.lan 300 IN AAAA 2601:98a:4100:3567:9608:53ff:fe84:9b9d
+atari.lan 300 IN AAAA 2601:98a:4102:ef0:9608:53ff:fe84:9b9d
 portal.lan 300 IN A 10.40.33.1
-portal.lan 300 IN AAAA 2601:98a:4100:3567::1
+portal.lan 300 IN AAAA 2601:98a:4102:ef0::1
 vw.lan 300 IN CNAME optina.lan
 hass.lan 300 IN CNAME optina.lan
 plex.lan 300 IN CNAME optina.lan
