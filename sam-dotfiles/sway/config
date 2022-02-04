@@ -28,7 +28,11 @@ font pango:Source Code Pro for Powerline Bold 9
 #output eDP-1 scale 2.3
 output * bg /home/sam/photos/20170503_183237.jpg fill
 
-output DP-1 scale 0.8
+# Position of screens
+output HDMI-A-1 pos 0 0
+output eDP-1 pos 1920 0
+
+#output eDP-1 scale 0.8
 
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
@@ -140,7 +144,13 @@ bindsym --release $mod+Shift+s exec loginctl lock-session
     # We just use 1-10 as the default.
 #
 # Layout stuff:
-#
+
+workspace 1 output eDP-1
+workspace 2 output eDP-1
+
+workspace 9 output HDMI-A-1
+workspace 10 output HDMI-A-1
+
     # You can "split" the current object of your focus with
     # $mod+b or $mod+v, for horizontal and vertical splits
     # respectively.

@@ -110,16 +110,11 @@ in
   };
 
   nix = {
-    useSandbox = true;
-    buildCores = 4;
-    sandboxPaths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
-    binaryCaches = [
-      "https://cache.nixos.org"
-      "https://hydra.iohk.io"
-    ];
-    binaryCachePublicKeys = [
-      "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-    ];
+    settings.sandbox = true;
+    settings.cores = 4;
+    settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
+    settings.substituters = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
+    settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
     package = pkgs.nixUnstable;
     extraOptions = ''
       experimental-features = nix-command flakes

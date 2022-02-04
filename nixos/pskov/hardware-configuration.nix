@@ -24,36 +24,42 @@
     {
       device = "zpool/nixos/etc";
       fsType = "zfs";
+      options = [ "zfsutil" ];
     };
 
   fileSystems."/nix" =
     {
       device = "zpool/nixos/nix";
       fsType = "zfs";
+      options = [ "zfsutil" ];
     };
 
   fileSystems."/var" =
     {
       device = "zpool/nixos/var";
       fsType = "zfs";
+      options = [ "zfsutil" ];
     };
 
   fileSystems."/var/lib" =
     {
       device = "zpool/nixos/var/lib";
       fsType = "zfs";
+      options = [ "zfsutil" ];
     };
 
   fileSystems."/var/log" =
     {
       device = "zpool/nixos/var/log";
       fsType = "zfs";
+      options = [ "zfsutil" ];
     };
 
   fileSystems."/var/spool" =
     {
       device = "zpool/nixos/var/spool";
       fsType = "zfs";
+      options = [ "zfsutil" ];
     };
 
   fileSystems."/boot" =

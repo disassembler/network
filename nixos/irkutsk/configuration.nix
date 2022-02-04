@@ -96,17 +96,11 @@ in
       buildMachines = import ../../build-machines.nix;
     in
     {
-      useSandbox = true;
-      buildCores = 4;
-      sandboxPaths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
-      binaryCaches = [
-        "https://cache.nixos.org"
-        "https://hydra.iohk.io"
-      ];
-      binaryCachePublicKeys = [
-        "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-        "hydra.mantis.ist-1:4LTe7Q+5pm8+HawKxvmn2Hx0E3NbkYjtf1oWv+eAmTo="
-      ];
+      settings.sandbox = true;
+      settings.cores = 4;
+      settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
+      settings.substituters = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
+      settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
       distributedBuilds = true;
       buildMachines = [
       ];

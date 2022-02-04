@@ -78,8 +78,8 @@ in
       buildMachines = [
         buildMachines.linux.optina
       ];
-      binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
-      binaryCachePublicKeys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
+      settings.substituters = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
+      settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
       extraOptions = ''
         allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk
       '';
@@ -154,12 +154,12 @@ in
         32400 # plex
         5201 # iperf
       ];
-      allowedUDPPorts = [ 53 137 138 1194 500 4500 19132 ];
+      allowedUDPPorts = [ 53 137 138 1194 500 4500 5353 19132 ];
     };
   };
 
   security.acme.acceptTerms = true;
-  security.acme.email = "disasm@gmail.com";
+  security.acme.defaults.email = "disasm@gmail.com";
   security.acme.certs."lan.disasm.us" = {
     domain = "*.lan.disasm.us";
     postRun = "systemctl reload nginx.service";
@@ -214,9 +214,20 @@ in
     #openssl
     powerdns
     virtmanager
+    config.services.home-assistant.package
   ];
 
   services = {
+    avahi = {
+      enable = true;
+      interfaces = [ "enp2s0" ];
+      reflector = true;
+      publish = {
+        enable = true;
+        addresses = true;
+        workstation = true;
+      };
+    };
     home-assistant = {
       enable = true;
       package = (pkgs.home-assistant.override {
@@ -268,17 +279,12 @@ in
       elasticsearch.url = "http://localhost:9200";
     };
 
-    #hledger = {
-    #  api = {
-    #    enable = true;
-    #    listenPort = "8001";
-    #  };
-    #  web = {
-    #    enable = true;
-    #    listenPort = "8002";
-    #    baseURL = "https://hledger.lan.disasm.us/";
-    #  };
-    #};
+    hledger-web = {
+      enable = true;
+      port = 8002;
+      baseUrl = "https://hledger.lan.disasm.us/";
+      capabilities.add = true;
+    };
 
     journalbeat = {
       enable = false;
@@ -351,6 +357,7 @@ in
     unifi = {
       enable = true;
       unifiPackage = pkgs.unifiStable;
+      openFirewall = true;
     };
     #telegraf = {
     #  enable = true;
@@ -854,13 +861,13 @@ in
         "hledger.lan.disasm.us" = {
           useACMEHost = "lan.disasm.us";
           forceSSL = true;
-          locations."/api".extraConfig = ''
-            proxy_pass http://localhost:8001/api;
-            proxy_set_header Host $host;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header  X-Real-IP         $remote_addr;
-            proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
-          '';
+          #locations."/api".extraConfig = ''
+          #  proxy_pass http://localhost:8001/api;
+          #  proxy_set_header Host $host;
+          #  proxy_set_header X-Forwarded-Proto $scheme;
+          #  proxy_set_header  X-Real-IP         $remote_addr;
+          #  proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+          #'';
           locations."/".extraConfig = ''
             proxy_pass http://localhost:8002/;
             proxy_set_header Host $host;
@@ -1066,5 +1073,5 @@ in
     uid = 1004;
   };
   # don't change this without reading release notes
-  system.stateVersion = "17.09";
+  system.stateVersion = "22.05";
 }

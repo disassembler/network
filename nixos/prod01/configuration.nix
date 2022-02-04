@@ -20,12 +20,12 @@ in
 
   nixpkgs.overlays = [ styxOverlay ];
   security.polkit.enable = false;
-  # TODO: Use this when switching to 22.05
-  #security.acme.defaults.email = "disasm@gmail.com";
+
+  security.acme.defaults.email = "disasm@gmail.com";
   security.acme = {
     acceptTerms = true;
-    email = "disasm@gmail.com";
   };
+
   fileSystems."/" = {
     device = "/dev/vda1";
     fsType = "btrfs";
@@ -38,11 +38,11 @@ in
   boot.loader.grub.device = "/dev/vda";
   boot.kernelPackages = pkgs.linuxPackages_latest;
   nix = {
-    useSandbox = true;
-    buildCores = 4;
-    sandboxPaths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
-    binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
-    binaryCachePublicKeys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
+    settings.sandbox = true;
+    settings.cores = 4;
+    settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
+    settings.substituters = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
+    settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
     distributedBuilds = true;
     extraOptions = ''
       allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk/nixpkgs/archive

@@ -2,11 +2,11 @@
   description = "Disassembler Network";
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
-    nix.url = "github:NixOS/nix/2.5.1";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
-    cardano-node.url = "github:input-output-hk/cardano-node/1.33.0";
-    #cardano-db-sync.url = "github:input-output-hk/cardano-db-sync";
+    nix.url = "github:NixOS/nix/master";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    cardano-node.url = "github:input-output-hk/cardano-node/master";
     haskellNix.url = "github:input-output-hk/haskell.nix";
+    #cardano-db-sync.url = "github:input-output-hk/cardano-db-sync";
     adawallet.url = "github:input-output-hk/adawallet";
     cncli.url = "github:AndrewWestberg/cncli";
     nixos-hardware.url = "github:NixOS/nixos-hardware";

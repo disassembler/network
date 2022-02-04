@@ -232,7 +232,7 @@ in
           ''
         ];
       allowedTCPPorts = [ 32400 5222 5060 53 3001 ];
-      allowedUDPPorts = [ 51820 1194 1195 5060 5222 53 config.services.toxvpn.port 19132 ];
+      allowedUDPPorts = [ 51820 1194 1195 5060 5222 53 config.services.toxvpn.port 19132 5353 ];
     };
     wireguard.interfaces = {
       wg0 = {
@@ -296,8 +296,8 @@ in
   };
 
   nix = {
-    binaryCaches = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
-    binaryCachePublicKeys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
+    settings.substituters = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
+    settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
@@ -321,6 +321,16 @@ in
   ];
 
   services = {
+    avahi = {
+      enable = true;
+      interfaces = [ "lan" "iot" "mgmt" ];
+      reflector = true;
+      publish = {
+        enable = true;
+        addresses = true;
+        workstation = true;
+      };
+    };
     toxvpn = {
       enable = false;
       localip = "10.40.13.1";
