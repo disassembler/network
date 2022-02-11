@@ -25,6 +25,6 @@
   swapDevices =
     [{ device = "/dev/disk/by-uuid/9024e237-e028-4d71-8428-8b2b4ff01002"; }];
 
-  nix.maxJobs = lib.mkDefault 4;
+  nix.settings.max-jobs = lib.mkDefault 4;
   powerManagement.cpuFreqGovernor = "ondemand";
 }

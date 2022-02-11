@@ -80,14 +80,24 @@ in
               "homepage": "https://rats.fail"
             }
           '';
+          metadata-testnet = ''
+            {
+              "name": "MICE Pool",
+              "ticker": "MICE",
+              "description": "MICE pool is RATS testnet sibling, an IPv6 only pool ran by Samuel Leathers",
+              "homepage": "https://rats.fail"
+            }
+          '';
           metadataJson = pkgs.writeText "pool.json" metadata;
+          metadataTestnetJson = pkgs.writeText "pool.json" metadata-testnet;
           index = ''
             Future home of Cardano RATS Stake Pool
           '';
           index-html = pkgs.writeText "index.html" index;
           ratsRoot = pkgs.runCommandNoCC "rats-root" { } ''
-            mkdir -p $out
+            mkdir -p $out/testnet
             cp ${metadataJson} $out/pool.json
+            cp ${metadataTestnetJson} $out/testnet/pool.json
             cp ${index-html} $out/index.html
           '';
         in

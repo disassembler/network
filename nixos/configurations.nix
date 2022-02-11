@@ -73,6 +73,7 @@ in
     system = "x86_64-linux";
     modules = defaultModules ++ [
       cardano-node.nixosModules.cardano-node
+      { _module.args.cardano-node = cardano-node; }
       #cardano-db-sync.nixosModules.cardano-db-sync
       ./valaam/configuration.nix
     ];

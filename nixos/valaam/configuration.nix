@@ -2,95 +2,101 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, inputs, ... }:
-let
-  inherit (inputs) cardano-node;
-  pkgs' = pkgs;
-  #baseCardanoContainer = {
+{ config, pkgs, lib, cardano-node, ... }: let
+  baseCardanoContainer = {
 
-  #  privateNetwork = true;
-  #  autoStart = true;
-  #  config = { config, pkgs, ... }: {
-  #    imports = [ pkgs'.cardanoNodeModule ];
-  #    networking.firewall.allowedTCPPorts = [ 3001 12798 ];
-  #    environment = {
-  #      systemPackages = with pkgs'; [
-  #        dnsutils
-  #        screen
-  #        vim
-  #        jq
-  #        cardano-node
-  #        cardano-cli
-  #      ];
-  #      variables = {
-  #        CARDANO_NODE_SOCKET_PATH = config.services.cardano-node.socketPath;
-  #      };
-  #    };
-  #    services = {
-  #      cardano-node = {
-  #        enable = true;
-  #        environment = "mainnet";
-  #        package = pkgs'.cardano-node;
-  #        systemdSocketActivation = true;
-  #        nodeConfig = pkgs'.cardanoEnvironments.mainnet.nodeConfig // {
-  #          hasPrometheus = [ "0.0.0.0" 12798 ];
-  #          TraceMempool = false;
-  #          setupScribes = [{
-  #            scKind = "JournalSK";
-  #            scName = "cardano";
-  #            scFormat = "ScText";
-  #          }];
-  #          defaultScribes = [
-  #            [
-  #              "JournalSK"
-  #              "cardano"
-  #            ]
-  #          ];
-  #        };
-  #      };
-  #      promtail = {
-  #        enable = true;
-  #        configuration = {
-  #          server = {
-  #            http_listen_port = 28183;
-  #            grpc_listen_port = 0;
-  #          };
+    privateNetwork = true;
+    autoStart = true;
+    hostBridge = "br0";
+    config = { config, pkgs, ... }: {
+      # setup network
+      networking.useDHCP = lib.mkForce true;
+      imports = [ cardano-node.nixosModules.cardano-node ];
+      networking.firewall.allowedTCPPorts = [ 3001 12798 ];
+      environment = let
+        basePackages = with pkgs; [
+          dnsutils
+          screen
+          vim
+          jq
+        ];
+        cardanoPackages = [
+          cardano-node.packages.x86_64-linux.cardano-node
+          cardano-node.packages.x86_64-linux.cardano-cli
+        ];
+      in {
+        systemPackages = basePackages ++ cardanoPackages;
+        variables = {
+          CARDANO_NODE_SOCKET_PATH = config.services.cardano-node.socketPath;
+        };
+      };
+      services = {
+        cardano-node = {
+          enable = true;
+          environment = "testnet";
+          package = cardano-node.packages.x86_64-linux.cardano-node;
+          systemdSocketActivation = true;
+          nodeConfig = cardano-node.environments.x86_64-linux.testnet.nodeConfig // {
+            hasPrometheus = [ "::" 12798 ];
+            TraceMempool = false;
+            setupScribes = [{
+              scKind = "JournalSK";
+              scName = "cardano";
+              scFormat = "ScText";
+            }];
+            defaultScribes = [
+              [
+                "JournalSK"
+                "cardano"
+              ]
+            ];
+          };
+        };
+        promtail = {
+          enable = true;
+          configuration = {
+            server = {
+              http_listen_port = 28183;
+              grpc_listen_port = 0;
+            };
 
-  #          positions = {
-  #            filename = "/tmp/positions.yaml";
-  #          };
+            positions = {
+              filename = "/tmp/positions.yaml";
+            };
 
-  #          clients = [{
-  #            # TODO: get address of host running container
-  #            url = "http://10.40.33.21:3100/loki/api/v1/push";
-  #          }];
+            clients = [{
+              # TODO: get address of host running container
+              url = "http://10.40.33.21:3100/loki/api/v1/push";
+            }];
 
-  #          scrape_configs = [{
-  #            job_name = "journal";
-  #            journal = {
-  #              max_age = "12h";
-  #              labels = {
-  #                job = "systemd-journal";
-  #                # TODO: get container name to prevent clashing and make it easier to query
-  #                host = "container_name";
-  #              };
-  #            };
-  #            relabel_configs = [{
-  #              source_labels = ["__journal__systemd_unit"];
-  #              target_label = "unit";
-  #            }];
-  #          }];
-  #        };
-  #      };
-  #    };
-  #    systemd.sockets.cardano-node.partOf = [ "cardano-node.socket" ];
-  #    systemd.services.cardano-node.after = lib.mkForce [ "network-online.target" "cardano-node.socket" ];
-  #    users.users.cardano-node.isSystemUser = true;
-  #  };
-  #};
+            scrape_configs = [{
+              job_name = "journal";
+              journal = {
+                max_age = "12h";
+                labels = {
+                  job = "systemd-journal";
+                  # TODO: get container name to prevent clashing and make it easier to query
+                  host = "container_name";
+                };
+              };
+              relabel_configs = [{
+                source_labels = ["__journal__systemd_unit"];
+                target_label = "unit";
+              }];
+            }];
+          };
+        };
+      };
+      systemd.sockets.cardano-node.partOf = [ "cardano-node.socket" ];
+      systemd.services.cardano-node.after = lib.mkForce [ "network-online.target" "cardano-node.socket" ];
+    };
+  };
 
-in
-{
+in {
+  sops.defaultSopsFile = ./secrets.yaml;
+  sops.secrets.pool_opcert = { };
+  sops.secrets.pool_vrf_skey = { };
+  sops.secrets.pool_kes_skey = { };
   imports =
     [
       # Include the results of the hardware scan.
@@ -100,6 +106,7 @@ in
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.supportedFilesystems = [ "zfs" ];
 
   boot.kernelModules = [ "amdgpu" ];
   boot.initrd.kernelModules = [ "amdgpu" ];
@@ -122,20 +129,24 @@ in
   };
 
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.overlays = [ cardano-node.overlay ];
   networking = {
     hostName = "valaam";
     hostId = "07c7b2e8";
+    bridges = {
+      br0 = {
+        interfaces = [ "enp4s0" ];
+      };
+    };
     useDHCP = false;
-    interfaces.enp4s0.useDHCP = true;
-    interfaces.enp5s0f3u4u2.useDHCP = true;
+    interfaces.br0.useDHCP = true;
     interfaces.wlp3s0.useDHCP = true;
     networkmanager.enable = false;
-    nat = {
-      enable = true;
-      internalInterfaces = [ "ve-+" ];
-      externalInterface = "enp4s0";
-    };
+    # TODO: remove when working
+    #nat = {
+    #  enable = true;
+    #  internalInterfaces = [ "ve-+" ];
+    #  externalInterface = "mv-enp4s0-host";
+    #};
     #wireless = {
     #  enable = true;
     #  networks = secrets.wifiNetworks;
@@ -149,26 +160,17 @@ in
   };
 
   environment.systemPackages = with pkgs; [
-    #cncli
     docker_compose
+
     wget
     vim
     screen
     gitMinimal
     pinentry
     gnupg
-    pinentry-curses
-    #adawallet
-    bech32
     cardano-node.packages.x86_64-linux.cardano-node
-    cardano-cli
-    #cardano-address
-    #cardano-completions
-    #cardano-hw-cli
-    #cardano-rosetta-py
+    cardano-node.packages.x86_64-linux.cardano-cli
     python3Packages.ipython
-    python3Packages.trezor
-    sqliteInteractive
     srm
     jq
   ];
@@ -412,42 +414,64 @@ in
 
 
   containers = {
-    #pool = lib.mkMerge [ baseCardanoContainer {
-    #  hostAddress = "10.10.1.1";
-    #  localAddress = "10.10.1.2";
-    #  bindMounts."/pool-keys" = { hostPath = "/var/leder-keys"; isReadOnly = false; };
-    #  config = {
-    #    services.cardano-node = {
-    #      hostAddr = "10.10.1.2";
-    #      topology = __toFile "topology.json" (__toJSON {
-    #        Producers = [
-    #          { addr = "10.10.1.4"; port = 3001; valency = 1; }
-    #        ];
-    #      });
-    #      operationalCertificate = "/pool-keys/leder.opcert";
-    #      kesKey = "/pool-keys/leder-kes.skey";
-    #      vrfKey = "/pool-keys/leder-vrf.skey";
-    #    };
+    pool = lib.mkMerge [ baseCardanoContainer {
+      bindMounts = {
+        "/run/secrets/pool_opcert" = {
+          hostPath = "/run/secrets/pool_opcert";
+          isReadOnly = true;
+        };
+        "/run/secrets/pool_kes_skey" = {
+          hostPath = "/run/secrets/pool_kes_skey";
+          isReadOnly = true;
+        };
+        "/run/secrets/pool_vrf_skey" = {
+          hostPath = "/run/secrets/pool_vrf_skey";
+          isReadOnly = true;
+        };
+      };
+      bindMounts."/pool-keys" = { hostPath = "/var/leder-keys"; isReadOnly = false; };
+      config = {
+        services.cardano-node = {
+          ipv6HostAddr = "::";
+          topology = __toFile "topology.json" (__toJSON {
+            Producers = [
+              { addr = "relay.valaam.lan.disasm.us"; port = 3001; valency = 1; }
+            ];
+          });
+          operationalCertificate = "/var/lib/cardano-node/opcert";
+          kesKey = "/var/lib/cardano-node/kes.skey";
+          vrfKey = "/var/lib/cardano-node/vrf.skey";
+        };
+        systemd.services.cardano-node.preStart = ''
+          cp /run/secrets/pool_opcert /var/lib/cardano-node/opcert
+          cp /run/secrets/pool_vrf_skey /var/lib/cardano-node/vrf.skey
+          cp /run/secrets/pool_kes_skey /var/lib/cardano-node/kes.skey
+          chown cardano-node /var/lib/cardano-node/opcert
+          chown cardano-node /var/lib/cardano-node/vrf.skey
+          chown cardano-node /var/lib/cardano-node/kes.skey
+        '';
+        systemd.services.cardano-node.serviceConfig.PermissionsStartOnly = true;
 
-    #  };
-    #}];
-    #relay = lib.mkMerge [ baseCardanoContainer {
-    #  hostAddress = "10.10.1.3";
-    #  localAddress = "10.10.1.4";
-    #  forwardPorts = [ { protocol = "tcp"; hostPort = 3001; containerPort = 3001; } ];
-    #  bindMounts."/run/cardano-node" = { hostPath = "/relay-run-cardano"; isReadOnly = false; };
-    #  config = {
-    #    services.cardano-node = {
-    #      hostAddr = "10.10.1.4";
-    #      topology = __toFile "topology.json" (__toJSON {
-    #        Producers = [
-    #          { addr = "relays-new.cardano-mainnet.iohk.io"; port = 3001; valency = 3; }
-    #          #{ addr = "10.10.1.2"; port = 3001; valency = 1; }
-    #        ];
-    #      });
-    #    };
-    #  };
-    #}];
+      };
+    }];
+    relay = lib.mkMerge [ baseCardanoContainer {
+      bindMounts."/run/cardano-node" = { hostPath = "/relay-run-cardano"; isReadOnly = false; };
+      config = {
+        services.cardano-node = {
+          ipv6HostAddr = "::";
+          topology = __toFile "topology.json" (__toJSON {
+            Producers = [
+              { addr = "relays-new.cardano-testnet.iohkdev.io"; port = 3001; valency = 3; }
+              { addr = "2a07:c700:0:503::1"; port = 1025; valency = 1; }
+              { addr = "2a07:c700:0:505::1"; port = 6021; valency = 1; }
+              { addr = "2600:1700:fb0:fd00::77"; port = 4564; valency = 1; }
+              { addr = "testnet.weebl.me"; port = 3123; valency = 1; }
+              { addr = "pool.valaam.lan.disasm.us"; port = 3001; valency = 1; }
+            ];
+          });
+        };
+      };
+    }];
     #db-sync = lib.mkMerge [ baseCardanoContainer {
     #  hostAddress = "10.10.1.5";
     #  localAddress = "10.10.1.6";

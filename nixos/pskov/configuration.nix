@@ -340,6 +340,11 @@ in
 
 
   services = {
+    rabbitmq = {
+      enable = true;
+      listenAddress = "::1";
+      managementPlugin.enable = true;
+    };
     tftpd.enable = true;
     tftpd.path = "/var/tftpd";
     zfs.trim.enable = true;
@@ -513,47 +518,47 @@ in
       resolveLocalQueries = false;
     };
 
-    #openvpn = {
-    #  servers = {
-    #    prophet = {
-    #      autoStart = false;
-    #      config = ''
-    #        client
-    #        dev tun
-    #        proto udp
-    #        remote prophet.samleathers.com 1195
-    #        nobind
-    #        persist-key
-    #        persist-tun
-    #        ca ${config.sops.secrets.openvpn_prophet_ca}
-    #        cert ${config.sops.secrets.openvpn_prophet_cert}
-    #        key ${config.sops.secrets.openvpn_prophet_key}
-    #        tls-auth ${config.sops.secrets.openvpn_prophet_tls}
-    #        key-direction 1
-    #        comp-lzo
-    #        verb 3
-    #      '';
-    #    };
-    #    bower = {
-    #      autoStart = false;
-    #      config = ''
-    #        client
-    #        dev tun
-    #        proto udp
-    #        remote 73.230.94.119 1194
-    #        nobind
-    #        persist-key
-    #        persist-tun
-    #        cipher AES-256-CBC
-    #        ca ${config.sops.secrets.openvpn_bower_ca}
-    #        cert ${config.sops.secrets.openvpn_bower_cert}
-    #        key ${config.sops.secrets.openvpn_bower_key}
-    #        comp-lzo
-    #        verb 3
-    #        '';
-    #    };
-    #  };
-    #};
+    openvpn = {
+      servers = {
+        prophet = {
+          autoStart = false;
+          config = ''
+            client
+            dev tun
+            proto udp
+            remote prophet.samleathers.com 1195
+            nobind
+            persist-key
+            persist-tun
+            ca ${config.sops.secrets.openvpn_prophet_ca.path}
+            cert ${config.sops.secrets.openvpn_prophet_cert.path}
+            key ${config.sops.secrets.openvpn_prophet_key.path}
+            tls-auth ${config.sops.secrets.openvpn_prophet_tls.path}
+            key-direction 1
+            comp-lzo
+            verb 3
+          '';
+        };
+        #bower = {
+        #  autoStart = false;
+        #  config = ''
+        #    client
+        #    dev tun
+        #    proto udp
+        #    remote 73.230.94.119 1194
+        #    nobind
+        #    persist-key
+        #    persist-tun
+        #    cipher AES-256-CBC
+        #    ca ${config.sops.secrets.openvpn_bower_ca}
+        #    cert ${config.sops.secrets.openvpn_bower_cert}
+        #    key ${config.sops.secrets.openvpn_bower_key}
+        #    comp-lzo
+        #    verb 3
+        #    '';
+        #};
+      };
+    };
     keybase.enable = true;
     kbfs = {
       enable = true;

@@ -826,6 +826,15 @@ in
             }
           '';
         };
+        "noc.lan.disasm.us" = {
+          locations."/" = {
+            proxyPass = "http://optina.lan.disasm.us:3000";
+            extraConfig = ''
+              proxy_set_header Host $host;
+              proxy_set_header X-Forwarded-Proto $scheme;
+            '';
+          };
+        };
         "hass.lan.disasm.us" = {
           useACMEHost = "lan.disasm.us";
           forceSSL = true;

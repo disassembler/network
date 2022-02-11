@@ -182,7 +182,9 @@ in
               ip6tables -A FORWARD -i ${interface} \
                 -p ${proto} -d ${host} \
                 --dport ${toString port} -j ACCEPT
-
+              ip6tables -A nixos-fw -i ${interface} \
+                -p ${proto} -d ${host} \
+                --dport ${toString port} -j ACCEPT
             '';
 
           privatelyAcceptPort = port:
@@ -227,6 +229,8 @@ in
             ip46tables -A FORWARD -m state --state NEW -i tun0 -o enp1s0 -j ACCEPT
             # allow traffic with existing state
             ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+            # Allow forwarding the following ports from Internet via IPv6 only
+            ${forwardPortToHost 3001 "enp1s0" "tcp" "2601:98a:4102:ef0:8c6d:c3ff:fe13:5d63"}
             # block forwarding from external interface
             ip6tables -A FORWARD -i enp1s0 -j DROP
           ''
@@ -260,6 +264,11 @@ in
           {
             publicKey = "eR6I+LI/BayJ90Kjt0wJyfJUsoSmayD+cb6Kb7qdCV4=";
             allowedIPs = [ "10.37.4.0/24" "10.37.6.1/32" "fd00::37/128" ];
+          }
+          {
+            # doug/traci
+            publicKey = "b1SJJq77euLkBM/femF+jJ5HbR/dc3cEQEejYZMtFCA=";
+            allowedIPs = [ "10.40.9.5/32" ];
           }
           {
             # greenacres
@@ -337,45 +346,6 @@ in
     };
     dnsmasq = {
       enable = true;
-      extraConfig =
-        let
-          portal_cnames = [
-            "portal"
-            "ns"
-          ];
-          portal_ipv4 = "10.40.33.1";
-          portal_ipv6 = "2601:98a:4100:3567::1";
-          optina_cnames = [
-            "optina"
-            "cloud"
-            "crate"
-            "storage"
-            "git"
-            "hledger"
-            "hydra"
-            "mpd"
-            "netboot"
-            "plex"
-            "unifi"
-            "stg"
-            "noc"
-            "plex"
-            "hass"
-          ];
-          optina_ipv4 = "10.40.33.20";
-          optina_ipv6 = "2601:98a:4100:3567:d63d:7eff:fe4d:c47f";
-          createAddress = domain: ipv4: ipv6: name: ''
-            address=/${name}.${domain}/${ipv4}
-            address=/${name}.${domain}/${ipv6}
-          '';
-        in
-        ''
-          ${lib.concatMapStrings (createAddress "lan.disasm.us" optina_ipv4 optina_ipv6) optina_cnames}
-          ${lib.concatMapStrings (createAddress "lan.disasm.us" portal_ipv4 portal_ipv6) portal_cnames}
-          address=/printer.lan.disasm.us/10.40.33.50
-          address=/prod01.wedlake.lan/fd00::2
-          rebind-domain-ok=/plex.direct/
-        '';
     };
     tftpd = {
       enable = true;
