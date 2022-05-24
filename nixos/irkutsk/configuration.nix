@@ -214,7 +214,7 @@ in
     hledger
     psmisc
     #hie82
-    sqliteInteractive
+    sqlite-interactive
     manymans
     hlint
     gist
@@ -222,7 +222,7 @@ in
     google-chrome
     gnupg
     gnupg1compat
-    docker_compose
+    docker-compose
     niff
     tmate
     htop
@@ -236,8 +236,8 @@ in
     xsel
     keepassx2
     tcpdump
-    telnet
-    p11_kit
+    inetutils
+    p11-kit
     openconnect
     openconnect_gnutls
     gnutls

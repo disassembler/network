@@ -75,7 +75,7 @@ in
     #cardano-rosetta-py
     python3Packages.ipython
     #python3Packages.trezor
-    sqliteInteractive
+    sqlite-interactive
     srm
     jq
   ];
@@ -91,7 +91,6 @@ in
     enable = true;
     environment = "mainnet";
     package = pkgs.cardano-node;
-    cardanoNodePkgs = pkgs;
     systemdSocketActivation = true;
     environments = cardano-node.environments.x86_64-linux;
   };

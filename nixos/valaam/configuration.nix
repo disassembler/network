@@ -36,7 +36,7 @@
           environment = "testnet";
           package = cardano-node.packages.x86_64-linux.cardano-node;
           systemdSocketActivation = true;
-          nodeConfig = cardano-node.environments.x86_64-linux.testnet.nodeConfig // {
+          extraNodeConfig = {
             hasPrometheus = [ "::" 12798 ];
             TraceMempool = false;
             setupScribes = [{
@@ -160,7 +160,7 @@ in {
   };
 
   environment.systemPackages = with pkgs; [
-    docker_compose
+    docker-compose
 
     wget
     vim
@@ -393,6 +393,7 @@ in {
       enable = true;
       desktopManager.gnome.enable = true;
       displayManager.gdm.enable = true;
+      displayManager.gdm.autoSuspend = false;
     };
   };
   # Open ports in the firewall.
@@ -459,16 +460,55 @@ in {
       config = {
         services.cardano-node = {
           ipv6HostAddr = "::";
-          topology = __toFile "topology.json" (__toJSON {
-            Producers = [
-              { addr = "relays-new.cardano-testnet.iohkdev.io"; port = 3001; valency = 3; }
-              { addr = "2a07:c700:0:503::1"; port = 1025; valency = 1; }
-              { addr = "2a07:c700:0:505::1"; port = 6021; valency = 1; }
-              { addr = "2600:1700:fb0:fd00::77"; port = 4564; valency = 1; }
-              { addr = "testnet.weebl.me"; port = 3123; valency = 1; }
-              { addr = "pool.valaam.lan.disasm.us"; port = 3001; valency = 1; }
+          extraNodeConfig.TestEnableDevelopmentNetworkProtocols = true;
+          producers =  [
+            {
+              accessPoints = [
+              {
+                address = "2a07:c700:0:503::1";
+                port = 1025;
+              }
+              {
+                address = "2a07:c700:0:505::1";
+                port = 6021;
+              }
+              {
+                address = "2600:1700:fb0:fd00::77";
+                port = 4564;
+              }
+              {
+                address = "testnet.weebl.me";
+                port = 3123;
+              }
+              {
+                address = "pool.valaam.lan.disasm.us";
+                port = 3001;
+              }
             ];
-          });
+              advertise = false;
+              valency = 1;
+            }
+          ];
+          publicProducers = [
+            {
+              accessPoints = [{
+                address = "relays.vpc.cardano-testnet.iohkdev.io";
+                port = 3001;
+              }];
+              advertise = false;
+            }
+          ];
+          useNewTopology = true;
+          #topology = __toFile "topology.json" (__toJSON {
+          #  Producers = [
+          #    { addr = "relays-new.cardano-testnet.iohkdev.io"; port = 3001; valency = 3; }
+          #    { addr = "2a07:c700:0:503::1"; port = 1025; valency = 1; }
+          #    { addr = "2a07:c700:0:505::1"; port = 6021; valency = 1; }
+          #    { addr = "2600:1700:fb0:fd00::77"; port = 4564; valency = 1; }
+          #    { addr = "testnet.weebl.me"; port = 3123; valency = 1; }
+          #    { addr = "pool.valaam.lan.disasm.us"; port = 3001; valency = 1; }
+          #  ];
+          #});
         };
       };
     }];
@@ -543,6 +583,17 @@ in {
     #  };
     #}];
   };
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+        if (action.id == "org.freedesktop.login1.suspend" ||
+            action.id == "org.freedesktop.login1.suspend-multiple-sessions" ||
+            action.id == "org.freedesktop.login1.hibernate" ||
+            action.id == "org.freedesktop.login1.hibernate-multiple-sessions")
+        {
+            return polkit.Result.NO;
+        }
+    });
+  '';
 
 
   powerManagement.enable = false;

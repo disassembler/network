@@ -193,7 +193,7 @@ in
 
   environment.systemPackages = with pkgs; [
     hello
-    kvm
+    qemu_kvm
     aspell
     aspellDicts.en
     ncdu
@@ -647,12 +647,20 @@ in
                 alias = "optina.lan.disasm.us";
               };
             }
+            #{
+            #  targets = [
+            #    "10.40.9.5:9100"
+            #  ];
+            #  labels = {
+            #    alias = "buffalo_run.home";
+            #  };
+            #}
             {
               targets = [
-                "prod01.wedlake.lan:9100"
+                "10.40.9.2:9100"
               ];
               labels = {
-                alias = "prod01.wedlake.lan";
+                alias = "prod01.samleathers.com";
               };
             }
           ];
@@ -827,6 +835,8 @@ in
           '';
         };
         "noc.lan.disasm.us" = {
+          useACMEHost = "lan.disasm.us";
+          forceSSL = true;
           locations."/" = {
             proxyPass = "http://optina.lan.disasm.us:3000";
             extraConfig = ''

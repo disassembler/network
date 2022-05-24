@@ -1,8 +1,8 @@
 { config, lib, pkgs, ... }:
 
 let
-  version = "1.17.40.06";
-  sha256 = "sha256-58YNk1wlnILXhDp5/QcxgKb3Rsh/vE5cWwMTsK4GSHE=";
+  version = "1.18.32.02";
+  sha256 = "sha256-rp7lEqloNcYl6YnXKK06+UDU9xgWtEcZDeCNzsoxPe8=";
 
   minecraft-bedrock-server = with pkgs; stdenv.mkDerivation rec {
     name = "${pname}-${version}";
@@ -182,6 +182,8 @@ in
         cp -a -n ${cfg.package}/var/lib/* .
         cp -f ${serverPropertiesFile} server.properties
         chmod +w server.properties
+        ln -sf /var/lib/minecraft-bedrock-data/permissions.json /var/lib/minecraft-bedrock/permissions.json
+        ln -sf /var/lib/minecraft-bedrock-data/worlds /var/lib/minecraft-bedrock/worlds
       '';
     };
 

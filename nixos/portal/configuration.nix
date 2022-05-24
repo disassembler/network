@@ -245,6 +245,10 @@ in
         privateKeyFile = config.sops.secrets.portal_wg0_private.path;
         peers = [
           {
+            publicKey = "PiXwxQyrMi7iCZvTrmd2V9OB6008aOIU1bOaWi9xOlI=";
+            allowedIPs = [ "10.40.9.25/32" ];
+          }
+          {
             publicKey = "mFn9gVTlPTEa+ZplilmKiZ0pYqzzof75IaDiG9q/pko=";
             allowedIPs = [ "10.40.9.39/32" "10.39.0.0/24" "2601:98a:4000:9ed0::1/64" "fd00::39/128" ];
           }
@@ -266,7 +270,7 @@ in
             allowedIPs = [ "10.37.4.0/24" "10.37.6.1/32" "fd00::37/128" ];
           }
           {
-            # doug/traci
+            # buffalo run
             publicKey = "b1SJJq77euLkBM/femF+jJ5HbR/dc3cEQEejYZMtFCA=";
             allowedIPs = [ "10.40.9.5/32" ];
           }

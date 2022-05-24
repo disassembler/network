@@ -76,7 +76,7 @@ in {
     chromium
     gnupg
     vim
-    sqliteInteractive
+    sqlite-interactive
     jq
   ];
 

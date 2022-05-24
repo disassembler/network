@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2022020800 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 2022022800 7200 3600 86400 3600
 
 $TTL 600
 
@@ -50,6 +50,7 @@ portal.lan 300 IN A 10.40.33.1
 portal.lan 300 IN AAAA 2601:98a:4102:ef0::1
 vw.lan 300 IN CNAME optina.lan
 hass.lan 300 IN CNAME optina.lan
+hledger.lan 300 IN CNAME optina.lan
 plex.lan 300 IN CNAME optina.lan
 noc.lan 300 IN CNAME optina.lan
 stg.lan 300 IN CNAME optina.lan
