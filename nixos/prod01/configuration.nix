@@ -19,7 +19,7 @@ in
   ];
 
   nixpkgs.overlays = [ styxOverlay ];
-  security.polkit.enable = false;
+  security.polkit.enable = lib.mkForce false;
 
   security.acme.defaults.email = "disasm@gmail.com";
   security.acme = {

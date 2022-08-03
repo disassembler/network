@@ -16,7 +16,7 @@
     ./modules/knot
   ];
 
-  security.polkit.enable = false;
+  security.polkit.enable = lib.mkForce false;
 
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;

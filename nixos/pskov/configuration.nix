@@ -1,4 +1,4 @@
-{ lib, config, pkgs, fetchgit, ... }:
+{ lib, inputs, config, pkgs, fetchgit, ... }:
 
 let
   shared = import ../../shared.nix;
@@ -102,8 +102,6 @@ in
     };
   };
 
-  security.pki.certificates = [ shared.wedlake_ca_cert ];
-
   nix =
     let
       buildMachines = import ../../build-machines.nix;
@@ -128,6 +126,7 @@ in
 
   nixpkgs.overlays = [
     (self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
+    inputs.vivarium.overlay
   ];
 
   nixpkgs.config = {
@@ -155,7 +154,7 @@ in
     isNormalUser = true;
     description = "Sam Leathers";
     uid = 1000;
-    extraGroups = [ "wheel" "docker" "disk" "video" "libvirtd" "adbusers" "dialout" "plugdev" "cexplorer" ];
+    extraGroups = [ "wheel" "podman" "disk" "video" "libvirtd" "adbusers" "dialout" "plugdev" "cexplorer" ];
     openssh.authorizedKeys.keys = shared.sam_ssh_keys;
   };
   #users.users.cardano-node.isSystemUser = true;
@@ -174,6 +173,7 @@ in
     enable = true;
     dev = true;
   };
+  profiles.vivarium.enable = true;
 
   environment.pathsToLink = [
     "/share/nix-direnv"
@@ -201,6 +201,8 @@ in
     #});
   in
   [
+    headscale
+    gopass
     starship
     direnv
     nix-direnv
@@ -344,6 +346,7 @@ in
 
 
   services = {
+    tailscale.enable = true;
     #thermald.enable = true;
     rabbitmq = {
       enable = true;
@@ -544,24 +547,24 @@ in
             verb 3
           '';
         };
-        #bower = {
-        #  autoStart = false;
-        #  config = ''
-        #    client
-        #    dev tun
-        #    proto udp
-        #    remote 73.230.94.119 1194
-        #    nobind
-        #    persist-key
-        #    persist-tun
-        #    cipher AES-256-CBC
-        #    ca ${config.sops.secrets.openvpn_bower_ca}
-        #    cert ${config.sops.secrets.openvpn_bower_cert}
-        #    key ${config.sops.secrets.openvpn_bower_key}
-        #    comp-lzo
-        #    verb 3
-        #    '';
-        #};
+        bower = {
+          autoStart = false;
+          config = ''
+            client
+            dev tun
+            proto udp
+            remote 73.230.94.119 1194
+            nobind
+            persist-key
+            persist-tun
+            cipher AES-256-CBC
+            ca ${config.sops.secrets.openvpn_bower_ca.path}
+            cert ${config.sops.secrets.openvpn_bower_cert.path}
+            key ${config.sops.secrets.openvpn_bower_key.path}
+            comp-lzo
+            verb 3
+            '';
+        };
       };
     };
     keybase.enable = true;
@@ -580,10 +583,21 @@ in
   #  Restart = "always";
   #  RestartSec = "30s";
   #};
-  virtualisation.docker = {
-    enable = true;
-    storageDriver = "zfs";
-  };
+  #virtualisation.docker = {
+  #  enable = true;
+  #  storageDriver = "zfs";
+  #};
+
+  virtualisation.docker.enable = false;
+  virtualisation.podman.enable = true;
+  virtualisation.podman.dockerCompat = true;
+  virtualisation.podman.dockerSocket.enable = true;
+  virtualisation.podman.defaultNetwork.dnsname.enable = true;
+  systemd.services.podman.path = [pkgs.zfs];
+  systemd.services.podman.serviceConfig.ExecStart = lib.mkForce [
+    ""
+    "${config.virtualisation.podman.package}/bin/podman --storage-driver zfs $LOGGING system service"
+  ];
   virtualisation.libvirtd.enable = false;
   security.sudo.wheelNeedsPassword = true;
 

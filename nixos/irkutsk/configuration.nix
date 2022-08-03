@@ -84,6 +84,7 @@ in
     };
     firewall = {
       enable = true;
+      checkReversePath = "loose";
       allowedUDPPorts = [ 53 4919 ];
       allowedTCPPorts = [ 4444 8081 3478 3000 8080 5900 3100 3001 ];
     };
@@ -142,7 +143,7 @@ in
     isNormalUser = true;
     description = "Sam Leathers";
     uid = 1000;
-    extraGroups = [ "wheel" "docker" "disk" "video" "libvirtd" "adbusers" "dialout" "plugdev" "cexplorer" ];
+    extraGroups = [ "wheel" "podman" "disk" "video" "libvirtd" "adbusers" "dialout" "plugdev" "cexplorer" ];
     openssh.authorizedKeys.keys = shared.sam_ssh_keys;
   };
   #users.users.cardano-node.isSystemUser = true;
@@ -188,6 +189,9 @@ in
     #});
   in
   [
+    docker-client
+    podman
+    tailscale
     starship
     direnv
     nix-direnv
@@ -245,7 +249,6 @@ in
     gitAndTools.gitFull
     gitAndTools.hub
     tig
-    python27Packages.gnutls
     unzip
     zip
     scrot
@@ -329,6 +332,7 @@ in
 
 
   services = {
+    tailscale.enable = true;
     lorri.enable = true;
     trezord.enable = true;
     resolved.enable = false;
@@ -497,20 +501,30 @@ in
       enable = true;
       mountPoint = "/keybase";
     };
-    redshift = {
-      enable = true;
-      package = pkgs.redshift-wlr;
-    };
+    #redshift = {
+    #  enable = true;
+    #  package = pkgs.gammastep;
+    #};
   };
   #systemd.services.cardano-db-sync.serviceConfig = {
   #  SupplementaryGroups = "cardano-node";
   #  Restart = "always";
   #  RestartSec = "30s";
   #};
-  virtualisation.docker = {
-    enable = true;
-    storageDriver = "zfs";
-  };
+  #virtualisation.docker = {
+  #  enable = true;
+  #  storageDriver = "zfs";
+  #};
+  virtualisation.docker.enable = false;
+  virtualisation.podman.enable = true;
+  virtualisation.podman.dockerCompat = true;
+  virtualisation.podman.dockerSocket.enable = true;
+  virtualisation.podman.defaultNetwork.dnsname.enable = true;
+  systemd.services.podman.path = [pkgs.zfs];
+  systemd.services.podman.serviceConfig.ExecStart = lib.mkForce [
+    ""
+    "${config.virtualisation.podman.package}/bin/podman --storage-driver zfs $LOGGING system service"
+  ];
   virtualisation.libvirtd.enable = false;
   security.sudo.wheelNeedsPassword = true;
 

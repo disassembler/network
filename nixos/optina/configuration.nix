@@ -121,7 +121,7 @@ in
       externalInterface = "enp2s0";
     };
     firewall = {
-      enable = true;
+      enable = false;
       allowPing = true;
       allowedTCPPorts = [
         53
@@ -153,8 +153,14 @@ in
         24000
         32400 # plex
         5201 # iperf
+        29811 # omada
+        29812
+        29813
+        29814
+        8844
+        8043
       ];
-      allowedUDPPorts = [ 53 137 138 1194 500 4500 5353 19132 ];
+      allowedUDPPorts = [ 53 137 138 1194 500 4500 5353 19132 29810 27001 ];
     };
   };
 
@@ -218,6 +224,18 @@ in
   ];
 
   services = {
+    syslog-ng = {
+      enable = true;
+      extraConfig = ''
+        source s_net {
+          tcp(ip(0.0.0.0) port(514));
+          udp(ip(0.0.0.0) port(514));
+        };
+        destination d_fromnet {file("/var/log/remote");};
+        log {source(s_net); destination(d_fromnet);};
+
+      '';
+    };
     avahi = {
       enable = true;
       interfaces = [ "enp2s0" ];
@@ -354,8 +372,13 @@ in
       };
     };
     mongodb.enable = true;
+    omadad = {
+      enable = false;
+      httpPort = 8089;
+      httpsPort = 10443;
+    };
     unifi = {
-      enable = true;
+      enable = false;
       unifiPackage = pkgs.unifiStable;
       openFirewall = true;
     };
@@ -914,6 +937,13 @@ in
             proxy_set_header Connection "upgrade";
           '';
         };
+        "omada.lan.disasm.us" = {
+          useACMEHost = "lan.disasm.us";
+          forceSSL = true;
+          locations."/".extraConfig = ''
+            proxy_pass https://localhost:8043;
+          '';
+        };
         #"git.lan.disasm.us" = {
         #  forceSSL = true;
         #  sslCertificate = "/data/ssl/git.lan.disasm.us.crt";
@@ -1039,15 +1069,29 @@ in
     };
 
   };
-  #virtualisation.docker.enable = true;
-  #virtualisation.docker.enableOnBoot = true;
-  #virtualisation.docker.storageDriver = "zfs";
+  virtualisation.docker.enable = true;
+  virtualisation.docker.enableOnBoot = true;
+  virtualisation.docker.storageDriver = "zfs";
+  #virtualisation.podman.enable = true;
+  #virtualisation.podman.dockerCompat = true;
+  #virtualisation.podman.dockerSocket.enable = true;
+  #virtualisation.podman.defaultNetwork.dnsname.enable = true;
+  #systemd.services.podman.serviceConfig.ExecStart = lib.mkForce [
+  #  ""
+  #  "${config.virtualisation.podman.package}/bin/podman --storage-driver zfs $LOGGING system service"
+  #];
   virtualisation.libvirtd.enable = false;
   containers.rtorrent = {
     privateNetwork = true;
     hostAddress = "10.233.1.1";
     localAddress = "10.233.1.2";
     enableTun = true;
+    bindMounts = {
+      "/opt/rtorrent" = {
+        hostPath = "/data/rtorrent";
+        isReadOnly = false;
+      };
+    };
     config = { config, pkgs, ... }: {
       environment.systemPackages = with pkgs; [
         rtorrent

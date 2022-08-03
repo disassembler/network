@@ -61,6 +61,7 @@ in
           alias ssht="TERM=screen-256color ssh"
           alias nshell="nix-shell --run zsh"
           alias vi="nvim"
+          alias jvim="${pkgs.vim}/bin/vim"
           alias cpf="${pkgs.coreutils}/bin/cp"
           fasd_cache="$HOME/.fasd-init-bash"
           if [ "$(command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then

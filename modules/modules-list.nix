@@ -5,7 +5,9 @@
   ./roles/base.nix
   ./profiles/xapps.nix
   ./profiles/tmux
+  ./profiles/vivarium
   ./profiles/prometheus-surfboard-exporter/service.nix
   ./profiles/hledger/service.nix
   ./profiles/weechat.nix
+  ./services/omadad
 ]
