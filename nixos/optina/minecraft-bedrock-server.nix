@@ -1,51 +1,9 @@
 { config, lib, pkgs, ... }:
 
-let
-  version = "1.18.32.02";
-  sha256 = "sha256-rp7lEqloNcYl6YnXKK06+UDU9xgWtEcZDeCNzsoxPe8=";
-
-  minecraft-bedrock-server = with pkgs; stdenv.mkDerivation rec {
-    name = "${pname}-${version}";
-    pname = "minecraft-bedrock-server";
-    inherit version;
-    src = fetchurl {
-      url = "https://minecraft.azureedge.net/bin-linux/bedrock-server-${version}.zip";
-      inherit sha256;
-    };
-    postPatch = ''
-      rm -f Makefile cmake_install.cmake *.debug
-    '';
-    sourceRoot = ".";
-    nativeBuildInputs = [
-      (patchelf.overrideDerivation (old: {
-        postPatch = ''
-          substituteInPlace src/patchelf.cc \
-            --replace "32 * 1024 * 1024" "512 * 1024 * 1024"
-        '';
-      }))
-      autoPatchelfHook
-      curl
-      gcc-unwrapped
-      openssl
-      unzip
-    ];
-    installPhase = ''
-      install -m755 -D bedrock_server $out/bin/bedrock_server
-      rm bedrock_server
-      rm server.properties
-      mkdir -p $out/var
-      cp -a . $out/var/lib
-    '';
-    fixupPhase = ''
-      autoPatchelf $out/bin/bedrock_server
-    '';
-  };
-
-in
-
 with lib;
 
 let
+  minecraft-bedrock-server = pkgs.callPackage ./minecraft-bedrock.nix {};
   cfg = config.services.minecraft-bedrock-server;
 
   cfgToString = v: if builtins.isBool v then boolToString v else toString v;
