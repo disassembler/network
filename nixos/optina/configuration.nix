@@ -260,7 +260,7 @@ in
       };
     };
     matterbridge = {
-      enable = true;
+      enable = false;
       configPath = "/etc/nixos/matterbridge.toml";
     };
     minecraft-bedrock-server.enable = true;

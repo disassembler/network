@@ -45,6 +45,11 @@ in
   boot.cleanTmpDir = true;
   boot.zfs.devNodes = "/dev";
 
+  boot.extraModprobeConfig = ''
+    options kvm_intel nested=1
+    options kvm_intel emulate_invalid_guest_state=0
+    options kvm ignore_msrs=1
+  '';
 
   # Splash screen to make boot look nice
   boot.plymouth.enable = false;
@@ -268,6 +273,7 @@ in
     keybase
     keybase-gui
     slack
+    signal-desktop
     neomutt
     notmuch
     taskwarrior
@@ -598,7 +604,7 @@ in
     ""
     "${config.virtualisation.podman.package}/bin/podman --storage-driver zfs $LOGGING system service"
   ];
-  virtualisation.libvirtd.enable = false;
+  virtualisation.libvirtd.enable = true;
   security.sudo.wheelNeedsPassword = true;
 
   # Custom dotfiles for sam user

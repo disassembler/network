@@ -50,7 +50,6 @@ in
       nameservers = [ "127.0.0.1" "8.8.8.8" ];
       useDHCP = false;
       interfaces.ens3.useDHCP = true;
-      interfaces.ens7.useDHCP = true;
 
       #wireguard.interfaces = {
       #  wg0 = {

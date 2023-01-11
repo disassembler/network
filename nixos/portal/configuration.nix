@@ -350,6 +350,9 @@ in
     };
     dnsmasq = {
       enable = true;
+      extraConfig = ''
+        address=/hivebedrock.network/10.40.33.20
+      '';
     };
     tftpd = {
       enable = true;
@@ -524,63 +527,63 @@ in
         ];
       };
     };
-    openvpn = {
-      servers = {
-        wedlake = {
-          config = ''
-            dev tun
-            proto udp
-            port 1194
-            tun-ipv6
-            ca /var/lib/openvpn/ca.crt
-            cert /var/lib/openvpn/crate.wedlake.lan.crt
-            key /var/lib/openvpn/crate.wedlake.lan.key
-            dh /var/lib/openvpn/dh2048.pem
-            server 10.40.12.0 255.255.255.0
-            server-ipv6 2601:98a:4101:bff3::/64
-            push "route 10.40.33.0 255.255.255.0"
-            push "route-ipv6 2000::/3"
-            push "dhcp-option DNS 10.40.12.1"
-            duplicate-cn
-            keepalive 10 120
-            tls-auth /var/lib/openvpn/ta.key 0
-            comp-lzo
-            user openvpn
-            group root
-            persist-key
-            persist-tun
-            status openvpn-status.log
-            verb 3
-          '';
-        };
-        guest = {
-          config = ''
-            dev ovpn-guest
-            dev-type tun
-            proto udp
-            port 1195
-            tun-ipv6
-            ca /var/lib/openvpn/ca.crt
-            cert /var/lib/openvpn/crate.wedlake.lan.crt
-            key /var/lib/openvpn/crate.wedlake.lan.key
-            dh /var/lib/openvpn/dh2048.pem
-            server 10.40.13.0 255.255.255.0
-            push "redirect-gateway def1"
-            push "dhcp-option DNS 8.8.8.8"
-            duplicate-cn
-            keepalive 10 120
-            tls-auth /var/lib/openvpn/ta-guest.key 0
-            comp-lzo
-            user openvpn
-            group root
-            persist-key
-            persist-tun
-            status openvpn-status.log
-            verb 3
-          '';
-        };
-      };
-    };
+    #openvpn = {
+    #  servers = {
+    #    wedlake = {
+    #      config = ''
+    #        dev tun
+    #        proto udp
+    #        port 1194
+    #        tun-ipv6
+    #        ca /var/lib/openvpn/ca.crt
+    #        cert /var/lib/openvpn/crate.wedlake.lan.crt
+    #        key /var/lib/openvpn/crate.wedlake.lan.key
+    #        dh /var/lib/openvpn/dh2048.pem
+    #        server 10.40.12.0 255.255.255.0
+    #        server-ipv6 2601:98a:4101:bff3::/64
+    #        push "route 10.40.33.0 255.255.255.0"
+    #        push "route-ipv6 2000::/3"
+    #        push "dhcp-option DNS 10.40.12.1"
+    #        duplicate-cn
+    #        keepalive 10 120
+    #        tls-auth /var/lib/openvpn/ta.key 0
+    #        comp-lzo
+    #        user openvpn
+    #        group root
+    #        persist-key
+    #        persist-tun
+    #        status openvpn-status.log
+    #        verb 3
+    #      '';
+    #    };
+    #    guest = {
+    #      config = ''
+    #        dev ovpn-guest
+    #        dev-type tun
+    #        proto udp
+    #        port 1195
+    #        tun-ipv6
+    #        ca /var/lib/openvpn/ca.crt
+    #        cert /var/lib/openvpn/crate.wedlake.lan.crt
+    #        key /var/lib/openvpn/crate.wedlake.lan.key
+    #        dh /var/lib/openvpn/dh2048.pem
+    #        server 10.40.13.0 255.255.255.0
+    #        push "redirect-gateway def1"
+    #        push "dhcp-option DNS 8.8.8.8"
+    #        duplicate-cn
+    #        keepalive 10 120
+    #        tls-auth /var/lib/openvpn/ta-guest.key 0
+    #        comp-lzo
+    #        user openvpn
+    #        group root
+    #        persist-key
+    #        persist-tun
+    #        status openvpn-status.log
+    #        verb 3
+    #      '';
+    #    };
+    #  };
+    #};
   };
   users.extraUsers.sam = {
     isNormalUser = true;
