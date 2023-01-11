@@ -139,7 +139,7 @@ in
       preStart = ''
         cp -a -n ${cfg.package}/var/lib/* .
         cp -f ${serverPropertiesFile} server.properties
-        chmod +w server.properties
+        chmod -R u+w .
         ln -sf /var/lib/minecraft-bedrock-data/permissions.json /var/lib/minecraft-bedrock/permissions.json
         ln -sf /var/lib/minecraft-bedrock-data/worlds /var/lib/minecraft-bedrock/worlds
       '';

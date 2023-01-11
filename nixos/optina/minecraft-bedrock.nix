@@ -2,7 +2,7 @@
 
 let
   version = "1.19.51.01";
-  sha256 = "sha256-DffMcl579TXwdkmYw8emBmvhI+G5wdBVNDdXQ13DJ+Y=";
+  sha256 = "sha256-ZzSlPYM8On0xTsifQgC4GE14g0lBDAImYtYGM3/BYZ0=";
   rpath = lib.makeLibraryPath [ zlib openssl stdenv.cc.cc curl ];
 in
 stdenv.mkDerivation rec {
