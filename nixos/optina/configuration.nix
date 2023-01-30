@@ -893,7 +893,7 @@ in
           useACMEHost = "lan.disasm.us";
           forceSSL = true;
           locations."/" = {
-            proxyPass = "http://optina.lan.disasm.us:8000";
+            proxyPass = "http://127.0.0.1:8000";
             extraConfig = ''
               proxy_set_header Host $host;
               proxy_set_header X-Forwarded-Proto $scheme;
