@@ -24,6 +24,9 @@ in {
 
   nixpkgs.config.allowUnfree = true;
   nixpkgs.overlays = [
+    (final: prev: {
+      inherit (inputs.adawallet.legacyPackages.x86_64-linux) openapi-generator-cli;
+    })
     inputs.adawallet.overlay
     (import ./overlay.nix)
   ];

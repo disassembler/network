@@ -6,7 +6,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
     #nixpkgs-2111.follows = "cardano-node/haskellNix/nixpkgs-2111";
     #nixpkgs-2105.follows = "cardano-node/haskellNix/nixpkgs-2105";
-    cardano-node.url = "github:input-output-hk/cardano-node/1.35.4";
+    cardano-node.url = "github:input-output-hk/cardano-node/8.0.0";
     #cardano-node.inputs.nixpkgs.follows = "haskellNix/nixpkgs-2105";
     #cardano-addresses.url = "github:input-output-hk/cardano-addresses";
     #haskellNix.url = "github:input-output-hk/haskell.nix/14f740c7c8f535581c30b1697018e389680e24cb";
