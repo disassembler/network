@@ -1,14 +1,9 @@
-{ config, pkgs, lib, inputs, ... }:
-let
-  inherit (inputs) cardano-node;
-  #inherit (inputs) adawallet;
-in
+{ config, pkgs, lib, cardano-node, ... }:
 {
   imports =
     [
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      #cardano-node.nixosModules.cardano-node
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -28,7 +23,6 @@ in
   };
 
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.overlays = [ cardano-node.overlay ];
   networking = {
     hostName = "sarov";
     hostId = "d11ab455";
@@ -54,7 +48,7 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.variables = {
-    #CARDANO_NODE_SOCKET_PATH = config.services.cardano-node.socketPath;
+    CARDANO_NODE_SOCKET_PATH = config.services.cardano-node.socketPath 0;
   };
   environment.systemPackages = with pkgs; [
     #cncli
@@ -66,9 +60,9 @@ in
     gnupg
     pinentry-curses
     #adawallet
-    bech32
+    cardano-node.packages.x86_64-linux.bech32
     cardano-node.packages.x86_64-linux.cardano-node
-    cardano-cli
+    cardano-node.packages.x86_64-linux.cardano-cli
     #cardano-address
     #cardano-completions
     #cardano-hw-cli
@@ -90,9 +84,24 @@ in
   services.cardano-node = {
     enable = true;
     environment = "mainnet";
-    package = pkgs.cardano-node;
+    package = cardano-node.packages.x86_64-linux.cardano-node;
     systemdSocketActivation = true;
     environments = cardano-node.environments.x86_64-linux;
+    nodeConfig = cardano-node.environments.x86_64-linux.mainnet.nodeConfig // {
+      hasPrometheus = [ "0.0.0.0" 12798 ];
+      TraceMempool = false;
+      setupScribes = [{
+        scKind = "JournalSK";
+        scName = "cardano";
+        scFormat = "ScText";
+      }];
+      defaultScribes = [
+        [
+          "JournalSK"
+          "cardano"
+        ]
+      ];
+    };
   };
   systemd.sockets.cardano-node.partOf = [ "cardano-node.socket" ];
   systemd.services.cardano-node.after = lib.mkForce [ "network-online.target" "cardano-node.socket" ];

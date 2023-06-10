@@ -1,19 +1,20 @@
-{ stdenv, lib, fetchurl, mongodb }:
+{ stdenv, lib, fetchurl, mongodb }: let
 
-stdenv.mkDerivation rec {
+  version = "5.7.4";
+  year = "2022";
+  month = "11";
+  day = "21";
+  url = "https://static.tp-link.com/upload/software/${year}/${year}${month}/${year}${month}${day}/Omada_SDN_Controller_v${version}_Linux_x64.tar.gz";
+  src = fetchurl {
+    inherit url;
+    sha256 = "sha256-6xG80bOFoJg3DXe00zw4t9QOfw/ADrHjowWHUtQtj0s=";
+  };
+
+
+in stdenv.mkDerivation rec {
   pname = "omadad";
 
-  # version = "3.2.10";
-  # src = fetchurl {
-  #   url = "https://static.tp-link.com/2020/202004/20200420/Omada_Controller_v3.2.10_linux_x64.tar.gz";
-  #   sha256 = "0y0kx00wgws918wz76ldpvz340aid0ay5nckkg8x38yclx929qgh";
-  # };
-
-  version = "5.3.1";
-  src = fetchurl {
-    url = "https://static.tp-link.com/upload/software/2022/202205/20220507/Omada_SDN_Controller_v${version}_Linux_x64.tar.gz";
-    sha256 = "sha256-b2T7prvomBpyVhNHC7jTIBm3E2uergYGYcpIZ8tOD2Q=";
-  };
+  inherit version src;
 
   dontConfigure = true;
   dontBuild = true;

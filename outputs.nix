@@ -11,6 +11,7 @@
   in
   {
     minecraft = pkgs.callPackage ./nixos/optina/minecraft-bedrock.nix {};
+    omadad = pkgs.callPackage ./modules/services/omadad/package.nix {};
     devShell = pkgs.callPackage ./shell.nix {
       inherit (sops-nix.packages."${pkgs.system}") sops-import-keys-hook ssh-to-pgp sops-init-gpg-key;
       inherit (deploy.packages."${pkgs.system}") deploy-rs;

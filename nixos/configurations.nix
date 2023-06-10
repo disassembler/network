@@ -12,8 +12,6 @@ let
   nixosSystem = nixpkgs.lib.makeOverridable nixpkgs.lib.nixosSystem;
   customModules = import ../modules/modules-list.nix;
   baseModules = [
-    # make flake inputs accessiable in NixOS
-    { _module.args.inputs = inputs; }
     {
       imports = [
         ({ pkgs, ... }: {
@@ -43,31 +41,36 @@ in
       nixos-hardware.nixosModules.dell-xps-13-9380
       ./irkutsk/configuration.nix
     ];
+    specialArgs = { inherit inputs; };
   };
   pskov = nixosSystem {
     system = "x86_64-linux";
     modules = defaultModules ++ [
       ./pskov/configuration.nix
     ];
+    specialArgs = { inherit inputs; };
   };
   optina = nixosSystem {
     system = "x86_64-linux";
     modules = defaultModules ++ [
       ./optina/configuration.nix
     ];
+    specialArgs = { inherit inputs; };
   };
   portal = nixosSystem {
     system = "x86_64-linux";
     modules = defaultModules ++ [
       ./portal/configuration.nix
     ];
+    specialArgs = { inherit inputs; };
   };
   sarov = nixosSystem {
     system = "x86_64-linux";
-    modules = defaultModules ++ [
-      cardano-node.nixosModules.cardano-node # no idea why this works here but not in sarov/configuration.nix
+    modules = baseModules ++ [
+      cardano-node.nixosModules.cardano-node
       ./sarov/configuration.nix
     ];
+    specialArgs = { inherit inputs cardano-node; };
   };
   valaam = nixosSystem {
     system = "x86_64-linux";
@@ -77,29 +80,34 @@ in
       #cardano-db-sync.nixosModules.cardano-db-sync
       ./valaam/configuration.nix
     ];
+    specialArgs = { inherit inputs; };
   };
   prod01 = nixosSystem {
     system = "x86_64-linux";
     modules = defaultModules ++ [
       ./prod01/configuration.nix
     ];
+    specialArgs = { inherit inputs; };
   };
   prod03 = nixosSystem {
     system = "x86_64-linux";
     modules = defaultModules ++ [
       ./prod03/configuration.nix
     ];
+    specialArgs = { inherit inputs; };
   };
   installer = nixosSystem {
     system = "x86_64-linux";
     modules = [
       ./installer/configuration.nix
     ];
+    specialArgs = { inherit inputs; };
   };
   airgap = nixosSystem {
     system = "x86_64-linux";
     modules = baseModules ++ [
       ./airgap/configuration.nix
     ];
+    specialArgs = { inherit inputs cardano-node; };
   };
 }
