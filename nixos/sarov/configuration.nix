@@ -89,7 +89,7 @@
     environments = cardano-node.environments.x86_64-linux;
     nodeConfig = cardano-node.environments.x86_64-linux.mainnet.nodeConfig // {
       hasPrometheus = [ "0.0.0.0" 12798 ];
-      TraceMempool = false;
+      TraceMempool = true;
       setupScribes = [{
         scKind = "JournalSK";
         scName = "cardano";

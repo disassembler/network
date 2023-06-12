@@ -76,11 +76,10 @@ in
     system = "x86_64-linux";
     modules = defaultModules ++ [
       cardano-node.nixosModules.cardano-node
-      { _module.args.cardano-node = cardano-node; }
       #cardano-db-sync.nixosModules.cardano-db-sync
       ./valaam/configuration.nix
     ];
-    specialArgs = { inherit inputs; };
+    specialArgs = { inherit inputs cardano-node; };
   };
   prod01 = nixosSystem {
     system = "x86_64-linux";
