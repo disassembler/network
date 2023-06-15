@@ -83,9 +83,11 @@
   #
   services.cardano-node = {
     enable = true;
+    useNewTopology = true;
     environment = "mainnet";
     package = cardano-node.packages.x86_64-linux.cardano-node;
-    systemdSocketActivation = true;
+    shareIpv6port = false;
+    hostAddr = "0.0.0.0";
     environments = cardano-node.environments.x86_64-linux;
     nodeConfig = cardano-node.environments.x86_64-linux.mainnet.nodeConfig // {
       hasPrometheus = [ "0.0.0.0" 12798 ];
@@ -103,8 +105,7 @@
       ];
     };
   };
-  systemd.sockets.cardano-node.partOf = [ "cardano-node.socket" ];
-  systemd.services.cardano-node.after = lib.mkForce [ "network-online.target" "cardano-node.socket" ];
+  systemd.services.cardano-node.after = lib.mkForce [ "network-online.target" ];
   services.trezord.enable = true;
   services.udev.extraRules = ''
     ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{authorized}=="0", ATTR{authorized}="1"

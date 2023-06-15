@@ -21,7 +21,6 @@ in
       xtrlock-pam
       rxvt_unicode-with-plugins
       xsel
-      keepassx-community
       virtmanager
       xclip
       gnome3.gnome_session

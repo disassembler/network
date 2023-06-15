@@ -8,7 +8,7 @@ return {
   automatically_reload_config = true,
   audible_bell = "Disabled",
   font_size = 14,
-  color_scheme = "Gruvbox Dark",
+  color_scheme = "Gruvbox dark, medium (base16)",
   hide_tab_bar_if_only_one_tab = true,
   font = wezterm.font_with_fallback({
     "Fira Code",

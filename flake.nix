@@ -2,8 +2,8 @@
   description = "Disassembler Network";
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
-    nix.url = "github:NixOS/nix/2.15.0";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
+    nix.url = "github:NixOS/nix/2.14.1";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
     #nixpkgs-2111.follows = "cardano-node/haskellNix/nixpkgs-2111";
     #nixpkgs-2105.follows = "cardano-node/haskellNix/nixpkgs-2105";
     cardano-node.url = "github:input-output-hk/cardano-node/cardano-node-service-ipv6";

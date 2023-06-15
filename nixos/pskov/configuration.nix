@@ -42,7 +42,7 @@ in
   boot.zfs.enableUnstable = true;
 
   boot.supportedFilesystems = [ "exfat" "zfs" ];
-  boot.cleanTmpDir = true;
+  boot.tmp.cleanOnBoot = true;
   boot.zfs.devNodes = "/dev";
 
   boot.extraModprobeConfig = ''
@@ -222,7 +222,7 @@ in
     strace
     mplayer
     gpgme.dev
-    yubioath-desktop
+    yubioath-flutter
     yubikey-manager
     pinentry-gtk2
     bat
@@ -255,7 +255,6 @@ in
     termite
     wezterm
     xsel
-    keepassx2
     tcpdump
     inetutils
     p11-kit
@@ -513,22 +512,24 @@ in
     };
     dnsmasq = {
       enable = true;
-      extraConfig = ''
-        address=/portal.wedlake.lan/10.40.33.1
-        address=/crate.wedlake.lan/10.40.33.20
-        address=/hydra.wedlake.lan/10.40.33.20
-        address=/unifi.wedlake.lan/10.40.33.20
-        address=/server.lan.bower-law.com/192.168.0.254
-        server=/wedlake.lan/10.40.33.1
-        server=/lan.centrallakerealty.com/10.37.3.2
-        server=/lan.bower-law.com/192.168.0.254
-        server=/bower.local/192.168.0.254
-        server=/lan.centrallakerealty.com/10.37.3.2
-      '';
-      servers = [
-        "8.8.4.4"
-        "8.8.8.8"
-      ];
+      settings = {
+        address = [
+          "/portal.wedlake.lan/10.40.33.1"
+          "/crate.wedlake.lan/10.40.33.20"
+          "/hydra.wedlake.lan/10.40.33.20"
+          "/unifi.wedlake.lan/10.40.33.20"
+          "/server.lan.bower-law.com/192.168.0.254"
+        ];
+        server = [
+          "8.8.4.4"
+          "8.8.8.8"
+          "/wedlake.lan/10.40.33.1"
+          "/lan.centrallakerealty.com/10.37.3.2"
+          "/lan.bower-law.com/192.168.0.254"
+          "/bower.local/192.168.0.254"
+          "/lan.centrallakerealty.com/10.37.3.2"
+        ];
+      };
       resolveLocalQueries = false;
     };
 
@@ -598,7 +599,7 @@ in
   virtualisation.podman.enable = true;
   virtualisation.podman.dockerCompat = true;
   virtualisation.podman.dockerSocket.enable = true;
-  virtualisation.podman.defaultNetwork.dnsname.enable = true;
+  virtualisation.podman.defaultNetwork.settings.dnsenabled = true;
   systemd.services.podman.path = [pkgs.zfs];
   systemd.services.podman.serviceConfig.ExecStart = lib.mkForce [
     ""
@@ -692,4 +693,5 @@ in
     };
 
   systemd.user.services = { };
+  system.stateVersion = "23.05";
 }

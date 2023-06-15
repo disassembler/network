@@ -238,7 +238,6 @@ in
     rxvt_unicode-with-plugins
     termite
     xsel
-    keepassx2
     tcpdump
     inetutils
     p11-kit

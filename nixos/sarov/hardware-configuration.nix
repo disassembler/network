@@ -26,6 +26,12 @@
       fsType = "zfs";
     };
 
+  fileSystems."/iog" =
+    {
+      device = "sarov/iog";
+      fsType = "zfs";
+    };
+
   fileSystems."/boot" =
     {
       device = "/dev/disk/by-uuid/67E3-17ED";

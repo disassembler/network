@@ -12,7 +12,7 @@ with lib;
     users.mutableUsers = mkDefault true;
 
     # clean tmp on boot
-    boot.cleanTmpDir = mkDefault true;
+    boot.tmp.cleanOnBoot = mkDefault true;
 
     programs = {
       bash.enableCompletion = mkDefault true;
@@ -23,10 +23,6 @@ with lib;
 
     # sane dnsmasq defaults
     services = {
-      dnsmasq.extraConfig = ''
-        strict-order # obey order of dns servers
-      '';
-
       # sane journald defaults
       journald.extraConfig = ''
         SystemMaxUse=256M
@@ -34,8 +30,10 @@ with lib;
       locate.enable = true;
       openssh = {
         enable = true;
-        passwordAuthentication = false;
-        permitRootLogin = "without-password";
+        settings = {
+          PasswordAuthentication = false;
+          PermitRootLogin = "without-password";
+        };
       };
     };
 
