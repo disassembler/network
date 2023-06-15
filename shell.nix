@@ -4,6 +4,7 @@
 , sops-init-gpg-key
 , sops
 , deploy-rs
+, colmena
 , nixpkgs-fmt
 , knot-dns
 , lefthook
@@ -30,6 +31,7 @@ mkShell {
     sops-init-gpg-key
     sops
     deploy-rs
+    colmena
     nixpkgs-fmt
     lefthook
     knot-dns

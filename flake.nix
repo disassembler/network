@@ -15,7 +15,7 @@
     #cncli.url = "github:AndrewWestberg/cncli";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     deploy.url = "github:input-output-hk/deploy-rs";
-    #colmena.url = "github:zhaofengli/colmena";
+    colmena.url = "github:zhaofengli/colmena";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     styx.url = "github:disassembler/styx";
