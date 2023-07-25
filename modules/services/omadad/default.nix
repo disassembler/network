@@ -17,7 +17,7 @@ in {
 
     user = mkOption {
       default = defaultUser;
-      example = "john";
+      example = "omadad";
       type = types.str;
       description = ''
         The name of an existing user account to use to own the omadad server
@@ -27,7 +27,7 @@ in {
 
     group = mkOption {
       default = defaultUser;
-      example = "john";
+      example = "omadad";
       type = types.str;
       description = ''
         Group to own the omadad server process.
@@ -36,7 +36,7 @@ in {
 
     dataDir = mkOption {
       default = "/var/lib/omadad/";
-      example = "/home/john/.omadad/";
+      example = "/home/omadad/.omadad/";
       type = types.path;
       description = ''
         The state directory for omadad.
@@ -69,6 +69,14 @@ in {
       '';
     };
 
+    mongodb = mkOption {
+      type = types.package;
+      default = pkgs.mongodb-4_4;
+      description = ''
+        mongodb package
+      '';
+    };
+
     openFirewall = mkOption {
       type = types.bool;
       default = false;
@@ -85,16 +93,16 @@ in {
       description = "Wifi access point controller";
       wantedBy = [ "multi-user.target" ];
       after = [ "network-online.target" ];
-      path = [ pkgs.bash pkgs.mongodb pkgs.nettools pkgs.curl pkgs.procps ];
+      path = [ pkgs.bash cfg.mongodb pkgs.nettools pkgs.curl pkgs.procps ];
 
       serviceConfig = let
-        java_opts = "-classpath '${cfg.dataDir}/lib/*' -server -Xms128m -Xmx1024m -XX:MaxHeapFreeRatio=60 -XX:MinHeapFreeRatio=30 -XX:+HeapDumpOnOutOfMemoryError -DhttpPort=${toString cfg.httpPort} -DhttpsPort=${toString cfg.httpsPort} -DmongoPort=${toString cfg.mongoPort} -DdataDir=${cfg.dataDir}/data -Deap.home=${cfg.dataDir} --add-opens=java.base/sun.security.x509=ALL-UNNAMED";
+        java_opts = "-classpath '${cfg.dataDir}/lib/*' -server -Xms128m -Xmx1024m -XX:MaxHeapFreeRatio=60 -XX:MinHeapFreeRatio=30 -XX:+HeapDumpOnOutOfMemoryError -DhttpPort=${toString cfg.httpPort} -DhttpsPort=${toString cfg.httpsPort} -DmongoPort=${toString cfg.mongoPort} -DdataDir=${cfg.dataDir}/data -Deap.home=${cfg.dataDir}";
         main_class = "com.tplink.smb.omada.starter.OmadaLinuxMain";
       in {
         Type = "simple";
         User = cfg.user;
         Group = cfg.group;
-        ExecStart = "${pkgs.jre}/bin/java ${java_opts} ${main_class}";
+        ExecStart = "${pkgs.openjdk8}/bin/java ${java_opts} ${main_class}";
         WorkingDirectory = "${cfg.dataDir}/data";
       };
 

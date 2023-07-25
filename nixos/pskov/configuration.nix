@@ -80,6 +80,24 @@ in
     hostName = machine;
     inherit hostId;
     #nameservers = [ "127.0.0.1" ];
+    wireguard.interfaces = {
+      wg0 = {
+        ips = [ "10.70.0.1/24" ];
+        listenPort = 51820;
+        postSetup = ''
+          ip link set mtu 1392 dev wg0
+        '';
+        privateKeyFile = "/var/lib/wg-keys/wg0.key";
+        peers = [
+          {
+            publicKey = "RtwIQ8Ni8q+/E5tgYPFUnHrOhwAnkGOEe98h+vUYmyg=";
+            allowedIPs = [ "10.40.33.0/24" "10.40.9.1/32" "192.168.0.0/24" ];
+            endpoint = "prophet.samleathers.com:51820";
+            persistentKeepalive = 30;
+          }
+        ];
+      };
+    };
     networkmanager.enable = true;
     networkmanager.unmanaged = [ "interface-name:ve-*" "ens9" ];
     extraHosts =

@@ -1,13 +1,13 @@
 { stdenv, lib, fetchurl, mongodb }: let
 
-  version = "5.7.4";
-  year = "2022";
-  month = "11";
+  version = "5.9.31";
+  year = "2023";
+  month = "03";
   day = "21";
   url = "https://static.tp-link.com/upload/software/${year}/${year}${month}/${year}${month}${day}/Omada_SDN_Controller_v${version}_Linux_x64.tar.gz";
   src = fetchurl {
     inherit url;
-    sha256 = "sha256-6xG80bOFoJg3DXe00zw4t9QOfw/ADrHjowWHUtQtj0s=";
+    sha256 = "sha256-rSrioNDgzCJES5YneklHIYpropgvNsU141cqNZAghww=";
   };
 
 

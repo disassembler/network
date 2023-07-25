@@ -249,6 +249,10 @@ in
             allowedIPs = [ "10.40.9.25/32" ];
           }
           {
+            publicKey = "5f6TDkTVN8OS/xF7M12+rEUibIWljqMrMrBwXU34MUw=";
+            allowedIPs = [ "10.70.0.1/32" ];
+          }
+          {
             publicKey = "mFn9gVTlPTEa+ZplilmKiZ0pYqzzof75IaDiG9q/pko=";
             allowedIPs = [ "10.40.9.39/32" "10.39.0.0/24" "2601:98a:4000:9ed0::1/64" "fd00::39/128" ];
           }
@@ -376,6 +380,7 @@ in
         option space ubnt;
         option ubnt.UNIFI-IP-ADDRESS code 1 = ip-address;
         option ubnt.UNIFI-IP-ADDRESS 10.40.33.20;
+        option ovwma code 138 = ip-address;
 
         class "ubnt" {
           match if substring (option vendor-class-identifier, 0, 4) = "ubnt";
@@ -429,6 +434,7 @@ in
           option routers 10.40.3.1;
           option domain-name-servers 10.40.3.1;
           range 10.40.3.100 10.40.3.200;
+          option ovwma 10.40.33.20;
         }
       '';
     };

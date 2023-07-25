@@ -2448,11 +2448,11 @@
         "wilder-nvim": "wilder-nvim"
       },
       "locked": {
-        "lastModified": 1643144914,
-        "narHash": "sha256-UBe6knq1rWDK18Iw6XS8P+GL0khWzRetKzJkTSkIZzo=",
+        "lastModified": 1689441891,
+        "narHash": "sha256-Jvwhcty19iY99n2rjdSyRrXN7r/6XkaSCdlJ4HNscik=",
         "owner": "disassembler",
         "repo": "neovim-flake",
-        "rev": "205bb85b5f98910d7326ce1d49ea4972561bd5e2",
+        "rev": "8ca95911c04d2c2b95760a8b8347d8ad15e482ac",
         "type": "github"
       },
       "original": {

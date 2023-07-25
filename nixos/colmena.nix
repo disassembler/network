@@ -4,11 +4,11 @@
 , ...
 }:
 let
-  mkNode = server: ip: fast:
-    self.nixosConfigurations."${server}" // {
-      deployment.targetHost = ip;
-      deployment.targetPort = 22;
-      deployment.targetUser = "root";
+  mkNode = server: ip: fast: {
+    imports = [self.nixosConfigurations."${server}".config];
+    deployment.targetHost = ip;
+    deployment.targetPort = 22;
+    deployment.targetUser = "root";
     };
 in
 {

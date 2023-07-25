@@ -371,9 +371,9 @@ in
         passwordFile = config.sops.secrets.gitea_dbpass.path;
       };
     };
-    mongodb.enable = true;
+    #mongodb.enable = true;
     omadad = {
-      enable = false;
+      enable = true;
       httpPort = 8089;
       httpsPort = 10443;
     };
