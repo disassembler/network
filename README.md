@@ -54,5 +54,7 @@ Preliminary darwin support has been added. It's a three step process:
 
 # NixOS Configs
 
-NixOS machines not managed by nixops are in `machines/hostname.nix`. Symlink that
-file to `/etc/nixos/configuration.nix`.
+NixOS configs are in nixos/<hostname>
+
+Ones managed by deploy-rs are deployed with deploy .#<hostname>. Otherwise, configuration.nix and hardware-configuration.nix
+is symlinked to /etc/nixos/.
