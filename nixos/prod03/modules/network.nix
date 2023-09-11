@@ -47,7 +47,7 @@ in
       hostId = "8556b001";
       domain = "samleathers.com";
       search = [ "samleathers.com" ];
-      nameservers = [ "127.0.0.1" "8.8.8.8" ];
+      nameservers = [ "8.8.8.8" ];
       useDHCP = false;
       interfaces.ens3.useDHCP = true;
 

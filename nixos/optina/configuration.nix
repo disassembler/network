@@ -371,15 +371,14 @@ in
         passwordFile = config.sops.secrets.gitea_dbpass.path;
       };
     };
-    #mongodb.enable = true;
     omadad = {
       enable = true;
       httpPort = 8089;
       httpsPort = 10443;
     };
     unifi = {
-      enable = false;
-      unifiPackage = pkgs.unifiStable;
+      enable = true;
+      unifiPackage = pkgs.unifi6;
       openFirewall = true;
     };
     #telegraf = {

@@ -1,4 +1,6 @@
-@ 3600 IN SOA centrallakerealty.com. root.centrallakerealty.com. 2022012500 7200 3600 86400 3600
+@ 3600 IN SOA centrallakerealty.com. root.centrallakerealty.com. 2023072900 7200 3600 86400 3600
+
+$TTL 600
 
 @	300	IN	NS	ns1.centrallakerealty.com.
 @	300	IN	NS	ns2.centrallakerealty.com.
@@ -6,6 +8,12 @@
 @ 300 IN NS ns2.samleathers.com.
 @ 300 IN NS ns1.disasm.us.
 @ 300 IN NS ns2.disasm.us.
+
+; letsencrypt rules
+@ IN CAA 0 issue "letsencrypt.org"
+@ IN CAA 0 iodef "mailto:sam@nixedge.com"
+
+@	300	IN	A	45.76.4.212
 
 ; Google records
 @	300	IN	MX	1 aspmx.l.google.com.
@@ -36,5 +44,4 @@ upnorthblog	300	IN	A	45.63.23.13
 www.upnorthblog	300	IN	A	45.63.23.13
 vpn	300	IN	A	97.85.39.25
 
-@	300	IN	A	130.211.17.200
-www	300	IN	CNAME	wwwha.ihouseweb.com.
+www	300	IN	A	45.76.4.212

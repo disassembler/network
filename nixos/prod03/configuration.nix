@@ -19,7 +19,7 @@
   security.polkit.enable = lib.mkForce false;
 
   services.openssh.enable = true;
-  services.openssh.passwordAuthentication = false;
+  services.openssh.settings.PasswordAuthentication = false;
   services.journald = {
     rateLimitBurst = 0;
     extraConfig = "SystemMaxUse=50M";

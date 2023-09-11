@@ -1,4 +1,4 @@
-@ 3600 IN SOA samleathers.com. root.samleathers.com. 2022012600 7200 3600 86400 3600
+@ 3600 IN SOA samleathers.com. root.samleathers.com. 2023080800 7200 3600 86400 3600
 
 $TTL 600
 
@@ -13,9 +13,6 @@ $TTL 600
 @ IN CAA 0 iodef "mailto:sam@nixedge.com"
 
 @	300	IN	A	45.76.4.212
-
-@	300	IN	A	45.76.4.212
-
 
 ; Google records
 @	300	IN	MX	1 aspmx.l.google.com.

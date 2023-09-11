@@ -142,7 +142,7 @@ in
         binary-caches-parallel-connections = 3
         connect-timeout = 5
         #allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk/nixpkgs/archive
-        experimental-features = nix-command flakes
+        experimental-features = nix-command flakes fetch-closure
       '';
       #package = pkgs.nixUnstable;
     };

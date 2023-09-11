@@ -4,7 +4,7 @@
 }:
 let
   mkNode = server: ip: fast: {
-    hostname = "${ip}:22";
+    hostname = "${ip}";
     fastConnection = fast;
     profiles.system.path =
       deploy.lib.x86_64-linux.activate.nixos

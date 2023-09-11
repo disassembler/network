@@ -41,7 +41,7 @@ in
     settings.sandbox = true;
     settings.cores = 4;
     settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
-    settings.substituters = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
+    settings.substituters = [ "https://cache.nixos.org" "https://cache.iog.io" ];
     settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
     distributedBuilds = true;
     extraOptions = ''
@@ -54,10 +54,6 @@ in
     vim
     tmux
     git
-    wp-cli
-    bind
-    powerdns
-    pdns-recursor
     nix-index
   ];
   services.fail2ban.enable = true;
@@ -118,15 +114,21 @@ in
         forceSSL = true;
         root = "/data/web/vhosts/samleathers/util";
       };
+      "centrallakerealty.com" = {
+        enableACME = true;
+        forceSSL = true;
+        serverAliases = [ "www.centrallakerealty.com" ];
+        globalRedirect = "www.facebook.com/MarieLeathersRealtor?mibextid=2JQ9oc";
+      };
     };
   };
   services.mysql = {
-    enable = true;
+    enable = false;
     package = pkgs.mariadb;
   };
 
   services.openssh.enable = true;
-  services.openssh.passwordAuthentication = false;
+  services.openssh.settings.PasswordAuthentication = false;
   services.journald = {
     rateLimitBurst = 0;
     extraConfig = "SystemMaxUse=50M";

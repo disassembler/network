@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2022061700 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 2023091101 7200 3600 86400 3600
 
 $TTL 600
 
@@ -55,3 +55,10 @@ hledger.lan 300 IN CNAME optina.lan
 plex.lan 300 IN CNAME optina.lan
 noc.lan 300 IN CNAME optina.lan
 stg.lan 300 IN CNAME optina.lan
+unifi.lan 300 IN CNAME optina.lan
+
+bp01.lan 300 IN A 147.28.148.163
+relay01.lan 300 IN A 147.28.149.209
+relay02.lan 300 IN A 147.28.183.225
+
+sanchonet 300 IN CNAME input-output-hk.github.io.

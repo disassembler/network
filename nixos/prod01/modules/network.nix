@@ -43,6 +43,7 @@ in
   };
   config = {
     networking = {
+      hostName = "prod01";
       domain = "samleathers.com";
       search = [ "samleathers.com" ];
       nat = {
@@ -53,7 +54,7 @@ in
           { sourcePort = 3001; destination = "10.42.2.2:3001"; proto = "tcp"; }
         ];
       };
-      nameservers = [ "127.0.0.1" "8.8.8.8" ];
+      nameservers = [ "8.8.8.8" ];
       wireguard.interfaces = {
         wg0 = {
           ips = [ "10.40.9.2/24" "fd00::2" ];

@@ -11,9 +11,7 @@ in {
     };
   };
   config = let
-    nvim = if cfg.dev
-      then inputs.neovim-flake.packages.x86_64-linux.neovim-dev
-      else inputs.neovim-flake.packages.x86_64-linux.neovim;
+    nvim = inputs.neovim-flake.packages.x86_64-linux.neovim;
   in lib.mkIf cfg.enable {
     environment.systemPackages = [
       nvim

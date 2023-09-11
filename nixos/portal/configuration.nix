@@ -340,7 +340,7 @@ in
   services = {
     avahi = {
       enable = true;
-      interfaces = [ "lan" "iot" "mgmt" ];
+      allowInterfaces = [ "lan" "iot" "mgmt" ];
       reflector = true;
       publish = {
         enable = true;
@@ -354,9 +354,11 @@ in
     };
     dnsmasq = {
       enable = true;
-      extraConfig = ''
-        address=/hivebedrock.network/10.40.33.20
-      '';
+      settings = {
+        address = [
+        "/hivebedrock.network/10.40.33.20"
+        ];
+      };
     };
     tftpd = {
       enable = true;
