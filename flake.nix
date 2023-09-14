@@ -11,7 +11,7 @@
     #cardano-addresses.url = "github:input-output-hk/cardano-addresses";
     #haskellNix.url = "github:input-output-hk/haskell.nix/14f740c7c8f535581c30b1697018e389680e24cb";
     #cardano-db-sync.url = "github:input-output-hk/cardano-db-sync";
-    adawallet.url = "github:input-output-hk/adawallet/sl/node-8.1.2";
+    adawallet.url = "github:input-output-hk/adawallet";
     #cncli.url = "github:AndrewWestberg/cncli";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     deploy.url = "github:serokell/deploy-rs";

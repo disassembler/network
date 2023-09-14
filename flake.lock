@@ -105,16 +105,15 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1694659065,
+        "lastModified": 1694663636,
         "narHash": "sha256-+BcodGrCERSeQEDbH/DXysuQmCSpSuR3NNpovHtKvcU=",
         "owner": "input-output-hk",
         "repo": "adawallet",
-        "rev": "89e832b3c89bf832a39eeddf28e290f5c1f95664",
+        "rev": "0174f66aa31839f5fa70a01ad871bf8d43255ad9",
         "type": "github"
       },
       "original": {
         "owner": "input-output-hk",
-        "ref": "sl/node-8.1.2",
         "repo": "adawallet",
         "type": "github"
       }
