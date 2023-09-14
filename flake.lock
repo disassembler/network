@@ -102,15 +102,14 @@
       "inputs": {
         "cardano-addresses": "cardano-addresses",
         "cardano-node": "cardano-node",
-        "cardano-rosetta": "cardano-rosetta",
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1694631272,
-        "narHash": "sha256-IhbFNOhdjg0JSbtExOWNVMiONndZQ6BJMAFKgFUWmZI=",
+        "lastModified": 1694659065,
+        "narHash": "sha256-+BcodGrCERSeQEDbH/DXysuQmCSpSuR3NNpovHtKvcU=",
         "owner": "input-output-hk",
         "repo": "adawallet",
-        "rev": "5c677ad337f42b412714803946ff01d4e73ff1e7",
+        "rev": "89e832b3c89bf832a39eeddf28e290f5c1f95664",
         "type": "github"
       },
       "original": {
@@ -556,23 +555,6 @@
         "owner": "input-output-hk",
         "ref": "8.1.2",
         "repo": "cardano-node",
-        "type": "github"
-      }
-    },
-    "cardano-rosetta": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1674830113,
-        "narHash": "sha256-lr7nBYpRJksddql7VmVkN33dvcIdqW3MQFdMc2G0ptM=",
-        "owner": "input-output-hk",
-        "repo": "cardano-rosetta",
-        "rev": "d1146033e8ee778cebe30c57fd08032ba4d72684",
-        "type": "github"
-      },
-      "original": {
-        "owner": "input-output-hk",
-        "ref": "2.1.0",
-        "repo": "cardano-rosetta",
         "type": "github"
       }
     },
@@ -3245,16 +3227,16 @@
     },
     "nixpkgs_8": {
       "locked": {
-        "lastModified": 1659914493,
-        "narHash": "sha256-lkA5X3VNMKirvA+SUzvEhfA7XquWLci+CGi505YFAIs=",
+        "lastModified": 1694499547,
+        "narHash": "sha256-R7xMz1Iia6JthWRHDn36s/E248WB1/je62ovC/dUVKI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "022caabb5f2265ad4006c1fa5b1ebe69fb0c3faf",
+        "rev": "e5f018cf150e29aac26c61dac0790ea023c46b24",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-21.05",
+        "ref": "nixos-23.05",
         "repo": "nixpkgs",
         "type": "github"
       }
