@@ -347,6 +347,7 @@ in
     mosh.enable = true;
     adb.enable = true;
     light.enable = true;
+    #hyprland.enable = true;
     sway = {
       enable = true;
       extraPackages = with pkgs; [
