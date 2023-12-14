@@ -21,7 +21,7 @@ in
       xtrlock-pam
       rxvt_unicode-with-plugins
       xsel
-      virtmanager
+      virt-manager
       xclip
       gnome3.gnome_session
       libnotify

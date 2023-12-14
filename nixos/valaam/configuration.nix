@@ -27,7 +27,7 @@
       in {
         systemPackages = basePackages ++ cardanoPackages;
         variables = {
-          CARDANO_NODE_SOCKET_PATH = config.services.cardano-node.socketPath;
+          #CARDANO_NODE_SOCKET_PATH = config.services.cardano-node.socketPath;
         };
       };
       services = {
@@ -35,7 +35,7 @@
           enable = true;
           environment = "testnet";
           package = cardano-node.packages.x86_64-linux.cardano-node;
-          systemdSocketActivation = true;
+          #systemdSocketActivation = true;
           extraNodeConfig = {
             hasPrometheus = [ "::" 12798 ];
             TraceMempool = false;
@@ -87,7 +87,6 @@
           };
         };
       };
-      systemd.sockets.cardano-node.partOf = [ "cardano-node.socket" ];
       systemd.services.cardano-node.after = lib.mkForce [ "network-online.target" "cardano-node.socket" ];
     };
   };

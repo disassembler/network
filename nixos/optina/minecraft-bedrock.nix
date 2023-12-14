@@ -1,8 +1,8 @@
 { stdenv, fetchurl, patchelf, openssl, unzip, lib, zlib, curl }:
 
 let
-  version = "1.20.0.01";
-  sha256 = "sha256-pm/bu8rcAUlNFlWsm1f4+RGWmF6LxOhMT8am0a1PNF4=";
+  version = "1.20.41.02";
+  sha256 = "sha256-V1/qmRoQqcbkuQZFjW6ld/AJSUkQxGi5ebisTv74ScM=";
   rpath = lib.makeLibraryPath [ zlib openssl stdenv.cc.cc curl ];
 in
 stdenv.mkDerivation rec {

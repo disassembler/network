@@ -115,7 +115,7 @@ in
     };
 
   nixpkgs.overlays = [
-    (self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
+    #(self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
   ];
 
   nixpkgs.config = {
@@ -202,7 +202,6 @@ in
     gopass
     arduino
     startSway
-    avidemux
     strace
     mplayer
     gpgme.dev
@@ -261,7 +260,7 @@ in
     jq
     cabal2nix
     haskellPackages.ghcid
-    virtmanager
+    virt-manager
     xdg_utils
     inotifyTools
     zoom-us

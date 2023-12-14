@@ -3,7 +3,7 @@
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
     nix.url = "github:NixOS/nix/2.17-maintenance";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
     #nixpkgs-2111.follows = "cardano-node/haskellNix/nixpkgs-2111";
     #nixpkgs-2105.follows = "cardano-node/haskellNix/nixpkgs-2105";
     cardano-node.url = "github:input-output-hk/cardano-node/8.1.2";

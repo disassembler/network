@@ -14,28 +14,28 @@ let
   ];
   ipxe' = pkgs.ipxe.overrideDerivation (drv: {
     installPhase = ''
-      ${drv.installPhase}
-      make $makeFlags bin-x86_64-efi/ipxe.efi bin-i386-efi/ipxe.efi
-      cp -v bin-x86_64-efi/ipxe.efi $out/x86_64-ipxe.efi
-      cp -v bin-i386-efi/ipxe.efi $out/i386-ipxe.efi
+    ${drv.installPhase}
+    make $makeFlags bin-x86_64-efi/ipxe.efi bin-i386-efi/ipxe.efi
+    cp -v bin-x86_64-efi/ipxe.efi $out/x86_64-ipxe.efi
+    cp -v bin-i386-efi/ipxe.efi $out/i386-ipxe.efi
     '';
   });
   tftp_root = pkgs.runCommand "tftproot" { } ''
-    mkdir -pv $out
-    cp -vi ${ipxe'}/undionly.kpxe $out/undionly.kpxe
-    cp -vi ${ipxe'}/x86_64-ipxe.efi $out/x86_64-ipxe.efi
-    cp -vi ${ipxe'}/i386-ipxe.efi $out/i386-ipxe.efi
+  mkdir -pv $out
+  cp -vi ${ipxe'}/undionly.kpxe $out/undionly.kpxe
+  cp -vi ${ipxe'}/x86_64-ipxe.efi $out/x86_64-ipxe.efi
+  cp -vi ${ipxe'}/i386-ipxe.efi $out/i386-ipxe.efi
   '';
 
 
 in
-{
-  sops.defaultSopsFile = ./secrets.yaml;
-  sops.secrets.portal_wg0_private = { };
-  imports =
-    [
-      ./hardware-configuration.nix
-    ];
+  {
+    sops.defaultSopsFile = ./secrets.yaml;
+    sops.secrets.portal_wg0_private = { };
+    imports =
+      [
+        ./hardware-configuration.nix
+      ];
   # TODO: move up
   _module.args = {
     inherit shared;
@@ -136,10 +136,10 @@ in
     dhcpcd.persistent = true;
     # NOTE: 3 is taken by openvpn
     dhcpcd.extraConfig = ''
-      noipv6rs
-      interface ${externalInterface}
-      ia_na 1
-      ia_pd 2/::/60 lan/0/64 mgmt/1/64 guest/2/64 iot/4/64
+    noipv6rs
+    interface ${externalInterface}
+    ia_na 1
+    ia_pd 2/::/60 lan/0/64 mgmt/1/64 guest/2/64 iot/4/64
     '';
     firewall = {
       enable = true;
@@ -147,78 +147,78 @@ in
       extraCommands =
         let
           dropPortNoLog = port:
-            ''
-              ip46tables -A nixos-fw -p tcp \
-                --dport ${toString port} -j nixos-fw-refuse
-              ip46tables -A nixos-fw -p udp \
-                --dport ${toString port} -j nixos-fw-refuse
-            '';
+          ''
+          ip46tables -A nixos-fw -p tcp \
+          --dport ${toString port} -j nixos-fw-refuse
+          ip46tables -A nixos-fw -p udp \
+          --dport ${toString port} -j nixos-fw-refuse
+          '';
 
           dropPortIcmpLog =
             ''
-              iptables -A nixos-fw -p icmp \
-                -j LOG --log-prefix "iptables[icmp]: "
-              ip6tables -A nixos-fw -p ipv6-icmp \
-                -j LOG --log-prefix "iptables[icmp-v6]: "
+            iptables -A nixos-fw -p icmp \
+            -j LOG --log-prefix "iptables[icmp]: "
+            ip6tables -A nixos-fw -p ipv6-icmp \
+            -j LOG --log-prefix "iptables[icmp-v6]: "
             '';
 
-          refusePortOnInterface = port: interface:
+            refusePortOnInterface = port: interface:
             ''
-              ip46tables -A nixos-fw -i ${interface} -p tcp \
-                --dport ${toString port} -j nixos-fw-log-refuse
-              ip46tables -A nixos-fw -i ${interface} -p udp \
-                --dport ${toString port} -j nixos-fw-log-refuse
+            ip46tables -A nixos-fw -i ${interface} -p tcp \
+            --dport ${toString port} -j nixos-fw-log-refuse
+            ip46tables -A nixos-fw -i ${interface} -p udp \
+            --dport ${toString port} -j nixos-fw-log-refuse
             '';
-          acceptPortOnInterface = port: interface:
+            acceptPortOnInterface = port: interface:
             ''
-              ip46tables -A nixos-fw -i ${interface} -p tcp \
-                --dport ${toString port} -j nixos-fw-accept
-              ip46tables -A nixos-fw -i ${interface} -p udp \
-                --dport ${toString port} -j nixos-fw-accept
+            ip46tables -A nixos-fw -i ${interface} -p tcp \
+            --dport ${toString port} -j nixos-fw-accept
+            ip46tables -A nixos-fw -i ${interface} -p udp \
+            --dport ${toString port} -j nixos-fw-accept
             '';
           # IPv6 flat forwarding. For ipv4, see nat.forwardPorts
           forwardPortToHost = port: interface: proto: host:
-            ''
-              ip6tables -A FORWARD -i ${interface} \
-                -p ${proto} -d ${host} \
-                --dport ${toString port} -j ACCEPT
-              ip6tables -A nixos-fw -i ${interface} \
-                -p ${proto} -d ${host} \
-                --dport ${toString port} -j ACCEPT
-            '';
+          ''
+          ip6tables -A FORWARD -i ${interface} \
+          -p ${proto} -d ${host} \
+          --dport ${toString port} -j ACCEPT
+          ip6tables -A nixos-fw -i ${interface} \
+          -p ${proto} -d ${host} \
+          --dport ${toString port} -j ACCEPT
+          '';
 
           privatelyAcceptPort = port:
-            lib.concatMapStrings
-              (interface: acceptPortOnInterface port interface)
-              internalInterfaces;
+          lib.concatMapStrings
+          (interface: acceptPortOnInterface port interface)
+          internalInterfaces;
 
           publiclyRejectPort = port:
-            refusePortOnInterface port externalInterface;
+          refusePortOnInterface port externalInterface;
 
           allowPortOnlyPrivately = port:
-            ''
-              ${privatelyAcceptPort port}
-              ${publiclyRejectPort port}
-            '';
+          ''
+          ${privatelyAcceptPort port}
+          ${publiclyRejectPort port}
+          '';
         in
         lib.concatStrings [
           (lib.concatMapStrings allowPortOnlyPrivately
-            [
-              67 # DHCP
-              69 # TFTP
-              546 # DHCPv6
-              547 # DHCPv6
-              9100 # prometheus
-              5201 # iperf
-            ])
+          [
+            67 # DHCP
+            69 # TFTP
+            546 # DHCPv6
+            547 # DHCPv6
+            9100 # prometheus
+            5201 # iperf
+          ])
           (lib.concatMapStrings dropPortNoLog
-            [
-              23 # Common from public internet
-              143 # Common from public internet
-              139 # From RT AP
-              515 # From RT AP
-              9100 # From RT AP
-            ])
+          [
+            23 # Common from public internet
+            143 # Common from public internet
+            139 # From RT AP
+            515 # From RT AP
+            9100 # From RT AP
+          ])
           (dropPortIcmpLog)
           ''
             # block internal traffic from guest vpn
@@ -233,47 +233,47 @@ in
             ${forwardPortToHost 3001 "enp1s0" "tcp" "2601:98a:4102:ef0:8c6d:c3ff:fe13:5d63"}
             # block forwarding from external interface
             ip6tables -A FORWARD -i enp1s0 -j DROP
-          ''
-        ];
-      allowedTCPPorts = [ 32400 5222 5060 53 3001 ];
-      allowedUDPPorts = [ 51820 1194 1195 5060 5222 53 config.services.toxvpn.port 19132 5353 ];
-    };
-    wireguard.interfaces = {
-      wg0 = {
-        ips = [ "10.40.9.1/24" "fd00::1" ];
-        listenPort = 51820;
-        privateKeyFile = config.sops.secrets.portal_wg0_private.path;
-        peers = [
-          {
-            publicKey = "PiXwxQyrMi7iCZvTrmd2V9OB6008aOIU1bOaWi9xOlI=";
-            allowedIPs = [ "10.40.9.25/32" ];
-          }
-          {
-            publicKey = "5f6TDkTVN8OS/xF7M12+rEUibIWljqMrMrBwXU34MUw=";
-            allowedIPs = [ "10.70.0.1/32" ];
-          }
-          {
-            publicKey = "mFn9gVTlPTEa+ZplilmKiZ0pYqzzof75IaDiG9q/pko=";
-            allowedIPs = [ "10.40.9.39/32" "10.39.0.0/24" "2601:98a:4000:9ed0::1/64" "fd00::39/128" ];
-          }
-          {
-            publicKey = "b1mP5d9m041QyP0jbXicP145BOUYwNefUOOqo6XXwF8=";
-            allowedIPs = [ "10.40.9.2/32" "fd00::2/128" ];
-            endpoint = "45.76.4.212:51820";
-          }
-          {
-            publicKey = "V6iLYqTiCzv/zoluqhfWDV49eIIISoZgN30IbS4XZCw=";
-            allowedIPs = [ "10.42.1.1/32" ];
-          }
-          {
-            publicKey = "dCKIaTC40Y5sQqbdsYw1adSgVDmV+1SZMV4DVx1ctSk=";
-            allowedIPs = [ "10.38.0.0/24" "fd00::38/128" ];
-          }
-          {
-            publicKey = "eR6I+LI/BayJ90Kjt0wJyfJUsoSmayD+cb6Kb7qdCV4=";
-            allowedIPs = [ "10.37.4.0/24" "10.37.6.1/32" "fd00::37/128" ];
-          }
-          {
+            ''
+          ];
+          allowedTCPPorts = [ 32400 5222 5060 53 3001 ];
+          allowedUDPPorts = [ 51820 1194 1195 5060 5222 53 config.services.toxvpn.port 19132 5353 ];
+        };
+        wireguard.interfaces = {
+          wg0 = {
+            ips = [ "10.40.9.1/24" "fd00::1" ];
+            listenPort = 51820;
+            privateKeyFile = config.sops.secrets.portal_wg0_private.path;
+            peers = [
+              {
+                publicKey = "PiXwxQyrMi7iCZvTrmd2V9OB6008aOIU1bOaWi9xOlI=";
+                allowedIPs = [ "10.40.9.25/32" ];
+              }
+              {
+                publicKey = "5f6TDkTVN8OS/xF7M12+rEUibIWljqMrMrBwXU34MUw=";
+                allowedIPs = [ "10.70.0.1/32" ];
+              }
+              {
+                publicKey = "mFn9gVTlPTEa+ZplilmKiZ0pYqzzof75IaDiG9q/pko=";
+                allowedIPs = [ "10.40.9.39/32" "10.39.0.0/24" "2601:98a:4000:9ed0::1/64" "fd00::39/128" ];
+              }
+              {
+                publicKey = "b1mP5d9m041QyP0jbXicP145BOUYwNefUOOqo6XXwF8=";
+                allowedIPs = [ "10.40.9.2/32" "fd00::2/128" ];
+                endpoint = "45.76.4.212:51820";
+              }
+              {
+                publicKey = "V6iLYqTiCzv/zoluqhfWDV49eIIISoZgN30IbS4XZCw=";
+                allowedIPs = [ "10.42.1.1/32" ];
+              }
+              {
+                publicKey = "dCKIaTC40Y5sQqbdsYw1adSgVDmV+1SZMV4DVx1ctSk=";
+                allowedIPs = [ "10.38.0.0/24" "fd00::38/128" ];
+              }
+              {
+                publicKey = "eR6I+LI/BayJ90Kjt0wJyfJUsoSmayD+cb6Kb7qdCV4=";
+                allowedIPs = [ "10.37.4.0/24" "10.37.6.1/32" "fd00::37/128" ];
+              }
+              {
             # buffalo run
             publicKey = "b1SJJq77euLkBM/femF+jJ5HbR/dc3cEQEejYZMtFCA=";
             allowedIPs = [ "10.40.9.5/32" ];
@@ -316,7 +316,7 @@ in
     settings.substituters = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
     settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
     extraOptions = ''
-      experimental-features = nix-command flakes
+    experimental-features = nix-command flakes
     '';
     package = pkgs.nixUnstable;
   };
@@ -356,7 +356,7 @@ in
       enable = true;
       settings = {
         address = [
-        "/hivebedrock.network/10.40.33.20"
+          "/hivebedrock.network/10.40.33.20"
         ];
       };
     };
@@ -364,177 +364,294 @@ in
       enable = true;
       path = tftp_root;
     };
-    dhcpd4 = {
-      interfaces = [ "lan" "mgmt" "guest" "iot" ];
-      enable = true;
-      machines = [
-        { hostName = "optina"; ethernetAddress = "d4:3d:7e:4d:c4:7f"; ipAddress = "10.40.33.20"; }
-        { hostName = "valaam"; ethernetAddress = "00:c0:08:9d:ba:42"; ipAddress = "10.40.33.21"; }
-        { hostName = "atari"; ethernetAddress = "94:08:53:84:9b:9d"; ipAddress = "10.40.33.22"; }
-        { hostName = "valaam-wifi"; ethernetAddress = "3c:58:c2:f9:87:5b"; ipAddress = "10.40.33.31"; }
-        { hostName = "printer"; ethernetAddress = "a4:5d:36:d6:22:d9"; ipAddress = "10.40.33.50"; }
-      ];
-      extraConfig = ''
-        option arch code 93 = unsigned integer 16;
-        option rpiboot code 43 = text;
-
-        # Allow UniFi devices to locate the controller from a separate VLAN
-        option space ubnt;
-        option ubnt.UNIFI-IP-ADDRESS code 1 = ip-address;
-        option ubnt.UNIFI-IP-ADDRESS 10.40.33.20;
-        option ovwma code 138 = ip-address;
-
-        class "ubnt" {
-          match if substring (option vendor-class-identifier, 0, 4) = "ubnt";
-          option vendor-class-identifier "ubnt";
-          vendor-option-space ubnt;
-        }
-
-        subnet 10.40.33.0 netmask 255.255.255.0 {
-          option domain-search "lan.disasm.us";
-          option subnet-mask 255.255.255.0;
-          option broadcast-address 10.40.33.255;
-          option routers 10.40.33.1;
-          option domain-name-servers 10.40.33.1;
-          range 10.40.33.100 10.40.33.200;
-          next-server 10.40.33.1;
-          if exists user-class and option user-class = "iPXE" {
-            filename "http://netboot.lan.disasm.us/boot.php?mac=''${net0/mac}&asset=''${asset:uristring}&version=''${builtin/version}";
-          } else {
-            if option arch = 00:07 or option arch = 00:09 {
-              filename = "x86_64-ipxe.efi";
-            } else {
-              filename = "undionly.kpxe";
+    kea = {
+      dhcp4 = {
+        enable = true;
+        settings = {
+          interfaces-config = {
+            interfaces = [ "lan" "mgmt" "guest" "iot" ];
+          };
+          lease-database = {
+            name = "/var/lib/kea/dhcp4.leases";
+            persist = true;
+            type = "memfile";
+          };
+          option-data = [
+            {
+              name = "domain-name-servers";
+              data = "10.40.33.1";
+              always-send = true;
             }
-          }
-          option rpiboot "Raspberry Pi Boot   ";
-        }
-        subnet 10.40.40.0 netmask 255.255.255.0 {
-          option subnet-mask 255.255.255.0;
-          option broadcast-address 10.40.40.255;
-          option routers 10.40.40.1;
-          option domain-name-servers 10.40.40.1;
-          range 10.40.40.100 10.40.40.200;
-        }
-        subnet 10.40.10.0 netmask 255.255.255.0 {
-          option subnet-mask 255.255.255.0;
-          option broadcast-address 10.40.10.255;
-          option routers 10.40.10.1;
-          option domain-name-servers 10.40.10.1;
-          range 10.40.10.100 10.40.10.200;
-        }
-        subnet 10.40.8.0 netmask 255.255.255.0 {
-          option subnet-mask 255.255.255.0;
-          option broadcast-address 10.40.8.255;
-          option routers 10.40.8.1;
-          option domain-name-servers 10.40.8.1;
-          range 10.40.8.100 10.40.8.200;
-        }
-        subnet 10.40.3.0 netmask 255.255.255.0 {
-          option subnet-mask 255.255.255.0;
-          option broadcast-address 10.40.3.255;
-          option routers 10.40.3.1;
-          option domain-name-servers 10.40.3.1;
-          range 10.40.3.100 10.40.3.200;
-          option ovwma 10.40.33.20;
-        }
-      '';
+            {
+              name = "routers";
+              data = "10.40.33.1";
+            }
+            {
+              name = "domain-name";
+              data = "lan.disasm.us";
+            }
+          ];
+
+          rebind-timer = 2000;
+          renew-timer = 1000;
+          valid-lifetime = 4000;
+
+          subnet4 = [
+            {
+              pools = [
+                {
+                  pool = "10.40.33.100 - 10.40.33.200";
+                }
+              ];
+              option-data = [
+                {
+                  name = "routers";
+                  data = "10.40.33.1";
+                }
+              ];
+              subnet = "10.40.33.0/24";
+              reservations = [
+                { hostname = "optina"; hw-address = "d4:3d:7e:4d:c4:7f"; ip-address = "10.40.33.20"; }
+                { hostname = "valaam"; hw-address = "00:c0:08:9d:ba:42"; ip-address = "10.40.33.21"; }
+                { hostname = "atari"; hw-address = "94:08:53:84:9b:9d"; ip-address = "10.40.33.22"; }
+                { hostname = "kodiak"; hw-address = "ec:f4:bb:e7:4b:dc"; ip-address = "10.40.33.23"; }
+                { hostname = "valaam-wifi"; hw-address = "3c:58:c2:f9:87:5b"; ip-address = "10.40.33.31"; }
+                { hostname = "printer"; hw-address = "a4:5d:36:d6:22:d9"; ip-address = "10.40.33.50"; }
+              ];
+            }
+            {
+              pools = [
+                {
+                  pool = "10.40.40.100 - 10.40.40.200";
+                }
+              ];
+              option-data = [
+                {
+                  name = "routers";
+                  data = "10.40.40.1";
+                }
+              ];
+              subnet = "10.40.40.0/24";
+            }
+            {
+              pools = [
+                {
+                  pool = "10.40.10.100 - 10.40.10.200";
+                }
+              ];
+              option-data = [
+                {
+                  name = "routers";
+                  data = "10.40.10.1";
+                }
+              ];
+              subnet = "10.40.10.0/24";
+            }
+            {
+              pools = [
+                {
+                  pool = "10.40.8.100 - 10.40.8.200";
+                }
+              ];
+              option-data = [
+                {
+                  name = "routers";
+                  data = "10.40.8.1";
+                }
+              ];
+              subnet = "10.40.8.0/24";
+            }
+            {
+              pools = [
+                {
+                  pool = "10.40.3.100 - 10.40.3.200";
+                }
+              ];
+              option-data = [
+                {
+                  name = "routers";
+                  data = "10.40.3.1";
+                }
+              ];
+              subnet = "10.40.3.0/24";
+            }
+          ];
+        };
+      };
     };
-    radvd = {
-      enable = true;
-      config = ''
+
+    #dhcpd4 = {
+    #  interfaces = [ "lan" "mgmt" "guest" "iot" ];
+    #  enable = true;
+    #  machines = [
+    #    { hostName = "optina"; ethernetAddress = "d4:3d:7e:4d:c4:7f"; ipAddress = "10.40.33.20"; }
+    #    { hostName = "valaam"; ethernetAddress = "00:c0:08:9d:ba:42"; ipAddress = "10.40.33.21"; }
+    #    { hostName = "atari"; ethernetAddress = "94:08:53:84:9b:9d"; ipAddress = "10.40.33.22"; }
+    #    { hostName = "kodiak"; ethernetAddress = "ec:f4:bb:e7:4b:dc"; ipAddress = "10.40.33.23"; }
+    #    { hostName = "valaam-wifi"; ethernetAddress = "3c:58:c2:f9:87:5b"; ipAddress = "10.40.33.31"; }
+    #    { hostName = "printer"; ethernetAddress = "a4:5d:36:d6:22:d9"; ipAddress = "10.40.33.50"; }
+    #  ];
+    #  extraConfig = ''
+    #  option arch code 93 = unsigned integer 16;
+    #  option rpiboot code 43 = text;
+
+    #    # Allow UniFi devices to locate the controller from a separate VLAN
+    #    option space ubnt;
+    #    option ubnt.UNIFI-IP-ADDRESS code 1 = ip-address;
+    #    option ubnt.UNIFI-IP-ADDRESS 10.40.33.20;
+    #    option ovwma code 138 = ip-address;
+
+    #    class "ubnt" {
+    #      match if substring (option vendor-class-identifier, 0, 4) = "ubnt";
+    #      option vendor-class-identifier "ubnt";
+    #      vendor-option-space ubnt;
+    #    }
+
+    #    subnet 10.40.33.0 netmask 255.255.255.0 {
+    #      option domain-search "lan.disasm.us";
+    #      option subnet-mask 255.255.255.0;
+    #      option broadcast-address 10.40.33.255;
+    #      option routers 10.40.33.1;
+    #      option domain-name-servers 10.40.33.1;
+    #      range 10.40.33.100 10.40.33.200;
+    #      next-server 10.40.33.1;
+    #      if exists user-class and option user-class = "iPXE" {
+    #        filename "http://netboot.lan.disasm.us/boot.php?mac=''${net0/mac}&asset=''${asset:uristring}&version=''${builtin/version}";
+    #      } else {
+    #        if option arch = 00:07 or option arch = 00:09 {
+    #          filename = "x86_64-ipxe.efi";
+    #        } else {
+    #          filename = "undionly.kpxe";
+    #        }
+    #      }
+    #      option rpiboot "Raspberry Pi Boot   ";
+    #    }
+    #    subnet 10.40.40.0 netmask 255.255.255.0 {
+    #      option subnet-mask 255.255.255.0;
+    #      option broadcast-address 10.40.40.255;
+    #      option routers 10.40.40.1;
+    #      option domain-name-servers 10.40.40.1;
+    #      range 10.40.40.100 10.40.40.200;
+    #    }
+    #    subnet 10.40.10.0 netmask 255.255.255.0 {
+    #      option subnet-mask 255.255.255.0;
+    #      option broadcast-address 10.40.10.255;
+    #      option routers 10.40.10.1;
+    #      option domain-name-servers 10.40.10.1;
+    #      range 10.40.10.100 10.40.10.200;
+    #    }
+    #    subnet 10.40.8.0 netmask 255.255.255.0 {
+    #      option subnet-mask 255.255.255.0;
+    #      option broadcast-address 10.40.8.255;
+    #      option routers 10.40.8.1;
+    #      option domain-name-servers 10.40.8.1;
+    #      range 10.40.8.100 10.40.8.200;
+    #    }
+    #    subnet 10.40.3.0 netmask 255.255.255.0 {
+    #      option subnet-mask 255.255.255.0;
+    #      option broadcast-address 10.40.3.255;
+    #      option routers 10.40.3.1;
+    #      option domain-name-servers 10.40.3.1;
+    #      range 10.40.3.100 10.40.3.200;
+    #      option ovwma 10.40.33.20;
+    #    }
+    #    '';
+    #  };
+      radvd = {
+        enable = true;
+        config = ''
         interface lan
         {
-           AdvSendAdvert on;
-           prefix ::/64
-           {
-                AdvOnLink on;
-                AdvAutonomous on;
-           };
+          AdvSendAdvert on;
+          prefix ::/64
+          {
+            AdvOnLink on;
+            AdvAutonomous on;
+          };
         };
         interface mgmt
         {
-           AdvSendAdvert on;
-           prefix ::/64
-           {
-                AdvOnLink on;
-                AdvAutonomous on;
-           };
+          AdvSendAdvert on;
+          prefix ::/64
+          {
+            AdvOnLink on;
+            AdvAutonomous on;
+          };
         };
         interface guest
         {
-           AdvSendAdvert on;
-           prefix ::/64
-           {
-                AdvOnLink on;
-                AdvAutonomous on;
-           };
+          AdvSendAdvert on;
+          prefix ::/64
+          {
+            AdvOnLink on;
+            AdvAutonomous on;
+          };
         };
         interface voip
         {
-           AdvSendAdvert on;
-           prefix ::/64
-           {
-                AdvOnLink on;
-                AdvAutonomous on;
-           };
+          AdvSendAdvert on;
+          prefix ::/64
+          {
+            AdvOnLink on;
+            AdvAutonomous on;
+          };
         };
         interface iot
         {
-           AdvSendAdvert on;
-           prefix ::/64
-           {
-                AdvOnLink on;
-                AdvAutonomous on;
-           };
+          AdvSendAdvert on;
+          prefix ::/64
+          {
+            AdvOnLink on;
+            AdvAutonomous on;
+          };
         };
-      '';
-    };
-    journald = {
-      rateLimitBurst = 0;
-      extraConfig = "SystemMaxUse=50M";
-    };
-    journalbeat = {
-      enable = false;
-      extraConfig = ''
-        journalbeat:
-          seek_position: cursor
-          cursor_seek_fallback: tail
-          write_cursor_state: true
-          cursor_flush_period: 5s
-          clean_field_names: true
-          convert_to_numbers: false
-          move_metadata_to_field: journal
-          default_type: journal
-        output.kafka:
-          hosts: ["optina.lan.disasm.us:9092"]
-          topic: KAFKA-LOGSTASH-ELASTICSEARCH
-      '';
-    };
-    prometheus.exporters = {
-      node = {
-        enable = true;
-        enabledCollectors = [
-          "systemd"
-          "tcpstat"
-          "conntrack"
-          "diskstats"
-          "entropy"
-          "filefd"
-          "filesystem"
-          "loadavg"
-          "meminfo"
-          "netdev"
-          "netstat"
-          "stat"
-          "time"
-          "vmstat"
-          "logind"
-          "interrupts"
-          "ksmd"
-        ];
+        '';
       };
-    };
+      journald = {
+        rateLimitBurst = 0;
+        extraConfig = "SystemMaxUse=50M";
+      };
+      journalbeat = {
+        enable = false;
+        extraConfig = ''
+        journalbeat:
+        seek_position: cursor
+        cursor_seek_fallback: tail
+        write_cursor_state: true
+        cursor_flush_period: 5s
+        clean_field_names: true
+        convert_to_numbers: false
+        move_metadata_to_field: journal
+        default_type: journal
+        output.kafka:
+        hosts: ["optina.lan.disasm.us:9092"]
+        topic: KAFKA-LOGSTASH-ELASTICSEARCH
+        '';
+      };
+      prometheus.exporters = {
+        node = {
+          enable = true;
+          enabledCollectors = [
+            "systemd"
+            "tcpstat"
+            "conntrack"
+            "diskstats"
+            "entropy"
+            "filefd"
+            "filesystem"
+            "loadavg"
+            "meminfo"
+            "netdev"
+            "netstat"
+            "stat"
+            "time"
+            "vmstat"
+            "logind"
+            "interrupts"
+            "ksmd"
+          ];
+        };
+      };
     #openvpn = {
     #  servers = {
     #    wedlake = {

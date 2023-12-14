@@ -132,7 +132,6 @@ in
         631
         3000 # grafana
         4444
-        5601 # kibana
         5900
         5951
         5952
@@ -219,7 +218,7 @@ in
     dnsutils
     #openssl
     powerdns
-    virtmanager
+    virt-manager
     config.services.home-assistant.package
   ];
 
@@ -274,28 +273,6 @@ in
     udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="74:d4:35:9b:84:62", NAME="enp2s0"
     '';
-    zookeeper = {
-      enable = false;
-    };
-    apache-kafka = {
-      enable = false;
-      extraProperties = ''
-        offsets.topic.replication.factor = 1
-      '';
-      hostname = "optina.lan.disasm.us";
-      zookeeper = "localhost:2181";
-    };
-    elasticsearch = {
-      enable = false;
-      listenAddress = "0";
-      #plugins = with pkgs.elasticsearchPlugins; [ search_guard ];
-    };
-
-    kibana = {
-      enable = false;
-      listenAddress = "optina.lan.disasm.us";
-      elasticsearch.url = "http://localhost:9200";
-    };
 
     hledger-web = {
       enable = true;

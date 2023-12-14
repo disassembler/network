@@ -75,6 +75,7 @@ in
     powertop.enable = true;
   };
   time.timeZone = "America/New_York";
+  #time.timeZone = "Asia/Dubai";
 
   networking = {
     hostName = machine;
@@ -148,8 +149,8 @@ in
     };
 
   nixpkgs.overlays = [
-    (self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
-    inputs.vivarium.overlay
+    #(self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
+    #inputs.vivarium.overlay
   ];
 
   nixpkgs.config = {
@@ -196,7 +197,7 @@ in
     enable = true;
     dev = true;
   };
-  profiles.vivarium.enable = true;
+  #profiles.vivarium.enable = true;
 
   environment.pathsToLink = [
     "/share/nix-direnv"
@@ -236,7 +237,6 @@ in
     gopass
     arduino
     startSway
-    avidemux
     strace
     mplayer
     gpgme.dev
@@ -297,7 +297,7 @@ in
     jq
     cabal2nix
     haskellPackages.ghcid
-    virtmanager
+    virt-manager
     xdg_utils
     inotifyTools
     zoom-us
@@ -371,7 +371,26 @@ in
 
   services = {
     tailscale.enable = true;
-    #thermald.enable = true;
+    # Better scheduling for CPU cycles - thanks System76!!!
+    system76-scheduler.settings.cfsProfiles.enable = true;
+
+    # Enable TLP (better than gnomes internal power manager)
+    tlp = {
+      enable = true;
+      settings = {
+        CPU_BOOST_ON_AC = 1;
+        CPU_BOOST_ON_BAT = 0;
+        CPU_SCALING_GOVERNOR_ON_AC = "performance";
+        CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+      };
+    };
+
+    # Disable GNOMEs power management
+    power-profiles-daemon.enable = false;
+
+
+    # Enable thermald (only necessary if on Intel CPUs)
+    thermald.enable = true;
     rabbitmq = {
       enable = true;
       #listenAddress = "::1";
