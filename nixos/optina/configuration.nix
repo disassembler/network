@@ -1,4 +1,4 @@
-{ lib, config, pkgs, ... }:
+{ lib, config, pkgs, pkgsLegacy, ... }:
 
 
 with lib;
@@ -197,6 +197,7 @@ in
   };
 
   environment.systemPackages = with pkgs; [
+    direnv
     hello
     qemu_kvm
     aspell
@@ -237,7 +238,7 @@ in
     };
     avahi = {
       enable = true;
-      interfaces = [ "enp2s0" ];
+      allowInterfaces = [ "enp2s0" ];
       reflector = true;
       publish = {
         enable = true;
@@ -278,7 +279,7 @@ in
       enable = true;
       port = 8002;
       baseUrl = "https://hledger.lan.disasm.us/";
-      capabilities.add = true;
+      allow = "edit";
     };
 
     journalbeat = {
@@ -317,10 +318,13 @@ in
       '';
     };
 
+    displayManager = {
+      defaultSession = "none+i3";
+    };
     xserver = {
       autorun = true;
       enable = true;
-      layout = "us";
+      xkb.layout = "us";
       windowManager.i3 = {
         enable = true;
         #extraSessionCommands = ''
@@ -328,7 +332,6 @@ in
         #'';
         package = pkgs.i3-gaps;
       };
-      displayManager.defaultSession = "none+i3";
       displayManager.lightdm = {
         enable = true;
         background = "/etc/lightdm/background.jpg";
@@ -337,27 +340,30 @@ in
     bitlbee.enable = true;
     gitea = {
       enable = false;
-      domain = "git.lan.disasm.us";
       appName = "Personal Git Server";
-      httpAddress = "127.0.0.1";
-      rootUrl = "https://git.lan.disasm.us";
-      httpPort = 3001;
+      settings.server = {
+        ROOT_URL = "https://git.lan.disasm.us";
+        HTTP_PORT = 3001;
+        HTTP_ADDR = "127.0.0.1";
+        DOMAIN = "git.lan.disasm.us";
+      };
       database = {
         type = "postgres";
         port = 5432;
         passwordFile = config.sops.secrets.gitea_dbpass.path;
       };
     };
-    omadad = {
-      enable = true;
-      httpPort = 8089;
-      httpsPort = 10443;
-    };
-    unifi = {
-      enable = true;
-      unifiPackage = pkgs.unifi6;
-      openFirewall = true;
-    };
+    # TODO: run omadad and unifi in a controller with an older nixpkgs
+    #omadad = {
+    #  enable = true;
+    #  httpPort = 8089;
+    #  httpsPort = 10443;
+    #};
+    #unifi = {
+    #  enable = true;
+    #  unifiPackage = pkgs.unifi6;
+    #  openFirewall = true;
+    #};
     #telegraf = {
     #  enable = true;
     #  extraConfig = {
@@ -794,7 +800,7 @@ in
     };
     grafana = {
       enable = true;
-      addr = "0.0.0.0";
+      settings.server.http_addr = "0.0.0.0";
     };
     phpfpm = {
       #phpPackage = pkgs.php71;
@@ -1079,6 +1085,24 @@ in
         isNormalUser = true;
         uid = 10001;
       };
+    };
+  };
+  # TODO move omada and unifi here
+  containers.wifiController = {
+    privateNetwork = true;
+    hostAddress = "10.233.1.3";
+    localAddress = "10.233.1.4";
+    #bindMounts = {
+    #  "/opt/rtorrent" = {
+    #    hostPath = "/data/rtorrent";
+    #    isReadOnly = false;
+    #  };
+    #};
+    config = { config, pkgs, ... }: {
+      environment.systemPackages = with pkgs; [
+        tmux
+        sudo
+      ];
     };
   };
   users.users.sam = {

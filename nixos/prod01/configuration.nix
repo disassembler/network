@@ -93,7 +93,8 @@ in
           ratsRoot = pkgs.runCommandNoCC "rats-root" { } ''
             mkdir -p $out/testnet
             cp ${metadataJson} $out/pool.json
-            cp ${metadataTestnetJson} $out/testnet/pool.json
+            cp ${metadataJson} $out/rats.json
+            cp ${metadataTestnetJson} $out/mice.json
             cp ${index-html} $out/index.html
           '';
         in

@@ -1,4 +1,4 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, inputs, config, lib, ... }:
 let
   ip4 = config.networking.prod01.ipv4.address;
   ip6 = lib.head config.networking.prod01.ipv6.addresses;
@@ -23,9 +23,11 @@ in
   services.knot = {
     enable = true;
     keyFiles = [
+      # TODO this doesn't work with settingsFile
       config.sops.secrets."knot-keys.conf".path
     ];
-    extraConfig = ''
+    settingsFile = pkgs.writeText "knot.conf" ''
+      include: ${config.sops.secrets."knot-keys.conf".path}
       server:
         listen: ${ip4}@53
         listen: ${ip6}@53

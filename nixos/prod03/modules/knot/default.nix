@@ -8,9 +8,11 @@ in {
   services.knot = {
     enable = true;
     keyFiles = [
+      # TODO this doesn't work with settingsFile
       config.sops.secrets."knot-keys.conf".path
     ];
-    extraConfig = ''
+    settingsFile = pkgs.writeText "knot.conf" ''
+      include: ${config.sops.secrets."knot-keys.conf".path}
       server:
         listen: ${ip4}@53
         listen: ${ip6}@53

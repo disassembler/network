@@ -3,7 +3,6 @@
 {
   imports = [ ./hardware-configuration.nix ./generated.nix ];
   boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
   services.openssh.enable = true;
   boot.zfs.devNodes = "/dev"; # fixes some virtualmachine issues
   boot.zfs.forceImportRoot = false;

@@ -1,6 +1,7 @@
 { self
 , flake-utils
 , nixpkgs
+, nixpkgsLegacy
 , sops-nix
 , deploy
 , colmena
@@ -9,11 +10,12 @@
 (flake-utils.lib.eachDefaultSystem (system:
   let
     pkgs = nixpkgs.legacyPackages."${system}";
+    pkgsLegacy = nixpkgsLegacy.legacyPackages."${system}";
   in
   {
     minecraft = pkgs.callPackage ./nixos/optina/minecraft-bedrock.nix {};
-    omadad = pkgs.callPackage ./modules/services/omadad/package.nix {};
-    devShell = pkgs.callPackage ./shell.nix {
+    omadad = pkgsLegacy.callPackage ./modules/services/omadad/package.nix {};
+    devShells.default = pkgs.callPackage ./shell.nix {
       inherit (sops-nix.packages."${pkgs.system}") sops-import-keys-hook ssh-to-pgp sops-init-gpg-key;
       inherit (deploy.packages."${pkgs.system}") deploy-rs;
       inherit (colmena.packages."${pkgs.system}") colmena;

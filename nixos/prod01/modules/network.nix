@@ -76,7 +76,11 @@ in
           peers = [
             {
               publicKey = "QRx40Uq3nvbDzePVgCpQKt8pyswccctQAOZHh7pMAlk=";
-              allowedIPs = [ "10.42.2.0/24" ];
+              allowedIPs = [ "10.42.2.2/32" ];
+            }
+            {
+              publicKey = "tL946MevoBfCTVg4FT7j9dIncmp2VDmfJ2wBI4E7w1Y=";
+              allowedIPs = [ "10.42.2.3/32" ];
             }
           ];
         };

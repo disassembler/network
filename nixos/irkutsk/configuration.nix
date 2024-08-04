@@ -24,7 +24,7 @@ in
     device = "nodev";
     memtest86.enable = true;
   };
-  boot.zfs.enableUnstable = true;
+  boot.zfs.package = pkgs.zfs_unstable;
 
   boot.supportedFilesystems = [ "exfat" ];
 
@@ -111,7 +111,6 @@ in
         #allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk/nixpkgs/archive
         experimental-features = nix-command flakes
       '';
-      #package = pkgs.nixUnstable;
     };
 
   nixpkgs.overlays = [

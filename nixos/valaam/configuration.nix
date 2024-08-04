@@ -33,7 +33,7 @@
       services = {
         cardano-node = {
           enable = true;
-          environment = "testnet";
+          environment = "preview";
           package = cardano-node.packages.x86_64-linux.cardano-node;
           #systemdSocketActivation = true;
           extraNodeConfig = {
@@ -121,7 +121,6 @@ in {
     settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
     settings.substituters = [ "https://cache.nixos.org" "https://cache.iog.io" ];
     settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
-    package = pkgs.nixUnstable;
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
@@ -178,7 +177,7 @@ in {
 
   services = {
     openssh = {
-      passwordAuthentication = false;
+      settings.PasswordAuthentication = false;
       enable = true;
     };
 
@@ -386,7 +385,7 @@ in {
     };
     grafana = {
       enable = true;
-      addr = "0.0.0.0";
+      settings.server.http_addr = "0.0.0.0";
     };
     xserver = {
       enable = true;

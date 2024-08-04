@@ -1,3 +1,3 @@
 self: super: {
-  scripts = self.callPackage ./scripts.nix {};
+  airgapScripts = self.callPackage ./scripts.nix {};
 }

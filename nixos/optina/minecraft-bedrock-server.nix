@@ -46,7 +46,7 @@ in
         default = {
           server-name = "Dedicated Server";
           gamemode = "survival";
-          difficulty = "easy";
+          difficulty = "hard";
           allow-cheats = false;
           max-players = 100;
           online-mode = false;
@@ -137,6 +137,7 @@ in
       };
 
       preStart = ''
+        rm -rf /var/lib/minecraft-bedrock/*
         cp -a -n ${cfg.package}/var/lib/* .
         cp -f ${serverPropertiesFile} server.properties
         chmod -R u+w .

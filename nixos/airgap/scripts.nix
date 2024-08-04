@@ -1,6 +1,6 @@
-{ lib, coreutils, writeScriptBin, cardano-hw-cli, cardano-cli, cardano-addresses-cli, gnutar, gzip, jq }:
+{ lib, coreutils, writeScriptBin, cardano-hw-cli, cardano-cli, cardano-address, gnutar, gzip, jq }:
 let
-  packages = [ cardano-hw-cli cardano-cli coreutils gnutar gzip cardano-addresses-cli jq ];
+  packages = [ cardano-hw-cli cardano-cli coreutils gnutar gzip cardano-address jq ];
   scriptHeader = ''
     PATH=${lib.makeBinPath packages}
     set -euo pipefail

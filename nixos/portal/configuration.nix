@@ -43,7 +43,6 @@ in
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
   boot.loader.grub.device = "/dev/sda";
   boot.kernelParams = [ "console=ttyS0,115200n8" ];
   boot.kernel.sysctl = {
@@ -318,7 +317,6 @@ in
     extraOptions = ''
     experimental-features = nix-command flakes
     '';
-    package = pkgs.nixUnstable;
   };
 
   nixpkgs = {
@@ -413,9 +411,11 @@ in
               reservations = [
                 { hostname = "optina"; hw-address = "d4:3d:7e:4d:c4:7f"; ip-address = "10.40.33.20"; }
                 { hostname = "valaam"; hw-address = "00:c0:08:9d:ba:42"; ip-address = "10.40.33.21"; }
+                { hostname = "mice-rel-1"; hw-address = "12:46:d1:ea:92:76"; ip-address = "10.40.33.30"; }
+                { hostname = "mice-bp-1"; hw-address = "3a:58:ab:bd:83:d1"; ip-address = "10.40.33.31"; }
                 { hostname = "atari"; hw-address = "94:08:53:84:9b:9d"; ip-address = "10.40.33.22"; }
                 { hostname = "kodiak"; hw-address = "ec:f4:bb:e7:4b:dc"; ip-address = "10.40.33.23"; }
-                { hostname = "valaam-wifi"; hw-address = "3c:58:c2:f9:87:5b"; ip-address = "10.40.33.31"; }
+                { hostname = "valaam-wifi"; hw-address = "3c:58:c2:f9:87:5b"; ip-address = "10.40.33.24"; }
                 { hostname = "printer"; hw-address = "a4:5d:36:d6:22:d9"; ip-address = "10.40.33.50"; }
               ];
             }
@@ -460,6 +460,9 @@ in
                 }
               ];
               subnet = "10.40.8.0/24";
+              reservations = [
+                { hostname = "roof-wled"; hw-address = "dc:4f:22:52:e1:d3"; ip-address = "10.40.8.60"; }
+              ];
             }
             {
               pools = [

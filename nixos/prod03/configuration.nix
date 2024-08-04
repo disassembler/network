@@ -2,6 +2,7 @@
 
 {
   sops.defaultSopsFile = ./secrets.yaml;
+  sops.secrets.prod03_wg1_private = { };
 
   boot.supportedFilesystems = [ "zfs" ];
   boot.zfs.devNodes = "/dev";

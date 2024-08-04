@@ -16,7 +16,6 @@
     settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
     settings.substituters = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
     settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
-    package = pkgs.nixUnstable;
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
@@ -49,6 +48,7 @@
   # $ nix search wget
   environment.variables = {
     CARDANO_NODE_SOCKET_PATH = config.services.cardano-node.socketPath 0;
+    CARDANO_NODE_NETWORK_ID = "mainnet";
   };
   environment.systemPackages = with pkgs; [
     #cncli
@@ -124,7 +124,7 @@
 
   # Enable the OpenSSH daemon.
   services.openssh = {
-    passwordAuthentication = false;
+    settings.PasswordAuthentication = false;
     enable = true;
   };
 

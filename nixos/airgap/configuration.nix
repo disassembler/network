@@ -1,7 +1,5 @@
-{ config, lib, pkgs, inputs, modulesPath, ... }:
-let
+{ config, lib, pkgs, inputs, modulesPath, ... }: {
 
-in {
   imports = [
     (modulesPath + "/installer/cd-dvd/installation-cd-graphical-gnome.nix")
   ];
@@ -21,29 +19,57 @@ in {
 
   boot.kernelModules = [ "kvm-intel" ];
   boot.supportedFilesystems = [ "zfs" ];
+  boot.zfs.package = pkgs.zfs_unstable;
 
   nixpkgs.config.allowUnfree = true;
   nixpkgs.overlays = [
-    (final: prev: {
-      inherit (inputs.adawallet.legacyPackages.x86_64-linux) openapi-generator-cli;
-    })
     inputs.adawallet.overlay
     (import ./overlay.nix)
   ];
-  services.udev.extraRules = ''
-      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="2b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="3b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="4b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1807", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1808", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0000", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0001", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0004", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2c97"
-      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2581"
+  services.udev.extraRules = let
+    dependencies = with pkgs; [ coreutils gnupg gawk gnugrep ];
+    clearYubikey = pkgs.writeScript "clear-yubikey" ''
+      #!${pkgs.stdenv.shell}
+      export PATH=${pkgs.lib.makeBinPath dependencies};
+      keygrips=$(
+        gpg-connect-agent 'keyinfo --list' /bye 2>/dev/null \
+          | grep -v OK \
+          | awk '{if ($4 == "T") { print $3 ".key" }}')
+      for f in $keygrips; do
+        rm -v ~/.gnupg/private-keys-v1.d/$f
+      done
+      gpg --card-status 2>/dev/null 1>/dev/null || true
+    '';
+    clearYubikeyNixos = pkgs.writeScript "clear-yubikey-nixos" ''
+      #!${pkgs.stdenv.shell}
+      ${pkgs.sudo}/bin/sudo -u nixos ${clearYubikey}
+    '';
+    in
+    ''
+      # yubikey rules
+      ACTION=="add|change", SUBSYSTEM=="usb", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0407", RUN+="${clearYubikeyNixos}"
+
+      # HW.1, Nano
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1b7c|2b7c|3b7c|4b7c", TAG+="uaccess", TAG+="udev-acl"
+
+      # Blue, NanoS, Aramis, HW.2, Nano X, NanoSP, Stax, Ledger Test,
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", TAG+="uaccess", TAG+="udev-acl"
+
+      # Same, but with hidraw-based library (instead of libusb)
+      KERNEL=="hidraw*", ATTRS{idVendor}=="2c97", MODE="0666"
+
+      # Trezor
+      SUBSYSTEM=="usb", ATTR{idVendor}=="534c", ATTR{idProduct}=="0001", MODE="0660", GROUP="plugdev", TAG+="uaccess", TAG+="udev-acl", SYMLINK+="trezor%n"
+      KERNEL=="hidraw*", ATTRS{idVendor}=="534c", ATTRS{idProduct}=="0001", MODE="0660", GROUP="plugdev", TAG+="uaccess", TAG+="udev-acl"
+
+      # Trezor v2
+      SUBSYSTEM=="usb", ATTR{idVendor}=="1209", ATTR{idProduct}=="53c0", MODE="0660", GROUP="plugdev", TAG+="uaccess", TAG+="udev-acl", SYMLINK+="trezor%n"
+      SUBSYSTEM=="usb", ATTR{idVendor}=="1209", ATTR{idProduct}=="53c1", MODE="0660", GROUP="plugdev", TAG+="uaccess", TAG+="udev-acl", SYMLINK+="trezor%n"
+      KERNEL=="hidraw*", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="53c1", MODE="0660", GROUP="plugdev", TAG+="uaccess", TAG+="udev-acl"
+
       ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{authorized}=="0", ATTR{authorized}="1"
   '';
+  services.udev.packages = [ pkgs.yubikey-personalization ];
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
@@ -58,21 +84,25 @@ in {
   environment.systemPackages = with pkgs; [
     cardano-cli
     cardano-node
-    cardano-completions
+    scripts.mainnet.node
+    scripts.preprod.node
+    scripts.preview.node
+    scripts.sanchonet.node
+    scripts.private.node
     bech32
-    cardano-addresses-cli
+    cardano-address
     cardano-hw-cli
     adawallet
-    scripts.extractAccountKeys
-    scripts.instructions
-    scripts.extractAccountKeys
-    scripts.registerStakeKeys
-    scripts.delegateStakeKeys
-    scripts.witnessPoolTransactions
-    scripts.createWallet
-    scripts.restoreWallet
-    scripts.signPaymentTx
-    scripts.createTx
+    airgapScripts.extractAccountKeys
+    airgapScripts.instructions
+    airgapScripts.extractAccountKeys
+    airgapScripts.registerStakeKeys
+    airgapScripts.delegateStakeKeys
+    airgapScripts.witnessPoolTransactions
+    airgapScripts.createWallet
+    airgapScripts.restoreWallet
+    airgapScripts.signPaymentTx
+    airgapScripts.createTx
     kleopatra
     termite
     encfs

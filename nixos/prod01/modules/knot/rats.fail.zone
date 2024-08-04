@@ -1,4 +1,4 @@
-@ 3600 IN SOA rats.fail. root.rats.fail. 2022020800 7200 3600 86400 3600
+@ 3600 IN SOA rats.fail. root.rats.fail. 2024042500 7200 3600 86400 3600
 
 $TTL 600
 
@@ -14,4 +14,7 @@ $TTL 600
 ns1	300	IN	A	45.76.4.212
 ns2	300	IN	A	45.63.23.13
 relays	3600	IN	A	45.76.4.212
+relays-mice	3600	IN	A	45.63.23.13
 www	3600	IN	A	45.76.4.212
+rats-bp-1 3600	IN	A	10.9.3.23
+rats-rel-1 3600	IN	A	10.9.3.22

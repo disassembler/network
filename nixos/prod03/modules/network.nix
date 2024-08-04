@@ -47,11 +47,30 @@ in
       hostId = "8556b001";
       domain = "samleathers.com";
       search = [ "samleathers.com" ];
+      nat = {
+        enable = true;
+        externalInterface = "ens3";
+        internalInterfaces = [ "wg1" ];
+        forwardPorts = [
+          { sourcePort = 3001; destination = "10.42.3.2:3001"; proto = "tcp"; }
+        ];
+      };
       nameservers = [ "8.8.8.8" ];
       useDHCP = false;
       interfaces.ens3.useDHCP = true;
 
-      #wireguard.interfaces = {
+      wireguard.interfaces = {
+        wg1 = {
+          ips = [ "10.42.3.1/24" ];
+          listenPort = 51821;
+          privateKeyFile = config.sops.secrets.prod03_wg1_private.path;
+          peers = [
+            {
+              publicKey = "uiz+TtK7Sxi7zoHuc44uVyM/CLS2KnetypcHiXqzm0U=";
+              allowedIPs = [ "10.42.3.2/32" ];
+            }
+          ];
+        };
       #  wg0 = {
       #    ips = [ "10.40.9.3/24" "fd00::3" ];
       #    listenPort = 51820;
@@ -65,7 +84,9 @@ in
       #    ];
 
       #  };
-      #};
+      };
+      firewall.allowedTCPPorts = [ 80 443 53 3001 ];
+      firewall.allowedUDPPorts = [ 53 51820 51821 ];
       firewall.extraCommands =
         let
           dropPortNoLog = port:
@@ -102,6 +123,7 @@ in
         ''
           iptables -P FORWARD DROP
           ${acceptPortOnInterface 9100 "wg0"}
+          ${forwardNATPort 3001 "10.42.3.1" "10.42.3.2" "ens3" "wg1"}
         '';
     };
   };

@@ -39,7 +39,7 @@ in
   #  theme = pkgs.nixos-grub2-theme;
   #  memtest86.enable = true;
   #};
-  boot.zfs.enableUnstable = true;
+  boot.zfs.package = pkgs.zfs_unstable;
 
   boot.supportedFilesystems = [ "exfat" "zfs" ];
   boot.tmp.cleanOnBoot = true;
@@ -145,7 +145,6 @@ in
         #allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk/nixpkgs/archive
         experimental-features = nix-command flakes fetch-closure
       '';
-      #package = pkgs.nixUnstable;
     };
 
   nixpkgs.overlays = [
@@ -227,6 +226,7 @@ in
   [
     headscale
     gopass
+    iamb
     starship
     direnv
     nix-direnv
@@ -327,7 +327,7 @@ in
   };
   fonts.fontDir.enable = true;
   fonts.enableGhostscriptFonts = true;
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     # Used by starship for fonts
     (nerdfonts.override { fonts = [ "FiraCode" ]; })
     corefonts
@@ -364,7 +364,7 @@ in
     gnupg.agent = {
       enable = true;
       enableSSHSupport = true;
-      pinentryFlavor = "gtk2";
+      pinentryPackage = pkgs.pinentry-gtk2;
     };
   };
 
@@ -391,11 +391,11 @@ in
 
     # Enable thermald (only necessary if on Intel CPUs)
     thermald.enable = true;
-    rabbitmq = {
-      enable = true;
-      #listenAddress = "::1";
-      managementPlugin.enable = true;
-    };
+    #rabbitmq = {
+    #  enable = true;
+    #  #listenAddress = "::1";
+    #  managementPlugin.enable = true;
+    #};
     tftpd.enable = true;
     tftpd.path = "/var/tftpd";
     zfs.trim.enable = true;
@@ -434,67 +434,67 @@ in
     #cardano-graphql = {
     #  enable = false;
     #};
-    postgresql = {
-      enable = true;
-      enableTCPIP = false;
-      settings = {
-        max_connections = 200;
-        shared_buffers = "2GB";
-        effective_cache_size = "6GB";
-        maintenance_work_mem = "512MB";
-        checkpoint_completion_target = 0.7;
-        wal_buffers = "16MB";
-        default_statistics_target = 100;
-        random_page_cost = 1.1;
-        effective_io_concurrency = 200;
-        work_mem = "10485kB";
-        min_wal_size = "1GB";
-        max_wal_size = "2GB";
-      };
-      identMap = ''
-        #explorer-users /root cexplorer
-        explorer-users /postgres postgres
-        explorer-users /sam cexplorer
-        explorer-users /smash smash
-        explorer-users /cexplorer cexplorer
-      '';
-      authentication = ''
-        local all all ident map=explorer-users
-        local all all trust
-      '';
-      ensureDatabases = [
-        "explorer_python_api"
-        "cexplorer"
-        "smash"
-        "hdb_catalog"
-      ];
-      ensureUsers = [
-        {
-          name = "cexplorer";
-          ensurePermissions = {
-            "DATABASE explorer_python_api" = "ALL PRIVILEGES";
-            "DATABASE cexplorer" = "ALL PRIVILEGES";
-            "DATABASE hdb_catalog" = "ALL PRIVILEGES";
-            "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
-          };
-        }
-        {
-          name = "smash";
-          ensurePermissions = {
-            "DATABASE smash" = "ALL PRIVILEGES";
-            "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
-          };
-        }
-        {
-          name = "sam";
-          ensurePermissions = {
-            "DATABASE smash" = "ALL PRIVILEGES";
-            #"DATABASE cexplorer" = "ALL PRIVILEGES";
-            "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
-          };
-        }
-      ];
-    };
+    #postgresql = {
+    #  enable = true;
+    #  enableTCPIP = false;
+    #  settings = {
+    #    max_connections = 200;
+    #    shared_buffers = "2GB";
+    #    effective_cache_size = "6GB";
+    #    maintenance_work_mem = "512MB";
+    #    checkpoint_completion_target = 0.7;
+    #    wal_buffers = "16MB";
+    #    default_statistics_target = 100;
+    #    random_page_cost = 1.1;
+    #    effective_io_concurrency = 200;
+    #    work_mem = "10485kB";
+    #    min_wal_size = "1GB";
+    #    max_wal_size = "2GB";
+    #  };
+    #  identMap = ''
+    #    #explorer-users /root cexplorer
+    #    explorer-users /postgres postgres
+    #    explorer-users /sam cexplorer
+    #    explorer-users /smash smash
+    #    explorer-users /cexplorer cexplorer
+    #  '';
+    #  authentication = ''
+    #    local all all ident map=explorer-users
+    #    local all all trust
+    #  '';
+    #  ensureDatabases = [
+    #    "explorer_python_api"
+    #    "cexplorer"
+    #    "smash"
+    #    "hdb_catalog"
+    #  ];
+    #  ensureUsers = [
+    #    {
+    #      name = "cexplorer";
+    #      ensurePermissions = {
+    #        "DATABASE explorer_python_api" = "ALL PRIVILEGES";
+    #        "DATABASE cexplorer" = "ALL PRIVILEGES";
+    #        "DATABASE hdb_catalog" = "ALL PRIVILEGES";
+    #        "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
+    #      };
+    #    }
+    #    {
+    #      name = "smash";
+    #      ensurePermissions = {
+    #        "DATABASE smash" = "ALL PRIVILEGES";
+    #        "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
+    #      };
+    #    }
+    #    {
+    #      name = "sam";
+    #      ensurePermissions = {
+    #        "DATABASE smash" = "ALL PRIVILEGES";
+    #        #"DATABASE cexplorer" = "ALL PRIVILEGES";
+    #        "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
+    #      };
+    #    }
+    #  ];
+    #};
     printing = {
       enable = true;
       drivers = [ pkgs.hplip ];
