@@ -1,4 +1,4 @@
-@ 3600 IN SOA rats.fail. root.rats.fail. 2024042500 7200 3600 86400 3600
+@ 3600 IN SOA rats.fail. root.rats.fail. 2024092500 7200 3600 86400 3600
 
 $TTL 600
 
@@ -7,14 +7,15 @@ $TTL 600
 @ 3600 IN NS ns2.samleathers.com.
 @ 3600 IN NS ns1.disasm.us.
 @ 3600 IN NS ns2.disasm.us.
-@	3600	IN	NS	ns1.rats.fail.
-@	3600	IN	NS	ns2.rats.fail.
+@ 3600  IN  NS  ns1.rats.fail.
+@ 3600  IN  NS  ns2.rats.fail.
 
-@	3600	IN	A	45.76.4.212
-ns1	300	IN	A	45.76.4.212
-ns2	300	IN	A	45.63.23.13
-relays	3600	IN	A	45.76.4.212
-relays-mice	3600	IN	A	45.63.23.13
-www	3600	IN	A	45.76.4.212
-rats-bp-1 3600	IN	A	10.9.3.23
-rats-rel-1 3600	IN	A	10.9.3.22
+@ 3600  IN  A 45.76.4.212
+ns1 300 IN  A 45.76.4.212
+ns2 300 IN  A 45.63.23.13
+relays  3600  IN  A 45.76.4.212
+relays-mice 3600  IN  A 45.63.23.13
+relays-mice 3600  IN  AAAA  2601:98a:4100:1700:1046:d1ff:feea:9276
+www 3600  IN  A 45.76.4.212
+rats-bp-1 3600  IN  A 10.9.3.23
+rats-rel-1 3600 IN  A 10.9.3.22

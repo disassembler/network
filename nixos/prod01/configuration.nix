@@ -66,6 +66,11 @@ in
         serverAliases = [ "www.nixedge.com" ];
         root = pkgs.nixedge_site;
       };
+      "resume.disasm.us" = {
+        enableACME = true;
+        forceSSL = true;
+        root = ./resume;
+      };
       "rats.fail" =
         let
           metadata = ''
@@ -120,6 +125,15 @@ in
         forceSSL = true;
         serverAliases = [ "www.centrallakerealty.com" ];
         globalRedirect = "www.facebook.com/MarieLeathersRealtor?mibextid=2JQ9oc";
+      };
+      "doom.disasm.us" = {
+        enableACME = true;
+        forceSSL = true;
+        root = inputs.hydra-doom.packages."x86_64-linux".hydra-doom-static-remote;
+        extraConfig = ''
+          disable_symlinks off;
+          try_files $uri $uri /index.html;
+        '';
       };
     };
   };

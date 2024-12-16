@@ -1,4 +1,4 @@
-@ 3600 IN SOA samleathers.com. root.samleathers.com. 2024080400 7200 3600 86400 3600
+@ 3600 IN SOA samleathers.com. root.samleathers.com. 2024092100 7200 3600 86400 3600
 
 $TTL 600
 
@@ -45,8 +45,8 @@ prod01  300 IN  AAAA  2001:19f0:5:5ce:5400:ff:fe5e:4473
 prod01-do 300 IN  A 192.241.211.237
 prod02  300 IN  A 199.15.252.153
 prod03  300 IN  A 45.63.23.13
-prophet 300 IN  A 174.59.122.137
-prophet 300 IN  AAAA  2001:558:6031:52:edad:426d:90f4:ea87
+prophet 300 IN  A 98.235.160.27
+; prophet 300 IN  AAAA  2001:558:6031:52:edad:426d:90f4:ea87
 resume  300 IN  A 45.76.4.212
 secure  300 IN  CNAME www
 util  300 IN  CNAME www

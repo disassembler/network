@@ -1,4 +1,4 @@
-{ config, pkgs, lib, cardano-node, ... }:
+{ config, pkgs, lib, cardano-node, credential-manager, ... }:
 {
   imports =
     [
@@ -63,6 +63,7 @@
     cardano-node.packages.x86_64-linux.bech32
     cardano-node.packages.x86_64-linux.cardano-node
     cardano-node.packages.x86_64-linux.cardano-cli
+    credential-manager.packages.x86_64-linux.orchestrator-cli
     #cardano-address
     #cardano-completions
     #cardano-hw-cli

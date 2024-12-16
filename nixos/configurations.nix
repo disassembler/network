@@ -4,6 +4,7 @@
 , inputs
 , nixos-hardware
 , cardano-node
+, credential-manager
 , nix
   #, cardano-db-sync
 , ...
@@ -70,7 +71,7 @@ in
       cardano-node.nixosModules.cardano-node
       ./sarov/configuration.nix
     ];
-    specialArgs = { inherit inputs cardano-node; };
+    specialArgs = { inherit inputs cardano-node credential-manager; };
   };
   valaam = nixosSystem {
     system = "x86_64-linux";
@@ -102,6 +103,13 @@ in
     ];
     specialArgs = { inherit inputs; };
   };
+  #installeriso = nixosSystem {
+  #  system = "x86_64-linux";
+  #  modules = [
+  #    ./installeriso/configuration.nix
+  #  ];
+  #  specialArgs = { inherit inputs; };
+  #};
   airgap = nixosSystem {
     system = "x86_64-linux";
     modules = baseModules ++ [

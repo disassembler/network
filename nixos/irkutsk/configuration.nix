@@ -329,7 +329,7 @@ in
 
 
   services = {
-    tailscale.enable = true;
+    tailscale.enable = false;
     lorri.enable = true;
     trezord.enable = true;
     resolved.enable = false;

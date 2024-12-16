@@ -49,7 +49,14 @@ in
     options kvm_intel nested=1
     options kvm_intel emulate_invalid_guest_state=0
     options kvm ignore_msrs=1
+    options v4l2loopback exclusive_caps=1 card_label="Virtual Webcam"
   '';
+  boot.extraModulePackages = [
+    config.boot.kernelPackages.v4l2loopback
+  ];
+  boot.kernelModules = [
+    "v4l2loopback"
+  ];
 
   # Splash screen to make boot look nice
   boot.plymouth.enable = false;
@@ -60,11 +67,6 @@ in
   i18n = {
     defaultLocale = "en_US.UTF-8";
   };
-
-  # Luks support
-  systemd.additionalUpstreamSystemUnits = [
-    "debug-shell.service"
-  ];
 
   powerManagement = {
     enable = true;
@@ -80,6 +82,7 @@ in
   networking = {
     hostName = machine;
     inherit hostId;
+    tempAddresses = "disabled";
     #nameservers = [ "127.0.0.1" ];
     wireguard.interfaces = {
       wg0 = {
@@ -92,15 +95,61 @@ in
         peers = [
           {
             publicKey = "RtwIQ8Ni8q+/E5tgYPFUnHrOhwAnkGOEe98h+vUYmyg=";
-            allowedIPs = [ "10.40.33.0/24" "10.40.9.1/32" "192.168.0.0/24" ];
+            allowedIPs = [
+              "10.40.33.0/24"
+              "10.40.9.0/24"
+              #"192.168.0.0/24"
+            ];
             endpoint = "prophet.samleathers.com:51820";
+            persistentKeepalive = 30;
+          }
+        ];
+      };
+      #wg1 = {
+      #  ips = [ "192.168.2.2/32" ];
+      #  listenPort = 51820;
+      #  privateKeyFile = "/var/lib/wg-keys/wg1.key";
+      #  peers = [
+      #    {
+      #      publicKey = "W8Mqo7sGVNUVXe/+3Yb0DqiN/QPKGpc6BHB8H10jagE=";
+      #      allowedIPs = [
+      #        "192.168.2.1/32"
+      #        "192.168.2.2/32"
+      #        "10.9.0.0/24"
+      #        "10.9.3.0/24"
+      #        "10.9.4.0/24"
+      #        "10.9.7.0/24"
+      #        "192.168.99.0/24"
+      #        "192.168.109.0/24"
+      #      ];
+      #      endpoint = "8.42.79.100:51820";
+      #      persistentKeepalive = 30;
+      #    }
+      #  ];
+      #};
+      wg2 = {
+        ips = [ "10.44.2.3/32" ];
+        listenPort = 52024;
+        privateKeyFile = "/var/lib/wg-keys/wg2.key";
+        peers = [
+          {
+            publicKey = "z9CFP9lxAJTHS7DsPcP9dv0Ll3qqUtR0dorlMVokQFw=";
+            allowedIPs = [
+              "10.44.2.1/32"
+              "10.44.2.3/32"
+              "10.44.1.0/24"
+            ];
+            endpoint = "8.42.79.100:52024";
             persistentKeepalive = 30;
           }
         ];
       };
     };
     networkmanager.enable = true;
-    networkmanager.unmanaged = [ "interface-name:ve-*" "ens9" ];
+    networkmanager.unmanaged = [
+      "interface-name:ve-*"
+      #"ens9"
+    ];
     extraHosts =
       ''
         # If DNS is broke, we still want to be able to deploy
@@ -113,6 +162,7 @@ in
         127.0.0.1 explorer.jormungandr
         127.0.0.1 explorer.cardano
         127.0.0.1 wp.dev
+        10.40.9.9 offline.doom.lan
       '';
     nat = {
       enable = true;
@@ -215,6 +265,14 @@ in
         exec systemctl --user start sway.service
       '';
     };
+    obsStudio = pkgs.wrapOBS {
+    plugins = with pkgs.obs-studio-plugins; [
+      scrcpy
+      wlrobs
+      obs-backgroundremoval
+      obs-pipewire-audio-capture
+    ];
+  };
     #trezor = python3Packages.trezor.overrideAttrs (oldAttrs: {
     #  src = python3Packages.fetchPypi {
     #    pname = "trezor";
@@ -224,6 +282,7 @@ in
     #});
   in
   [
+    obsStudio
     headscale
     gopass
     iamb
@@ -304,10 +363,11 @@ in
   ];
 
   hardware = {
+    opentabletdriver.enable = true;
     system76.enableAll = true;
     enableRedistributableFirmware = true;
     pulseaudio = {
-      enable = true;
+      enable = false;
       package = pkgs.pulseaudioFull;
       extraConfig = "load-module module-switch-on-connect";
 
@@ -370,7 +430,15 @@ in
 
 
   services = {
-    tailscale.enable = true;
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+      # If you want to use JACK applications, uncomment this
+      #jack.enable = true;
+    };
+    tailscale.enable = false;
     # Better scheduling for CPU cycles - thanks System76!!!
     system76-scheduler.settings.cfsProfiles.enable = true;
 
@@ -645,6 +713,7 @@ in
   ];
   virtualisation.libvirtd.enable = true;
   security.sudo.wheelNeedsPassword = true;
+  security.rtkit.enable = true;
 
   # Custom dotfiles for sam user
   environment = {

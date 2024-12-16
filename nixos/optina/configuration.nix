@@ -1,9 +1,17 @@
-{ lib, config, pkgs, pkgsLegacy, ... }:
+{ lib, config, pkgs, inputs, ... }:
 
 
 with lib;
 
 let
+  legacyPkgs = import inputs.nixpkgsLegacy {
+    system = "x86_64-linux";
+    config = {
+      allowUnfree = true;
+      # required for mongodb 3.4
+      permittedInsecurePackages = [ "openssl-1.0.2u" ];
+    };
+  };
   shared = import ../../shared.nix;
   netboot_root = pkgs.runCommand "nginxroot" { } ''
     mkdir -pv $out
@@ -107,6 +115,7 @@ in
     hostName = "optina";
     domain = "lan.disasm.us";
     hostId = "1768b40b";
+    tempAddresses = "disabled";
     interfaces.enp2s0.ipv4.addresses = [{ address = "10.40.33.20"; prefixLength = 24; }];
     defaultGateway = "10.40.33.1";
     nameservers = [ "10.40.33.1" "8.8.8.8" ];
@@ -354,16 +363,18 @@ in
       };
     };
     # TODO: run omadad and unifi in a controller with an older nixpkgs
-    #omadad = {
-    #  enable = true;
-    #  httpPort = 8089;
-    #  httpsPort = 10443;
-    #};
-    #unifi = {
-    #  enable = true;
-    #  unifiPackage = pkgs.unifi6;
-    #  openFirewall = true;
-    #};
+    omadad = {
+      enable = true;
+      httpPort = 8089;
+      httpsPort = 10443;
+      mongodb = legacyPkgs.mongodb;
+    };
+    unifi = {
+      enable = true;
+      unifiPackage = legacyPkgs.unifi6;
+      mongodbPackage = legacyPkgs.mongodb-4_4;
+      openFirewall = true;
+    };
     #telegraf = {
     #  enable = true;
     #  extraConfig = {

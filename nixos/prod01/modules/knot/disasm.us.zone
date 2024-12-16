@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2023091101 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 2024092403 7200 3600 86400 3600
 
 $TTL 600
 
@@ -13,41 +13,41 @@ _acme-challenge.lan IN NS ns1.disasm.us
 @ IN CAA 0 issue "letsencrypt.org"
 @ IN CAA 0 iodef "mailto:sam@nixedge.com"
 
-@	300	IN	A	45.76.4.212
+@ 300 IN  A 45.76.4.212
 
 ; Google records
-@	300	IN	MX	1 aspmx.l.google.com.
-@	300	IN	MX	3 alt1.aspmx.l.google.com.
-@	300	IN	MX	3 alt2.aspmx.l.google.com.
-@	300	IN	MX	5 aspmx2.googlemail.com.
-@	300	IN	MX	5 aspmx3.googlemail.com.
-@	300	IN	MX	5 aspmx4.googlemail.com.
-@	300	IN	MX	5 aspmx5.googlemail.com.
-@	10800	IN	TXT	"google-site-verification=7qHsbQ1rdlFiMWL080OeAv7uGddX_-8E-Qc-WiUU_L8"
-calendar	300	IN	CNAME	ghs.google.com.
-docs	300	IN	CNAME	ghs.google.com.
-in	300	IN	TXT	"v=spf1" "include:_spf.google.com" "~all"
-mail	300	IN	CNAME	ghs.google.com.
-sites	300	IN	CNAME	ghs.google.com.
-start	300	IN	CNAME	ghs.google.com.
+@ 300 IN  MX  1 aspmx.l.google.com.
+@ 300 IN  MX  3 alt1.aspmx.l.google.com.
+@ 300 IN  MX  3 alt2.aspmx.l.google.com.
+@ 300 IN  MX  5 aspmx2.googlemail.com.
+@ 300 IN  MX  5 aspmx3.googlemail.com.
+@ 300 IN  MX  5 aspmx4.googlemail.com.
+@ 300 IN  MX  5 aspmx5.googlemail.com.
+@ 10800 IN  TXT "google-site-verification=7qHsbQ1rdlFiMWL080OeAv7uGddX_-8E-Qc-WiUU_L8"
+calendar  300 IN  CNAME ghs.google.com.
+docs  300 IN  CNAME ghs.google.com.
+in  300 IN  TXT "v=spf1" "include:_spf.google.com" "~all"
+mail  300 IN  CNAME ghs.google.com.
+sites 300 IN  CNAME ghs.google.com.
+start 300 IN  CNAME ghs.google.com.
 
-localhost	300	IN	A	127.0.0.1
-ns1	300	IN	A	45.76.4.212
-ns2	300	IN	A	45.76.4.212
-www	300	IN	A	45.76.4.212
-resume	300	IN	CNAME	www
+localhost 300 IN  A 127.0.0.1
+ns1 300 IN  A 45.76.4.212
+ns2 300 IN  A 45.76.4.212
+www 300 IN  A 45.76.4.212
+resume  300 IN  CNAME www
 
 ; lan
 optina.lan 300 IN A 10.40.33.20
-optina.lan 300 IN AAAA 2601:98a:4102:ef0:d63d:7eff:fe4d:c47f
+optina.lan 300 IN AAAA 2601:98a:4100:1700:76d4:35ff:fe9b:8462
 valaam.lan 300 IN A 10.40.33.21
-valaam.lan 300 IN AAAA 2601:98a:4102:ef0:1c99:304c:7769:9426
-relay.valaam.lan 300 IN AAAA 2601:98a:4102:ef0:8c6d:c3ff:fe13:5d63
-pool.valaam.lan 300 IN AAAA 2601:98a:4102:ef0:463:25ff:fe4c:d1e3
+valaam.lan 300 IN AAAA 2601:98a:4100:1700:2c0:8ff:fe9d:ba42
+relay.valaam.lan 300 IN AAAA 2601:98a:4100:1700:1046:d1ff:feea:9276
+pool.valaam.lan 300 IN AAAA 2601:98a:4100:1700:3858:abff:febd:83d1
 atari.lan 300 IN A 10.40.33.22
-atari.lan 300 IN AAAA 2601:98a:4102:ef0:9608:53ff:fe84:9b9d
+atari.lan 300 IN AAAA 2601:98a:4100:1700:9608:53ff:fe84:9b9d
 portal.lan 300 IN A 10.40.33.1
-portal.lan 300 IN AAAA 2601:98a:4102:ef0::1
+portal.lan 300 IN AAAA 2601:98a:4100:1700::1
 vw.lan 300 IN CNAME optina.lan
 omada.lan 300 IN CNAME optina.lan
 hass.lan 300 IN CNAME optina.lan
@@ -62,3 +62,5 @@ relay01.lan 300 IN A 147.28.149.209
 relay02.lan 300 IN A 147.28.183.225
 
 sanchonet 300 IN CNAME input-output-hk.github.io.
+
+doom 300 IN CNAME disasm.us.

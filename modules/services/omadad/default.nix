@@ -63,7 +63,9 @@ in {
 
     package = mkOption {
       type = types.package;
-      default = pkgs.callPackage ./package.nix {};
+      default = pkgs.callPackage ./package.nix {
+        mongodb = cfg.mongodb;
+      };
       description = ''
         Omada package
       '';
@@ -91,8 +93,9 @@ in {
 
     systemd.services.omadad = {
       description = "Wifi access point controller";
-      wantedBy = [ "multi-user.target" ];
+      wants = [ "network-online.target" ];
       after = [ "network-online.target" ];
+      wantedBy = [ "multi-user.target" ];
       path = [ pkgs.bash cfg.mongodb pkgs.nettools pkgs.curl pkgs.procps ];
 
       serviceConfig = let

@@ -229,13 +229,13 @@ in
             # allow traffic with existing state
             ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
             # Allow forwarding the following ports from Internet via IPv6 only
-            ${forwardPortToHost 3001 "enp1s0" "tcp" "2601:98a:4102:ef0:8c6d:c3ff:fe13:5d63"}
+            ${forwardPortToHost 3001 "enp1s0" "tcp" "2601:98a:4100:1700:1046:d1ff:feea:9276"}
             # block forwarding from external interface
             ip6tables -A FORWARD -i enp1s0 -j DROP
             ''
           ];
           allowedTCPPorts = [ 32400 5222 5060 53 3001 ];
-          allowedUDPPorts = [ 51820 1194 1195 5060 5222 53 config.services.toxvpn.port 19132 5353 ];
+          allowedUDPPorts = [ 51820 1194 1195 5060 5222 53 19132 5353 ];
         };
         wireguard.interfaces = {
           wg0 = {
@@ -272,39 +272,69 @@ in
                 publicKey = "eR6I+LI/BayJ90Kjt0wJyfJUsoSmayD+cb6Kb7qdCV4=";
                 allowedIPs = [ "10.37.4.0/24" "10.37.6.1/32" "fd00::37/128" ];
               }
+              #{
+              #  # buffalo run
+              #  publicKey = "b1SJJq77euLkBM/femF+jJ5HbR/dc3cEQEejYZMtFCA=";
+              #  allowedIPs = [ "10.40.9.5/32" ];
+              #}
               {
-            # buffalo run
-            publicKey = "b1SJJq77euLkBM/femF+jJ5HbR/dc3cEQEejYZMtFCA=";
-            allowedIPs = [ "10.40.9.5/32" ];
-          }
-          {
-            # greenacres
-            publicKey = "NhywNZQlIJitXta1V+HCLSiOTYlgxWOQGvxh2Tvinmk=";
-            allowedIPs = [ "10.36.3.0/24" "fd00::36/128" "192.168.254.0/24" ];
-          }
-          {
-            # bower-office
-            publicKey = "rsRvtd4mm4hucE5W1QqCjWJwmSlhWnSWaIWts/Z8/xY=";
-            allowedIPs = [ "10.38.0.1/32" "192.168.0.0/24" ];
-            endpoint = "73.230.94.119:51820";
-          }
-          {
-            # bower-home
-            publicKey = "3sHFhvDxx6nVX/DBroIGTdHfehl9I/OOB4Fo5v7Vvxc=";
-            allowedIPs = [ "10.38.0.2/32" "192.168.1.0/24" "192.168.10.0/24" ];
-            endpoint = "98.235.35.253:51820";
-          }
-          {
-            # clever
-            publicKey = "oycbQ1DhtRh0hhD5gpyiKTUh0USkAwbjMer6/h/aHg8=";
-            allowedIPs = [ "10.40.9.3/32" "fd00::3/128" ];
-            endpoint = "nas.earthtools.ca:51821";
-          }
-          {
-            # johnalotoski
-            publicKey = "MRowDI1eC9B5Hx/zgPk5yyq2eWSq6kYFW5Sjm7w52AY=";
-            allowedIPs = [ "10.40.9.4/32" "fd00::4/128" ];
-          }
+                # greenacres
+                publicKey = "NhywNZQlIJitXta1V+HCLSiOTYlgxWOQGvxh2Tvinmk=";
+                allowedIPs = [ "10.36.3.0/24" "fd00::36/128" "192.168.254.0/24" ];
+              }
+              {
+                # bower-office
+                publicKey = "rsRvtd4mm4hucE5W1QqCjWJwmSlhWnSWaIWts/Z8/xY=";
+                allowedIPs = [ "10.38.0.1/32" "192.168.0.0/24" ];
+                endpoint = "174.175.23.241:51820";
+              }
+              {
+                # bower-home
+                publicKey = "3sHFhvDxx6nVX/DBroIGTdHfehl9I/OOB4Fo5v7Vvxc=";
+                allowedIPs = [ "10.38.0.2/32" "192.168.1.0/24" "192.168.10.0/24" ];
+                endpoint = "98.235.35.253:51820";
+              }
+              {
+                # clever
+                publicKey = "oycbQ1DhtRh0hhD5gpyiKTUh0USkAwbjMer6/h/aHg8=";
+                allowedIPs = [ "10.40.9.3/32" "fd00::3/128" ];
+                endpoint = "nas.earthtools.ca:51821";
+              }
+              {
+                # johnalotoski
+                publicKey = "MRowDI1eC9B5Hx/zgPk5yyq2eWSq6kYFW5Sjm7w52AY=";
+                allowedIPs = [ "10.40.9.4/32" "fd00::4/128" ];
+              }
+              {
+                # installer
+                publicKey = "FDES05UMXVPKusZaMjP0vbVlyM5UASZtE560RjVIo3E=";
+                allowedIPs = [ "10.40.9.5/32" "fd00::5/128" ];
+              }
+              {
+                # hydra-arcade-1
+                publicKey = "aq7dxIkmWEQXr3eB7uzZOBEZ0WT6kgEW9BsqqH2eBDE=";
+                allowedIPs = [ "10.40.9.6/32" "fd00::6/128" ];
+              }
+              {
+                # hydra-arcade-2
+                publicKey = "Q+Sx+o4ckWuO/CQ9IVCIIfBytXZkgDUIkSS50eUmCWU=";
+                allowedIPs = [ "10.40.9.7/32" "fd00::7/128" ];
+              }
+              {
+                # hydra-arcade-qemu
+                publicKey = "A0LYo/Pjx99kUTA9jBzSzfi8qRELOfM+0N0JD1HhcBY=";
+                allowedIPs = [ "10.40.9.8/32" "fd00::8/128" ];
+              }
+              {
+                # hydra-doom-mini
+                publicKey = "hP0Z/mlzGoiZ3XgavKGL40wypHKcRVDR1Hkx2Cz28Sg=";
+                allowedIPs = [ "10.40.9.9/32" "fd00::9/128" ];
+              }
+              {
+                # carlos
+                publicKey = "/9YVN8nraowBRjhe6ysajY5bp4fUVqJE622OpLpl4Hs=";
+                allowedIPs = [ "10.40.9.100/32" "fd00::100/128" ];
+              }
         ];
 
       };

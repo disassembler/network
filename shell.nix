@@ -12,6 +12,7 @@
 , iproute2
 , python3
 , libguestfs-with-appliance
+, qemu-run-iso
 }:
 
 mkShell {
@@ -35,5 +36,6 @@ mkShell {
     nixpkgs-fmt
     lefthook
     knot-dns
+    qemu-run-iso
   ];
 }
