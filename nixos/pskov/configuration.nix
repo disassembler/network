@@ -214,7 +214,7 @@ in
           ignoreCollisions = true;
           paths = [
             man-pages
-            posix_man_pages
+            man-pages-posix
             stdmanpages
             glibcInfo
           ];
@@ -252,19 +252,19 @@ in
     "/share/nix-direnv"
   ];
   environment.systemPackages = with pkgs; let
-    startSway = pkgs.writeTextFile {
-      name = "startsway";
-      destination = "/bin/startsway";
-      executable = true;
-      text = ''
-        #! ${pkgs.bash}/bin/bash
+    #startSway = pkgs.writeTextFile {
+    #  name = "startsway";
+    #  destination = "/bin/startsway";
+    #  executable = true;
+    #  text = ''
+    #    #! ${pkgs.bash}/bin/bash
 
-        # first import environment variables from the login manager
-        systemctl --user import-environment
-        # then start the service
-        exec systemctl --user start sway.service
-      '';
-    };
+    #    # first import environment variables from the login manager
+    #    systemctl --user import-environment
+    #    # then start the service
+    #    exec systemctl --user start sway.service
+    #  '';
+    #};
     obsStudio = pkgs.wrapOBS {
     plugins = with pkgs.obs-studio-plugins; [
       scrcpy
@@ -282,6 +282,9 @@ in
     #});
   in
   [
+    inputs.home-manager.packages.x86_64-linux.home-manager
+    kitty
+    wofi
     obsStudio
     headscale
     gopass
@@ -295,7 +298,7 @@ in
     #trezor
     gopass
     arduino
-    startSway
+    #startSway
     strace
     mplayer
     gpgme.dev
@@ -319,7 +322,7 @@ in
     google-chrome
     gnupg
     gnupg1compat
-    docker-compose
+    podman-compose
     niff
     tmate
     htop
@@ -328,7 +331,7 @@ in
     magic-wormhole
     weechat
     pv
-    rxvt_unicode-with-plugins
+    rxvt-unicode
     termite
     wezterm
     xsel
@@ -357,7 +360,7 @@ in
     cabal2nix
     haskellPackages.ghcid
     virt-manager
-    xdg_utils
+    xdg-utils
     inotifyTools
     zoom-us
   ];
@@ -372,9 +375,9 @@ in
       extraConfig = "load-module module-switch-on-connect";
 
     };
-    opengl.enable = true;
-    opengl.driSupport32Bit = true;
-    opengl.extraPackages = [ pkgs.vaapiIntel ];
+    graphics.enable = true;
+    graphics.enable32Bit = true;
+    graphics.extraPackages = [ pkgs.vaapiIntel ];
     facetimehd.enable = true;
     bluetooth = {
       enable = true;
@@ -408,17 +411,18 @@ in
     adb.enable = true;
     light.enable = true;
     #hyprland.enable = true;
-    sway = {
-      enable = true;
-      extraPackages = with pkgs; [
-        swaylock
-        swayidle
-        xwayland
-        waybar
-        mako
-        kanshi
-      ];
-    };
+    #hyprland.package = inputs.hyprland.packages.x86_64-linux.hyprland;
+    #sway = {
+    #  enable = true;
+    #  extraPackages = with pkgs; [
+    #    swaylock
+    #    swayidle
+    #    xwayland
+    #    waybar
+    #    mako
+    #    kanshi
+    #  ];
+    #};
     waybar.enable = true;
     ssh.startAgent = lib.mkForce false;
     gnupg.agent = {

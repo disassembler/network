@@ -219,7 +219,7 @@ in
     zip
     gnupg
     gnupg1compat
-    rxvt_unicode
+    rxvt-unicode-unwrapped
     tcpdump
     nix-prefetch-git
     ncmpc
@@ -954,7 +954,11 @@ in
 
     samba = {
       enable = true;
-      shares = {
+      settings = {
+        global = {
+        "guest account" = "nobody";
+        "map to guest" = "bad user";
+        };
         meganbackup =
           {
             path = "/data/backups/other/megan";
@@ -970,10 +974,6 @@ in
             comment = "music share";
           };
       };
-      extraConfig = ''
-        guest account = nobody
-        map to guest = bad user
-      '';
     };
     printing = {
       enable = true;

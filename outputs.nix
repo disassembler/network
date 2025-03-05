@@ -75,6 +75,11 @@
   nixosConfigurations = import ./nixos/configurations.nix (inputs // {
     inherit inputs;
   });
+
+  homeConfigurations = import ./home/configurations.nix (inputs // {
+    inherit inputs;
+  });
+
   deploy = import ./nixos/deploy.nix (inputs // {
     inherit inputs;
   });

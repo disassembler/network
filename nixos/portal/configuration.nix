@@ -248,6 +248,10 @@ in
                 allowedIPs = [ "10.40.9.25/32" ];
               }
               {
+                publicKey = "GJbyHq3IdbkT8xeUb54Ot4PPgU4UtkzpImzNT/Wx+HI=";
+                allowedIPs = [ "10.40.9.26/32" ];
+              }
+              {
                 publicKey = "5f6TDkTVN8OS/xF7M12+rEUibIWljqMrMrBwXU34MUw=";
                 allowedIPs = [ "10.70.0.1/32" ];
               }
@@ -492,6 +496,7 @@ in
               subnet = "10.40.8.0/24";
               reservations = [
                 { hostname = "roof-wled"; hw-address = "dc:4f:22:52:e1:d3"; ip-address = "10.40.8.60"; }
+                { hostname = "camera-dvr"; hw-address = "3c:1b:f8:72:04:ca"; ip-address = "10.40.8.20"; }
               ];
             }
             {
