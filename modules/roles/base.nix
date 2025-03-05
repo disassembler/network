@@ -15,7 +15,7 @@ with lib;
     boot.tmp.cleanOnBoot = mkDefault true;
 
     programs = {
-      bash.enableCompletion = mkDefault true;
+      bash.completion.enable = mkDefault true;
       ssh.forwardX11 = false;
       ssh.startAgent = true;
       #vim.defaultEditor = true;

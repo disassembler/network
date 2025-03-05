@@ -51,6 +51,7 @@
     CARDANO_NODE_NETWORK_ID = "mainnet";
   };
   environment.systemPackages = with pkgs; [
+    magic-wormhole
     #cncli
     wget
     vim

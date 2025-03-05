@@ -3,12 +3,12 @@
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
     nix.url = "github:NixOS/nix/2.18-maintenance";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     # used for unifi and omadad
     nixpkgsLegacy.url = "github:NixOS/nixpkgs/nixos-23.11";
     #nixpkgs-2111.follows = "cardano-node/haskellNix/nixpkgs-2111";
     #nixpkgs-2105.follows = "cardano-node/haskellNix/nixpkgs-2105";
-    cardano-node.url = "github:intersectmbo/cardano-node/10.1.1-pre";
+    cardano-node.url = "github:intersectmbo/cardano-node/10.1.4";
     credential-manager.url = "github:intersectmbo/credential-manager/0.1.0.0";
     hydra-doom.url = "github:cardano-scaling/hydra-doom";
     #cardano-node.inputs.nixpkgs.follows = "haskellNix/nixpkgs-2105";
@@ -25,6 +25,15 @@
     styx.url = "github:disassembler/styx";
     neovim-flake.url = "github:johnalotoski/neovim-flake/autocmd-highlighting";
     vivarium.url = "github:nrdxp/vivarium";
+    # Used for user packages and dotfiles
+    home-manager = {
+      url = "github:nix-community/home-manager/release-24.11";
+      inputs.nixpkgs.follows =
+        "nixpkgs"; # Use system packages list where available
+    };
+    hy3 = {
+      url = "github:outfoxxed/hy3?ref=hl0.45.0";
+    };
   };
   outputs = { ... } @ args: import ./outputs.nix args;
 }
