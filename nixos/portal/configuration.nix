@@ -309,9 +309,9 @@ in
                 publicKey = "MRowDI1eC9B5Hx/zgPk5yyq2eWSq6kYFW5Sjm7w52AY=";
                 allowedIPs = [ "10.40.9.4/32" "fd00::4/128" ];
               }
+              # installeriso - uncomment and rotate key when remote installing
               {
-                # installer
-                publicKey = "FDES05UMXVPKusZaMjP0vbVlyM5UASZtE560RjVIo3E=";
+                publicKey = "d094K+jaM3ACtvWN26gPwVI61t6cAxOeKfLookHpvCM=";
                 allowedIPs = [ "10.40.9.5/32" "fd00::5/128" ];
               }
               {
@@ -442,6 +442,7 @@ in
                 }
               ];
               subnet = "10.40.33.0/24";
+              id = 104033;
               reservations = [
                 { hostname = "optina"; hw-address = "d4:3d:7e:4d:c4:7f"; ip-address = "10.40.33.20"; }
                 { hostname = "valaam"; hw-address = "00:c0:08:9d:ba:42"; ip-address = "10.40.33.21"; }
@@ -451,6 +452,7 @@ in
                 { hostname = "kodiak"; hw-address = "ec:f4:bb:e7:4b:dc"; ip-address = "10.40.33.23"; }
                 { hostname = "valaam-wifi"; hw-address = "3c:58:c2:f9:87:5b"; ip-address = "10.40.33.24"; }
                 { hostname = "printer"; hw-address = "a4:5d:36:d6:22:d9"; ip-address = "10.40.33.50"; }
+                { hostname = "sarov"; hw-address = "a8:20:66:3b:f4:b9"; ip-address = "10.40.33.40"; }
               ];
             }
             {
@@ -466,6 +468,7 @@ in
                 }
               ];
               subnet = "10.40.40.0/24";
+              id = 104040;
             }
             {
               pools = [
@@ -480,6 +483,7 @@ in
                 }
               ];
               subnet = "10.40.10.0/24";
+              id = 104010;
             }
             {
               pools = [
@@ -494,6 +498,7 @@ in
                 }
               ];
               subnet = "10.40.8.0/24";
+              id = 10408;
               reservations = [
                 { hostname = "roof-wled"; hw-address = "dc:4f:22:52:e1:d3"; ip-address = "10.40.8.60"; }
                 { hostname = "camera-dvr"; hw-address = "3c:1b:f8:72:04:ca"; ip-address = "10.40.8.20"; }
@@ -512,6 +517,7 @@ in
                 }
               ];
               subnet = "10.40.3.0/24";
+              id = 10403;
             }
           ];
         };

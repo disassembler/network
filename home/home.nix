@@ -5,6 +5,10 @@
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
+      debug = {
+        disable_logs = false;
+        enable_stdout_logs = true;
+      };
       "$mod" = "SUPER";
       "$terminal" = "${pkgs.kitty}/bin/kitty";
       "$fileManager" = "${pkgs.dolphin}/bin/dolphin";
@@ -73,6 +77,7 @@
       env = [
         "HYPRCURSOR_SIZE,24"
         "XCURSOR_SIZE,24"
+        "AQ_DRM_DEVICES,/dev/dri/card1"
       ];
       input = {
         kb_layout = "us";

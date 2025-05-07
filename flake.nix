@@ -6,10 +6,11 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     # used for unifi and omadad
     nixpkgsLegacy.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgsUnstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     #nixpkgs-2111.follows = "cardano-node/haskellNix/nixpkgs-2111";
     #nixpkgs-2105.follows = "cardano-node/haskellNix/nixpkgs-2105";
     cardano-node.url = "github:intersectmbo/cardano-node/10.1.4";
-    credential-manager.url = "github:intersectmbo/credential-manager/0.1.0.0";
+    credential-manager.url = "github:intersectmbo/credential-manager/0.1.2.0";
     hydra-doom.url = "github:cardano-scaling/hydra-doom";
     #cardano-node.inputs.nixpkgs.follows = "haskellNix/nixpkgs-2105";
     #cardano-addresses.url = "github:input-output-hk/cardano-addresses";

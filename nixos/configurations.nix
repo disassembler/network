@@ -51,6 +51,13 @@ in
     ];
     specialArgs = { inherit inputs; };
   };
+  iviron = nixosSystem {
+    system = "x86_64-linux";
+    modules = defaultModules ++ [
+      ./iviron/configuration.nix
+    ];
+    specialArgs = { inherit inputs; };
+  };
   optina = nixosSystem {
     system = "x86_64-linux";
     modules = defaultModules ++ [
@@ -103,13 +110,13 @@ in
     ];
     specialArgs = { inherit inputs; };
   };
-  #installeriso = nixosSystem {
-  #  system = "x86_64-linux";
-  #  modules = [
-  #    ./installeriso/configuration.nix
-  #  ];
-  #  specialArgs = { inherit inputs; };
-  #};
+  installeriso = nixosSystem {
+    system = "x86_64-linux";
+    modules = [
+      ./installeriso/configuration.nix
+    ];
+    specialArgs = { inherit inputs; };
+  };
   airgap = nixosSystem {
     system = "x86_64-linux";
     modules = baseModules ++ [

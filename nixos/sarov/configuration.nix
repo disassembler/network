@@ -65,6 +65,8 @@
     cardano-node.packages.x86_64-linux.cardano-node
     cardano-node.packages.x86_64-linux.cardano-cli
     credential-manager.packages.x86_64-linux.orchestrator-cli
+    credential-manager.packages.x86_64-linux.cc-sign
+    credential-manager.packages.x86_64-linux.tx-bundle
     #cardano-address
     #cardano-completions
     #cardano-hw-cli
