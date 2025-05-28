@@ -1,7 +1,6 @@
 { self
 , nixpkgs
 , home-manager
-, hy3
 , inputs
 , ...
 }:
@@ -13,14 +12,9 @@ in
   sam = home-manager.lib.homeManagerConfiguration {
     inherit pkgs;
     modules = [
-      #hyprland.homeManagerModules.default
-      {
-        wayland.windowManager.hyprland = {
-          enable = true;
-          #plugins = [ hy3.packages.x86_64-linux.hy3 ];
-        };
-      }
+      inputs.niri.homeModules.niri
       ./home.nix
+      ./niri.nix
     ];
   };
 }

@@ -4,21 +4,21 @@ let
   shared = import ../../shared.nix;
   machine = "iviron";
   hostId = "7a6c1214";
-  isUnstable = config.boot.zfs.package == pkgs.zfsUnstable;
-  zfsCompatibleKernelPackages = lib.filterAttrs (
-    name: kernelPackages:
-    (builtins.match "linux_[0-9]+_[0-9]+" name) != null
-    && (builtins.tryEval kernelPackages).success
-    && (
-      (!isUnstable && !kernelPackages.zfs.meta.broken)
-      || (isUnstable && !kernelPackages.zfs_unstable.meta.broken)
-      )
-      ) pkgs.linuxKernel.packages;
-      latestKernelPackage = lib.last (
-        lib.sort (a: b: (lib.versionOlder a.kernel.version b.kernel.version)) (
-          builtins.attrValues zfsCompatibleKernelPackages
-          )
-          );
+  #isUnstable = config.boot.zfs.package == pkgs.zfsUnstable;
+  #zfsCompatibleKernelPackages = lib.filterAttrs (
+  #  name: kernelPackages:
+  #  (builtins.match "linux_[0-9]+_[0-9]+" name) != null
+  #  && (builtins.tryEval kernelPackages).success
+  #  && (
+  #    (!isUnstable && !kernelPackages.zfs.meta.broken)
+  #    || (isUnstable && !kernelPackages.zfs_unstable.meta.broken)
+  #    )
+  #    ) pkgs.linuxKernel.packages;
+  #    latestKernelPackage = lib.last (
+  #      lib.sort (a: b: (lib.versionOlder a.kernel.version b.kernel.version)) (
+  #        builtins.attrValues zfsCompatibleKernelPackages
+  #        )
+  #        );
 
 in
   {
@@ -52,7 +52,7 @@ in
     theme = pkgs.nixos-grub2-theme;
     memtest86.enable = true;
   };
-  boot.kernelPackages = latestKernelPackage;
+  #boot.kernelPackages = latestKernelPackage;
   #boot.zfs.package = pkgs.zfs_unstable;
 
   boot.supportedFilesystems = [ "exfat" "zfs" ];
@@ -210,38 +210,39 @@ in
       };
 
       nixpkgs.overlays = [
-    #(self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
-    #inputs.vivarium.overlay
-  ];
+        inputs.niri.overlays.niri
+        #(self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
+        #inputs.vivarium.overlay
+      ];
 
-  nixpkgs.config = {
-    allowUnfree = true;
-    allowBroken = false;
-    android_sdk.accept_license = true;
-    packageOverrides = super:
-    let self = super.pkgs; in
-    {
-      manymans = with pkgs; buildEnv {
-        name = "manymans";
-        ignoreCollisions = true;
-        paths = [
-          man-pages
-          man-pages-posix
-          stdmanpages
-          glibcInfo
-        ];
+      nixpkgs.config = {
+        allowUnfree = true;
+        allowBroken = false;
+        android_sdk.accept_license = true;
+        packageOverrides = super:
+        let self = super.pkgs; in
+        {
+          manymans = with pkgs; buildEnv {
+            name = "manymans";
+            ignoreCollisions = true;
+            paths = [
+              man-pages
+              man-pages-posix
+              stdmanpages
+              glibcInfo
+            ];
+          };
+        };
       };
-    };
-  };
 
-  users.groups.plugdev = { };
-  users.extraUsers.sam = {
-    isNormalUser = true;
-    description = "Sam Leathers";
-    uid = 1000;
-    extraGroups = [ "wheel" "podman" "disk" "video" "libvirtd" "adbusers" "dialout" "plugdev" "cexplorer" ];
-    openssh.authorizedKeys.keys = shared.sam_ssh_keys;
-  };
+      users.groups.plugdev = { };
+      users.extraUsers.sam = {
+        isNormalUser = true;
+        description = "Sam Leathers";
+        uid = 1000;
+        extraGroups = [ "wheel" "podman" "disk" "video" "libvirtd" "adbusers" "dialout" "plugdev" "cexplorer" ];
+        openssh.authorizedKeys.keys = shared.sam_ssh_keys;
+      };
   #users.users.cardano-node.isSystemUser = true;
 
   profiles.zsh = {
@@ -254,6 +255,9 @@ in
     eval "$(starship init bash)"
     '';
   };
+
+  programs.niri.package = pkgs.niri-unstable;
+
   profiles.vim = {
     enable = true;
     dev = true;
@@ -368,7 +372,7 @@ in
     signal-desktop
     neomutt
     notmuch
-    taskwarrior
+    taskwarrior3
     jq
     cabal2nix
     haskellPackages.ghcid
@@ -385,12 +389,6 @@ in
       users = [ "sam" ];
     };
     enableRedistributableFirmware = true;
-    pulseaudio = {
-      enable = false;
-      package = pkgs.pulseaudioFull;
-      extraConfig = "load-module module-switch-on-connect";
-
-    };
     graphics = {
       enable = true;
       extraPackages = with pkgs; [nvidia-vaapi-driver];
@@ -400,14 +398,14 @@ in
       powerManagement.enable = false;
       powerManagement.finegrained = false;
       open = true;
-      package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-        version = "570.133.07"; # Replace with your desired version
-        sha256_64bit = "sha256-LUPmTFgb5e9VTemIixqpADfvbUX1QoTT2dztwI3E3CY="; # Replace with the correct SHA256
-        sha256_aarch64 = "sha256-xcff4TPRlOJ6r5S54h5W6PT6/3Zy2R4ASNFPu8TSHKM="; # Replace with the correct SHA256
-        openSha256 = "sha256-9l8N83Spj0MccA8+8R1uqiXBS0Ag4JrLPjrU3TaXHnM="; # Optional: If using open source driver
-        settingsSha256 = "sha256-XMk+FvTlGpMquM8aE8kgYK2PIEszUZD2+Zmj2OpYrzU="; # Optional: For settings package
-        persistencedSha256 = lib.fakeSha256; # Use fakeSha256 for persistence
-      };
+      #package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
+      #  version = "570.133.07"; # Replace with your desired version
+      #  sha256_64bit = "sha256-LUPmTFgb5e9VTemIixqpADfvbUX1QoTT2dztwI3E3CY="; # Replace with the correct SHA256
+      #  sha256_aarch64 = "sha256-xcff4TPRlOJ6r5S54h5W6PT6/3Zy2R4ASNFPu8TSHKM="; # Replace with the correct SHA256
+      #  openSha256 = "sha256-9l8N83Spj0MccA8+8R1uqiXBS0Ag4JrLPjrU3TaXHnM="; # Optional: If using open source driver
+      #  settingsSha256 = "sha256-XMk+FvTlGpMquM8aE8kgYK2PIEszUZD2+Zmj2OpYrzU="; # Optional: For settings package
+      #  persistencedSha256 = lib.fakeSha256; # Use fakeSha256 for persistence
+      #};
       prime = {
         offload = {
           enable = true;
@@ -431,7 +429,7 @@ in
   fonts.enableGhostscriptFonts = true;
   fonts.packages = with pkgs; [
     # Used by starship for fonts
-    (nerdfonts.override { fonts = [ "FiraCode" ]; })
+    nerd-fonts.fira-code
     corefonts
     fira # monospaced
     fira-code
@@ -484,6 +482,11 @@ in
         wayland = true;
       };
       desktopManager.gnome.enable = true;
+    };
+    pulseaudio = {
+      enable = false;
+      package = pkgs.pulseaudioFull;
+      extraConfig = "load-module module-switch-on-connect";
     };
     pipewire = {
       enable = true;

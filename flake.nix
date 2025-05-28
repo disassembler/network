@@ -2,8 +2,9 @@
   description = "Disassembler Network";
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
-    nix.url = "github:NixOS/nix/2.18-maintenance";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    niri.url = "github:sodiboo/niri-flake/d5ccd8c5e6198bdac760ea65dd6c46e83a55b6f6?";
+    nix.url = "github:NixOS/nix/2.29.0";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     # used for unifi and omadad
     nixpkgsLegacy.url = "github:NixOS/nixpkgs/nixos-23.11";
     nixpkgsUnstable.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -28,7 +29,7 @@
     vivarium.url = "github:nrdxp/vivarium";
     # Used for user packages and dotfiles
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.11";
+      url = "github:nix-community/home-manager/d0bbd221482c2713cccb80220f3c9d16a6e20a33";
       inputs.nixpkgs.follows =
         "nixpkgs"; # Use system packages list where available
     };

@@ -116,7 +116,7 @@
   programs.dconf.enable = true;
   programs.gnupg.agent.enable = true;
   programs.bash = {
-    enableCompletion = true;
+    completion.enable = true;
   };
   systemd.user.services.dconf-defaults = {
     script = let
