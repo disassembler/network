@@ -11,7 +11,6 @@
       };
       "$mod" = "SUPER";
       "$terminal" = "${pkgs.kitty}/bin/kitty";
-      "$fileManager" = "${pkgs.dolphin}/bin/dolphin";
       "$menu" = "${pkgs.wofi}/bin/wofi  --show drun";
 
       exec-once = [
@@ -20,7 +19,6 @@
       ];
       bind = [
         "$mod      , Return    , exec, ${pkgs.ghostty}/bin/ghostty"
-        "$mod      , E         , exec, ${pkgs.plasma5Packages.dolphin}/bin/dolphin"
         "$mod      , D         , exec, ${pkgs.rofi-wayland}/bin/rofi -show run"
         "$mod SHIFT, C         , killactive,"
         "$mod SHIFT, E         , exit,"

@@ -5,6 +5,10 @@
     packages = with pkgs; [
       hello
       cowsay
+      ghostty
+      fuzzel
+      swaylock
+      rofi
     ];
 
     username = "sam";

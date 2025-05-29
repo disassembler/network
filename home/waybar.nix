@@ -7,12 +7,13 @@
       settings = [
         {
           id = "top";
-          height = 0;
-          margin = "0px 0px 0p 0px";
+          height = 32;
+          margin-top = 4;
+          margin-left = 4;
+          margin-right = 4;
           name = "top";
           layer = "top";
-          position = "left";
-          reload_style_on_change = true;
+
           modules-right = [
             "tray"
             "disk"
@@ -21,7 +22,7 @@
             "network"
             "pulseaudio"
             "idle_inhibitor"
-            "clock#1"
+            "clock"
           ];
 
           modules-center = [
@@ -35,7 +36,6 @@
           "niri/window" = {
             format = "{}";
             separate-outputs = true;
-            rotate = 90;
           };
 
           "niri/workspaces" = {
@@ -51,24 +51,23 @@
               10
             );
             format-icons = {
-              "1" = "一";
-              "2" = "二";
-              "3" = "三";
-              "4" = "四";
-              "5" = "五";
-              "6" = "六";
-              "7" = "七";
-              "8" = "八";
-              "9" = "九";
-              "10" = "〇";
+              "1" = "1";
+              "2" = "2";
+              "3" = "3";
+              "4" = "4";
+              "5" = "5";
+              "6" = "6";
+              "7" = "7";
+              "8" = "8";
+              "9" = "9";
+              "10" = "10";
             };
           };
 
-          "clock#1" = {
-            format = "{:%a\n%d\n%b\n%H\n%M}";
+          "clock" = {
+            format = "{:%e %B %H:%M}";
             tooltip = true;
             tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
-            # rotate = 90;
           };
 
           network = {
@@ -123,7 +122,6 @@
             format-source-muted = "";
             on-click = "${pkgs.ponymix}/bin/ponymix -N -t sink toggle";
             on-click-right = "${pkgs.ponymix}/bin/ponymix -N -t source toggle";
-            rotate = 90;
             format-icons = {
               car = "";
               default = ["🔈" "🔉" "🔊"];
@@ -153,7 +151,6 @@
             format-icons = ["▁" "▂" "▃" "▄" "▅" "▆" "▇" "█"];
             tooltip = false;
             interval = 1;
-            # rotate = 90;
             states = {
               low = 0;
               mid = 50;
@@ -227,8 +224,8 @@
             "FontAwesome6Free",
             "PowerlineExtraSymbols"
             ;
-          font-size: 18px;
-          min-height: 14px;
+          font-size: 14px;
+          min-height: 12px;
           margin: 0px;
         }
 

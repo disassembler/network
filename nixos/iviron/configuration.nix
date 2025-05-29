@@ -52,6 +52,7 @@ in
     theme = pkgs.nixos-grub2-theme;
     memtest86.enable = true;
   };
+  #boot.blacklistedKernelModules = [ "amdgpu" ];
   #boot.kernelPackages = latestKernelPackage;
   #boot.zfs.package = pkgs.zfs_unstable;
 
@@ -195,7 +196,7 @@ in
           settings.sandbox = true;
           settings.cores = 4;
       #settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" "/etc/skopeo/auth.json=${config.sops.secrets.docker_auth.path}" ];
-      settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
+      #settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
       settings.substituters = [ "https://cache.iog.io" ];
       settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
       distributedBuilds = true;
@@ -256,8 +257,6 @@ in
     '';
   };
 
-  programs.niri.package = pkgs.niri-unstable;
-
   profiles.vim = {
     enable = true;
     dev = true;
@@ -298,8 +297,14 @@ in
     #});
   in
   [
+
     inputs.home-manager.packages.x86_64-linux.home-manager
     polychromatic
+    pciutils
+    steamcmd
+    wineWowPackages.waylandFull
+    winetricks
+    lshw
     kitty
     wofi
     obsStudio
@@ -394,7 +399,7 @@ in
       extraPackages = with pkgs; [nvidia-vaapi-driver];
     };
     nvidia = {
-      modesetting.enable = true;
+      modesetting.enable = false;
       powerManagement.enable = false;
       powerManagement.finegrained = false;
       open = true;
@@ -406,6 +411,7 @@ in
       #  settingsSha256 = "sha256-XMk+FvTlGpMquM8aE8kgYK2PIEszUZD2+Zmj2OpYrzU="; # Optional: For settings package
       #  persistencedSha256 = lib.fakeSha256; # Use fakeSha256 for persistence
       #};
+      nvidiaSettings = true;
       prime = {
         offload = {
           enable = true;
@@ -451,6 +457,14 @@ in
       enable = true;
       xwayland.enable = true;
     };
+    niri = {
+      enable = true;
+      package = pkgs.niri-unstable;
+    };
+    sway = {
+      enable = true;
+    };
+
     #hyprland.package = inputs.hyprland.packages.x86_64-linux.hyprland;
     #sway = {
     #  enable = true;
@@ -476,12 +490,19 @@ in
   services = {
     xserver = {
       videoDrivers = [ "nvidia" ];
-      enable = true;
+    #  enable = true;
+      desktopManager.gnome.enable = true;
       displayManager.gdm = {
         enable = true;
         wayland = true;
       };
-      desktopManager.gnome.enable = true;
+    };
+    displayManager = {
+      #sddm = {
+      #  enable = true;
+      #  wayland.enable = true;
+      #};
+      defaultSession = "niri";
     };
     pulseaudio = {
       enable = false;

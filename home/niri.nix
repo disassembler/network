@@ -21,12 +21,11 @@ in {
     input = {
       keyboard = {
         xkb = {
-          layout = "jp,de";
-          options = "caps:ctrl_modifier";
+          layout = "en,us";
         };
 
-        repeat-delay = 150;
-        repeat-rate = 40;
+        #repeat-delay = 150;
+        #repeat-rate = 40;
         track-layout = "global";
       };
 
@@ -37,17 +36,17 @@ in {
       workspace-auto-back-and-forth = true;
     };
 
-    outputs."DP-1" = {
+    outputs."eDP-1" = {
       scale = 1;
 
-      mode = {
-        width = 5120;
-        height = 1440;
-        refresh = 119.970;
-      };
+      #mode = {
+      #  width = 5120;
+      #  height = 1440;
+      #  refresh = 119.970;
+      #};
 
       position = {
-        x = 1280;
+        x = 0;
         y = 0;
       };
     };

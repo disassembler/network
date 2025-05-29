@@ -15,6 +15,8 @@ in
       inputs.niri.homeModules.niri
       ./home.nix
       ./niri.nix
+      ./hyprland.nix
+      ./waybar.nix
     ];
   };
 }
