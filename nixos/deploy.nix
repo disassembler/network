@@ -17,7 +17,7 @@ in
   nodes = {
     optina = mkNode "optina" "10.40.33.20" true;
     iviron = mkNode "iviron" "10.40.33.133" true;
-    pskov = mkNode "pskov" "10.40.33.191" true;
+    irkutsk = mkNode "irkutsk" "10.40.33.191" true;
     #portal = mkNode "portal" "portal.lan.disasm.us" true;
     portal = mkNode "portal" "10.40.33.1" false;
     sarov  = mkNode "sarov" "10.40.33.40" true;

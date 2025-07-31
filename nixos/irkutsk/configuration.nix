@@ -1,4 +1,4 @@
-{ lib, config, pkgs, fetchgit, ... }:
+{ lib, inputs, config, pkgs, fetchgit, ... }:
 
 let
   shared = import ../../shared.nix;
@@ -17,16 +17,27 @@ in
   # Uncomment to use the systemd-boot EFI boot loader.
   #boot.loader.systemd-boot.enable = true;
 
-  # Uncomment to use grub boot loader
   boot.loader.grub = {
+    enable = true;
     efiSupport = true;
-    gfxmodeEfi = "1024x768";
+    efiInstallAsRemovable = true;
+    useOSProber = true;
+    default = "saved";
     device = "nodev";
+    theme = pkgs.nixos-grub2-theme;
     memtest86.enable = true;
   };
-  boot.zfs.package = pkgs.zfs_unstable;
 
-  boot.supportedFilesystems = [ "exfat" ];
+  #boot.zfs.package = pkgs.zfs_unstable;
+
+  boot.supportedFilesystems = [ "exfat" "zfs" ];
+
+  boot.extraModulePackages = [
+    config.boot.kernelPackages.v4l2loopback
+  ];
+  boot.kernelModules = [
+    "v4l2loopback"
+  ];
 
 
   # Splash screen to make boot look nice
@@ -45,9 +56,9 @@ in
       device = "/dev/disk/by-uuid/47a5b911-4dfe-4bf5-8a5c-c911e211cda0";
     };
   };
-  systemd.additionalUpstreamSystemUnits = [
-    "debug-shell.service"
-  ];
+  #systemd.additionalUpstreamSystemUnits = [
+  #  "debug-shell.service"
+  #];
 
   powerManagement = {
     enable = true;
@@ -60,7 +71,7 @@ in
 
   networking = {
     hostName = machine;
-    hostId = hostId;
+    inherit hostId;
     #nameservers = [ "127.0.0.1" ];
     networkmanager.enable = true;
     networkmanager.unmanaged = [ "interface-name:ve-*" "ens9" ];
@@ -99,21 +110,23 @@ in
     {
       settings.sandbox = true;
       settings.cores = 4;
-      settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
-      settings.substituters = [ "https://cache.nixos.org" "https://cache.iog.io" ];
-      settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
-      distributedBuilds = true;
-      buildMachines = [
-      ];
-      extraOptions = ''
-        binary-caches-parallel-connections = 3
-        connect-timeout = 5
-        #allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk/nixpkgs/archive
-        experimental-features = nix-command flakes
-      '';
-    };
+  #settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" "/etc/skopeo/auth.json=${config.sops.secrets.docker_auth.path}" ];
+  #settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
+  settings.substituters = [ "https://cache.iog.io" ];
+  settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
+  distributedBuilds = true;
+  buildMachines = [
+  ];
+  extraOptions = ''
+  binary-caches-parallel-connections = 3
+  connect-timeout = 5
+    #allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk/nixpkgs/archive
+    experimental-features = nix-command flakes fetch-closure
+    '';
+  };
 
   nixpkgs.overlays = [
+    inputs.niri.overlays.niri
     #(self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
   ];
 
@@ -129,7 +142,7 @@ in
           ignoreCollisions = true;
           paths = [
             man-pages
-            posix_man_pages
+            man-pages-posix
             stdmanpages
             glibcInfo
           ];
@@ -165,20 +178,29 @@ in
   environment.pathsToLink = [
     "/share/nix-direnv"
   ];
-  environment.systemPackages = with pkgs; let
-    startSway = pkgs.writeTextFile {
-      name = "startsway";
-      destination = "/bin/startsway";
-      executable = true;
-      text = ''
-        #! ${pkgs.bash}/bin/bash
 
-        # first import environment variables from the login manager
-        systemctl --user import-environment
-        # then start the service
-        exec systemctl --user start sway.service
-      '';
-    };
+  environment.systemPackages = with pkgs; let
+    #startSway = pkgs.writeTextFile {
+    #  name = "startsway";
+    #  destination = "/bin/startsway";
+    #  executable = true;
+    #  text = ''
+    #    #! ${pkgs.bash}/bin/bash
+
+    #    # first import environment variables from the login manager
+    #    systemctl --user import-environment
+    #    # then start the service
+    #    exec systemctl --user start sway.service
+    #  '';
+    #};
+    obsStudio = pkgs.wrapOBS {
+    plugins = with pkgs.obs-studio-plugins; [
+      scrcpy
+      wlrobs
+      obs-backgroundremoval
+      obs-pipewire-audio-capture
+    ];
+  };
     #trezor = python3Packages.trezor.overrideAttrs (oldAttrs: {
     #  src = python3Packages.fetchPypi {
     #    pname = "trezor";
@@ -188,9 +210,13 @@ in
     #});
   in
   [
-    docker-client
-    podman
-    tailscale
+    inputs.home-manager.packages.x86_64-linux.home-manager
+    kitty
+    wofi
+    obsStudio
+    headscale
+    gopass
+    iamb
     starship
     direnv
     nix-direnv
@@ -200,11 +226,11 @@ in
     #trezor
     gopass
     arduino
-    startSway
+    #startSway
     strace
     mplayer
     gpgme.dev
-    yubioath-desktop
+    yubioath-flutter
     yubikey-manager
     pinentry-gtk2
     bat
@@ -224,7 +250,7 @@ in
     google-chrome
     gnupg
     gnupg1compat
-    docker-compose
+    podman-compose
     niff
     tmate
     htop
@@ -233,8 +259,9 @@ in
     magic-wormhole
     weechat
     pv
-    rxvt_unicode-with-plugins
+    rxvt-unicode
     termite
+    wezterm
     xsel
     tcpdump
     inetutils
@@ -253,30 +280,26 @@ in
     keybase
     keybase-gui
     slack
+    signal-desktop
     neomutt
     notmuch
-    taskwarrior
+    taskwarrior3
     jq
     cabal2nix
     haskellPackages.ghcid
     virt-manager
-    xdg_utils
+    xdg-utils
     inotifyTools
     zoom-us
   ];
 
   hardware = {
+    opentabletdriver.enable = true;
     enableRedistributableFirmware = true;
-    pulseaudio = {
-      enable = true;
-      package = pkgs.pulseaudioFull;
-      extraConfig = "load-module module-switch-on-connect";
-
-    };
-    opengl.enable = true;
-    opengl.driSupport32Bit = true;
-    opengl.extraPackages = [ pkgs.vaapiIntel ];
     facetimehd.enable = true;
+    graphics.enable = true;
+    graphics.enable32Bit = true;
+    graphics.extraPackages = [ pkgs.vaapiIntel ];
     bluetooth = {
       enable = true;
       settings = {
@@ -288,11 +311,12 @@ in
   };
   fonts.fontDir.enable = true;
   fonts.enableGhostscriptFonts = true;
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     # Used by starship for fonts
-    (nerdfonts.override { fonts = [ "FiraCode" ]; })
+    nerd-fonts.fira-code
     corefonts
     fira # monospaced
+    fira-code
     powerline-fonts
     inconsolata
     liberation_ttf
@@ -307,29 +331,75 @@ in
     mosh.enable = true;
     adb.enable = true;
     light.enable = true;
-    sway = {
-      enable = true;
-      extraPackages = with pkgs; [
-        swaylock
-        swayidle
-        xwayland
-        waybar
-        mako
-        kanshi
-      ];
-    };
+    #hyprland.enable = true;
+    #hyprland.package = inputs.hyprland.packages.x86_64-linux.hyprland;
+    #sway = {
+    #  enable = true;
+    #  extraPackages = with pkgs; [
+    #    swaylock
+    #    swayidle
+    #    xwayland
+    #    waybar
+    #    mako
+    #    kanshi
+    #  ];
+    #};
     waybar.enable = true;
     ssh.startAgent = lib.mkForce false;
     gnupg.agent = {
       enable = true;
       enableSSHSupport = true;
-      pinentryFlavor = "gtk2";
+      pinentryPackage = pkgs.pinentry-gtk2;
+    };
+    niri = {
+      enable = true;
+      package = pkgs.niri-unstable;
     };
   };
 
-
   services = {
+    xserver = {
+      desktopManager.gnome.enable = true;
+      displayManager.gdm = {
+        enable = true;
+        wayland = true;
+        autoSuspend = false;
+      };
+    };
+    displayManager = {
+      defaultSession = "niri";
+    };
+    pulseaudio = {
+      enable = false;
+      package = pkgs.pulseaudioFull;
+      extraConfig = "load-module module-switch-on-connect";
+
+    };
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+      # If you want to use JACK applications, uncomment this
+      #jack.enable = true;
+    };
     tailscale.enable = false;
+
+    #rabbitmq = {
+    #  enable = true;
+    #  #listenAddress = "::1";
+    #  managementPlugin.enable = true;
+    #};
+    tftpd.enable = true;
+    tftpd.path = "/var/tftpd";
+    zfs.trim.enable = true;
+    zfs.autoScrub.enable = true;
+    zfs.autoScrub.pools = [ "zpool" ];
+    zfs.autoSnapshot = {
+      enable = true;
+      frequent = 8;
+      monthly = 1;
+    };
     lorri.enable = true;
     trezord.enable = true;
     resolved.enable = false;
@@ -358,67 +428,67 @@ in
     #cardano-graphql = {
     #  enable = false;
     #};
-    postgresql = {
-      enable = true;
-      enableTCPIP = false;
-      settings = {
-        max_connections = 200;
-        shared_buffers = "2GB";
-        effective_cache_size = "6GB";
-        maintenance_work_mem = "512MB";
-        checkpoint_completion_target = 0.7;
-        wal_buffers = "16MB";
-        default_statistics_target = 100;
-        random_page_cost = 1.1;
-        effective_io_concurrency = 200;
-        work_mem = "10485kB";
-        min_wal_size = "1GB";
-        max_wal_size = "2GB";
-      };
-      identMap = ''
-        #explorer-users /root cexplorer
-        explorer-users /postgres postgres
-        explorer-users /sam cexplorer
-        explorer-users /smash smash
-        explorer-users /cexplorer cexplorer
-      '';
-      authentication = ''
-        local all all ident map=explorer-users
-        local all all trust
-      '';
-      ensureDatabases = [
-        "explorer_python_api"
-        "cexplorer"
-        "smash"
-        "hdb_catalog"
-      ];
-      ensureUsers = [
-        {
-          name = "cexplorer";
-          ensurePermissions = {
-            "DATABASE explorer_python_api" = "ALL PRIVILEGES";
-            "DATABASE cexplorer" = "ALL PRIVILEGES";
-            "DATABASE hdb_catalog" = "ALL PRIVILEGES";
-            "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
-          };
-        }
-        {
-          name = "smash";
-          ensurePermissions = {
-            "DATABASE smash" = "ALL PRIVILEGES";
-            "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
-          };
-        }
-        {
-          name = "sam";
-          ensurePermissions = {
-            "DATABASE smash" = "ALL PRIVILEGES";
-            #"DATABASE cexplorer" = "ALL PRIVILEGES";
-            "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
-          };
-        }
-      ];
-    };
+    #postgresql = {
+    #  enable = true;
+    #  enableTCPIP = false;
+    #  settings = {
+    #    max_connections = 200;
+    #    shared_buffers = "2GB";
+    #    effective_cache_size = "6GB";
+    #    maintenance_work_mem = "512MB";
+    #    checkpoint_completion_target = 0.7;
+    #    wal_buffers = "16MB";
+    #    default_statistics_target = 100;
+    #    random_page_cost = 1.1;
+    #    effective_io_concurrency = 200;
+    #    work_mem = "10485kB";
+    #    min_wal_size = "1GB";
+    #    max_wal_size = "2GB";
+    #  };
+    #  identMap = ''
+    #    #explorer-users /root cexplorer
+    #    explorer-users /postgres postgres
+    #    explorer-users /sam cexplorer
+    #    explorer-users /smash smash
+    #    explorer-users /cexplorer cexplorer
+    #  '';
+    #  authentication = ''
+    #    local all all ident map=explorer-users
+    #    local all all trust
+    #  '';
+    #  ensureDatabases = [
+    #    "explorer_python_api"
+    #    "cexplorer"
+    #    "smash"
+    #    "hdb_catalog"
+    #  ];
+    #  ensureUsers = [
+    #    {
+    #      name = "cexplorer";
+    #      ensurePermissions = {
+    #        "DATABASE explorer_python_api" = "ALL PRIVILEGES";
+    #        "DATABASE cexplorer" = "ALL PRIVILEGES";
+    #        "DATABASE hdb_catalog" = "ALL PRIVILEGES";
+    #        "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
+    #      };
+    #    }
+    #    {
+    #      name = "smash";
+    #      ensurePermissions = {
+    #        "DATABASE smash" = "ALL PRIVILEGES";
+    #        "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
+    #      };
+    #    }
+    #    {
+    #      name = "sam";
+    #      ensurePermissions = {
+    #        "DATABASE smash" = "ALL PRIVILEGES";
+    #        #"DATABASE cexplorer" = "ALL PRIVILEGES";
+    #        "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
+    #      };
+    #    }
+    #  ];
+    #};
     printing = {
       enable = true;
       drivers = [ pkgs.hplip ];
@@ -474,55 +544,93 @@ in
     };
     dnsmasq = {
       enable = true;
-      extraConfig = ''
-        address=/portal.wedlake.lan/10.40.33.1
-        address=/crate.wedlake.lan/10.40.33.20
-        address=/hydra.wedlake.lan/10.40.33.20
-        address=/unifi.wedlake.lan/10.40.33.20
-        address=/server.lan.bower-law.com/192.168.0.254
-        server=/wedlake.lan/10.40.33.1
-        server=/lan.centrallakerealty.com/10.37.3.2
-        server=/lan.bower-law.com/192.168.0.254
-        server=/bower.local/192.168.0.254
-        server=/lan.centrallakerealty.com/10.37.3.2
-      '';
-      servers = [
-        "8.8.4.4"
-        "8.8.8.8"
-      ];
+      settings = {
+        address = [
+          "/portal.wedlake.lan/10.40.33.1"
+          "/crate.wedlake.lan/10.40.33.20"
+          "/hydra.wedlake.lan/10.40.33.20"
+          "/unifi.wedlake.lan/10.40.33.20"
+          "/server.lan.bower-law.com/192.168.0.254"
+        ];
+        server = [
+          "8.8.4.4"
+          "8.8.8.8"
+          "/wedlake.lan/10.40.33.1"
+          "/lan.centrallakerealty.com/10.37.3.2"
+          "/lan.bower-law.com/192.168.0.254"
+          "/bower.local/192.168.0.254"
+          "/lan.centrallakerealty.com/10.37.3.2"
+        ];
+      };
       resolveLocalQueries = false;
     };
 
+    #openvpn = {
+    #  servers = {
+    #    prophet = {
+    #      autoStart = false;
+    #      config = ''
+    #        client
+    #        dev tun
+    #        proto udp
+    #        remote prophet.samleathers.com 1195
+    #        nobind
+    #        persist-key
+    #        persist-tun
+    #        ca ${config.sops.secrets.openvpn_prophet_ca.path}
+    #        cert ${config.sops.secrets.openvpn_prophet_cert.path}
+    #        key ${config.sops.secrets.openvpn_prophet_key.path}
+    #        tls-auth ${config.sops.secrets.openvpn_prophet_tls.path}
+    #        key-direction 1
+    #        comp-lzo
+    #        verb 3
+    #      '';
+    #    };
+    #    bower = {
+    #      autoStart = false;
+    #      config = ''
+    #        client
+    #        dev tun
+    #        proto udp
+    #        remote 73.230.94.119 1194
+    #        nobind
+    #        persist-key
+    #        persist-tun
+    #        cipher AES-256-CBC
+    #        ca ${config.sops.secrets.openvpn_bower_ca.path}
+    #        cert ${config.sops.secrets.openvpn_bower_cert.path}
+    #        key ${config.sops.secrets.openvpn_bower_key.path}
+    #        comp-lzo
+    #        verb 3
+    #        '';
+    #    };
+    #  };
+    #};
     keybase.enable = true;
     kbfs = {
       enable = true;
       mountPoint = "/keybase";
     };
-    #redshift = {
-    #  enable = true;
-    #  package = pkgs.gammastep;
-    #};
+    redshift = {
+      enable = true;
+      package = pkgs.gammastep;
+    };
   };
-  #systemd.services.cardano-db-sync.serviceConfig = {
-  #  SupplementaryGroups = "cardano-node";
-  #  Restart = "always";
-  #  RestartSec = "30s";
-  #};
-  #virtualisation.docker = {
-  #  enable = true;
-  #  storageDriver = "zfs";
-  #};
+  location.provider = "geoclue2";
+
+
   virtualisation.docker.enable = false;
   virtualisation.podman.enable = true;
   virtualisation.podman.dockerCompat = true;
   virtualisation.podman.dockerSocket.enable = true;
-  virtualisation.podman.defaultNetwork.dnsname.enable = true;
+  virtualisation.podman.defaultNetwork.settings.dnsenabled = true;
   systemd.services.podman.path = [pkgs.zfs];
   systemd.services.podman.serviceConfig.ExecStart = lib.mkForce [
     ""
     "${config.virtualisation.podman.package}/bin/podman --storage-driver zfs $LOGGING system service"
   ];
-  virtualisation.libvirtd.enable = false;
+  virtualisation.libvirtd.enable = true;
+  security.rtkit.enable = true;
   security.sudo.wheelNeedsPassword = true;
 
   # Custom dotfiles for sam user
@@ -530,8 +638,20 @@ in
     etc = {
       "per-user/sam/gitconfig".text = import ../../sam-dotfiles/git-config.nix;
       "sway/config".source = ../../sam-dotfiles/sway/config;
+      "per-user/sam/wezterm.lua".source = ../../sam-dotfiles/wezterm.lua;
       "xdg/waybar/config".source = ../../sam-dotfiles/waybar/config;
       "xdg/waybar/style.css".source = ../../sam-dotfiles/waybar/style.css;
+      "sysconfig/lm_sensors".text = ''
+        # Generated by sensors-detect on Tue Feb 15 13:12:56 2022
+        # This file is sourced by /etc/init.d/lm_sensors and defines the modules to
+        # be loaded/unloaded.
+        #
+        # The format of this file is a shell script that simply defines variables:
+        # HWMON_MODULES for hardware monitoring driver modules, and optionally
+        # BUS_MODULES for any required bus driver module (for example for I2C or SPI).
+
+        HWMON_MODULES="coretemp"
+      '';
     };
 
     shellInit = ''
@@ -544,7 +664,9 @@ in
   system.activationScripts.samdotfiles = {
     text = ''
       mkdir -p /home/sam/.config/sway
+      mkdir -p /home/sam/.config/wezterm
       ln -sfn /etc/per-user/sam/gitconfig /home/sam/.gitconfig
+      ln -sfn /etc/per-user/sam/wezterm.lua /home/sam/.config/wezterm/wezterm.lua
       ln -sfn /etc/xdg/waybar /home/sam/.config/waybar
     '';
     deps = [ ];
@@ -596,4 +718,5 @@ in
     };
 
   systemd.user.services = { };
+  system.stateVersion = "23.05";
 }

@@ -36,14 +36,14 @@ let
   defaultModules = baseModules ++ customModules;
 in
 {
-  #irkutsk = nixosSystem {
-  #  system = "x86_64-linux";
-  #  modules = defaultModules ++ [
-  #    nixos-hardware.nixosModules.dell-xps-13-9380
-  #    ./irkutsk/configuration.nix
-  #  ];
-  #  specialArgs = { inherit inputs; };
-  #};
+  irkutsk = nixosSystem {
+    system = "x86_64-linux";
+    modules = defaultModules ++ [
+      nixos-hardware.nixosModules.dell-xps-13-9380
+      ./irkutsk/configuration.nix
+    ];
+    specialArgs = { inherit inputs; };
+  };
   pskov = nixosSystem {
     system = "x86_64-linux";
     modules = defaultModules ++ [
