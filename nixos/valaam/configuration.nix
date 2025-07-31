@@ -95,11 +95,13 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    inputs.home-manager.packages.x86_64-linux.home-manager
+    google-chrome
     wget
     vim
     screen
     gitMinimal
-    pinentry
+    pinentry-gtk2
     gnupg
     python3Packages.ipython
     srm
@@ -111,7 +113,12 @@
   ];
 
   programs = {
-    gnupg.agent = { enable = true; enableSSHSupport = false; };
+    ssh.startAgent = lib.mkForce false;
+    gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
+      pinentryPackage = pkgs.pinentry-gtk2;
+    };
     mosh.enable = true;
     bash = {
       interactiveShellInit = ''
@@ -135,6 +142,41 @@
   };
 
   services = {
+    udev.extraRules =
+      let
+        dependencies = with pkgs; [ coreutils gnupg gawk gnugrep ];
+        clearYubikey = pkgs.writeScript "clear-yubikey" ''
+          #!${pkgs.stdenv.shell}
+          export PATH=${pkgs.lib.makeBinPath dependencies};
+          keygrips=$(
+            gpg-connect-agent 'keyinfo --list' /bye 2>/dev/null \
+              | grep -v OK \
+              | awk '{if ($4 == "T") { print $3 ".key" }}')
+          for f in $keygrips; do
+            rm -v ~/.gnupg/private-keys-v1.d/$f
+          done
+          gpg --card-status 2>/dev/null 1>/dev/null || true
+        '';
+        clearYubikeySam = pkgs.writeScript "clear-yubikey-sam" ''
+          #!${pkgs.stdenv.shell}
+          ${pkgs.sudo}/bin/sudo -u sam ${clearYubikey}
+        '';
+      in
+      ''
+        ACTION=="add|change", SUBSYSTEM=="usb", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0407", RUN+="${clearYubikeySam}"
+        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="2b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="3b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="4b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1807", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1808", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0000", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0001", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0004", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+        KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2c97"
+        KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2581"
+      '';
+    udev.packages = [ pkgs.yubikey-personalization ];
     openssh = {
       settings.PasswordAuthentication = false;
       enable = true;
@@ -150,7 +192,18 @@
     };
   };
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 3001 9090 9093 3000 3100 7777 ];
+  networking.firewall.allowedTCPPorts = [ 3001 9090 9093 3000 3100 ];
+  networking.firewall.allowedUDPPorts = [
+    7777
+    7778
+    7787
+    7788
+    7797
+    7798
+    27015
+    27016
+    27017
+  ];
   # TODO: pull users from secrets.nix instead
   users.users.sam = {
     uid = 10016;

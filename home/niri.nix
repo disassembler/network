@@ -36,20 +36,20 @@ in {
       workspace-auto-back-and-forth = true;
     };
 
-    outputs."eDP-1" = {
-      scale = 1;
+    #outputs."eDP-1" = {
+    #  scale = 1;
 
-      #mode = {
-      #  width = 5120;
-      #  height = 1440;
-      #  refresh = 119.970;
-      #};
+    #  #mode = {
+    #  #  width = 5120;
+    #  #  height = 1440;
+    #  #  refresh = 119.970;
+    #  #};
 
-      position = {
-        x = 0;
-        y = 0;
-      };
-    };
+    #  position = {
+    #    x = 0;
+    #    y = 0;
+    #  };
+    #};
 
     layout = {
       gaps = 1;

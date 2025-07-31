@@ -86,7 +86,7 @@ in
       buildMachines = [
         buildMachines.linux.optina
       ];
-      settings.substituters = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
+      settings.substituters = [ "https://cache.nixos.org" "https://cache.iog.io" ];
       settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
       extraOptions = ''
         allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk

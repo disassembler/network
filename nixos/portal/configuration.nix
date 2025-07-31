@@ -129,6 +129,16 @@ in
       forwardPorts = [
         { sourcePort = 32400; destination = "10.40.33.20:32400"; proto = "tcp"; }
         { sourcePort = 19132; destination = "10.40.33.20:19132"; proto = "udp"; }
+        # Ark Survival Ascended
+        { sourcePort = 7777; destination = "10.40.33.21:7777"; proto = "udp"; }
+        { sourcePort = 7778; destination = "10.40.33.21:7778"; proto = "udp"; }
+        { sourcePort = 7787; destination = "10.40.33.21:7787"; proto = "udp"; }
+        { sourcePort = 7788; destination = "10.40.33.21:7788"; proto = "udp"; }
+        { sourcePort = 7797; destination = "10.40.33.21:7797"; proto = "udp"; }
+        { sourcePort = 7798; destination = "10.40.33.21:7798"; proto = "udp"; }
+        { sourcePort = 27015; destination = "10.40.33.21:27015"; proto = "udp"; }
+        { sourcePort = 27016; destination = "10.40.33.21:27016"; proto = "udp"; }
+        { sourcePort = 27017; destination = "10.40.33.21:27017"; proto = "udp"; }
       ];
     };
     enableIPv6 = true;
@@ -311,7 +321,7 @@ in
               }
               # installeriso - uncomment and rotate key when remote installing
               {
-                publicKey = "d094K+jaM3ACtvWN26gPwVI61t6cAxOeKfLookHpvCM=";
+                publicKey = "JR2LSc/P4EkEtzywUzf5flIVYz7yR+p7fPEERYrdQ0U=";
                 allowedIPs = [ "10.40.9.5/32" "fd00::5/128" ];
               }
               {
@@ -346,7 +356,7 @@ in
   };
 
   nix = {
-    settings.substituters = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
+    settings.substituters = [ "https://cache.nixos.org" "https://cache.iog.io" ];
     settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
     extraOptions = ''
     experimental-features = nix-command flakes

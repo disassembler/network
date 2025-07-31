@@ -24,22 +24,17 @@ in
 
   imports = [ ./hardware-configuration.nix ];
 
-  # Uncomment to use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = "/boot";
-
-
-  # Uncomment to use grub boot loader
-  #boot.loader.grub = {
-  #  enable = true;
-  #  efiSupport = true;
-  #  gfxmodeEfi = "1024x768";
-  #  device = "nodev";
-  #  theme = pkgs.nixos-grub2-theme;
-  #  memtest86.enable = true;
-  #};
-  boot.zfs.package = pkgs.zfs_unstable;
+  boot.loader.grub = {
+    enable = true;
+    efiSupport = true;
+    efiInstallAsRemovable = true;
+    useOSProber = true;
+    default = "saved";
+    device = "nodev";
+    theme = pkgs.nixos-grub2-theme;
+    memtest86.enable = true;
+  };
+  #boot.zfs.package = pkgs.zfs_unstable;
 
   boot.supportedFilesystems = [ "exfat" "zfs" ];
   boot.tmp.cleanOnBoot = true;
@@ -183,7 +178,7 @@ in
     {
       settings.sandbox = true;
       settings.cores = 4;
-      settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" "/etc/skopeo/auth.json=${config.sops.secrets.docker_auth.path}" ];
+      settings.extra-sandbox-paths = [ "/etc/skopeo/auth.json=${config.sops.secrets.docker_auth.path}" ];
       settings.substituters = [ "https://cache.iog.io" ];
       settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
       distributedBuilds = true;
@@ -198,6 +193,7 @@ in
     };
 
   nixpkgs.overlays = [
+    inputs.niri.overlays.niri
     #(self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
     #inputs.vivarium.overlay
   ];
@@ -355,7 +351,7 @@ in
     signal-desktop
     neomutt
     notmuch
-    taskwarrior
+    taskwarrior3
     jq
     cabal2nix
     haskellPackages.ghcid
@@ -369,12 +365,6 @@ in
     opentabletdriver.enable = true;
     system76.enableAll = true;
     enableRedistributableFirmware = true;
-    pulseaudio = {
-      enable = false;
-      package = pkgs.pulseaudioFull;
-      extraConfig = "load-module module-switch-on-connect";
-
-    };
     graphics.enable = true;
     graphics.enable32Bit = true;
     graphics.extraPackages = [ pkgs.vaapiIntel ];
@@ -392,7 +382,7 @@ in
   fonts.enableGhostscriptFonts = true;
   fonts.packages = with pkgs; [
     # Used by starship for fonts
-    (nerdfonts.override { fonts = [ "FiraCode" ]; })
+    nerd-fonts.fira-code
     corefonts
     fira # monospaced
     fira-code
@@ -430,10 +420,31 @@ in
       enableSSHSupport = true;
       pinentryPackage = pkgs.pinentry-gtk2;
     };
+    niri = {
+      enable = true;
+      package = pkgs.niri-unstable;
+    };
   };
 
 
   services = {
+    xserver = {
+      desktopManager.gnome.enable = true;
+      displayManager.gdm = {
+        enable = true;
+        wayland = true;
+        autoSuspend = false;
+      };
+    };
+    displayManager = {
+      defaultSession = "niri";
+    };
+    pulseaudio = {
+      enable = false;
+      package = pkgs.pulseaudioFull;
+      extraConfig = "load-module module-switch-on-connect";
+
+    };
     pipewire = {
       enable = true;
       alsa.enable = true;

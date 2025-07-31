@@ -14,7 +14,7 @@
     settings.sandbox = true;
     settings.cores = 4;
     settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
-    settings.substituters = [ "https://cache.nixos.org" "https://hydra.iohk.io" ];
+    settings.substituters = [ "https://cache.nixos.org" "https://cache.iog.io" ];
     settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -51,6 +51,7 @@
     CARDANO_NODE_NETWORK_ID = "mainnet";
   };
   environment.systemPackages = with pkgs; [
+    openssl
     magic-wormhole
     #cncli
     wget
@@ -64,6 +65,7 @@
     cardano-node.packages.x86_64-linux.bech32
     cardano-node.packages.x86_64-linux.cardano-node
     cardano-node.packages.x86_64-linux.cardano-cli
+    cardano-node.packages.x86_64-linux.snapshot-converter
     credential-manager.packages.x86_64-linux.orchestrator-cli
     credential-manager.packages.x86_64-linux.cc-sign
     credential-manager.packages.x86_64-linux.tx-bundle

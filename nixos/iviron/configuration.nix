@@ -97,48 +97,44 @@ in
     tempAddresses = "disabled";
     #nameservers = [ "127.0.0.1" ];
     wireguard.interfaces = {
-      #wg0 = {
-      #  ips = [ "10.70.0.1/24" ];
-      #  listenPort = 51820;
-      #  postSetup = ''
-      #    ip link set mtu 1392 dev wg0
-      #  '';
-      #  privateKeyFile = "/var/lib/wg-keys/wg0.key";
-      #  peers = [
-      #    {
-      #      publicKey = "RtwIQ8Ni8q+/E5tgYPFUnHrOhwAnkGOEe98h+vUYmyg=";
-      #      allowedIPs = [
-      #        "10.40.33.0/24"
-      #        "10.40.9.0/24"
-      #        #"192.168.0.0/24"
-      #      ];
-      #      endpoint = "prophet.samleathers.com:51820";
-      #      persistentKeepalive = 30;
-      #    }
-      #  ];
-      #};
-      #wg1 = {
-      #  ips = [ "192.168.2.2/32" ];
-      #  listenPort = 51820;
-      #  privateKeyFile = "/var/lib/wg-keys/wg1.key";
-      #  peers = [
-      #    {
-      #      publicKey = "W8Mqo7sGVNUVXe/+3Yb0DqiN/QPKGpc6BHB8H10jagE=";
-      #      allowedIPs = [
-      #        "192.168.2.1/32"
-      #        "192.168.2.2/32"
-      #        "10.9.0.0/24"
-      #        "10.9.3.0/24"
-      #        "10.9.4.0/24"
-      #        "10.9.7.0/24"
-      #        "192.168.99.0/24"
-      #        "192.168.109.0/24"
-      #      ];
-      #      endpoint = "8.42.79.100:51820";
-      #      persistentKeepalive = 30;
-      #    }
-      #  ];
-      #};
+      wg0 = {
+        ips = [ "10.70.0.1/24" ];
+        postSetup = ''
+          ip link set mtu 1392 dev wg0
+        '';
+        privateKeyFile = "/var/lib/wg-keys/wg0.key";
+        peers = [
+          {
+            publicKey = "RtwIQ8Ni8q+/E5tgYPFUnHrOhwAnkGOEe98h+vUYmyg=";
+            allowedIPs = [
+              "10.40.33.0/24"
+              "10.40.9.0/24"
+              #"192.168.0.0/24"
+            ];
+            endpoint = "prophet.samleathers.com:51820";
+            persistentKeepalive = 30;
+          }
+        ];
+      };
+      wg1 = {
+        ips = [ "10.250.192.2/32" ];
+        mtu = 1280;
+        privateKeyFile = "/var/lib/wg-keys/wg1.key";
+        peers = [
+          {
+            publicKey = "W8Mqo7sGVNUVXe/+3Yb0DqiN/QPKGpc6BHB8H10jagE=";
+            allowedIPs = [
+              "10.200.128.0/24"
+              "10.200.129.0/24"
+              "10.160.0.0/22"
+              "10.101.0.0/21"
+              "10.140.0.0/24"
+            ];
+            endpoint = "64.78.224.166:51821";
+            persistentKeepalive = 30;
+          }
+        ];
+      };
       #wg2 = {
       #  ips = [ "10.44.2.3/32" ];
       #  listenPort = 52024;
@@ -495,6 +491,7 @@ in
       displayManager.gdm = {
         enable = true;
         wayland = true;
+        autoSuspend = false;
       };
     };
     displayManager = {
@@ -765,7 +762,7 @@ in
       mountPoint = "/keybase";
     };
     redshift = {
-      enable = true;
+      enable = false;
       package = pkgs.gammastep;
     };
   };
