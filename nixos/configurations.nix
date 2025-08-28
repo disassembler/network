@@ -32,6 +32,7 @@ let
         sops-nix.nixosModules.sops
       ];
     }
+    inputs.home-manager.nixosModules.home-manager
   ];
   defaultModules = baseModules ++ customModules;
 in

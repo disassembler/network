@@ -25,7 +25,7 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     styx.url = "github:disassembler/styx";
-    neovim-flake.url = "github:johnalotoski/neovim-flake/autocmd-highlighting";
+    neovim-flake.url = "github:disassembler/neovim-flake/sl/ollama";
     vivarium.url = "github:nrdxp/vivarium";
     # Used for user packages and dotfiles
     home-manager = {

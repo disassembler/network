@@ -121,7 +121,6 @@
   };
 
   environment.systemPackages = with pkgs; [
-    inputs.home-manager.packages.x86_64-linux.home-manager
     pciutils
     google-chrome
     wget
@@ -367,6 +366,9 @@
         deps = [ ];
       };
 
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
+  home-manager.users.sam = ../../home/sam.nix;
   powerManagement.enable = true;
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database

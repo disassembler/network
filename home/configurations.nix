@@ -13,7 +13,7 @@ in
     inherit pkgs;
     modules = [
       inputs.niri.homeModules.niri
-      ./home.nix
+      ./sam.nix
       ./niri.nix
       ./hyprland.nix
       ./waybar.nix
