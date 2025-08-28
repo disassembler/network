@@ -157,6 +157,10 @@ in
         127.0.0.1 explorer.jormungandr
         127.0.0.1 explorer.cardano
         127.0.0.1 wp.dev
+        127.0.0.1 api.localhost
+        127.0.0.1 app.localhost
+        127.0.0.1 portal.localhost
+        127.0.0.1 launch.localhost
         10.40.9.9 offline.doom.lan
       '';
     nat = {
@@ -248,6 +252,30 @@ in
     "/share/nix-direnv"
   ];
   environment.systemPackages = with pkgs; let
+    platformioFHS = pkgs.buildFHSEnv {
+    name = "platformio-fhs";
+    targetPkgs = pkgs: with pkgs; [
+      platformio
+      glibc
+      zlib
+      openssl
+      (python3.withPackages (python-pkgs: with python-pkgs; [
+        pip
+      ]))
+      arduino-cli
+      avrdude
+    ];
+    runScript = ''
+      # Optional: Initialize PlatformIO if needed (e.g., if installed via pip)
+      # ${pkgs.python3}/bin/pip install platformio
+      # Start a shell within the FHS environment
+      ${pkgs.bash}/bin/bash
+    '';
+    # Optional: Add extra build commands if necessary for specific setups
+    # extraBuildCommands = ''
+    #   mkdir -p $out/lib
+    # '';
+  };
     #startSway = pkgs.writeTextFile {
     #  name = "startsway";
     #  destination = "/bin/startsway";
@@ -279,6 +307,9 @@ in
   in
   [
     inputs.home-manager.packages.x86_64-linux.home-manager
+    platformio
+    platformioFHS
+    avrdude
     kitty
     wofi
     obsStudio

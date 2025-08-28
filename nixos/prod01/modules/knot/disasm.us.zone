@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2025042001 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 2025082001 7200 3600 86400 3600
 
 $TTL 600
 
@@ -39,17 +39,17 @@ resume  300 IN  CNAME www
 
 ; lan
 optina.lan 300 IN A 10.40.33.20
-optina.lan 300 IN AAAA 2601:98a:4100:4d0:76d4:35ff:fe9b:8462
+optina.lan 300 IN AAAA 2601:98a:4100:5b60:76d4:35ff:fe9b:8462
 sarov.lan 300 IN A 10.40.33.40
-optina.lan 300 IN AAAA 2601:98a:4100:4d0:76d4:35ff:fe9b:8462
+optina.lan 300 IN AAAA 2601:98a:4100:5b60:76d4:35ff:fe9b:8462
 valaam.lan 300 IN A 10.40.33.21
-valaam.lan 300 IN AAAA 2601:98a:4100:4d0:2c0:8ff:fe9d:ba42
-relay.valaam.lan 300 IN AAAA 2601:98a:4100:4d0:1046:d1ff:feea:9276
-pool.valaam.lan 300 IN AAAA 2601:98a:4100:4d0:3858:abff:febd:83d1
+valaam.lan 300 IN AAAA 2601:98a:4100:5b60:2c0:8ff:fe9d:ba42
+relay.valaam.lan 300 IN AAAA 2601:98a:4100:5b60:1046:d1ff:feea:9276
+pool.valaam.lan 300 IN AAAA 2601:98a:4100:5b60:3858:abff:febd:83d1
 atari.lan 300 IN A 10.40.33.22
-atari.lan 300 IN AAAA 2601:98a:4100:4d0:9608:53ff:fe84:9b9d
+atari.lan 300 IN AAAA 2601:98a:4100:5b60:9608:53ff:fe84:9b9d
 portal.lan 300 IN A 10.40.33.1
-portal.lan 300 IN AAAA 2601:98a:4100:4d0::1
+portal.lan 300 IN AAAA 2601:98a:4100:5b60::1
 vw.lan 300 IN CNAME optina.lan
 omada.lan 300 IN CNAME optina.lan
 hass.lan 300 IN CNAME optina.lan
