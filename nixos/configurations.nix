@@ -89,6 +89,13 @@ in
     ];
     specialArgs = { inherit inputs cardano-node; };
   };
+  silouan = nixosSystem {
+    system = "x86_64-linux";
+    modules = defaultModules ++ [
+      ./silouan/configuration.nix
+    ];
+    specialArgs = { inherit inputs; };
+  };
   prod01 = nixosSystem {
     system = "x86_64-linux";
     modules = defaultModules ++ [

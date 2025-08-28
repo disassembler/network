@@ -22,6 +22,7 @@ in
     portal = mkNode "portal" "10.40.33.1" false;
     sarov  = mkNode "sarov" "10.40.33.40" true;
     valaam = mkNode "valaam" "10.40.33.21" true;
+    silouan = mkNode "silouan" "10.40.33.186" true;
     prod01 = mkNode "prod01" "prod01.samleathers.com" false;
     prod03 = mkNode "prod03" "45.63.23.13" false;
   };
