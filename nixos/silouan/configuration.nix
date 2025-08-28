@@ -170,6 +170,7 @@
         nvidiaBusId = "PCI:1:0:0";
       };
     };
+    nvidia-container-toolkit.enable = true;
     facetimehd.enable = true;
     bluetooth = {
       enable = true;
@@ -215,6 +216,14 @@
       enable = true;
       pulse.enable = true;
     };
+
+    ollama = {
+      enable = true;
+      acceleration = "cuda";
+      # Optional: Preload models on startup.
+      loadModels = [ "deepseek-llm:7b" ];
+    };
+
 
     libinput.enable = true;
 
