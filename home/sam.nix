@@ -1,4 +1,10 @@
-{ lib, pkgs, ... }: {
+{ inputs, pkgs, ... }: {
+  imports = [
+    inputs.niri.homeModules.niri
+    ./niri.nix
+    ./hyprland.nix
+    ./waybar.nix
+  ];
   programs = {
   };
   home = {

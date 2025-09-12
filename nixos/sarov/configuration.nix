@@ -22,6 +22,9 @@
   };
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "broadcom-sta-6.30.223.271-57-6.12.41"
+  ];
   networking = {
     hostName = "sarov";
     hostId = "d11ab455";

@@ -6,6 +6,9 @@
   niri = "${config.programs.niri.package}/bin/niri";
 in {
   programs.niri.settings = {
+    debug = {
+      render-drm-device = "/dev/dri/renderD129";
+    };
     prefer-no-csd = true;
     spawn-at-startup = [
       {command = ["${pkgs.xwayland-satellite}/bin/xwayland-satellite"];}

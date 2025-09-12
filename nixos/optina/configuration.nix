@@ -110,6 +110,13 @@ in
   #profiles.vim.enable = false;
   profiles.zsh.enable = true;
   profiles.tmux.enable = true;
+  profiles.weechat = {
+    enable = true;
+    user = "samchat";
+    configs = {
+      default = {};
+    };
+  };
 
   networking = {
     hostName = "optina";
@@ -346,7 +353,10 @@ in
         background = "/etc/lightdm/background.jpg";
       };
     };
-    bitlbee.enable = true;
+    bitlbee = {
+      enable = true;
+      libpurple_plugins = [ pkgs.purple-discord ];
+    };
     gitea = {
       enable = false;
       appName = "Personal Git Server";
@@ -936,6 +946,20 @@ in
           locations."/".extraConfig = ''
             proxy_pass https://localhost:8043;
           '';
+        };
+        "irc.lan.disasm.us" = {
+          forceSSL = true;
+          useACMEHost = "lan.disasm.us";
+          locations."/weechat" = {
+            proxyPass = "http://127.0.0.1:9001/weechat";
+            proxyWebsockets = true;
+            extraConfig = ''
+              proxy_read_timeout 4h;
+            '';
+          };
+        locations."/" = {
+          root = pkgs.glowing-bear;
+        };
         };
         #"git.lan.disasm.us" = {
         #  forceSSL = true;

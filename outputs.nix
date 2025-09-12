@@ -73,7 +73,7 @@
     };
   })) // {
   nixosConfigurations = import ./nixos/configurations.nix (inputs // {
-    inherit inputs;
+    inherit self inputs;
   });
 
   homeConfigurations = import ./home/configurations.nix (inputs // {

@@ -11,7 +11,7 @@ in
 {
   sam = home-manager.lib.homeManagerConfiguration {
     inherit pkgs;
-    modules = [
+    imports = [
       inputs.niri.homeModules.niri
       ./sam.nix
       ./niri.nix

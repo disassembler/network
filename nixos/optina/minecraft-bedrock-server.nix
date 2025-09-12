@@ -54,7 +54,8 @@ in
           server-port = 19132;
           server-portv6 = 19133;
           view-distance = 32;
-          tick-distance = 4;
+          tick-distance = 12;
+          simulation-distance = 12;
           player-idle-timeout = 30;
           max-threads = 8;
           level-name = "Bedrock level";
@@ -81,7 +82,7 @@ in
             server-port = 19132;
             server-portv6 = 19133;
             view-distance = 32;
-            tick-distance = 4;
+            tick-distance = 12;
             player-idle-timeout = 30;
             max-threads = 8;
             level-name = "Bedrock level";

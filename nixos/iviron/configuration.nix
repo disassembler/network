@@ -1,4 +1,4 @@
-{ lib, inputs, config, pkgs, fetchgit, ... }:
+{ self, lib, inputs, config, pkgs, ... }:
 
 let
   shared = import ../../shared.nix;
@@ -295,6 +295,7 @@ in
   [
 
     inputs.home-manager.packages.x86_64-linux.home-manager
+    telegram-desktop
     polychromatic
     pciutils
     steamcmd
@@ -395,13 +396,14 @@ in
       extraPackages = with pkgs; [nvidia-vaapi-driver];
     };
     nvidia = {
-      modesetting.enable = false;
+      modesetting.enable = true;
       powerManagement.enable = false;
       powerManagement.finegrained = false;
+      #package = config.boot.kernelPackages.nvidiaPackages.beta;
       open = true;
       #package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-      #  version = "570.133.07"; # Replace with your desired version
-      #  sha256_64bit = "sha256-LUPmTFgb5e9VTemIixqpADfvbUX1QoTT2dztwI3E3CY="; # Replace with the correct SHA256
+      #  version = "580.82.07"; # Replace with your desired version
+      #  sha256_64bit = "sha256-Bh5I4R/lUiMglYEdCxzqm3GLolQNYFB0/yJ/zgYoeYw="; # Replace with the correct SHA256
       #  sha256_aarch64 = "sha256-xcff4TPRlOJ6r5S54h5W6PT6/3Zy2R4ASNFPu8TSHKM="; # Replace with the correct SHA256
       #  openSha256 = "sha256-9l8N83Spj0MccA8+8R1uqiXBS0Ag4JrLPjrU3TaXHnM="; # Optional: If using open source driver
       #  settingsSha256 = "sha256-XMk+FvTlGpMquM8aE8kgYK2PIEszUZD2+Zmj2OpYrzU="; # Optional: For settings package
@@ -484,6 +486,7 @@ in
 
 
   services = {
+    picom.enable = lib.mkForce false;
     xserver = {
       videoDrivers = [ "nvidia" ];
     #  enable = true;
@@ -528,6 +531,8 @@ in
         CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
       };
     };
+
+    flatpak.enable = true;
 
     # Disable GNOMEs power management
     power-profiles-daemon.enable = false;
@@ -876,5 +881,8 @@ in
       };
 
       systemd.user.services = { };
+      home-manager.useGlobalPkgs = true;
+      home-manager.useUserPackages = true;
+      home-manager.users.sam = ../../home/sam.nix;
       system.stateVersion = "23.05";
     }

@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2025082001 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 2025090401 7200 3600 86400 3600
 
 $TTL 600
 
@@ -54,6 +54,7 @@ vw.lan 300 IN CNAME optina.lan
 omada.lan 300 IN CNAME optina.lan
 hass.lan 300 IN CNAME optina.lan
 hledger.lan 300 IN CNAME optina.lan
+irc.lan 300 IN CNAME optina.lan
 plex.lan 300 IN CNAME optina.lan
 noc.lan 300 IN CNAME optina.lan
 stg.lan 300 IN CNAME optina.lan

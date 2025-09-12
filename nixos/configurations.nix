@@ -33,6 +33,11 @@ let
       ];
     }
     inputs.home-manager.nixosModules.home-manager
+    {
+      home-manager.extraSpecialArgs = {
+        inherit inputs;
+      };
+    }
   ];
   defaultModules = baseModules ++ customModules;
 in
@@ -57,7 +62,7 @@ in
     modules = defaultModules ++ [
       ./iviron/configuration.nix
     ];
-    specialArgs = { inherit inputs; };
+    specialArgs = { inherit inputs self; };
   };
   optina = nixosSystem {
     system = "x86_64-linux";
