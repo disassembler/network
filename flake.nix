@@ -1,5 +1,5 @@
 {
-  description = "Bower Law";
+  description = "Home Network Deployment";
   inputs = {
     # scaffolding for flake-parts and deployment
     flake-utils.url = "github:numtide/flake-utils";

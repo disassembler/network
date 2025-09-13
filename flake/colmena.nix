@@ -1,5 +1,6 @@
 {
-  inputs
+  self
+  , inputs
   , lib
   , ...
 }: {
@@ -113,4 +114,5 @@
       ];
     };
   };
+  flake.colmenaHive = inputs.colmena.lib.makeHive self.outputs.colmena;
 }
