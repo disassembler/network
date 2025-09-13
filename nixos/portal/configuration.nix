@@ -30,13 +30,14 @@ let
 
 in
   {
+    deployment = {
+      targetHost = "10.40.33.1";
+      targetPort = 22;
+      targetUser = "root";
+      buildOnTarget = true;
+    };
     sops.defaultSopsFile = ./secrets.yaml;
     sops.secrets.portal_wg0_private = { };
-    imports =
-      [
-        ./hardware-configuration.nix
-      ];
-  # TODO: move up
   _module.args = {
     inherit shared;
   };

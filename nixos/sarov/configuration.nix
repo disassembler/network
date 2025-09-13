@@ -1,10 +1,16 @@
-{ config, pkgs, lib, cardano-node, credential-manager, ... }:
+{ config, pkgs, lib, inputs, ... }:
 {
-  imports =
-    [
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  deployment = {
+    targetHost = "10.40.33.40";
+    targetPort = 22;
+    targetUser = "root";
+    buildOnTarget = true;
+  };
+
+  imports = [
+    #inputs.cardano-parts.nixosModules.profile-cardano-parts
+    #inputs.cardano-parts.nixosModules.role-relay
+  ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -23,7 +29,7 @@
 
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.permittedInsecurePackages = [
-    "broadcom-sta-6.30.223.271-57-6.12.41"
+    "broadcom-sta-6.30.223.271-57-6.12.46"
   ];
   networking = {
     hostName = "sarov";
@@ -50,34 +56,27 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.variables = {
-    CARDANO_NODE_SOCKET_PATH = config.services.cardano-node.socketPath 0;
-    CARDANO_NODE_NETWORK_ID = "mainnet";
+    #CARDANO_NODE_SOCKET_PATH = config.services.cardano-node.socketPath 0;
+    #CARDANO_NODE_NETWORK_ID = "mainnet";
   };
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs; with inputs.cardano-parts.packages.x86_64-linux; [
     openssl
     magic-wormhole
-    #cncli
     wget
     vim
     screen
     git
-    #pinentry
     gnupg
     pinentry-curses
     #adawallet
-    cardano-node.packages.x86_64-linux.bech32
-    cardano-node.packages.x86_64-linux.cardano-node
-    cardano-node.packages.x86_64-linux.cardano-cli
-    cardano-node.packages.x86_64-linux.snapshot-converter
-    credential-manager.packages.x86_64-linux.orchestrator-cli
-    credential-manager.packages.x86_64-linux.cc-sign
-    credential-manager.packages.x86_64-linux.tx-bundle
-    #cardano-address
-    #cardano-completions
-    #cardano-hw-cli
-    #cardano-rosetta-py
+    bech32
+    cardano-node
+    cardano-cli
+    snapshot-converter
+    orchestrator-cli
+    cc-sign
+    tx-bundle
     python3Packages.ipython
-    #python3Packages.trezor
     sqlite-interactive
     srm
     jq
@@ -90,31 +89,32 @@
 
   # List services that you want to enable:
   #
-  services.cardano-node = {
-    enable = true;
-    useNewTopology = true;
-    environment = "mainnet";
-    package = cardano-node.packages.x86_64-linux.cardano-node;
-    shareIpv6port = false;
-    hostAddr = "0.0.0.0";
-    environments = cardano-node.environments.x86_64-linux;
-    nodeConfig = cardano-node.environments.x86_64-linux.mainnet.nodeConfig // {
-      hasPrometheus = [ "0.0.0.0" 12798 ];
-      TraceMempool = true;
-      setupScribes = [{
-        scKind = "JournalSK";
-        scName = "cardano";
-        scFormat = "ScText";
-      }];
-      defaultScribes = [
-        [
-          "JournalSK"
-          "cardano"
-        ]
-      ];
-    };
-  };
-  systemd.services.cardano-node.after = lib.mkForce [ "network-online.target" ];
+  # TODO: switch to cardano-parts
+  #services.cardano-node = {
+  #  enable = true;
+  #  useNewTopology = true;
+  #  environment = "mainnet";
+  #  package = cardano-node.packages.x86_64-linux.cardano-node;
+  #  shareIpv6port = false;
+  #  hostAddr = "0.0.0.0";
+  #  environments = cardano-node.environments.x86_64-linux;
+  #  nodeConfig = cardano-node.environments.x86_64-linux.mainnet.nodeConfig // {
+  #    hasPrometheus = [ "0.0.0.0" 12798 ];
+  #    TraceMempool = true;
+  #    setupScribes = [{
+  #      scKind = "JournalSK";
+  #      scName = "cardano";
+  #      scFormat = "ScText";
+  #    }];
+  #    defaultScribes = [
+  #      [
+  #        "JournalSK"
+  #        "cardano"
+  #      ]
+  #    ];
+  #  };
+  #};
+  #systemd.services.cardano-node.after = lib.mkForce [ "network-online.target" ];
   services.trezord.enable = true;
   services.udev.extraRules = ''
     ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{authorized}=="0", ATTR{authorized}="1"

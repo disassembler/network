@@ -84,11 +84,7 @@
   environment.systemPackages = with pkgs; [
     cardano-cli
     cardano-node
-    scripts.mainnet.node
-    scripts.preprod.node
-    scripts.preview.node
-    scripts.sanchonet.node
-    scripts.private.node
+    inputs.cardano-parts.packages.x86_64-linux.run-process-compose-node-stack
     bech32
     cardano-address
     cardano-hw-cli
@@ -103,7 +99,7 @@
     airgapScripts.restoreWallet
     airgapScripts.signPaymentTx
     airgapScripts.createTx
-    kleopatra
+    kdePackages.kleopatra
     termite
     encfs
     chromium

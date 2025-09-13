@@ -9,6 +9,12 @@ let
 
 in
 {
+  deployment = {
+    targetHost = "prod01.samleathers.com";
+    targetPort = 22;
+    targetUser = "root";
+    buildOnTarget = true;
+  };
   sops.defaultSopsFile = ./secrets.yaml;
   sops.secrets.prod01_wg0_private = { };
   sops.secrets.prod01_wg1_private = { };
@@ -125,15 +131,6 @@ in
         forceSSL = true;
         serverAliases = [ "www.centrallakerealty.com" ];
         globalRedirect = "www.facebook.com/MarieLeathersRealtor?mibextid=2JQ9oc";
-      };
-      "doom.disasm.us" = {
-        enableACME = true;
-        forceSSL = true;
-        root = inputs.hydra-doom.packages."x86_64-linux".hydra-doom-static-remote;
-        extraConfig = ''
-          disable_symlinks off;
-          try_files $uri $uri /index.html;
-        '';
       };
     };
   };

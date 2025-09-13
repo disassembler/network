@@ -5,15 +5,17 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
+  deployment = {
+    targetHost = "10.40.33.21";
+    targetPort = 22;
+    targetUser = "root";
+    buildOnTarget = true;
+  };
+
   sops.defaultSopsFile = ./secrets.yaml;
   sops.secrets.pool_opcert = { };
   sops.secrets.pool_vrf_skey = { };
   sops.secrets.pool_kes_skey = { };
-  imports =
-    [
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
 
   # Use the systemd-boot EFI boot loader.
   boot = {

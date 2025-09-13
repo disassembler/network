@@ -57,6 +57,12 @@ let
   };
 in
 {
+  deployment = {
+    targetHost = "10.40.33.20";
+    targetPort = 22;
+    targetUser = "root";
+    buildOnTarget = true;
+  };
   sops.defaultSopsFile = ./secrets.yaml;
   sops.secrets = {
     gitea_dbpass = { };
@@ -67,7 +73,6 @@ in
   };
   imports =
     [
-      ./hardware-configuration.nix
       ./minecraft-bedrock-server.nix
     ];
   _module.args = {

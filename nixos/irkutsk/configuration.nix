@@ -11,7 +11,13 @@ in
     inherit shared;
   };
 
-  imports = [ ./hardware-configuration.nix ];
+  deployment = {
+    targetHost = "127.0.0.1";
+    targetPort = 22;
+    targetUser = "root";
+    buildOnTarget = true;
+  };
+
   #Boot Config
 
   # Uncomment to use the systemd-boot EFI boot loader.

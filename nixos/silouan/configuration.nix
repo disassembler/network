@@ -5,12 +5,13 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
+  deployment = {
+    targetHost = "127.0.0.1";
+    targetPort = 22;
+    targetUser = "root";
+    buildOnTarget = true;
+  };
   #sops.defaultSopsFile = ./secrets.yaml;
-  imports =
-    [
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
 
   # Use the systemd-boot EFI boot loader.
   boot = {
