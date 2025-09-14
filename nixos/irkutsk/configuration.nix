@@ -12,10 +12,9 @@ in
   };
 
   deployment = {
-    targetHost = "127.0.0.1";
+    targetHost = "10.40.33.61";
     targetPort = 22;
     targetUser = "root";
-    buildOnTarget = true;
   };
 
   #Boot Config

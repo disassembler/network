@@ -34,7 +34,6 @@ in
       targetHost = "10.40.33.1";
       targetPort = 22;
       targetUser = "root";
-      buildOnTarget = true;
     };
     sops.defaultSopsFile = ./secrets.yaml;
     sops.secrets.portal_wg0_private = { };
@@ -464,6 +463,10 @@ in
                 { hostname = "valaam-wifi"; hw-address = "3c:58:c2:f9:87:5b"; ip-address = "10.40.33.24"; }
                 { hostname = "printer"; hw-address = "a4:5d:36:d6:22:d9"; ip-address = "10.40.33.50"; }
                 { hostname = "sarov"; hw-address = "a8:20:66:3b:f4:b9"; ip-address = "10.40.33.40"; }
+                { hostname = "iviron"; hw-address = "58:02:05:59:84:1c"; ip-address = "10.40.33.60"; }
+                { hostname = "irkutsk"; hw-address = "9c:b6:d0:95:88:9f"; ip-address = "10.40.33.61"; }
+                { hostname = "pskov"; hw-address = "cc:15:31:5c:56:b1"; ip-address = "10.40.33.62"; }
+                { hostname = "silouan"; hw-address = "c0:bf:be:60:c8:10"; ip-address = "10.40.33.63"; }
               ];
             }
             {

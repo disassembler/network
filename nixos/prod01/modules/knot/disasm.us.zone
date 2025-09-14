@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2025090401 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 2025091501 7200 3600 86400 3600
 
 $TTL 600
 
@@ -59,6 +59,12 @@ plex.lan 300 IN CNAME optina.lan
 noc.lan 300 IN CNAME optina.lan
 stg.lan 300 IN CNAME optina.lan
 unifi.lan 300 IN CNAME optina.lan
+
+; laptops
+iviron.lan 300 IN A 10.40.33.60
+irkutsk.lan 300 IN A 10.40.33.61
+pskov.lan 300 IN A 10.40.33.62
+silouan.lan 300 IN A 10.40.33.63
 
 bp01.lan 300 IN A 147.28.148.163
 relay01.lan 300 IN A 147.28.149.209

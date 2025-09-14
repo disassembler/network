@@ -24,9 +24,9 @@ in
   {
     deployment = {
       targetHost = "127.0.0.1";
+      #targetHost = "127.0.0.1"; when deploying remotely
       targetPort = 22;
       targetUser = "root";
-      buildOnTarget = true;
     };
   #sops.defaultSopsFile = ./secrets.yaml;
   #sops.secrets.openvpn_prophet_ca = { };
@@ -99,44 +99,44 @@ in
     tempAddresses = "disabled";
     #nameservers = [ "127.0.0.1" ];
     wireguard.interfaces = {
-      wg0 = {
-        ips = [ "10.70.0.1/24" ];
-        postSetup = ''
-          ip link set mtu 1392 dev wg0
-        '';
-        privateKeyFile = "/var/lib/wg-keys/wg0.key";
-        peers = [
-          {
-            publicKey = "RtwIQ8Ni8q+/E5tgYPFUnHrOhwAnkGOEe98h+vUYmyg=";
-            allowedIPs = [
-              "10.40.33.0/24"
-              "10.40.9.0/24"
-              #"192.168.0.0/24"
-            ];
-            endpoint = "prophet.samleathers.com:51820";
-            persistentKeepalive = 30;
-          }
-        ];
-      };
-      wg1 = {
-        ips = [ "10.250.192.2/32" ];
-        mtu = 1280;
-        privateKeyFile = "/var/lib/wg-keys/wg1.key";
-        peers = [
-          {
-            publicKey = "W8Mqo7sGVNUVXe/+3Yb0DqiN/QPKGpc6BHB8H10jagE=";
-            allowedIPs = [
-              "10.200.128.0/24"
-              "10.200.129.0/24"
-              "10.160.0.0/22"
-              "10.101.0.0/21"
-              "10.140.0.0/24"
-            ];
-            endpoint = "64.78.224.166:51821";
-            persistentKeepalive = 30;
-          }
-        ];
-      };
+      #wg0 = {
+      #  ips = [ "10.70.0.1/24" ];
+      #  postSetup = ''
+      #    ip link set mtu 1392 dev wg0
+      #  '';
+      #  privateKeyFile = "/var/lib/wg-keys/wg0.key";
+      #  peers = [
+      #    {
+      #      publicKey = "RtwIQ8Ni8q+/E5tgYPFUnHrOhwAnkGOEe98h+vUYmyg=";
+      #      allowedIPs = [
+      #        "10.40.33.0/24"
+      #        "10.40.9.0/24"
+      #        #"192.168.0.0/24"
+      #      ];
+      #      endpoint = "prophet.samleathers.com:51820";
+      #      persistentKeepalive = 30;
+      #    }
+      #  ];
+      #};
+      #wg1 = {
+      #  ips = [ "10.250.192.2/32" ];
+      #  mtu = 1280;
+      #  privateKeyFile = "/var/lib/wg-keys/wg1.key";
+      #  peers = [
+      #    {
+      #      publicKey = "W8Mqo7sGVNUVXe/+3Yb0DqiN/QPKGpc6BHB8H10jagE=";
+      #      allowedIPs = [
+      #        "10.200.128.0/24"
+      #        "10.200.129.0/24"
+      #        "10.160.0.0/22"
+      #        "10.101.0.0/21"
+      #        "10.140.0.0/24"
+      #      ];
+      #      endpoint = "64.78.224.166:51821";
+      #      persistentKeepalive = 30;
+      #    }
+      #  ];
+      #};
       #wg2 = {
       #  ips = [ "10.44.2.3/32" ];
       #  listenPort = 52024;
@@ -197,6 +197,7 @@ in
       #settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
       settings.substituters = [ "https://cache.iog.io" ];
       settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
+      settings.trusted-users = [ "sam" ];
       distributedBuilds = true;
       buildMachines = [
       ];

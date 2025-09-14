@@ -6,10 +6,9 @@
 
 {
   deployment = {
-    targetHost = "127.0.0.1";
+    targetHost = "10.40.33.63";
     targetPort = 22;
     targetUser = "root";
-    buildOnTarget = true;
   };
   #sops.defaultSopsFile = ./secrets.yaml;
 

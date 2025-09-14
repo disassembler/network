@@ -61,7 +61,6 @@ in
     targetHost = "10.40.33.20";
     targetPort = 22;
     targetUser = "root";
-    buildOnTarget = true;
   };
   sops.defaultSopsFile = ./secrets.yaml;
   sops.secrets = {

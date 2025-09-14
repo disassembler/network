@@ -8,10 +8,9 @@ let
 in
 {
   deployment = {
-    targetHost = "127.0.0.1";
+    targetHost = "10.40.33.62";
     targetPort = 22;
     targetUser = "root";
-    buildOnTarget = true;
   };
   sops.defaultSopsFile = ./secrets.yaml;
   sops.secrets.openvpn_prophet_ca = { };
@@ -34,7 +33,6 @@ in
     enable = true;
     efiSupport = true;
     efiInstallAsRemovable = true;
-    useOSProber = true;
     default = "saved";
     device = "nodev";
     theme = pkgs.nixos-grub2-theme;
@@ -85,67 +83,67 @@ in
     inherit hostId;
     tempAddresses = "disabled";
     #nameservers = [ "127.0.0.1" ];
-    wireguard.interfaces = {
-      wg0 = {
-        ips = [ "10.70.0.1/24" ];
-        listenPort = 51820;
-        postSetup = ''
-          ip link set mtu 1392 dev wg0
-        '';
-        privateKeyFile = "/var/lib/wg-keys/wg0.key";
-        peers = [
-          {
-            publicKey = "RtwIQ8Ni8q+/E5tgYPFUnHrOhwAnkGOEe98h+vUYmyg=";
-            allowedIPs = [
-              "10.40.33.0/24"
-              "10.40.9.0/24"
-              #"192.168.0.0/24"
-            ];
-            endpoint = "prophet.samleathers.com:51820";
-            persistentKeepalive = 30;
-          }
-        ];
-      };
-      #wg1 = {
-      #  ips = [ "192.168.2.2/32" ];
-      #  listenPort = 51820;
-      #  privateKeyFile = "/var/lib/wg-keys/wg1.key";
-      #  peers = [
-      #    {
-      #      publicKey = "W8Mqo7sGVNUVXe/+3Yb0DqiN/QPKGpc6BHB8H10jagE=";
-      #      allowedIPs = [
-      #        "192.168.2.1/32"
-      #        "192.168.2.2/32"
-      #        "10.9.0.0/24"
-      #        "10.9.3.0/24"
-      #        "10.9.4.0/24"
-      #        "10.9.7.0/24"
-      #        "192.168.99.0/24"
-      #        "192.168.109.0/24"
-      #      ];
-      #      endpoint = "8.42.79.100:51820";
-      #      persistentKeepalive = 30;
-      #    }
-      #  ];
-      #};
-      wg2 = {
-        ips = [ "10.44.2.3/32" ];
-        listenPort = 52024;
-        privateKeyFile = "/var/lib/wg-keys/wg2.key";
-        peers = [
-          {
-            publicKey = "z9CFP9lxAJTHS7DsPcP9dv0Ll3qqUtR0dorlMVokQFw=";
-            allowedIPs = [
-              "10.44.2.1/32"
-              "10.44.2.3/32"
-              "10.44.1.0/24"
-            ];
-            endpoint = "8.42.79.100:52024";
-            persistentKeepalive = 30;
-          }
-        ];
-      };
-    };
+    #wireguard.interfaces = {
+    #  wg0 = {
+    #    ips = [ "10.70.0.1/24" ];
+    #    listenPort = 51820;
+    #    postSetup = ''
+    #      ip link set mtu 1392 dev wg0
+    #    '';
+    #    privateKeyFile = "/var/lib/wg-keys/wg0.key";
+    #    peers = [
+    #      {
+    #        publicKey = "RtwIQ8Ni8q+/E5tgYPFUnHrOhwAnkGOEe98h+vUYmyg=";
+    #        allowedIPs = [
+    #          "10.40.33.0/24"
+    #          "10.40.9.0/24"
+    #          #"192.168.0.0/24"
+    #        ];
+    #        endpoint = "prophet.samleathers.com:51820";
+    #        persistentKeepalive = 30;
+    #      }
+    #    ];
+    #  };
+    #  #wg1 = {
+    #  #  ips = [ "192.168.2.2/32" ];
+    #  #  listenPort = 51820;
+    #  #  privateKeyFile = "/var/lib/wg-keys/wg1.key";
+    #  #  peers = [
+    #  #    {
+    #  #      publicKey = "W8Mqo7sGVNUVXe/+3Yb0DqiN/QPKGpc6BHB8H10jagE=";
+    #  #      allowedIPs = [
+    #  #        "192.168.2.1/32"
+    #  #        "192.168.2.2/32"
+    #  #        "10.9.0.0/24"
+    #  #        "10.9.3.0/24"
+    #  #        "10.9.4.0/24"
+    #  #        "10.9.7.0/24"
+    #  #        "192.168.99.0/24"
+    #  #        "192.168.109.0/24"
+    #  #      ];
+    #  #      endpoint = "8.42.79.100:51820";
+    #  #      persistentKeepalive = 30;
+    #  #    }
+    #  #  ];
+    #  #};
+    #  wg2 = {
+    #    ips = [ "10.44.2.3/32" ];
+    #    listenPort = 52024;
+    #    privateKeyFile = "/var/lib/wg-keys/wg2.key";
+    #    peers = [
+    #      {
+    #        publicKey = "z9CFP9lxAJTHS7DsPcP9dv0Ll3qqUtR0dorlMVokQFw=";
+    #        allowedIPs = [
+    #          "10.44.2.1/32"
+    #          "10.44.2.3/32"
+    #          "10.44.1.0/24"
+    #        ];
+    #        endpoint = "8.42.79.100:52024";
+    #        persistentKeepalive = 30;
+    #      }
+    #    ];
+    #  };
+    #};
     networkmanager.enable = true;
     networkmanager.unmanaged = [
       "interface-name:ve-*"

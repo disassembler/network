@@ -4,7 +4,6 @@
     targetHost = "10.40.33.40";
     targetPort = 22;
     targetUser = "root";
-    buildOnTarget = true;
   };
 
   imports = [

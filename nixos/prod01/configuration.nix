@@ -13,7 +13,6 @@ in
     targetHost = "prod01.samleathers.com";
     targetPort = 22;
     targetUser = "root";
-    buildOnTarget = true;
   };
   sops.defaultSopsFile = ./secrets.yaml;
   sops.secrets.prod01_wg0_private = { };
