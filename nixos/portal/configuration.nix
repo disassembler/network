@@ -1,5 +1,9 @@
-{ lib, config, pkgs, ... }:
-let
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}: let
   # TODO: move to flake
   shared = import ../../shared.nix;
   externalInterface = "enp1s0";
@@ -14,29 +18,26 @@ let
   ];
   ipxe' = pkgs.ipxe.overrideDerivation (drv: {
     installPhase = ''
-    ${drv.installPhase}
-    make $makeFlags bin-x86_64-efi/ipxe.efi bin-i386-efi/ipxe.efi
-    cp -v bin-x86_64-efi/ipxe.efi $out/x86_64-ipxe.efi
-    cp -v bin-i386-efi/ipxe.efi $out/i386-ipxe.efi
+      ${drv.installPhase}
+      make $makeFlags bin-x86_64-efi/ipxe.efi bin-i386-efi/ipxe.efi
+      cp -v bin-x86_64-efi/ipxe.efi $out/x86_64-ipxe.efi
+      cp -v bin-i386-efi/ipxe.efi $out/i386-ipxe.efi
     '';
   });
-  tftp_root = pkgs.runCommand "tftproot" { } ''
-  mkdir -pv $out
-  cp -vi ${ipxe'}/undionly.kpxe $out/undionly.kpxe
-  cp -vi ${ipxe'}/x86_64-ipxe.efi $out/x86_64-ipxe.efi
-  cp -vi ${ipxe'}/i386-ipxe.efi $out/i386-ipxe.efi
+  tftp_root = pkgs.runCommand "tftproot" {} ''
+    mkdir -pv $out
+    cp -vi ${ipxe'}/undionly.kpxe $out/undionly.kpxe
+    cp -vi ${ipxe'}/x86_64-ipxe.efi $out/x86_64-ipxe.efi
+    cp -vi ${ipxe'}/i386-ipxe.efi $out/i386-ipxe.efi
   '';
-
-
-in
-  {
-    deployment = {
-      targetHost = "10.40.33.1";
-      targetPort = 22;
-      targetUser = "root";
-    };
-    sops.defaultSopsFile = ./secrets.yaml;
-    sops.secrets.portal_wg0_private = { };
+in {
+  deployment = {
+    targetHost = "10.40.33.1";
+    targetPort = 22;
+    targetUser = "root";
+  };
+  sops.defaultSopsFile = ./secrets.yaml;
+  sops.secrets.portal_wg0_private = {};
   _module.args = {
     inherit shared;
   };
@@ -44,22 +45,22 @@ in
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/sda";
-  boot.kernelParams = [ "console=ttyS0,115200n8" ];
+  boot.kernelParams = ["console=ttyS0,115200n8"];
   boot.kernel.sysctl = {
     "net.ipv6.conf.all.forwarding" = true;
     "net.ipv6.conf.enp1s0.accept_ra" = 2;
   };
 
-  security.pki.certificates = [ shared.wedlake_ca_cert ];
+  security.pki.certificates = [shared.wedlake_ca_cert];
 
   networking = {
     hostName = "portal";
     domain = "lan.disasm.us";
     hostId = "fa4b7394";
-    nameservers = [ "10.40.33.1" "8.8.8.8" ];
+    nameservers = ["10.40.33.1" "8.8.8.8"];
     hosts = lib.mkForce {
-      "127.0.0.1" = [ "localhost" ];
-      "::1" = [ "localhost" ];
+      "127.0.0.1" = ["localhost"];
+      "::1" = ["localhost"];
     };
     vlans = {
       lan = {
@@ -84,151 +85,198 @@ in
       };
     };
     bridges = {
-      br0.interfaces = [ "enp2s0" "enp3s0" ];
+      br0.interfaces = ["enp2s0" "enp3s0"];
     };
     interfaces = {
       ${externalInterface} = {
         useDHCP = true;
       };
       lan = {
-        ipv4.addresses = [{
-          address = "10.40.33.1";
-          prefixLength = 24;
-        }];
+        ipv4.addresses = [
+          {
+            address = "10.40.33.1";
+            prefixLength = 24;
+          }
+        ];
       };
       iot = {
-        ipv4.addresses = [{
-          address = "10.40.8.1";
-          prefixLength = 24;
-        }];
+        ipv4.addresses = [
+          {
+            address = "10.40.8.1";
+            prefixLength = 24;
+          }
+        ];
       };
       voip = {
-        ipv4.addresses = [{
-          address = "10.40.40.1";
-          prefixLength = 24;
-        }];
+        ipv4.addresses = [
+          {
+            address = "10.40.40.1";
+            prefixLength = 24;
+          }
+        ];
       };
       mgmt = {
-        ipv4.addresses = [{
-          address = "10.40.3.1";
-          prefixLength = 24;
-        }];
+        ipv4.addresses = [
+          {
+            address = "10.40.3.1";
+            prefixLength = 24;
+          }
+        ];
       };
       guest = {
-        ipv4.addresses = [{
-          address = "10.40.10.1";
-          prefixLength = 24;
-        }];
+        ipv4.addresses = [
+          {
+            address = "10.40.10.1";
+            prefixLength = 24;
+          }
+        ];
       };
     };
     nat = {
       enable = true;
       externalInterface = "${externalInterface}";
-      internalIPs = [ "10.40.33.0/24" "10.40.40.0/24" "10.40.3.0/24" "10.40.10.0/24" ];
-      internalInterfaces = [ "iot" "voip" "lan" "guest" "mgmt" "ovpn-guest" ];
+      internalIPs = ["10.40.33.0/24" "10.40.40.0/24" "10.40.3.0/24" "10.40.10.0/24"];
+      internalInterfaces = ["iot" "voip" "lan" "guest" "mgmt" "ovpn-guest"];
       forwardPorts = [
-        { sourcePort = 32400; destination = "10.40.33.20:32400"; proto = "tcp"; }
-        { sourcePort = 19132; destination = "10.40.33.20:19132"; proto = "udp"; }
+        {
+          sourcePort = 32400;
+          destination = "10.40.33.20:32400";
+          proto = "tcp";
+        }
+        {
+          sourcePort = 19132;
+          destination = "10.40.33.20:19132";
+          proto = "udp";
+        }
         # Ark Survival Ascended
-        { sourcePort = 7777; destination = "10.40.33.21:7777"; proto = "udp"; }
-        { sourcePort = 7778; destination = "10.40.33.21:7778"; proto = "udp"; }
-        { sourcePort = 7787; destination = "10.40.33.21:7787"; proto = "udp"; }
-        { sourcePort = 7788; destination = "10.40.33.21:7788"; proto = "udp"; }
-        { sourcePort = 7797; destination = "10.40.33.21:7797"; proto = "udp"; }
-        { sourcePort = 7798; destination = "10.40.33.21:7798"; proto = "udp"; }
-        { sourcePort = 27015; destination = "10.40.33.21:27015"; proto = "udp"; }
-        { sourcePort = 27016; destination = "10.40.33.21:27016"; proto = "udp"; }
-        { sourcePort = 27017; destination = "10.40.33.21:27017"; proto = "udp"; }
+        {
+          sourcePort = 7777;
+          destination = "10.40.33.21:7777";
+          proto = "udp";
+        }
+        {
+          sourcePort = 7778;
+          destination = "10.40.33.21:7778";
+          proto = "udp";
+        }
+        {
+          sourcePort = 7787;
+          destination = "10.40.33.21:7787";
+          proto = "udp";
+        }
+        {
+          sourcePort = 7788;
+          destination = "10.40.33.21:7788";
+          proto = "udp";
+        }
+        {
+          sourcePort = 7797;
+          destination = "10.40.33.21:7797";
+          proto = "udp";
+        }
+        {
+          sourcePort = 7798;
+          destination = "10.40.33.21:7798";
+          proto = "udp";
+        }
+        {
+          sourcePort = 27015;
+          destination = "10.40.33.21:27015";
+          proto = "udp";
+        }
+        {
+          sourcePort = 27016;
+          destination = "10.40.33.21:27016";
+          proto = "udp";
+        }
+        {
+          sourcePort = 27017;
+          destination = "10.40.33.21:27017";
+          proto = "udp";
+        }
       ];
     };
     enableIPv6 = true;
     dhcpcd.persistent = true;
     # NOTE: 3 is taken by openvpn
     dhcpcd.extraConfig = ''
-    noipv6rs
-    interface ${externalInterface}
-    ia_na 1
-    ia_pd 2/::/60 lan/0/64 mgmt/1/64 guest/2/64 iot/4/64
+      noipv6rs
+      interface ${externalInterface}
+      ia_na 1
+      ia_pd 2/::/60 lan/0/64 mgmt/1/64 guest/2/64 iot/4/64
     '';
     firewall = {
       enable = true;
       allowPing = true;
-      extraCommands =
-        let
-          dropPortNoLog = port:
-          ''
+      extraCommands = let
+        dropPortNoLog = port: ''
           ip46tables -A nixos-fw -p tcp \
           --dport ${toString port} -j nixos-fw-refuse
           ip46tables -A nixos-fw -p udp \
           --dport ${toString port} -j nixos-fw-refuse
-          '';
+        '';
 
-          dropPortIcmpLog =
-            ''
-            iptables -A nixos-fw -p icmp \
-            -j LOG --log-prefix "iptables[icmp]: "
-            ip6tables -A nixos-fw -p ipv6-icmp \
-            -j LOG --log-prefix "iptables[icmp-v6]: "
-            '';
+        dropPortIcmpLog = ''
+          iptables -A nixos-fw -p icmp \
+          -j LOG --log-prefix "iptables[icmp]: "
+          ip6tables -A nixos-fw -p ipv6-icmp \
+          -j LOG --log-prefix "iptables[icmp-v6]: "
+        '';
 
-            refusePortOnInterface = port: interface:
-            ''
-            ip46tables -A nixos-fw -i ${interface} -p tcp \
-            --dport ${toString port} -j nixos-fw-log-refuse
-            ip46tables -A nixos-fw -i ${interface} -p udp \
-            --dport ${toString port} -j nixos-fw-log-refuse
-            '';
-            acceptPortOnInterface = port: interface:
-            ''
-            ip46tables -A nixos-fw -i ${interface} -p tcp \
-            --dport ${toString port} -j nixos-fw-accept
-            ip46tables -A nixos-fw -i ${interface} -p udp \
-            --dport ${toString port} -j nixos-fw-accept
-            '';
-          # IPv6 flat forwarding. For ipv4, see nat.forwardPorts
-          forwardPortToHost = port: interface: proto: host:
-          ''
+        refusePortOnInterface = port: interface: ''
+          ip46tables -A nixos-fw -i ${interface} -p tcp \
+          --dport ${toString port} -j nixos-fw-log-refuse
+          ip46tables -A nixos-fw -i ${interface} -p udp \
+          --dport ${toString port} -j nixos-fw-log-refuse
+        '';
+        acceptPortOnInterface = port: interface: ''
+          ip46tables -A nixos-fw -i ${interface} -p tcp \
+          --dport ${toString port} -j nixos-fw-accept
+          ip46tables -A nixos-fw -i ${interface} -p udp \
+          --dport ${toString port} -j nixos-fw-accept
+        '';
+        # IPv6 flat forwarding. For ipv4, see nat.forwardPorts
+        forwardPortToHost = port: interface: proto: host: ''
           ip6tables -A FORWARD -i ${interface} \
           -p ${proto} -d ${host} \
           --dport ${toString port} -j ACCEPT
           ip6tables -A nixos-fw -i ${interface} \
           -p ${proto} -d ${host} \
           --dport ${toString port} -j ACCEPT
-          '';
+        '';
 
-          privatelyAcceptPort = port:
+        privatelyAcceptPort = port:
           lib.concatMapStrings
           (interface: acceptPortOnInterface port interface)
           internalInterfaces;
 
-          publiclyRejectPort = port:
+        publiclyRejectPort = port:
           refusePortOnInterface port externalInterface;
 
-          allowPortOnlyPrivately = port:
-          ''
+        allowPortOnlyPrivately = port: ''
           ${privatelyAcceptPort port}
           ${publiclyRejectPort port}
-          '';
-        in
+        '';
+      in
         lib.concatStrings [
           (lib.concatMapStrings allowPortOnlyPrivately
-          [
-            67 # DHCP
-            69 # TFTP
-            546 # DHCPv6
-            547 # DHCPv6
-            9100 # prometheus
-            5201 # iperf
-          ])
+            [
+              67 # DHCP
+              69 # TFTP
+              546 # DHCPv6
+              547 # DHCPv6
+              9100 # prometheus
+              5201 # iperf
+            ])
           (lib.concatMapStrings dropPortNoLog
-          [
-            23 # Common from public internet
-            143 # Common from public internet
-            139 # From RT AP
-            515 # From RT AP
-            9100 # From RT AP
-          ])
-          (dropPortIcmpLog)
+            [
+              23 # Common from public internet
+              143 # Common from public internet
+              139 # From RT AP
+              515 # From RT AP
+              9100 # From RT AP
+            ])
+          dropPortIcmpLog
           ''
             # block internal traffic from guest vpn
             ip46tables -A FORWARD -m state --state NEW -i ovpn-guest -o br0 -j DROP
@@ -242,124 +290,123 @@ in
             ${forwardPortToHost 3001 "enp1s0" "tcp" "2601:98a:4100:1700:1046:d1ff:feea:9276"}
             # block forwarding from external interface
             ip6tables -A FORWARD -i enp1s0 -j DROP
-            ''
-          ];
-          allowedTCPPorts = [ 32400 5222 5060 53 3001 ];
-          allowedUDPPorts = [ 51820 1194 1195 5060 5222 53 19132 5353 ];
-        };
-        wireguard.interfaces = {
-          wg0 = {
-            ips = [ "10.40.9.1/24" "fd00::1" ];
-            listenPort = 51820;
-            privateKeyFile = config.sops.secrets.portal_wg0_private.path;
-            peers = [
-              {
-                publicKey = "PiXwxQyrMi7iCZvTrmd2V9OB6008aOIU1bOaWi9xOlI=";
-                allowedIPs = [ "10.40.9.25/32" ];
-              }
-              {
-                publicKey = "GJbyHq3IdbkT8xeUb54Ot4PPgU4UtkzpImzNT/Wx+HI=";
-                allowedIPs = [ "10.40.9.26/32" ];
-              }
-              {
-                publicKey = "5f6TDkTVN8OS/xF7M12+rEUibIWljqMrMrBwXU34MUw=";
-                allowedIPs = [ "10.70.0.1/32" ];
-              }
-              {
-                publicKey = "mFn9gVTlPTEa+ZplilmKiZ0pYqzzof75IaDiG9q/pko=";
-                allowedIPs = [ "10.40.9.39/32" "10.39.0.0/24" "2601:98a:4000:9ed0::1/64" "fd00::39/128" ];
-              }
-              {
-                publicKey = "b1mP5d9m041QyP0jbXicP145BOUYwNefUOOqo6XXwF8=";
-                allowedIPs = [ "10.40.9.2/32" "fd00::2/128" ];
-                endpoint = "45.76.4.212:51820";
-              }
-              {
-                publicKey = "V6iLYqTiCzv/zoluqhfWDV49eIIISoZgN30IbS4XZCw=";
-                allowedIPs = [ "10.42.1.1/32" ];
-              }
-              {
-                publicKey = "dCKIaTC40Y5sQqbdsYw1adSgVDmV+1SZMV4DVx1ctSk=";
-                allowedIPs = [ "10.38.0.0/24" "fd00::38/128" ];
-              }
-              {
-                publicKey = "eR6I+LI/BayJ90Kjt0wJyfJUsoSmayD+cb6Kb7qdCV4=";
-                allowedIPs = [ "10.37.4.0/24" "10.37.6.1/32" "fd00::37/128" ];
-              }
-              #{
-              #  # buffalo run
-              #  publicKey = "b1SJJq77euLkBM/femF+jJ5HbR/dc3cEQEejYZMtFCA=";
-              #  allowedIPs = [ "10.40.9.5/32" ];
-              #}
-              {
-                # greenacres
-                publicKey = "NhywNZQlIJitXta1V+HCLSiOTYlgxWOQGvxh2Tvinmk=";
-                allowedIPs = [ "10.36.3.0/24" "fd00::36/128" "192.168.254.0/24" ];
-              }
-              {
-                # bower-office
-                publicKey = "rsRvtd4mm4hucE5W1QqCjWJwmSlhWnSWaIWts/Z8/xY=";
-                allowedIPs = [ "10.38.0.1/32" "192.168.0.0/24" ];
-                endpoint = "174.175.23.241:51820";
-              }
-              {
-                # bower-home
-                publicKey = "3sHFhvDxx6nVX/DBroIGTdHfehl9I/OOB4Fo5v7Vvxc=";
-                allowedIPs = [ "10.38.0.2/32" "192.168.1.0/24" "192.168.10.0/24" ];
-                endpoint = "98.235.35.253:51820";
-              }
-              {
-                # clever
-                publicKey = "oycbQ1DhtRh0hhD5gpyiKTUh0USkAwbjMer6/h/aHg8=";
-                allowedIPs = [ "10.40.9.3/32" "fd00::3/128" ];
-                endpoint = "nas.earthtools.ca:51821";
-              }
-              {
-                # johnalotoski
-                publicKey = "MRowDI1eC9B5Hx/zgPk5yyq2eWSq6kYFW5Sjm7w52AY=";
-                allowedIPs = [ "10.40.9.4/32" "fd00::4/128" ];
-              }
-              # installeriso - uncomment and rotate key when remote installing
-              {
-                publicKey = "JR2LSc/P4EkEtzywUzf5flIVYz7yR+p7fPEERYrdQ0U=";
-                allowedIPs = [ "10.40.9.5/32" "fd00::5/128" ];
-              }
-              {
-                # hydra-arcade-1
-                publicKey = "aq7dxIkmWEQXr3eB7uzZOBEZ0WT6kgEW9BsqqH2eBDE=";
-                allowedIPs = [ "10.40.9.6/32" "fd00::6/128" ];
-              }
-              {
-                # hydra-arcade-2
-                publicKey = "Q+Sx+o4ckWuO/CQ9IVCIIfBytXZkgDUIkSS50eUmCWU=";
-                allowedIPs = [ "10.40.9.7/32" "fd00::7/128" ];
-              }
-              {
-                # hydra-arcade-qemu
-                publicKey = "A0LYo/Pjx99kUTA9jBzSzfi8qRELOfM+0N0JD1HhcBY=";
-                allowedIPs = [ "10.40.9.8/32" "fd00::8/128" ];
-              }
-              {
-                # hydra-doom-mini
-                publicKey = "hP0Z/mlzGoiZ3XgavKGL40wypHKcRVDR1Hkx2Cz28Sg=";
-                allowedIPs = [ "10.40.9.9/32" "fd00::9/128" ];
-              }
-              {
-                # carlos
-                publicKey = "/9YVN8nraowBRjhe6ysajY5bp4fUVqJE622OpLpl4Hs=";
-                allowedIPs = [ "10.40.9.100/32" "fd00::100/128" ];
-              }
+          ''
         ];
-
+      allowedTCPPorts = [32400 5222 5060 53 3001];
+      allowedUDPPorts = [51820 1194 1195 5060 5222 53 19132 5353];
+    };
+    wireguard.interfaces = {
+      wg0 = {
+        ips = ["10.40.9.1/24" "fd00::1"];
+        listenPort = 51820;
+        privateKeyFile = config.sops.secrets.portal_wg0_private.path;
+        peers = [
+          {
+            publicKey = "PiXwxQyrMi7iCZvTrmd2V9OB6008aOIU1bOaWi9xOlI=";
+            allowedIPs = ["10.40.9.25/32"];
+          }
+          {
+            publicKey = "GJbyHq3IdbkT8xeUb54Ot4PPgU4UtkzpImzNT/Wx+HI=";
+            allowedIPs = ["10.40.9.26/32"];
+          }
+          {
+            publicKey = "5f6TDkTVN8OS/xF7M12+rEUibIWljqMrMrBwXU34MUw=";
+            allowedIPs = ["10.70.0.1/32"];
+          }
+          {
+            publicKey = "mFn9gVTlPTEa+ZplilmKiZ0pYqzzof75IaDiG9q/pko=";
+            allowedIPs = ["10.40.9.39/32" "10.39.0.0/24" "2601:98a:4000:9ed0::1/64" "fd00::39/128"];
+          }
+          {
+            publicKey = "b1mP5d9m041QyP0jbXicP145BOUYwNefUOOqo6XXwF8=";
+            allowedIPs = ["10.40.9.2/32" "fd00::2/128"];
+            endpoint = "45.76.4.212:51820";
+          }
+          {
+            publicKey = "V6iLYqTiCzv/zoluqhfWDV49eIIISoZgN30IbS4XZCw=";
+            allowedIPs = ["10.42.1.1/32"];
+          }
+          {
+            publicKey = "dCKIaTC40Y5sQqbdsYw1adSgVDmV+1SZMV4DVx1ctSk=";
+            allowedIPs = ["10.38.0.0/24" "fd00::38/128"];
+          }
+          {
+            publicKey = "eR6I+LI/BayJ90Kjt0wJyfJUsoSmayD+cb6Kb7qdCV4=";
+            allowedIPs = ["10.37.4.0/24" "10.37.6.1/32" "fd00::37/128"];
+          }
+          #{
+          #  # buffalo run
+          #  publicKey = "b1SJJq77euLkBM/femF+jJ5HbR/dc3cEQEejYZMtFCA=";
+          #  allowedIPs = [ "10.40.9.5/32" ];
+          #}
+          {
+            # greenacres
+            publicKey = "NhywNZQlIJitXta1V+HCLSiOTYlgxWOQGvxh2Tvinmk=";
+            allowedIPs = ["10.36.3.0/24" "fd00::36/128" "192.168.254.0/24"];
+          }
+          {
+            # bower-office
+            publicKey = "rsRvtd4mm4hucE5W1QqCjWJwmSlhWnSWaIWts/Z8/xY=";
+            allowedIPs = ["10.38.0.1/32" "192.168.0.0/24"];
+            endpoint = "174.175.23.241:51820";
+          }
+          {
+            # bower-home
+            publicKey = "3sHFhvDxx6nVX/DBroIGTdHfehl9I/OOB4Fo5v7Vvxc=";
+            allowedIPs = ["10.38.0.2/32" "192.168.1.0/24" "192.168.10.0/24"];
+            endpoint = "98.235.35.253:51820";
+          }
+          {
+            # clever
+            publicKey = "oycbQ1DhtRh0hhD5gpyiKTUh0USkAwbjMer6/h/aHg8=";
+            allowedIPs = ["10.40.9.3/32" "fd00::3/128"];
+            endpoint = "nas.earthtools.ca:51821";
+          }
+          {
+            # johnalotoski
+            publicKey = "MRowDI1eC9B5Hx/zgPk5yyq2eWSq6kYFW5Sjm7w52AY=";
+            allowedIPs = ["10.40.9.4/32" "fd00::4/128"];
+          }
+          # installeriso - uncomment and rotate key when remote installing
+          {
+            publicKey = "JR2LSc/P4EkEtzywUzf5flIVYz7yR+p7fPEERYrdQ0U=";
+            allowedIPs = ["10.40.9.5/32" "fd00::5/128"];
+          }
+          {
+            # hydra-arcade-1
+            publicKey = "aq7dxIkmWEQXr3eB7uzZOBEZ0WT6kgEW9BsqqH2eBDE=";
+            allowedIPs = ["10.40.9.6/32" "fd00::6/128"];
+          }
+          {
+            # hydra-arcade-2
+            publicKey = "Q+Sx+o4ckWuO/CQ9IVCIIfBytXZkgDUIkSS50eUmCWU=";
+            allowedIPs = ["10.40.9.7/32" "fd00::7/128"];
+          }
+          {
+            # hydra-arcade-qemu
+            publicKey = "A0LYo/Pjx99kUTA9jBzSzfi8qRELOfM+0N0JD1HhcBY=";
+            allowedIPs = ["10.40.9.8/32" "fd00::8/128"];
+          }
+          {
+            # hydra-doom-mini
+            publicKey = "hP0Z/mlzGoiZ3XgavKGL40wypHKcRVDR1Hkx2Cz28Sg=";
+            allowedIPs = ["10.40.9.9/32" "fd00::9/128"];
+          }
+          {
+            # carlos
+            publicKey = "/9YVN8nraowBRjhe6ysajY5bp4fUVqJE622OpLpl4Hs=";
+            allowedIPs = ["10.40.9.100/32" "fd00::100/128"];
+          }
+        ];
       };
     };
   };
 
   nix = {
-    settings.substituters = [ "https://cache.nixos.org" "https://cache.iog.io" ];
-    settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
+    settings.substituters = ["https://cache.nixos.org" "https://cache.iog.io"];
+    settings.trusted-public-keys = ["hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="];
     extraOptions = ''
-    experimental-features = nix-command flakes
+      experimental-features = nix-command flakes
     '';
   };
 
@@ -382,7 +429,7 @@ in
   services = {
     avahi = {
       enable = true;
-      allowInterfaces = [ "lan" "iot" "mgmt" ];
+      allowInterfaces = ["lan" "iot" "mgmt"];
       reflector = true;
       publish = {
         enable = true;
@@ -411,7 +458,7 @@ in
         enable = true;
         settings = {
           interfaces-config = {
-            interfaces = [ "lan" "mgmt" "guest" "iot" ];
+            interfaces = ["lan" "mgmt" "guest" "iot"];
           };
           lease-database = {
             name = "/var/lib/kea/dhcp4.leases";
@@ -454,19 +501,71 @@ in
               subnet = "10.40.33.0/24";
               id = 104033;
               reservations = [
-                { hostname = "optina"; hw-address = "d4:3d:7e:4d:c4:7f"; ip-address = "10.40.33.20"; }
-                { hostname = "valaam"; hw-address = "00:c0:08:9d:ba:42"; ip-address = "10.40.33.21"; }
-                { hostname = "mice-rel-1"; hw-address = "12:46:d1:ea:92:76"; ip-address = "10.40.33.30"; }
-                { hostname = "mice-bp-1"; hw-address = "3a:58:ab:bd:83:d1"; ip-address = "10.40.33.31"; }
-                { hostname = "atari"; hw-address = "94:08:53:84:9b:9d"; ip-address = "10.40.33.22"; }
-                { hostname = "kodiak"; hw-address = "ec:f4:bb:e7:4b:dc"; ip-address = "10.40.33.23"; }
-                { hostname = "valaam-wifi"; hw-address = "3c:58:c2:f9:87:5b"; ip-address = "10.40.33.24"; }
-                { hostname = "printer"; hw-address = "a4:5d:36:d6:22:d9"; ip-address = "10.40.33.50"; }
-                { hostname = "sarov"; hw-address = "a8:20:66:3b:f4:b9"; ip-address = "10.40.33.40"; }
-                { hostname = "iviron"; hw-address = "58:02:05:59:84:1c"; ip-address = "10.40.33.60"; }
-                { hostname = "irkutsk"; hw-address = "9c:b6:d0:95:88:9f"; ip-address = "10.40.33.61"; }
-                { hostname = "pskov"; hw-address = "cc:15:31:5c:56:b1"; ip-address = "10.40.33.62"; }
-                { hostname = "silouan"; hw-address = "c0:bf:be:60:c8:10"; ip-address = "10.40.33.63"; }
+                {
+                  hostname = "optina";
+                  hw-address = "d4:3d:7e:4d:c4:7f";
+                  ip-address = "10.40.33.20";
+                }
+                {
+                  hostname = "valaam";
+                  hw-address = "00:c0:08:9d:ba:42";
+                  ip-address = "10.40.33.21";
+                }
+                {
+                  hostname = "mice-rel-1";
+                  hw-address = "12:46:d1:ea:92:76";
+                  ip-address = "10.40.33.30";
+                }
+                {
+                  hostname = "mice-bp-1";
+                  hw-address = "3a:58:ab:bd:83:d1";
+                  ip-address = "10.40.33.31";
+                }
+                {
+                  hostname = "atari";
+                  hw-address = "94:08:53:84:9b:9d";
+                  ip-address = "10.40.33.22";
+                }
+                {
+                  hostname = "kodiak";
+                  hw-address = "ec:f4:bb:e7:4b:dc";
+                  ip-address = "10.40.33.23";
+                }
+                {
+                  hostname = "valaam-wifi";
+                  hw-address = "3c:58:c2:f9:87:5b";
+                  ip-address = "10.40.33.24";
+                }
+                {
+                  hostname = "printer";
+                  hw-address = "a4:5d:36:d6:22:d9";
+                  ip-address = "10.40.33.50";
+                }
+                {
+                  hostname = "sarov";
+                  hw-address = "a8:20:66:3b:f4:b9";
+                  ip-address = "10.40.33.40";
+                }
+                {
+                  hostname = "iviron";
+                  hw-address = "58:02:05:59:84:1c";
+                  ip-address = "10.40.33.60";
+                }
+                {
+                  hostname = "irkutsk";
+                  hw-address = "9c:b6:d0:95:88:9f";
+                  ip-address = "10.40.33.61";
+                }
+                {
+                  hostname = "pskov";
+                  hw-address = "cc:15:31:5c:56:b1";
+                  ip-address = "10.40.33.62";
+                }
+                {
+                  hostname = "silouan";
+                  hw-address = "c0:bf:be:60:c8:10";
+                  ip-address = "10.40.33.63";
+                }
               ];
             }
             {
@@ -514,8 +613,16 @@ in
               subnet = "10.40.8.0/24";
               id = 10408;
               reservations = [
-                { hostname = "roof-wled"; hw-address = "dc:4f:22:52:e1:d3"; ip-address = "10.40.8.60"; }
-                { hostname = "camera-dvr"; hw-address = "3c:1b:f8:72:04:ca"; ip-address = "10.40.8.20"; }
+                {
+                  hostname = "roof-wled";
+                  hw-address = "dc:4f:22:52:e1:d3";
+                  ip-address = "10.40.8.60";
+                }
+                {
+                  hostname = "camera-dvr";
+                  hw-address = "3c:1b:f8:72:04:ca";
+                  ip-address = "10.40.8.20";
+                }
               ];
             }
             {
@@ -615,9 +722,9 @@ in
     #    }
     #    '';
     #  };
-      radvd = {
-        enable = true;
-        config = ''
+    radvd = {
+      enable = true;
+      config = ''
         interface lan
         {
           AdvSendAdvert on;
@@ -663,15 +770,15 @@ in
             AdvAutonomous on;
           };
         };
-        '';
-      };
-      journald = {
-        rateLimitBurst = 0;
-        extraConfig = "SystemMaxUse=50M";
-      };
-      journalbeat = {
-        enable = false;
-        extraConfig = ''
+      '';
+    };
+    journald = {
+      rateLimitBurst = 0;
+      extraConfig = "SystemMaxUse=50M";
+    };
+    journalbeat = {
+      enable = false;
+      extraConfig = ''
         journalbeat:
         seek_position: cursor
         cursor_seek_fallback: tail
@@ -684,32 +791,32 @@ in
         output.kafka:
         hosts: ["optina.lan.disasm.us:9092"]
         topic: KAFKA-LOGSTASH-ELASTICSEARCH
-        '';
+      '';
+    };
+    prometheus.exporters = {
+      node = {
+        enable = true;
+        enabledCollectors = [
+          "systemd"
+          "tcpstat"
+          "conntrack"
+          "diskstats"
+          "entropy"
+          "filefd"
+          "filesystem"
+          "loadavg"
+          "meminfo"
+          "netdev"
+          "netstat"
+          "stat"
+          "time"
+          "vmstat"
+          "logind"
+          "interrupts"
+          "ksmd"
+        ];
       };
-      prometheus.exporters = {
-        node = {
-          enable = true;
-          enabledCollectors = [
-            "systemd"
-            "tcpstat"
-            "conntrack"
-            "diskstats"
-            "entropy"
-            "filefd"
-            "filesystem"
-            "loadavg"
-            "meminfo"
-            "netdev"
-            "netstat"
-            "stat"
-            "time"
-            "vmstat"
-            "logind"
-            "interrupts"
-            "ksmd"
-          ];
-        };
-      };
+    };
     #openvpn = {
     #  servers = {
     #    wedlake = {
@@ -772,7 +879,7 @@ in
     isNormalUser = true;
     description = "Sam Leathers";
     uid = 1000;
-    extraGroups = [ "wheel" ];
+    extraGroups = ["wheel"];
     openssh.authorizedKeys.keys = shared.sam_ssh_keys;
   };
   users.extraUsers.root = {

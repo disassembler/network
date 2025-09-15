@@ -1,65 +1,69 @@
-{ config, pkgs, lib, ... }:
-
-with lib;
-
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; let
   cfg = config.profiles.i3;
-  i3StatusBarConfig = ''
-    general {
-      colors = true
-      interval = 1
-      output_format = i3bar
-      color_good = "#2267a5"
-      color_degraded = "#8c7f22"
-      color_bad = "#be2422"
-    }
-
-    order += "disk /"
-    order += "wireless wlp2s0"
-    order += "cpu_usage"
-    order += "battery 0"
-    order += "volume master"
-    order += "tztime local"
-
-    tztime local {
-      format = " Date: %m/%d/%y  Time: %H:%M "
-    }
-
-    cpu_usage {
-      format = " CPU: %usage "
-    }
-
-    disk "/" {
-      format = " Disk: %free "
-    }
-
-    volume master {
-      format = " Vol: %volume "
-      device = "default"
-      mixer = "Master"
-      mixer_idx = 0
-    }
-  '' + (
-    if (parameters.machine == "ohrid") then ''
-      wireless wlp2s0 {
-        format_up = " WiFi: %ip %quality %essid %bitrate "
-        format_down = " WiFi: (/) "
+  i3StatusBarConfig =
+    ''
+      general {
+        colors = true
+        interval = 1
+        output_format = i3bar
+        color_good = "#2267a5"
+        color_degraded = "#8c7f22"
+        color_bad = "#be2422"
       }
 
-      battery 0 {
-        format = " Power: %status %percentage %remaining left "
-        path = "/sys/class/power_supply/BAT0/uevent"
-        low_threshold = 20
+      order += "disk /"
+      order += "wireless wlp2s0"
+      order += "cpu_usage"
+      order += "battery 0"
+      order += "volume master"
+      order += "tztime local"
+
+      tztime local {
+        format = " Date: %m/%d/%y  Time: %H:%M "
+      }
+
+      cpu_usage {
+        format = " CPU: %usage "
+      }
+
+      disk "/" {
+        format = " Disk: %free "
+      }
+
+      volume master {
+        format = " Vol: %volume "
+        device = "default"
+        mixer = "Master"
+        mixer_idx = 0
       }
     ''
-    else
-      ""
-  );
+    + (
+      if (parameters.machine == "ohrid")
+      then ''
+        wireless wlp2s0 {
+          format_up = " WiFi: %ip %quality %essid %bitrate "
+          format_down = " WiFi: (/) "
+        }
+
+        battery 0 {
+          format = " Power: %status %percentage %remaining left "
+          path = "/sys/class/power_supply/BAT0/uevent"
+          low_threshold = 20
+        }
+      ''
+      else ""
+    );
 
   i3Lock = pkgs.writeScript "i3-lock.sh" ''
     #!${pkgs.bash}/bin/bash
     ${pkgs.scrot}/bin/scrot /tmp/screen_locked.png
-    ${pkgs.imagemagick}/bin/convert /tmp/screen_locked.png -scale 10% -scale 1000% /tmp/screen_locked.png  
+    ${pkgs.imagemagick}/bin/convert /tmp/screen_locked.png -scale 10% -scale 1000% /tmp/screen_locked.png
     ${pkgs.i3lock-color}/bin/i3lock-color 0 -i /tmp/screen_locked.png \
         --insidevercolor=ffffff22 \
         --insidewrongcolor=C6666655 \
@@ -72,9 +76,7 @@ let
         --keyhlcolor=1B4651ff \
         --bshlcolor=1B4651ff
   '';
-
-in
-{
+in {
   options.profiles.i3 = {
     enable = mkEnable "Whether to enable i3 profile.";
     primaryMonitor = mkOption {
@@ -287,21 +289,20 @@ in
           bar {
                   font termsyn:monospace 8
                   status_command ${i3status}/bin/i3status -c ${
-                    writeText "i3status-config" i3StatusBarConfig
-                  }
+          writeText "i3status-config" i3StatusBarConfig
+        }
           }
       '';
     };
 
-    systemd.services."i3lock" =
-      {
-        description = "Pre-Sleep i3 lock";
-        wantedBy = [ "sleep.target" ];
-        before = [ "sleep.target" ];
-        environment.DISPLAY = ":0";
-        serviceConfig.ExecStart = i3Lock;
-        serviceConfig.Type = "forking";
-      };
+    systemd.services."i3lock" = {
+      description = "Pre-Sleep i3 lock";
+      wantedBy = ["sleep.target"];
+      before = ["sleep.target"];
+      environment.DISPLAY = ":0";
+      serviceConfig.ExecStart = i3Lock;
+      serviceConfig.Type = "forking";
+    };
 
     environment.systemPackages = with pkgs; [
       i3status

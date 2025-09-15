@@ -39,7 +39,6 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-
     environment.systemPackages = [
       vivarium
       pkgs.swaybg

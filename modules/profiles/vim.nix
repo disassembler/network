@@ -1,5 +1,10 @@
-{ config, pkgs, lib, inputs, ... }:
-let
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}: let
   cfg = config.profiles.vim;
 in {
   options.profiles.vim = with lib; {
@@ -12,10 +17,10 @@ in {
   };
   config = let
     nvim = inputs.neovim-flake.packages.x86_64-linux.neovim;
-  in lib.mkIf cfg.enable {
-    environment.systemPackages = [
-      nvim
-    ];
-  };
-
+  in
+    lib.mkIf cfg.enable {
+      environment.systemPackages = [
+        nvim
+      ];
+    };
 }

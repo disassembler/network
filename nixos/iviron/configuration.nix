@@ -1,6 +1,11 @@
-{ self, lib, inputs, config, pkgs, ... }:
-
-let
+{
+  self,
+  lib,
+  inputs,
+  config,
+  pkgs,
+  ...
+}: let
   shared = import ../../shared.nix;
   machine = "iviron";
   hostId = "7a6c1214";
@@ -19,15 +24,13 @@ let
   #        builtins.attrValues zfsCompatibleKernelPackages
   #        )
   #        );
-
-in
-  {
-    deployment = {
-      targetHost = "127.0.0.1";
-      #targetHost = "127.0.0.1"; when deploying remotely
-      targetPort = 22;
-      targetUser = "root";
-    };
+in {
+  deployment = {
+    targetHost = "127.0.0.1";
+    #targetHost = "127.0.0.1"; when deploying remotely
+    targetPort = 22;
+    targetUser = "root";
+  };
   #sops.defaultSopsFile = ./secrets.yaml;
   #sops.secrets.openvpn_prophet_ca = { };
   #sops.secrets.docker_auth = { };
@@ -58,12 +61,12 @@ in
   #boot.kernelPackages = latestKernelPackage;
   #boot.zfs.package = pkgs.zfs_unstable;
 
-  boot.supportedFilesystems = [ "exfat" "zfs" ];
+  boot.supportedFilesystems = ["exfat" "zfs"];
   boot.tmp.cleanOnBoot = true;
   boot.zfs.devNodes = "/dev";
 
   boot.extraModprobeConfig = ''
-  options v4l2loopback exclusive_caps=1 card_label="Virtual Webcam"
+    options v4l2loopback exclusive_caps=1 card_label="Virtual Webcam"
   '';
   boot.extraModulePackages = [
     config.boot.kernelPackages.v4l2loopback
@@ -76,7 +79,7 @@ in
   boot.plymouth.enable = false;
 
   console.keyMap = "us";
-  console.packages = with pkgs; [ terminus_font ];
+  console.packages = with pkgs; [terminus_font];
   console.font = "ter-i32b";
   i18n = {
     defaultLocale = "en_US.UTF-8";
@@ -86,7 +89,7 @@ in
     enable = true;
     cpuFreqGovernor = "powersave";
     powerUpCommands = ''
-    echo XHC > /proc/acpi/wakeup
+      echo XHC > /proc/acpi/wakeup
     '';
     powertop.enable = true;
   };
@@ -160,89 +163,87 @@ in
       "interface-name:ve-*"
       #"ens9"
     ];
-    extraHosts =
-      ''
-        # If DNS is broke, we still want to be able to deploy
-        10.40.33.20 optina.wedlake.lan
-        10.40.33.20 crate.wedlake.lan
-        10.40.33.20 hydra.wedlake.lan
-        10.40.33.1 portal.wedlake.lan
-        127.0.0.1 wallet.samleathers.com
-        127.0.0.1 dev.ocf.net
-        127.0.0.1 explorer.jormungandr
-        127.0.0.1 explorer.cardano
-        127.0.0.1 wp.dev
-        10.40.9.9 offline.doom.lan
-        '';
-        nat = {
-          enable = true;
-          internalInterfaces = [ "ve-+" ];
-          externalInterface = "wlp195s0";
-        };
-        firewall = {
-          enable = false;
-          allowedUDPPorts = [ 53 4919 69 ];
-          allowedTCPPorts = [ 4444 8081 3478 3000 8080 5900 3100 3001 ];
-        };
-      };
+    extraHosts = ''
+      # If DNS is broke, we still want to be able to deploy
+      10.40.33.20 optina.wedlake.lan
+      10.40.33.20 crate.wedlake.lan
+      10.40.33.20 hydra.wedlake.lan
+      10.40.33.1 portal.wedlake.lan
+      127.0.0.1 wallet.samleathers.com
+      127.0.0.1 dev.ocf.net
+      127.0.0.1 explorer.jormungandr
+      127.0.0.1 explorer.cardano
+      127.0.0.1 wp.dev
+      10.40.9.9 offline.doom.lan
+    '';
+    nat = {
+      enable = true;
+      internalInterfaces = ["ve-+"];
+      externalInterface = "wlp195s0";
+    };
+    firewall = {
+      enable = false;
+      allowedUDPPorts = [53 4919 69];
+      allowedTCPPorts = [4444 8081 3478 3000 8080 5900 3100 3001];
+    };
+  };
 
-      nix =
-        let
-          buildMachines = import ../../build-machines.nix;
-        in
-        {
-          settings.sandbox = true;
-          settings.cores = 4;
-      #settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" "/etc/skopeo/auth.json=${config.sops.secrets.docker_auth.path}" ];
-      #settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
-      settings.substituters = [ "https://cache.iog.io" ];
-      settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
-      settings.trusted-users = [ "sam" ];
-      distributedBuilds = true;
-      buildMachines = [
-      ];
-      extraOptions = ''
+  nix = let
+    buildMachines = import ../../build-machines.nix;
+  in {
+    settings.sandbox = true;
+    settings.cores = 4;
+    #settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" "/etc/skopeo/auth.json=${config.sops.secrets.docker_auth.path}" ];
+    #settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
+    settings.substituters = ["https://cache.iog.io"];
+    settings.trusted-public-keys = ["hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="];
+    settings.trusted-users = ["sam"];
+    distributedBuilds = true;
+    buildMachines = [
+    ];
+    extraOptions = ''
       binary-caches-parallel-connections = 3
       connect-timeout = 5
         #allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk/nixpkgs/archive
         experimental-features = nix-command flakes fetch-closure
-        '';
-      };
+    '';
+  };
 
-      nixpkgs.overlays = [
-        inputs.niri.overlays.niri
-        #(self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
-        #inputs.vivarium.overlay
-      ];
+  nixpkgs.overlays = [
+    inputs.niri.overlays.niri
+    #(self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
+    #inputs.vivarium.overlay
+  ];
 
-      nixpkgs.config = {
-        allowUnfree = true;
-        allowBroken = false;
-        android_sdk.accept_license = true;
-        packageOverrides = super:
-        let self = super.pkgs; in
-        {
-          manymans = with pkgs; buildEnv {
-            name = "manymans";
-            ignoreCollisions = true;
-            paths = [
-              man-pages
-              man-pages-posix
-              stdmanpages
-              glibcInfo
-            ];
-          };
+  nixpkgs.config = {
+    allowUnfree = true;
+    allowBroken = false;
+    android_sdk.accept_license = true;
+    packageOverrides = super: let
+      self = super.pkgs;
+    in {
+      manymans = with pkgs;
+        buildEnv {
+          name = "manymans";
+          ignoreCollisions = true;
+          paths = [
+            man-pages
+            man-pages-posix
+            stdmanpages
+            glibcInfo
+          ];
         };
-      };
+    };
+  };
 
-      users.groups.plugdev = { };
-      users.extraUsers.sam = {
-        isNormalUser = true;
-        description = "Sam Leathers";
-        uid = 1000;
-        extraGroups = [ "wheel" "podman" "disk" "video" "libvirtd" "adbusers" "dialout" "plugdev" "cexplorer" ];
-        openssh.authorizedKeys.keys = shared.sam_ssh_keys;
-      };
+  users.groups.plugdev = {};
+  users.extraUsers.sam = {
+    isNormalUser = true;
+    description = "Sam Leathers";
+    uid = 1000;
+    extraGroups = ["wheel" "podman" "disk" "video" "libvirtd" "adbusers" "dialout" "plugdev" "cexplorer"];
+    openssh.authorizedKeys.keys = shared.sam_ssh_keys;
+  };
   #users.users.cardano-node.isSystemUser = true;
 
   profiles.zsh = {
@@ -251,8 +252,8 @@ in
   };
   programs.bash = {
     interactiveShellInit = ''
-    eval "$(direnv hook bash)"
-    eval "$(starship init bash)"
+      eval "$(direnv hook bash)"
+      eval "$(starship init bash)"
     '';
   };
 
@@ -272,7 +273,6 @@ in
     #  executable = true;
     #  text = ''
     #    #! ${pkgs.bash}/bin/bash
-
     #    # first import environment variables from the login manager
     #    systemctl --user import-environment
     #    # then start the service
@@ -294,9 +294,7 @@ in
     #    sha256 = "sha256:0r0j0y0ii62ppawc8qqjyaq0fkmmb0zk1xb3f9navxp556w2dljv";
     #  };
     #});
-  in
-  [
-
+  in [
     inputs.home-manager.packages.x86_64-linux.home-manager
     telegram-desktop
     polychromatic
@@ -391,7 +389,7 @@ in
     opentabletdriver.enable = true;
     openrazer = {
       enable = true;
-      users = [ "sam" ];
+      users = ["sam"];
     };
     enableRedistributableFirmware = true;
     graphics = {
@@ -487,12 +485,11 @@ in
     };
   };
 
-
   services = {
     picom.enable = lib.mkForce false;
     xserver = {
-      videoDrivers = [ "nvidia" ];
-    #  enable = true;
+      videoDrivers = ["nvidia"];
+      #  enable = true;
       desktopManager.gnome.enable = true;
       displayManager.gdm = {
         enable = true;
@@ -540,7 +537,6 @@ in
     # Disable GNOMEs power management
     power-profiles-daemon.enable = false;
 
-
     # Enable thermald (only necessary if on Intel CPUs)
     thermald.enable = true;
     #rabbitmq = {
@@ -552,7 +548,7 @@ in
     tftpd.path = "/var/tftpd";
     zfs.trim.enable = true;
     zfs.autoScrub.enable = true;
-    zfs.autoScrub.pools = [ "zpool" ];
+    zfs.autoScrub.pools = ["zpool"];
     zfs.autoSnapshot = {
       enable = true;
       frequent = 8;
@@ -649,34 +645,32 @@ in
     #};
     printing = {
       enable = true;
-      drivers = [ pkgs.hplip ];
+      drivers = [pkgs.hplip];
       browsing = true;
     };
     dbus.enable = true;
     acpid.enable = true;
     upower.enable = true;
 
-    udev.extraRules =
-      let
-        dependencies = with pkgs; [ coreutils gnupg gawk gnugrep ];
-        clearYubikey = pkgs.writeScript "clear-yubikey" ''
-          #!${pkgs.stdenv.shell}
-          export PATH=${pkgs.lib.makeBinPath dependencies};
-          keygrips=$(
-            gpg-connect-agent 'keyinfo --list' /bye 2>/dev/null \
-            | grep -v OK \
-            | awk '{if ($4 == "T") { print $3 ".key" }}')
-            for f in $keygrips; do
-            rm -v ~/.gnupg/private-keys-v1.d/$f
-            done
-            gpg --card-status 2>/dev/null 1>/dev/null || true
-            '';
-            clearYubikeySam = pkgs.writeScript "clear-yubikey-sam" ''
-          #!${pkgs.stdenv.shell}
-          ${pkgs.sudo}/bin/sudo -u sam ${clearYubikey}
-          '';
-      in
-      ''
+    udev.extraRules = let
+      dependencies = with pkgs; [coreutils gnupg gawk gnugrep];
+      clearYubikey = pkgs.writeScript "clear-yubikey" ''
+        #!${pkgs.stdenv.shell}
+        export PATH=${pkgs.lib.makeBinPath dependencies};
+        keygrips=$(
+          gpg-connect-agent 'keyinfo --list' /bye 2>/dev/null \
+          | grep -v OK \
+          | awk '{if ($4 == "T") { print $3 ".key" }}')
+          for f in $keygrips; do
+          rm -v ~/.gnupg/private-keys-v1.d/$f
+          done
+          gpg --card-status 2>/dev/null 1>/dev/null || true
+      '';
+      clearYubikeySam = pkgs.writeScript "clear-yubikey-sam" ''
+        #!${pkgs.stdenv.shell}
+        ${pkgs.sudo}/bin/sudo -u sam ${clearYubikey}
+      '';
+    in ''
       ACTION=="add|change", SUBSYSTEM=="usb", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0407", RUN+="${clearYubikeySam}"
       SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
       SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="2b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
@@ -689,39 +683,39 @@ in
       SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0004", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2c97"
       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2581"
-      '';
-      udev.packages = [ pkgs.yubikey-personalization ];
+    '';
+    udev.packages = [pkgs.yubikey-personalization];
 
-      compton = {
-        enable = true;
-        shadowExclude = [ ''"_NET_WM_STATE@:32a *= '_NET_WM_STATE_HIDDEN'"'' ];
-        opacityRules = [
-          "95:class_g = 'URxvt' && !_NET_WM_STATE@:32a"
-          "0:_NET_WM_STATE@:32a *= '_NET_WM_STATE_HIDDEN'"
+    compton = {
+      enable = true;
+      shadowExclude = [''"_NET_WM_STATE@:32a *= '_NET_WM_STATE_HIDDEN'"''];
+      opacityRules = [
+        "95:class_g = 'URxvt' && !_NET_WM_STATE@:32a"
+        "0:_NET_WM_STATE@:32a *= '_NET_WM_STATE_HIDDEN'"
+      ];
+    };
+    dnsmasq = {
+      enable = true;
+      settings = {
+        address = [
+          "/portal.wedlake.lan/10.40.33.1"
+          "/crate.wedlake.lan/10.40.33.20"
+          "/hydra.wedlake.lan/10.40.33.20"
+          "/unifi.wedlake.lan/10.40.33.20"
+          "/server.lan.bower-law.com/192.168.0.254"
+        ];
+        server = [
+          "8.8.4.4"
+          "8.8.8.8"
+          "/wedlake.lan/10.40.33.1"
+          "/lan.centrallakerealty.com/10.37.3.2"
+          "/lan.bower-law.com/192.168.0.254"
+          "/bower.local/192.168.0.254"
+          "/lan.centrallakerealty.com/10.37.3.2"
         ];
       };
-      dnsmasq = {
-        enable = true;
-        settings = {
-          address = [
-            "/portal.wedlake.lan/10.40.33.1"
-            "/crate.wedlake.lan/10.40.33.20"
-            "/hydra.wedlake.lan/10.40.33.20"
-            "/unifi.wedlake.lan/10.40.33.20"
-            "/server.lan.bower-law.com/192.168.0.254"
-          ];
-          server = [
-            "8.8.4.4"
-            "8.8.8.8"
-            "/wedlake.lan/10.40.33.1"
-            "/lan.centrallakerealty.com/10.37.3.2"
-            "/lan.bower-law.com/192.168.0.254"
-            "/bower.local/192.168.0.254"
-            "/lan.centrallakerealty.com/10.37.3.2"
-          ];
-        };
-        resolveLocalQueries = false;
-      };
+      resolveLocalQueries = false;
+    };
 
     #openvpn = {
     #  servers = {
@@ -817,75 +811,73 @@ in
         # BUS_MODULES for any required bus driver module (for example for I2C or SPI).
 
         HWMON_MODULES="coretemp"
-        '';
-      };
-
-      shellInit = ''
-      export GPG_TTY="$(tty)"
-      gpg-connect-agent /bye
-      export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"
       '';
     };
 
-    system.activationScripts.samdotfiles = {
-      text = ''
+    shellInit = ''
+      export GPG_TTY="$(tty)"
+      gpg-connect-agent /bye
+      export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"
+    '';
+  };
+
+  system.activationScripts.samdotfiles = {
+    text = ''
       mkdir -p /home/sam/.config/sway
       mkdir -p /home/sam/.config/wezterm
       ln -sfn /etc/per-user/sam/gitconfig /home/sam/.gitconfig
       ln -sfn /etc/per-user/sam/wezterm.lua /home/sam/.config/wezterm/wezterm.lua
       ln -sfn /etc/xdg/waybar /home/sam/.config/waybar
-      '';
-      deps = [ ];
-    };
+    '';
+    deps = [];
+  };
 
-    system.activationScripts.starship =
-      let
-        starshipConfig = pkgs.writeText "starship.toml" ''
-        [username]
-        show_always = true
-        [hostname]
-        ssh_only = true
-        [git_commit]
-        tag_disabled = false
-        only_detached = false
-        [memory_usage]
-        format = "via $symbol[''${ram_pct}]($style) "
-        disabled = false
-        threshold = -1
-        [time]
-        format = '[\[ $time \]]($style) '
-        disabled = false
-        [[battery.display]]
-        threshold = 100
-        style = "bold green"
-        [[battery.display]]
-        threshold = 50
-        style = "bold orange"
-        [[battery.display]]
-        threshold = 20
-        style = "bold red"
-        [status]
-        map_symbol = true
-        disabled = false
-        '';
-      in
-      {
-        text = ''
-        mkdir -p /etc/per-user/shared
-        cp ${starshipConfig} /etc/per-user/shared/starship.toml
-        mkdir -p /home/sam/.config
-        mkdir -p /root/.config
-        chown sam:users /home/sam/.config
-        chown root /root/.config
-        ln -sf /etc/per-user/shared/starship.toml /home/sam/.config/starship.toml
-        ln -sf /etc/per-user/shared/starship.toml /root/.config/starship.toml
-        '';
-        deps = [ ];
-      };
+  system.activationScripts.starship = let
+    starshipConfig = pkgs.writeText "starship.toml" ''
+      [username]
+      show_always = true
+      [hostname]
+      ssh_only = true
+      [git_commit]
+      tag_disabled = false
+      only_detached = false
+      [memory_usage]
+      format = "via $symbol[''${ram_pct}]($style) "
+      disabled = false
+      threshold = -1
+      [time]
+      format = '[\[ $time \]]($style) '
+      disabled = false
+      [[battery.display]]
+      threshold = 100
+      style = "bold green"
+      [[battery.display]]
+      threshold = 50
+      style = "bold orange"
+      [[battery.display]]
+      threshold = 20
+      style = "bold red"
+      [status]
+      map_symbol = true
+      disabled = false
+    '';
+  in {
+    text = ''
+      mkdir -p /etc/per-user/shared
+      cp ${starshipConfig} /etc/per-user/shared/starship.toml
+      mkdir -p /home/sam/.config
+      mkdir -p /root/.config
+      chown sam:users /home/sam/.config
+      chown root /root/.config
+      ln -sf /etc/per-user/shared/starship.toml /home/sam/.config/starship.toml
+      ln -sf /etc/per-user/shared/starship.toml /root/.config/starship.toml
+    '';
+    deps = [];
+  };
 
-      systemd.user.services = { };
-      home-manager.useGlobalPkgs = true;
-      home-manager.useUserPackages = true;
-      home-manager.users.sam = ../../home/sam.nix;
-      system.stateVersion = "23.05";
-    }
+  systemd.user.services = {};
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
+  home-manager.users.sam = ../../home/sam.nix;
+  system.stateVersion = "23.05";
+}

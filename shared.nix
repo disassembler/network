@@ -37,5 +37,4 @@
     Ug7FfeuEQcqZqNl3YP2Laz2Q4KjxDFVP
     -----END CERTIFICATE-----
   '';
-
 }

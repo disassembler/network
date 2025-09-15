@@ -1,13 +1,13 @@
-{ config, pkgs, lib, ... }:
-
-with lib;
-
-let
-  cfg = config.services.prometheus.surfboardExporter;
-  pkg = pkgs.callPackage ./pkg.nix { };
-
-in
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.services.prometheus.surfboardExporter;
+  pkg = pkgs.callPackage ./pkg.nix {};
+in {
   options = {
     services.prometheus.surfboardExporter = {
       enable = mkEnableOption "prometheus surfboard exporter";
@@ -30,7 +30,7 @@ in
 
       extraFlags = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
         description = ''
           Extra commandline options when launching the surfboard exporter.
         '';
@@ -52,7 +52,7 @@ in
     systemd.services.prometheus-surfboard-exporter = {
       description = "Prometheus exporter for surfboard cable modem";
       unitConfig.Documentation = "https://github.com/ipstatic/surfboard_exporter";
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
       serviceConfig = {
         User = "nobody";
         Restart = "always";

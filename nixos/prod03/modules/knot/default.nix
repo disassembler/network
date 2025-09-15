@@ -1,5 +1,9 @@
-{ pkgs, config, lib, ... }:
-let
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}: let
   ip4 = config.networking.prod03.ipv4.address;
   ip6 = lib.head config.networking.prod03.ipv6.addresses;
 in {
@@ -74,6 +78,6 @@ in {
     '';
   };
 
-  networking.firewall.allowedTCPPorts = [ 53 ];
-  networking.firewall.allowedUDPPorts = [ 53 ];
+  networking.firewall.allowedTCPPorts = [53];
+  networking.firewall.allowedUDPPorts = [53];
 }

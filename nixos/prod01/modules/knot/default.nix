@@ -1,23 +1,29 @@
-{ pkgs, inputs, config, lib, ... }:
-let
+{
+  pkgs,
+  inputs,
+  config,
+  lib,
+  ...
+}: let
   ip4 = config.networking.prod01.ipv4.address;
   ip6 = lib.head config.networking.prod01.ipv6.addresses;
-  acmeChallenge = domain: pkgs.writeText "_acme-challenge.${domain}.zone" ''
-    @ 3600 IN SOA _acme-challenge.${domain}. root.disasm.us. 2022012801 7200 3600 86400 3600
+  acmeChallenge = domain:
+    pkgs.writeText "_acme-challenge.${domain}.zone" ''
+      @ 3600 IN SOA _acme-challenge.${domain}. root.disasm.us. 2022012801 7200 3600 86400 3600
 
-    $TTL 30
+      $TTL 30
 
-    @ IN NS ns1.disasm.us.
-  '';
-  dyndns = domain: pkgs.writeText "${domain}.zone" ''
-    @ 3600 IN SOA ${domain}. root.disasm.us. 2022012101 7200 3600 86400 3600
+      @ IN NS ns1.disasm.us.
+    '';
+  dyndns = domain:
+    pkgs.writeText "${domain}.zone" ''
+      @ 3600 IN SOA ${domain}. root.disasm.us. 2022012101 7200 3600 86400 3600
 
-    $TTL 300
+      $TTL 300
 
-    @ IN NS ns1.disasm.us.
-  '';
-in
-{
+      @ IN NS ns1.disasm.us.
+    '';
+in {
   sops.secrets."knot-keys.conf".owner = "knot";
 
   services.knot = {
@@ -148,6 +154,6 @@ in
     '';
   };
 
-  networking.firewall.allowedTCPPorts = [ 53 ];
-  networking.firewall.allowedUDPPorts = [ 53 ];
+  networking.firewall.allowedTCPPorts = [53];
+  networking.firewall.allowedUDPPorts = [53];
 }

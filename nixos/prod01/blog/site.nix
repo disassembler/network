@@ -1,80 +1,96 @@
-/*-----------------------------------------------------------------------------
-  Init
+/*
+-----------------------------------------------------------------------------
+Init
 
-  Initialization of Styx, should not be edited
-  -----------------------------------------------------------------------------*/
-{ styx
-, styxLib
-, styx-themes
-, extraConf ? { }
-}@args:
-
-rec {
-
-  /* Importing styx library
+Initialization of Styx, should not be edited
+-----------------------------------------------------------------------------
+*/
+{
+  styx,
+  styxLib,
+  styx-themes,
+  extraConf ? {},
+} @ args: rec {
+  /*
+  Importing styx library
   */
 
+  /*
+  -----------------------------------------------------------------------------
+  Themes setup
 
-  /*-----------------------------------------------------------------------------
-    Themes setup
+  -----------------------------------------------------------------------------
+  */
 
-    -----------------------------------------------------------------------------*/
-
-  /* list the themes to load, paths or packages can be used
-    items at the end of the list have higher priority
+  /*
+   list the themes to load, paths or packages can be used
+  items at the end of the list have higher priority
   */
   themes = [
     styx-themes.generic-templates
     styx-themes.nix
   ];
 
-  /* Loading the themes data
+  /*
+  Loading the themes data
   */
   themesData = styxLib.themes.load {
     inherit styxLib themes;
-    extraEnv = { inherit data pages; };
-    extraConf = [ ./conf.nix extraConf ];
+    extraEnv = {inherit data pages;};
+    extraConf = [./conf.nix extraConf];
   };
 
-  /* Bringing the themes data to the scope
+  /*
+  Bringing the themes data to the scope
   */
   inherit (themesData) conf lib files templates env;
 
+  /*
+  -----------------------------------------------------------------------------
+  Data
 
-  /*-----------------------------------------------------------------------------
-    Data
-
-    This section declares the data used by the site
-    -----------------------------------------------------------------------------*/
+  This section declares the data used by the site
+  -----------------------------------------------------------------------------
+  */
 
   data = with lib; {
     # Loading the index page data
-    index = loadFile { file = ./data/index.nix; inherit env; };
+    index = loadFile {
+      file = ./data/index.nix;
+      inherit env;
+    };
     # loading a single page
-    about = loadFile { file = ./data/pages/about.md; inherit env; };
+    about = loadFile {
+      file = ./data/pages/about.md;
+      inherit env;
+    };
 
     # loading a list of contents
-    posts = sortBy "date" "dsc" (loadDir { dir = ./data/posts; inherit env; });
+    posts = sortBy "date" "dsc" (loadDir {
+      dir = ./data/posts;
+      inherit env;
+    });
 
     # menu declaration
     menu = with pages; [
-      (about // { navbarTitle = "~/about"; })
-      ((head postsList) // { navbarTitle = "~/posts"; })
+      (about // {navbarTitle = "~/about";})
+      ((head postsList) // {navbarTitle = "~/posts";})
     ];
   };
 
+  /*
+  -----------------------------------------------------------------------------
+  Pages
 
-  /*-----------------------------------------------------------------------------
-    Pages
-
-    This section declares the pages that will be generated
-    -----------------------------------------------------------------------------*/
+  This section declares the pages that will be generated
+  -----------------------------------------------------------------------------
+  */
 
   pages = with lib; rec {
-
-    /* Index page
-      Splitting a list of items through multiple pages
-      For more complex needs, mkSplitCustom is available
+    /*
+     Index page
+    Splitting a list of items through multiple pages
+    For more complex needs, mkSplitCustom is available
     */
     #index = mkSplit {
     #  title        = "Home";
@@ -84,25 +100,32 @@ rec {
     #  data         = posts.list;
     #};
 
-    /* Custom index page
-      See data/index.nix for the details
+    /*
+     Custom index page
+    See data/index.nix for the details
     */
-    index = {
-      title = "sam@samleathers.com ~ $";
-      path = "/index.html";
-      template = id;
-    } // data.index;
+    index =
+      {
+        title = "sam@samleathers.com ~ $";
+        path = "/index.html";
+        template = id;
+      }
+      // data.index;
 
-    /* About page
-      Example of generating a page from imported data
+    /*
+     About page
+    Example of generating a page from imported data
     */
-    about = {
-      title = "About";
-      path = "/about.html";
-      template = templates.page.full;
-    } // data.about;
+    about =
+      {
+        title = "About";
+        path = "/about.html";
+        template = templates.page.full;
+      }
+      // data.about;
 
-    /* Feed page
+    /*
+    Feed page
     */
     feed = {
       title = "Feed";
@@ -113,14 +136,17 @@ rec {
       items = take 10 posts.list;
     };
 
-    /* 404 error page
+    /*
+    404 error page
     */
     e404 = {
       path = "/404.html";
       template = templates.e404;
     };
 
-    /* Posts lists */
+    /*
+    Posts lists
+    */
     postsList = mkSplit {
       title = "Posts";
       basePath = "/posts/index";
@@ -129,7 +155,8 @@ rec {
       data = posts.list;
     };
 
-    /* Posts pages
+    /*
+    Posts pages
     */
     posts = mkPageList {
       data = data.posts;
@@ -137,24 +164,23 @@ rec {
       template = templates.post.full;
       #breadcrumbs = [ (head pages.index) ];
     };
-
   };
 
+  /*
+  -----------------------------------------------------------------------------
+  Site rendering
 
-  /*-----------------------------------------------------------------------------
-    Site rendering
-
-    -----------------------------------------------------------------------------*/
+  -----------------------------------------------------------------------------
+  */
 
   # converting pages attribute set to a list
   pageList = lib.pagesToList {
     inherit pages;
-    default = { layout = templates.layout; };
+    default = {layout = templates.layout;};
   };
 
   site = lib.mkSite {
     inherit pageList;
-    files = files ++ [ ./files ];
+    files = files ++ [./files];
   };
-
 }

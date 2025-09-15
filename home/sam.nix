@@ -1,4 +1,8 @@
-{ inputs, pkgs, ... }: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   imports = [
     inputs.niri.homeModules.niri
     ./niri.nix

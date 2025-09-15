@@ -1,19 +1,21 @@
-{ lib, config, pkgs, inputs, ... }:
-
-
-with lib;
-
-let
+{
+  lib,
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
+with lib; let
   legacyPkgs = import inputs.nixpkgsLegacy {
     system = "x86_64-linux";
     config = {
       allowUnfree = true;
       # required for mongodb 3.4
-      permittedInsecurePackages = [ "openssl-1.0.2u" ];
+      permittedInsecurePackages = ["openssl-1.0.2u"];
     };
   };
   shared = import ../../shared.nix;
-  netboot_root = pkgs.runCommand "nginxroot" { } ''
+  netboot_root = pkgs.runCommand "nginxroot" {} ''
     mkdir -pv $out
     cat <<EOF > $out/boot.php
     <?php
@@ -32,9 +34,9 @@ let
     EOF
     ln -sv ${netboot} $out/netboot
   '';
-  netboot =
-    let
-      build = (import (pkgs.path + "/nixos/lib/eval-config.nix") {
+  netboot = let
+    build =
+      (import (pkgs.path + "/nixos/lib/eval-config.nix") {
         system = "x86_64-linux";
         modules = [
           (pkgs.path + "/nixos/modules/installer/netboot/netboot-minimal.nix")
@@ -42,10 +44,10 @@ let
           module
         ];
       }).config.system.build;
-    in
+  in
     pkgs.symlinkJoin {
       name = "netboot";
-      paths = with build; [ netbootRamdisk kernel netbootIpxeScript ];
+      paths = with build; [netbootRamdisk kernel netbootIpxeScript];
     };
   module = {
     kexec.justdoit = {
@@ -55,8 +57,7 @@ let
       bootSize = 64;
     };
   };
-in
-{
+in {
   deployment = {
     targetHost = "10.40.33.20";
     targetPort = 22;
@@ -64,38 +65,35 @@ in
   };
   sops.defaultSopsFile = ./secrets.yaml;
   sops.secrets = {
-    gitea_dbpass = { };
-    mpd_pw = { };
-    mpd_icecast_pw = { };
-    alertmanager = { };
+    gitea_dbpass = {};
+    mpd_pw = {};
+    mpd_icecast_pw = {};
+    alertmanager = {};
     lego-knot-credentials.owner = "acme";
   };
-  imports =
-    [
-      ./minecraft-bedrock-server.nix
-    ];
+  imports = [
+    ./minecraft-bedrock-server.nix
+  ];
   _module.args = {
     inherit shared;
   };
 
-  nix =
-    let
-      buildMachines = import ../../build-machines.nix;
-    in
-    {
-      sshServe = {
-        enable = true;
-        keys = [ "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6A3QRIK9XfLf/eDYb9Z4UO7iTmH7Gy3xwHphDx/ZEF9xZ6NuSsotihNZCpGIq2W3G7lx+3TlJW4WuI2GUHr9LZRsI+Z7T2+tSEtQZ1sE4p4rvlkNBzORobfrjXWs32Wd4ZH1i9unJRY6sFouWHt0ejjpnH49F8q5grTZALzrwh+Rz+Wj7Z1No7FccVMB15EtROq9jFQjP1Yqc+jScSFhgurHBpQbyJZXHXaelwVwLLM7DfDyLCDLgkB+1PDDMmfCMFEdV4oTMWmN6kZb52ko4B5ygzFg/RgOe73yYv9FRxUZK3kQQQfl4/VOIB8DhJieD/2VfmjCI0Q46xnia0rdz root@sarov" ];
-      };
-      buildMachines = [
-        buildMachines.linux.optina
-      ];
-      settings.substituters = [ "https://cache.nixos.org" "https://cache.iog.io" ];
-      settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
-      extraOptions = ''
-        allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk
-      '';
+  nix = let
+    buildMachines = import ../../build-machines.nix;
+  in {
+    sshServe = {
+      enable = true;
+      keys = ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6A3QRIK9XfLf/eDYb9Z4UO7iTmH7Gy3xwHphDx/ZEF9xZ6NuSsotihNZCpGIq2W3G7lx+3TlJW4WuI2GUHr9LZRsI+Z7T2+tSEtQZ1sE4p4rvlkNBzORobfrjXWs32Wd4ZH1i9unJRY6sFouWHt0ejjpnH49F8q5grTZALzrwh+Rz+Wj7Z1No7FccVMB15EtROq9jFQjP1Yqc+jScSFhgurHBpQbyJZXHXaelwVwLLM7DfDyLCDLgkB+1PDDMmfCMFEdV4oTMWmN6kZb52ko4B5ygzFg/RgOe73yYv9FRxUZK3kQQQfl4/VOIB8DhJieD/2VfmjCI0Q46xnia0rdz root@sarov"];
     };
+    buildMachines = [
+      buildMachines.linux.optina
+    ];
+    settings.substituters = ["https://cache.nixos.org" "https://cache.iog.io"];
+    settings.trusted-public-keys = ["hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="];
+    extraOptions = ''
+      allowed-uris = https://github.com/NixOS/nixpkgs/archive https://github.com/input-output-hk
+    '';
+  };
 
   # Use the systemd-boot EFI boot loader.
   #boot.loader.systemd-boot.enable = true;
@@ -110,7 +108,7 @@ in
       canTouchEfiVariables = false;
     };
   };
-  boot.supportedFilesystems = [ "zfs" ];
+  boot.supportedFilesystems = ["zfs"];
   #profiles.vim.enable = false;
   profiles.zsh.enable = true;
   profiles.tmux.enable = true;
@@ -127,17 +125,21 @@ in
     domain = "lan.disasm.us";
     hostId = "1768b40b";
     tempAddresses = "disabled";
-    interfaces.enp2s0.ipv4.addresses = [{ address = "10.40.33.20"; prefixLength = 24; }];
+    interfaces.enp2s0.ipv4.addresses = [
+      {
+        address = "10.40.33.20";
+        prefixLength = 24;
+      }
+    ];
     defaultGateway = "10.40.33.1";
-    nameservers = [ "10.40.33.1" "8.8.8.8" ];
-    extraHosts =
-      ''
-        10.233.1.2 rtorrent.optina.local
-        10.40.33.20 crate.lan.disasm.us
-      '';
+    nameservers = ["10.40.33.1" "8.8.8.8"];
+    extraHosts = ''
+      10.233.1.2 rtorrent.optina.local
+      10.40.33.20 crate.lan.disasm.us
+    '';
     nat = {
       enable = true;
-      internalInterfaces = [ "ve-+" ];
+      internalInterfaces = ["ve-+"];
       externalInterface = "enp2s0";
     };
     firewall = {
@@ -179,7 +181,7 @@ in
         8844
         8043
       ];
-      allowedUDPPorts = [ 53 137 138 1194 500 4500 5353 19132 29810 27001 ];
+      allowedUDPPorts = [53 137 138 1194 500 4500 5353 19132 29810 27001];
     };
   };
 
@@ -193,13 +195,13 @@ in
     dnsProvider = "rfc2136";
     credentialsFile = config.sops.secrets.lego-knot-credentials.path;
   };
-  security.pki.certificates = [ shared.wedlake_ca_cert ];
+  security.pki.certificates = [shared.wedlake_ca_cert];
 
   nixpkgs = {
     config = {
       allowUnfree = true;
       # required for mongodb 3.4
-      permittedInsecurePackages = [ "openssl-1.0.2u" ];
+      permittedInsecurePackages = ["openssl-1.0.2u"];
       packageOverrides = pkgs: rec {
         #weechat = pkgs.weechat.override {
         #  configure = {availablePlugins, ...}: {
@@ -258,7 +260,7 @@ in
     };
     avahi = {
       enable = true;
-      allowInterfaces = [ "enp2s0" ];
+      allowInterfaces = ["enp2s0"];
       reflector = true;
       publish = {
         enable = true;
@@ -269,14 +271,14 @@ in
     home-assistant = {
       enable = true;
       package = (pkgs.home-assistant.override {
-        extraComponents = [ "sense" "roku" "homekit" ];
-      }).overrideAttrs (oldAttrs: { doInstallCheck = false; });
+        extraComponents = ["sense" "roku" "homekit"];
+      }).overrideAttrs (oldAttrs: {doInstallCheck = false;});
       config = {
-        default_config = { };
-        met = { };
-        sense = { };
-        roku = { };
-        homekit = { };
+        default_config = {};
+        met = {};
+        sense = {};
+        roku = {};
+        homekit = {};
       };
     };
     matterbridge = {
@@ -359,7 +361,7 @@ in
     };
     bitlbee = {
       enable = true;
-      libpurple_plugins = [ pkgs.purple-discord ];
+      libpurple_plugins = [pkgs.purple-discord];
     };
     gitea = {
       enable = false;
@@ -435,7 +437,7 @@ in
               prober = "tcp";
               timeout = "10s";
               tcp = {
-                query_response = [{ expect = "^SSH-2.0-"; }];
+                query_response = [{expect = "^SSH-2.0-";}];
               };
             };
             tcp_v4 = {
@@ -507,13 +509,17 @@ in
       extraFlags = [
         "--storage.tsdb.retention.time 8760h"
       ];
-      alertmanagers = [{
-        scheme = "http";
-        path_prefix = "/";
-        static_configs = [{
-          targets = [ "optina.lan.disasm.us:9093" ];
-        }];
-      }];
+      alertmanagers = [
+        {
+          scheme = "http";
+          path_prefix = "/";
+          static_configs = [
+            {
+              targets = ["optina.lan.disasm.us:9093"];
+            }
+          ];
+        }
+      ];
       rules = [
         (builtins.toJSON {
           groups = [
@@ -725,7 +731,7 @@ in
           scrape_interval = "60s";
           metrics_path = "/probe";
           params = {
-            module = [ "ssh_banner" ];
+            module = ["ssh_banner"];
           };
           static_configs = [
             {
@@ -736,17 +742,17 @@ in
           ];
           relabel_configs = [
             {
-              source_labels = [ "__address__" ];
+              source_labels = ["__address__"];
               regex = "(.*)(:.*)?";
               replacement = "\${1}:22";
               target_label = "__param_target";
             }
             {
-              source_labels = [ "__param_target" ];
+              source_labels = ["__param_target"];
               target_label = "instance";
             }
             {
-              source_labels = [ ];
+              source_labels = [];
               target_label = "__address__";
               replacement = "127.0.0.1:9115";
             }
@@ -757,7 +763,7 @@ in
           scrape_interval = "10s";
           metrics_path = "/probe";
           params = {
-            module = [ "icmp_v4" ];
+            module = ["icmp_v4"];
           };
           static_configs = [
             {
@@ -769,17 +775,17 @@ in
           ];
           relabel_configs = [
             {
-              source_labels = [ "__address__" ];
+              source_labels = ["__address__"];
               regex = "(.*)";
               replacement = "\${1}";
               target_label = "__param_target";
             }
             {
-              source_labels = [ "__param_target" ];
+              source_labels = ["__param_target"];
               target_label = "instance";
             }
             {
-              source_labels = [ ];
+              source_labels = [];
               target_label = "__address__";
               replacement = "127.0.0.1:9115";
             }
@@ -799,7 +805,7 @@ in
           "smtp_auth_password" = "$SMTP_PW";
         };
         "route" = {
-          "group_by" = [ "alertname" "alias" ];
+          "group_by" = ["alertname" "alias"];
           "group_wait" = "30s";
           "group_interval" = "2m";
           "repeat_interval" = "4h";
@@ -842,16 +848,15 @@ in
           };
         };
       };
-      phpOptions =
-        ''
-          [opcache]
-          opcache.enable=1
-          opcache.memory_consumption=128
-          opcache.interned_strings_buffer=8
-          opcache.max_accelerated_files=4000
-          opcache.revalidate_freq=60
-          opcache.fast_shutdown=1
-        '';
+      phpOptions = ''
+        [opcache]
+        opcache.enable=1
+        opcache.memory_consumption=128
+        opcache.interned_strings_buffer=8
+        opcache.max_accelerated_files=4000
+        opcache.revalidate_freq=60
+        opcache.fast_shutdown=1
+      '';
     };
     nginx = {
       enable = true;
@@ -961,9 +966,9 @@ in
               proxy_read_timeout 4h;
             '';
           };
-        locations."/" = {
-          root = pkgs.glowing-bear;
-        };
+          locations."/" = {
+            root = pkgs.glowing-bear;
+          };
         };
         #"git.lan.disasm.us" = {
         #  forceSSL = true;
@@ -984,32 +989,30 @@ in
       enable = true;
       settings = {
         global = {
-        "guest account" = "nobody";
-        "map to guest" = "bad user";
+          "guest account" = "nobody";
+          "map to guest" = "bad user";
         };
-        meganbackup =
-          {
-            path = "/data/backups/other/megan";
-            "valid users" = "sam megan";
-            writable = "yes";
-            comment = "Megan's Backup";
-          };
-        musicdrive =
-          {
-            path = "/data/pvr/music";
-            "valid users" = "sam megan nursery";
-            writable = "yes";
-            comment = "music share";
-          };
+        meganbackup = {
+          path = "/data/backups/other/megan";
+          "valid users" = "sam megan";
+          writable = "yes";
+          comment = "Megan's Backup";
+        };
+        musicdrive = {
+          path = "/data/pvr/music";
+          "valid users" = "sam megan nursery";
+          writable = "yes";
+          comment = "music share";
+        };
       };
     };
     printing = {
       enable = true;
-      drivers = [ pkgs.hplip ];
+      drivers = [pkgs.hplip];
       defaultShared = true;
       browsing = true;
-      listenAddresses = [ "*:631" ];
-      allowFrom = [ "all" ];
+      listenAddresses = ["*:631"];
+      allowFrom = ["all"];
       extraConf = ''
         ServerAlias *
       '';
@@ -1029,11 +1032,11 @@ in
       credentials = [
         {
           passwordFile = config.sops.secrets.mpd_pw.path;
-          permissions = [ "admin" "read" "add" "control" ];
+          permissions = ["admin" "read" "add" "control"];
         }
         {
           passwordFile = config.sops.secrets.mpd_icecast_pw.path;
-          permissions = [ "read" "add" "control" ];
+          permissions = ["read" "add" "control"];
         }
       ];
       extraConfig = ''
@@ -1088,7 +1091,6 @@ in
       #  }
       #);
     };
-
   };
   virtualisation.docker.enable = true;
   virtualisation.docker.enableOnBoot = true;
@@ -1113,7 +1115,11 @@ in
         isReadOnly = false;
       };
     };
-    config = { config, pkgs, ... }: {
+    config = {
+      config,
+      pkgs,
+      ...
+    }: {
       environment.systemPackages = with pkgs; [
         rtorrent
         openvpn
@@ -1137,7 +1143,11 @@ in
     #    isReadOnly = false;
     #  };
     #};
-    config = { config, pkgs, ... }: {
+    config = {
+      config,
+      pkgs,
+      ...
+    }: {
       environment.systemPackages = with pkgs; [
         tmux
         sudo
@@ -1148,20 +1158,20 @@ in
     isNormalUser = true;
     description = "Sam Leathers";
     uid = 1000;
-    extraGroups = [ "wheel" "libvirtd" ];
+    extraGroups = ["wheel" "libvirtd"];
     openssh.authorizedKeys.keys = shared.sam_ssh_keys;
   };
   users.users.samchat = {
     isNormalUser = true;
     description = "Sam Leathers (chat)";
     uid = 1005;
-    extraGroups = [ ];
+    extraGroups = [];
     shell = pkgs.bashInteractive;
     openssh.authorizedKeys.keys = shared.sam_ssh_keys;
   };
-  system.activationScripts.samchat-tmp =
-    let bashrc = builtins.toFile "samchat-bashrc" "export TMUX_TMPDIR=/tmp";
-    in "ln -svf ${bashrc} ${config.users.users.samchat.home}/.bash_profile";
+  system.activationScripts.samchat-tmp = let
+    bashrc = builtins.toFile "samchat-bashrc" "export TMUX_TMPDIR=/tmp";
+  in "ln -svf ${bashrc} ${config.users.users.samchat.home}/.bash_profile";
   users.users.mitro = {
     isNormalUser = true;
     uid = 1001;

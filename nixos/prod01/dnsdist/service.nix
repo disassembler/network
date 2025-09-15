@@ -1,16 +1,17 @@
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
   cfg = config.services.dnsdist;
-  dnsdist = pkgs.callPackage ./package.nix { };
+  dnsdist = pkgs.callPackage ./package.nix {};
   configFile = pkgs.writeText "dndist.conf" ''
     setLocal('${cfg.listenAddress}:${toString cfg.listenPort}')
     ${cfg.extraConfig}
   '';
-in
-{
+in {
   options = {
     services.dnsdist = {
       enable = mkEnableOption "dnsdist domain name server";
@@ -40,8 +41,8 @@ in
   config = mkIf config.services.dnsdist.enable {
     systemd.services.dnsdist = {
       description = "dnsdist load balancer";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" ];
+      wantedBy = ["multi-user.target"];
+      after = ["network.target"];
 
       serviceConfig = {
         Restart = "on-failure";

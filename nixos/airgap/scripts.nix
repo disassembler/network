@@ -1,6 +1,15 @@
-{ lib, coreutils, writeScriptBin, cardano-hw-cli, cardano-cli, cardano-address, gnutar, gzip, jq }:
-let
-  packages = [ cardano-hw-cli cardano-cli coreutils gnutar gzip cardano-address jq ];
+{
+  lib,
+  coreutils,
+  writeScriptBin,
+  cardano-hw-cli,
+  cardano-cli,
+  cardano-address,
+  gnutar,
+  gzip,
+  jq,
+}: let
+  packages = [cardano-hw-cli cardano-cli coreutils gnutar gzip cardano-address jq];
   scriptHeader = ''
     PATH=${lib.makeBinPath packages}
     set -euo pipefail
@@ -70,25 +79,25 @@ let
     }
   '';
   instructions = writeScriptBin "instructions" ''
-    echo '
-The following steps will setup pools pledging to accounts 1-10 and all rewards are sent to account 0.
-1. adawallet init-restore
-2. extract keys 0-10 for mainnet: `adawallet import-accounts -s 0 -e 10`
-3. extract all account keys and addresses: `adawallet export-accounts --accounts-file accounts.json`
-4. send resulting json to pool operator
-5. Import utxo set: `adawallet import-utxos --utxo-file=utxo-mainnet-1.json`
-6. register stake keys for accounts: `adawallet bulk-stake-registration-tx --ttl <TTL> --fee 200000 --out-file stake-keys.tar.gz --sign`
-7. send resulting tarball to pool operator
-8. pool operator returns a `pool-transactions.tar.gz` and current ttl
-9. witness pool transactions with owner stake key: `adawallet bulk-witness-tx --transactions-file tx-pools.tar.gz --ttl <TTL> --stake --out-file tx-pools-witnessed.tar.gz`
-10. send resulting tarball to pool operator
-11. pool operator returns delegations.json and `utxo-mainnet-2.json` and current ttl
-12. Import utxo set: `adawallet import-utxos --utxo-file=utxo-mainnet-2.json`
-13. delegate stake keys to pools: `adawallet bulk-delegate-pool-tx --delegations delegations.json --ttl <TTL> --fee 210000 --out-file tx-deleg.tar.gz --sign`
-14. send resulting tarball to pool operator
+        echo '
+    The following steps will setup pools pledging to accounts 1-10 and all rewards are sent to account 0.
+    1. adawallet init-restore
+    2. extract keys 0-10 for mainnet: `adawallet import-accounts -s 0 -e 10`
+    3. extract all account keys and addresses: `adawallet export-accounts --accounts-file accounts.json`
+    4. send resulting json to pool operator
+    5. Import utxo set: `adawallet import-utxos --utxo-file=utxo-mainnet-1.json`
+    6. register stake keys for accounts: `adawallet bulk-stake-registration-tx --ttl <TTL> --fee 200000 --out-file stake-keys.tar.gz --sign`
+    7. send resulting tarball to pool operator
+    8. pool operator returns a `pool-transactions.tar.gz` and current ttl
+    9. witness pool transactions with owner stake key: `adawallet bulk-witness-tx --transactions-file tx-pools.tar.gz --ttl <TTL> --stake --out-file tx-pools-witnessed.tar.gz`
+    10. send resulting tarball to pool operator
+    11. pool operator returns delegations.json and `utxo-mainnet-2.json` and current ttl
+    12. Import utxo set: `adawallet import-utxos --utxo-file=utxo-mainnet-2.json`
+    13. delegate stake keys to pools: `adawallet bulk-delegate-pool-tx --delegations delegations.json --ttl <TTL> --fee 210000 --out-file tx-deleg.tar.gz --sign`
+    14. send resulting tarball to pool operator
 
-For more instructions, run `adawallet --help`
-    '
+    For more instructions, run `adawallet --help`
+        '
   '';
   createWallet = writeScriptBin "create-wallet" ''
     ${scriptHeader}

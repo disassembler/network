@@ -1,29 +1,38 @@
-/* Custom index page
-   
-  Returns a page attribute set, merge the data and the template for improved flexibility
+/*
+ Custom index page
+
+Returns a page attribute set, merge the data and the template for improved flexibility
 */
-{ conf, templates, lib, ... }:
-with lib;
-let
-  /* Page data 
-    Can be customized to fit needs
+{
+  conf,
+  templates,
+  lib,
+  ...
+}:
+with lib; let
+  /*
+   Page data
+  Can be customized to fit needs
   */
   name = "Sam Leathers";
   description = ''
     A site about technology
   '';
-  social = [{
-    title = "GitHub";
-    icon = "github";
-    link = "https://github.com/disassembler";
-  }
+  social = [
+    {
+      title = "GitHub";
+      icon = "github";
+      link = "https://github.com/disassembler";
+    }
     {
       title = "Email";
       icon = "envelope";
       link = "mailto:disasm@gmail.com";
-    }];
+    }
+  ];
 
-  /* template
+  /*
+  template
   */
   content = ''
     <div class="row">
@@ -39,8 +48,9 @@ let
     <div class="row">
       <div class="col-xs-12 user-social text-center">
         ${mapTemplate (s: ''
-          <a href="${s.link}" title="${s.title}"><i class="fa fa-${s.icon} fa-3x" aria-hidden="true"></i></a>
-        '') social}
+        <a href="${s.link}" title="${s.title}"><i class="fa fa-${s.icon} fa-3x" aria-hidden="true"></i></a>
+      '')
+      social}
       </div>
     </div>
     <div class="row">
@@ -49,5 +59,4 @@ let
       </div>
     </div>
   '';
-in
-{ inherit content; }
+in {inherit content;}

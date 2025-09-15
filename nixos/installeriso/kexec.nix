@@ -1,11 +1,12 @@
-{ pkgs, config, ... }:
-
-let
-  nixosPath = "${builtins.toString pkgs.path}/nixos";
-in
 {
+  pkgs,
+  config,
+  ...
+}: let
+  nixosPath = "${builtins.toString pkgs.path}/nixos";
+in {
   system.build = rec {
-    image = pkgs.runCommand "image" { buildInputs = [ pkgs.nukeReferences ]; } ''
+    image = pkgs.runCommand "image" {buildInputs = [pkgs.nukeReferences];} ''
       mkdir $out
       cp ${config.system.build.kernel}/${config.system.boot.loader.kernelFile} $out/kernel
       cp ${config.system.build.netbootRamdisk}/initrd $out/initrd
@@ -31,14 +32,17 @@ in
         sync
         echo "executing kernel, filesystems will be improperly umounted"
         kexec -e
-        '';
+      '';
     };
   };
 
   #system.build.kexec_tarball = pkgs.callPackage <nixpkgs/nixos/lib/make-system-tarball.nix> {
   system.build.kexec_tarball = pkgs.callPackage (nixosPath + "/lib/make-system-tarball.nix") {
     storeContents = [
-      { object = config.system.build.kexec_script; symlink = "/kexec_nixos"; }
+      {
+        object = config.system.build.kexec_script;
+        symlink = "/kexec_nixos";
+      }
     ];
     contents = [];
   };

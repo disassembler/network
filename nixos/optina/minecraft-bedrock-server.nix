@@ -1,28 +1,31 @@
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
   minecraft-bedrock-server = pkgs.callPackage ./minecraft-bedrock.nix {};
   cfg = config.services.minecraft-bedrock-server;
 
-  cfgToString = v: if builtins.isBool v then boolToString v else toString v;
+  cfgToString = v:
+    if builtins.isBool v
+    then boolToString v
+    else toString v;
 
   serverPropertiesFile = pkgs.writeText "server.properties" (''
-    # server.properties managed by NixOS configuration
-  '' + concatStringsSep "\n" (mapAttrsToList
-    (n: v: "${n}=${cfgToString v}")
-    cfg.serverProperties));
+      # server.properties managed by NixOS configuration
+    ''
+    + concatStringsSep "\n" (mapAttrsToList
+      (n: v: "${n}=${cfgToString v}")
+      cfg.serverProperties));
 
   defaultServerPort = 19132;
 
   serverPort = cfg.serverProperties.server-port or defaultServerPort;
-
-in
-{
+in {
   options = {
     services.minecraft-bedrock-server = {
-
       enable = mkOption {
         type = types.bool;
         default = false;
@@ -42,7 +45,7 @@ in
       };
 
       serverProperties = mkOption {
-        type = with types; attrsOf (oneOf [ bool int str ]);
+        type = with types; attrsOf (oneOf [bool int str]);
         default = {
           server-name = "Dedicated Server";
           gamemode = "survival";
@@ -110,12 +113,10 @@ in
         example = literalExample "pkgs.minecraft-bedrock-server-1_16";
         description = "Version of minecraft-bedrock-server to run.";
       };
-
     };
   };
 
   config = mkIf cfg.enable {
-
     users.users.minecraft = {
       description = "Minecraft server service user";
       home = cfg.dataDir;
@@ -123,12 +124,12 @@ in
       uid = 114;
       group = "minecraft";
     };
-    users.groups.minecraft = { };
+    users.groups.minecraft = {};
 
     systemd.services.minecraft-bedrock-server = {
       description = "Minecraft Bedrock Server Service";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" ];
+      wantedBy = ["multi-user.target"];
+      after = ["network.target"];
 
       serviceConfig = {
         ExecStart = "${cfg.package}/bin/bedrock_server";
@@ -148,7 +149,7 @@ in
     };
 
     networking.firewall = {
-      allowedUDPPorts = [ serverPort ];
+      allowedUDPPorts = [serverPort];
     };
   };
 }

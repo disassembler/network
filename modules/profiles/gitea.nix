@@ -1,11 +1,11 @@
-{ config, lib, ... }:
-
-with lib;
-
-let
-  cfg = config.profiles.gitea;
-in
 {
+  config,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.profiles.gitea;
+in {
   options.profiles.gitea = {
     enable = mkEnableOption "enable gitea profile.";
   };
@@ -16,6 +16,6 @@ in
         enable = true;
       };
     };
-    nixpkgs.config.packageOverrides = pkgs: { gitea = (import gitea/pkg.nix { }); };
+    nixpkgs.config.packageOverrides = pkgs: {gitea = import gitea/pkg.nix {};};
   };
 }

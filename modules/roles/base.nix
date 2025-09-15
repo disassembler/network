@@ -1,8 +1,10 @@
-{ config, pkgs, lib, ... }:
-
-with lib;
-
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; {
   config = {
     profiles.tmux.enable = true;
     profiles.vim.enable = true;
@@ -37,7 +39,7 @@ with lib;
       };
     };
 
-    boot.kernelModules = [ "tun" "fuse" ];
+    boot.kernelModules = ["tun" "fuse"];
     # Define a user account. Don't forget to set a password with ‘passwd’.
     users.extraUsers.root.shell = mkOverride 50 "${pkgs.bashInteractive}/bin/bash";
 

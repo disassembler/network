@@ -1,10 +1,13 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs, lib, inputs, ... }:
-
 {
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}: {
   deployment = {
     targetHost = "10.40.33.21";
     targetPort = 22;
@@ -12,9 +15,9 @@
   };
 
   sops.defaultSopsFile = ./secrets.yaml;
-  sops.secrets.pool_opcert = { };
-  sops.secrets.pool_vrf_skey = { };
-  sops.secrets.pool_kes_skey = { };
+  sops.secrets.pool_opcert = {};
+  sops.secrets.pool_vrf_skey = {};
+  sops.secrets.pool_kes_skey = {};
 
   # Use the systemd-boot EFI boot loader.
   boot = {
@@ -29,16 +32,15 @@
       availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sdhci_acpi"];
       kernelModules = [];
     };
-    kernelModules = [ "amdgpu" "kvm-amd" ];
+    kernelModules = ["amdgpu" "kvm-amd"];
     extraModulePackages = [];
   };
-
 
   nix = {
     settings.sandbox = true;
     settings.cores = 4;
-    settings.substituters = [ "https://cache.nixos.org" "https://cache.iog.io" ];
-    settings.trusted-public-keys = [ "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" ];
+    settings.substituters = ["https://cache.nixos.org" "https://cache.iog.io"];
+    settings.trusted-public-keys = ["hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="];
     extraOptions = ''
       experimental-features = nix-command flakes fetch-closure
     '';
@@ -54,7 +56,7 @@
     tempAddresses = "disabled";
     bridges = {
       br0 = {
-        interfaces = [ "enp4s0" ];
+        interfaces = ["enp4s0"];
       };
     };
     useDHCP = false;
@@ -150,8 +152,8 @@
     mosh.enable = true;
     bash = {
       interactiveShellInit = ''
-      eval "$(direnv hook bash)"
-      eval "$(starship init bash)"
+        eval "$(direnv hook bash)"
+        eval "$(starship init bash)"
       '';
     };
     hyprland = {
@@ -165,46 +167,42 @@
     sway = {
       enable = true;
     };
-
-
   };
 
   services = {
-    udev.extraRules =
-      let
-        dependencies = with pkgs; [ coreutils gnupg gawk gnugrep ];
-        clearYubikey = pkgs.writeScript "clear-yubikey" ''
-          #!${pkgs.stdenv.shell}
-          export PATH=${pkgs.lib.makeBinPath dependencies};
-          keygrips=$(
-            gpg-connect-agent 'keyinfo --list' /bye 2>/dev/null \
-              | grep -v OK \
-              | awk '{if ($4 == "T") { print $3 ".key" }}')
-          for f in $keygrips; do
-            rm -v ~/.gnupg/private-keys-v1.d/$f
-          done
-          gpg --card-status 2>/dev/null 1>/dev/null || true
-        '';
-        clearYubikeySam = pkgs.writeScript "clear-yubikey-sam" ''
-          #!${pkgs.stdenv.shell}
-          ${pkgs.sudo}/bin/sudo -u sam ${clearYubikey}
-        '';
-      in
-      ''
-        ACTION=="add|change", SUBSYSTEM=="usb", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0407", RUN+="${clearYubikeySam}"
-        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="2b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="3b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="4b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1807", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1808", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0000", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0001", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-        SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0004", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
-        KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2c97"
-        KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2581"
+    udev.extraRules = let
+      dependencies = with pkgs; [coreutils gnupg gawk gnugrep];
+      clearYubikey = pkgs.writeScript "clear-yubikey" ''
+        #!${pkgs.stdenv.shell}
+        export PATH=${pkgs.lib.makeBinPath dependencies};
+        keygrips=$(
+          gpg-connect-agent 'keyinfo --list' /bye 2>/dev/null \
+            | grep -v OK \
+            | awk '{if ($4 == "T") { print $3 ".key" }}')
+        for f in $keygrips; do
+          rm -v ~/.gnupg/private-keys-v1.d/$f
+        done
+        gpg --card-status 2>/dev/null 1>/dev/null || true
       '';
-    udev.packages = [ pkgs.yubikey-personalization ];
+      clearYubikeySam = pkgs.writeScript "clear-yubikey-sam" ''
+        #!${pkgs.stdenv.shell}
+        ${pkgs.sudo}/bin/sudo -u sam ${clearYubikey}
+      '';
+    in ''
+      ACTION=="add|change", SUBSYSTEM=="usb", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0407", RUN+="${clearYubikeySam}"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="2b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="3b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="4b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1807", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1808", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0000", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0001", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0004", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2c97"
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2581"
+    '';
+    udev.packages = [pkgs.yubikey-personalization];
     openssh = {
       settings.PasswordAuthentication = false;
       enable = true;
@@ -220,7 +218,7 @@
     };
   };
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 3001 9090 9093 3000 3100 ];
+  networking.firewall.allowedTCPPorts = [3001 9090 9093 3000 3100];
   networking.firewall.allowedUDPPorts = [
     7777
     7778
@@ -236,8 +234,8 @@
   users.users.sam = {
     uid = 10016;
     isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    openssh.authorizedKeys.keys = [ "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDEPOLnk4+mWNGOXd309PPxal8wgMzKXHnn7Jbu/SpSUYEc1EmjgnrVBcR0eDxgDmGD9zJ69wEH/zLQLPWjaTusiuF+bqAM/x7z7wwy1nZ48SYJw3Q+Xsgzeb0nvmNsPzb0mfnpI6av8MTHNt+xOqDnpC5B82h/voQ4m5DGMQz60ok2hMeh+sy4VIvX5zOVTOFPQqFR6BGDwtALiP5PwMfyScYXlebWHhDRdX9B0j9t+cqiy5utBUsl4cIUInE0KW7Z8Kf6gIsmQnfSZadqI857kdozU3IbaLoJc1C6LyVjzPFyC4+KUC11BmemTGdCjwcoqEZ0k5XtJaKFXacYYXi1l5MS7VdfHldFDZmMEMvfJG/PwvXN4prfOIjpy1521MJHGBNXRktvWhlNBgI1NUQlx7rGmPZmtrYdeclVnnY9Y4HIpkhm0iEt/XUZTMQpXhedd1BozpMp0h135an4uorIEUQnotkaGDwZIV3mSL8x4n6V02Qe2CYvqf4DcCSBv7D91N3JplJJKt7vV4ltwrseDPxDtCxXrQfSIQd0VGmwu1D9FzzDOuk/MGCiCMFCKIKngxZLzajjgfc9+rGLZ94iDz90jfk6GF4hgF78oFNfPEwoGl0soyZM7960QdBcHgB5QF9+9Yd6QhCb/6+ENM9sz6VLdAY7f/9hj/3Aq0Lm4Q==" ];
+    extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
+    openssh.authorizedKeys.keys = ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDEPOLnk4+mWNGOXd309PPxal8wgMzKXHnn7Jbu/SpSUYEc1EmjgnrVBcR0eDxgDmGD9zJ69wEH/zLQLPWjaTusiuF+bqAM/x7z7wwy1nZ48SYJw3Q+Xsgzeb0nvmNsPzb0mfnpI6av8MTHNt+xOqDnpC5B82h/voQ4m5DGMQz60ok2hMeh+sy4VIvX5zOVTOFPQqFR6BGDwtALiP5PwMfyScYXlebWHhDRdX9B0j9t+cqiy5utBUsl4cIUInE0KW7Z8Kf6gIsmQnfSZadqI857kdozU3IbaLoJc1C6LyVjzPFyC4+KUC11BmemTGdCjwcoqEZ0k5XtJaKFXacYYXi1l5MS7VdfHldFDZmMEMvfJG/PwvXN4prfOIjpy1521MJHGBNXRktvWhlNBgI1NUQlx7rGmPZmtrYdeclVnnY9Y4HIpkhm0iEt/XUZTMQpXhedd1BozpMp0h135an4uorIEUQnotkaGDwZIV3mSL8x4n6V02Qe2CYvqf4DcCSBv7D91N3JplJJKt7vV4ltwrseDPxDtCxXrQfSIQd0VGmwu1D9FzzDOuk/MGCiCMFCKIKngxZLzajjgfc9+rGLZ94iDz90jfk6GF4hgF78oFNfPEwoGl0soyZM7960QdBcHgB5QF9+9Yd6QhCb/6+ENM9sz6VLdAY7f/9hj/3Aq0Lm4Q=="];
   };
   users.users.root = {
     openssh.authorizedKeys.keys = [
@@ -258,50 +256,48 @@
     });
   '';
 
-    system.activationScripts.starship =
-      let
-        starshipConfig = pkgs.writeText "starship.toml" ''
-        [username]
-        show_always = true
-        [hostname]
-        ssh_only = true
-        [git_commit]
-        tag_disabled = false
-        only_detached = false
-        [memory_usage]
-        format = "via $symbol[''${ram_pct}]($style) "
-        disabled = false
-        threshold = -1
-        [time]
-        format = '[\[ $time \]]($style) '
-        disabled = false
-        [[battery.display]]
-        threshold = 100
-        style = "bold green"
-        [[battery.display]]
-        threshold = 50
-        style = "bold orange"
-        [[battery.display]]
-        threshold = 20
-        style = "bold red"
-        [status]
-        map_symbol = true
-        disabled = false
-        '';
-      in
-      {
-        text = ''
-        mkdir -p /etc/per-user/shared
-        cp ${starshipConfig} /etc/per-user/shared/starship.toml
-        mkdir -p /home/sam/.config
-        mkdir -p /root/.config
-        chown sam:users /home/sam/.config
-        chown root /root/.config
-        ln -sf /etc/per-user/shared/starship.toml /home/sam/.config/starship.toml
-        ln -sf /etc/per-user/shared/starship.toml /root/.config/starship.toml
-        '';
-        deps = [ ];
-      };
+  system.activationScripts.starship = let
+    starshipConfig = pkgs.writeText "starship.toml" ''
+      [username]
+      show_always = true
+      [hostname]
+      ssh_only = true
+      [git_commit]
+      tag_disabled = false
+      only_detached = false
+      [memory_usage]
+      format = "via $symbol[''${ram_pct}]($style) "
+      disabled = false
+      threshold = -1
+      [time]
+      format = '[\[ $time \]]($style) '
+      disabled = false
+      [[battery.display]]
+      threshold = 100
+      style = "bold green"
+      [[battery.display]]
+      threshold = 50
+      style = "bold orange"
+      [[battery.display]]
+      threshold = 20
+      style = "bold red"
+      [status]
+      map_symbol = true
+      disabled = false
+    '';
+  in {
+    text = ''
+      mkdir -p /etc/per-user/shared
+      cp ${starshipConfig} /etc/per-user/shared/starship.toml
+      mkdir -p /home/sam/.config
+      mkdir -p /root/.config
+      chown sam:users /home/sam/.config
+      chown root /root/.config
+      ln -sf /etc/per-user/shared/starship.toml /home/sam/.config/starship.toml
+      ln -sf /etc/per-user/shared/starship.toml /root/.config/starship.toml
+    '';
+    deps = [];
+  };
 
   powerManagement.enable = false;
   # This value determines the NixOS release with which your system is to be
@@ -309,5 +305,4 @@
   # servers. You should change this only after NixOS release notes say you
   # should.
   system.stateVersion = "25.05"; # Did you read the comment?
-
 }

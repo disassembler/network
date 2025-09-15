@@ -1,7 +1,9 @@
-{ lib, modulesPath, ... }:
-let
+{
+  lib,
+  modulesPath,
+  ...
+}: let
   shared = import ../../shared.nix;
-
 in {
   imports = [
     (modulesPath + "/installer/netboot/netboot-minimal.nix")
@@ -22,13 +24,14 @@ in {
     nvme = false;
   };
 
-  boot.supportedFilesystems = [ "zfs" ];
+  boot.supportedFilesystems = ["zfs"];
   boot.loader.grub.enable = false;
   boot.kernelParams = [
-    "panic=30" "boot.panic_on_fail" # reboot the machine upon fatal boot issues
+    "panic=30"
+    "boot.panic_on_fail" # reboot the machine upon fatal boot issues
   ];
   services.openssh.enable = true;
-  systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
+  systemd.services.sshd.wantedBy = lib.mkForce ["multi-user.target"];
   users.users.root.openssh.authorizedKeys.keys = shared.sam_ssh_keys;
   networking.hostName = "kexec";
 }

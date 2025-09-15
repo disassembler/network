@@ -1,7 +1,5 @@
-{ ... }:
-
-{
-  imports = [ ./hardware-configuration.nix ./generated.nix ];
+{...}: {
+  imports = [./hardware-configuration.nix ./generated.nix];
   boot.loader.grub.enable = true;
   services.openssh.enable = true;
   boot.zfs.devNodes = "/dev"; # fixes some virtualmachine issues

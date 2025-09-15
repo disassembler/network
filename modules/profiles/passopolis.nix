@@ -1,11 +1,11 @@
-{ config, lib, ... }:
-
-with lib;
-
-let
-  cfg = config.profiles.passopolis;
-in
 {
+  config,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.profiles.passopolis;
+in {
   options.profiles.passopolis = {
     enable = mkEnableOption "enable passopolis profile.";
   };

@@ -1,16 +1,13 @@
-{ config, pkgs, lib, ... }:
-
-with lib;
-
-let
-
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; let
   cfg = config.services.hledger;
   hledger-api = pkgs.haskell.lib.justStaticExecutables pkgs.haskellPackages.hledger-api;
-
-
-in
-
-{
+in {
   options = {
     services.hledger = {
       web = {
@@ -82,7 +79,6 @@ in
           Group which runs the hledger-web service.
         '';
       };
-
     };
   };
 
@@ -100,13 +96,12 @@ in
         name = "hledger";
         gid = 292;
       });
-
     })
     (mkIf cfg.web.enable {
       systemd.services.hledger-web = {
         description = "hledger-web accounting";
-        wantedBy = [ "multi-user.target" ];
-        after = [ "network.target" ];
+        wantedBy = ["multi-user.target"];
+        after = ["network.target"];
         preStart = ''
           touch ${cfg.statePath}/${cfg.stateFileName}
         '';
@@ -123,8 +118,8 @@ in
     (mkIf cfg.api.enable {
       systemd.services.hledger-api = {
         description = "hledger-api accounting";
-        wantedBy = [ "multi-user.target" ];
-        after = [ "network.target" ];
+        wantedBy = ["multi-user.target"];
+        after = ["network.target"];
 
         preStart = ''
           touch ${cfg.statePath}/${cfg.stateFileName}

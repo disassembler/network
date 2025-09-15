@@ -1,18 +1,21 @@
-{ config, pkgs, lib, ... }:
-
-with lib;
-
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; {
   options.themes.numix-solarized.enable = mkEnableOption "solarized";
 
-  config = mkIf
+  config =
+    mkIf
     (
-      config.themes.numix-solarized.enable &&
-      config.profiles.x11.enable
+      config.themes.numix-solarized.enable
+      && config.profiles.x11.enable
     )
     {
       # extra fonts
-      fonts.fonts = [ pkgs.source-code-pro pkgs.font-awesome-ttf pkgs.powerline-fonts ];
+      fonts.fonts = [pkgs.source-code-pro pkgs.font-awesome-ttf pkgs.powerline-fonts];
 
       programs.bash.promptInit = "source ${./bashrc}";
 
@@ -68,13 +71,13 @@ with lib;
           ! ┬ ╔════════════════════════════════════════════════════╗
           ! │ ║run:query                                           ║ ◀- rofi.color-window[0]
           ! │ ║====================================================║ ◀- rofi.separator-style
-          ! │ ║item1░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█║ ◀- rofi.color-normal[0] 
+          ! │ ║item1░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█║ ◀- rofi.color-normal[0]
           ! │ ╟───────────────────────────────────────────────────█╢
           ! │ ║item2▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█║ ◀- selected line
           ! │ ╟───────────────────────────────────────────────────█╢
           ! │ ║item3░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█║
           ! │ ╟───────────────────────────────────────────────────█╢
-          ! │ ║item4▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█║ ◀- rofi.color-normal[2] 
+          ! │ ║item4▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█║ ◀- rofi.color-normal[2]
           ! │ ╟───────────────────────────────────────────────────█╢
           ! │ ║item5░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█║
           ! ┴ ╚════════════════════════════════════════════════════╝

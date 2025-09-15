@@ -1,11 +1,12 @@
-{ config, pkgs, lib, ... }:
-
-with lib;
-
-let
-  cfg = config.profiles.xapps;
-in
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.profiles.xapps;
+in {
   options.profiles.xapps = {
     enable = mkEnableOption "enable xapps";
   };

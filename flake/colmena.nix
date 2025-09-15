@@ -1,22 +1,22 @@
 {
-  self
-  , inputs
-  , lib
-  , ...
+  self,
+  inputs,
+  lib,
+  ...
 }: {
   flake.colmena = let
     customModules = import ../modules/modules-list.nix;
     baseModules = [
       {
         imports = [
-          ({ pkgs, ... }: {
+          ({pkgs, ...}: {
             nix.nixPath = [
               "nixpkgs=${pkgs.path}"
             ];
             # TODO: remove when switching to 22.05
             nix.package = lib.mkForce inputs.nix.packages.x86_64-linux.nix;
             nix.extraOptions = ''
-            experimental-features = nix-command flakes
+              experimental-features = nix-command flakes
             '';
             documentation.info.enable = false;
           })
@@ -39,31 +39,31 @@
       specialArgs.inputs = inputs;
     };
     # modules we want on all deployments
-    defaults = { ... }: {
+    defaults = {...}: {
       imports = defaultModules;
     };
 
     # laptops
-    iviron = { ... }: {
+    iviron = {...}: {
       imports = [
         ../nixos/iviron/configuration.nix
         ../nixos/iviron/hardware-configuration.nix
       ];
     };
-    irkutsk = { ... }: {
+    irkutsk = {...}: {
       imports = [
         inputs.nixos-hardware.nixosModules.dell-xps-13-9380
         ../nixos/irkutsk/configuration.nix
         ../nixos/irkutsk/hardware-configuration.nix
       ];
     };
-    pskov = { ... }: {
+    pskov = {...}: {
       imports = [
         ../nixos/pskov/configuration.nix
         ../nixos/pskov/hardware-configuration.nix
       ];
     };
-    silouan = { ... }: {
+    silouan = {...}: {
       imports = [
         ../nixos/silouan/configuration.nix
         ../nixos/silouan/hardware-configuration.nix
@@ -72,28 +72,28 @@
 
     # home servers
 
-    portal = { ... }: {
+    portal = {...}: {
       imports = [
         ../nixos/portal/configuration.nix
         ../nixos/portal/hardware-configuration.nix
       ];
     };
 
-    optina = { ... }: {
+    optina = {...}: {
       imports = [
         ../nixos/optina/configuration.nix
         ../nixos/optina/hardware-configuration.nix
       ];
     };
 
-    valaam = { ... }: {
+    valaam = {...}: {
       imports = [
         ../nixos/valaam/configuration.nix
         ../nixos/valaam/hardware-configuration.nix
       ];
     };
 
-    sarov = { ... }: {
+    sarov = {...}: {
       imports = [
         ../nixos/sarov/configuration.nix
         ../nixos/sarov/hardware-configuration.nix
@@ -102,13 +102,13 @@
 
     # production servers
 
-    prod01 = { ... }: {
+    prod01 = {...}: {
       imports = [
         ../nixos/prod01/configuration.nix
       ];
     };
 
-    prod03 = { ... }: {
+    prod03 = {...}: {
       imports = [
         ../nixos/prod01/configuration.nix
       ];

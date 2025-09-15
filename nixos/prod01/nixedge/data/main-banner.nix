@@ -1,5 +1,4 @@
-{ templates, ... }:
-{
+{templates, ...}: {
   id = "hero";
   content = ''
      <div class="intro-text">

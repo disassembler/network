@@ -16,8 +16,7 @@
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
     home-manager = {
       url = "github:nix-community/home-manager/d0bbd221482c2713cccb80220f3c9d16a6e20a33";
-      inputs.nixpkgs.follows =
-        "nixpkgs"; # Use system packages list where available
+      inputs.nixpkgs.follows = "nixpkgs"; # Use system packages list where available
     };
     hy3 = {
       url = "github:outfoxxed/hy3?ref=hl0.45.0";
@@ -42,15 +41,33 @@
     styx.url = "github:disassembler/styx";
   };
 
-  outputs = { self, flake-parts, nixpkgs, ... }@ inputs: let
+  outputs = {
+    self,
+    flake-parts,
+    nixpkgs,
+    ...
+  } @ inputs: let
     inherit ((import ./flake/lib.nix {inherit inputs;}).flake.lib) recursiveImports;
-    in flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = recursiveImports [
-        ./flake
-        ./perSystem
-      ] ++ [
-        inputs.treefmt-nix.flakeModule
-      ];
+    inherit (inputs.nixpkgs.lib) mkOption types;
+  in
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      imports =
+        recursiveImports [
+          ./flake
+          ./perSystem
+        ]
+        ++ [
+          inputs.treefmt-nix.flakeModule
+          inputs.cardano-parts.flakeModules.aws
+          inputs.cardano-parts.flakeModules.cluster
+          inputs.cardano-parts.flakeModules.entrypoints
+          inputs.cardano-parts.flakeModules.jobs
+          inputs.cardano-parts.flakeModules.lib
+          inputs.cardano-parts.flakeModules.pkgs
+          inputs.cardano-parts.flakeModules.process-compose
+          inputs.cardano-parts.flakeModules.shell
+          {options.flake.opentofu = mkOption {type = types.attrs;};}
+        ];
       systems = [
         "x86_64-linux"
       ];

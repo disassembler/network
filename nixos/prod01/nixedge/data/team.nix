@@ -15,8 +15,14 @@
       name = "Samuel Leathers";
       title = "Owner and Lead Nix Engineer";
       social = [
-        { type = "twitter"; link = "#"; }
-        { type = "linkedin"; link = "#"; }
+        {
+          type = "twitter";
+          link = "#";
+        }
+        {
+          type = "linkedin";
+          link = "#";
+        }
       ];
     }
     {
@@ -24,8 +30,14 @@
       name = "Josiah Berkebile";
       title = "Nix Engineer and Software Design Expert";
       social = [
-        { type = "twitter"; link = "#"; }
-        { type = "linkedin"; link = "#"; }
+        {
+          type = "twitter";
+          link = "#";
+        }
+        {
+          type = "linkedin";
+          link = "#";
+        }
       ];
     }
     {
@@ -33,8 +45,14 @@
       name = "Nick Morelli";
       title = "Engineer";
       social = [
-        { type = "twitter"; link = "#"; }
-        { type = "linkedin"; link = "#"; }
+        {
+          type = "twitter";
+          link = "#";
+        }
+        {
+          type = "linkedin";
+          link = "#";
+        }
       ];
     }
   ];

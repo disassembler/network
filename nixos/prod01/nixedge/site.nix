@@ -1,73 +1,91 @@
-/*-----------------------------------------------------------------------------
-  Init
+/*
+-----------------------------------------------------------------------------
+Init
 
-  Initialization of Styx, should not be edited
-  -----------------------------------------------------------------------------*/
-{ styx
-, styxLib
-, styx-themes
-, extraConf ? { }
-}@args:
+Initialization of Styx, should not be edited
+-----------------------------------------------------------------------------
+*/
+{
+  styx,
+  styxLib,
+  styx-themes,
+  extraConf ? {},
+} @ args: rec {
+  /*
+  -----------------------------------------------------------------------------
+  Themes setup
 
-rec {
+  -----------------------------------------------------------------------------
+  */
 
-
-  /*-----------------------------------------------------------------------------
-    Themes setup
-
-    -----------------------------------------------------------------------------*/
-
-  /* list the themes to load, paths or packages can be used
-    items at the end of the list have higher priority
+  /*
+   list the themes to load, paths or packages can be used
+  items at the end of the list have higher priority
   */
   themes = [
     styx-themes.generic-templates
     styx-themes.agency
   ];
 
-  /* Loading the themes data
+  /*
+  Loading the themes data
   */
   themesData = styxLib.themes.load {
     inherit styxLib themes;
-    extraEnv = { inherit data pages; };
-    extraConf = [ ./conf.nix extraConf ];
+    extraEnv = {inherit data pages;};
+    extraConf = [./conf.nix extraConf];
   };
 
-  /* Bringing the themes data to the scope
+  /*
+  Bringing the themes data to the scope
   */
   inherit (themesData) conf lib files templates env;
 
+  /*
+  -----------------------------------------------------------------------------
+  Data
 
-  /*-----------------------------------------------------------------------------
-    Data
+  This section declares the data used by the site
+  -----------------------------------------------------------------------------
+  */
 
-    This section declares the data used by the site
-    -----------------------------------------------------------------------------*/
-
-  data = with lib; {
-
-    /* Menu using blocks
-    */
-    menu =
-      let
+  data = with lib;
+    {
+      /*
+      Menu using blocks
+      */
+      menu = let
         mkBlockSet = blocks:
-          map (id:
-            (lib.find { inherit id; } blocks) // { navbarClass = "page-scroll"; url = "/#${id}"; }
+          map (
+            id:
+              (lib.find {inherit id;} blocks)
+              // {
+                navbarClass = "page-scroll";
+                url = "/#${id}";
+              }
           );
       in
-      (mkBlockSet pages.index.blocks [ "services" "portfolio" "about" "team" "contact" ])
+        (mkBlockSet pages.index.blocks ["services" "portfolio" "about" "team" "contact"])
         ++ [
-        { title = "Styx"; url = "https://styx-static.github.io/styx-site/"; }
-      ];
+          {
+            title = "Styx";
+            url = "https://styx-static.github.io/styx-site/";
+          }
+        ];
+    }
+    // (lib.loadDir {
+      dir = ./data;
+      inherit env;
+      asAttrs = true;
+    });
 
-  } // (lib.loadDir { dir = ./data; inherit env; asAttrs = true; });
+  /*
+  -----------------------------------------------------------------------------
+  Pages
 
-
-  /*-----------------------------------------------------------------------------
-    Pages
-
-    This section declares the pages that will be generated
-    -----------------------------------------------------------------------------*/
+  This section declares the pages that will be generated
+  -----------------------------------------------------------------------------
+  */
 
   pages = rec {
     index = {
@@ -75,10 +93,9 @@ rec {
       path = "/index.html";
       template = templates.block-page.full;
       layout = templates.layout;
-      blocks =
-        let
-          darken = d: d // { class = "bg-light-gray"; };
-        in
+      blocks = let
+        darken = d: d // {class = "bg-light-gray";};
+      in
         with templates.blocks; [
           (banner data.main-banner)
           (services data.services)
@@ -91,21 +108,21 @@ rec {
     };
   };
 
+  /*
+  -----------------------------------------------------------------------------
+  Site rendering
 
-  /*-----------------------------------------------------------------------------
-    Site rendering
-
-    -----------------------------------------------------------------------------*/
+  -----------------------------------------------------------------------------
+  */
 
   # converting pages attribute set to a list
   pageList = lib.pagesToList {
     inherit pages;
-    default = { layout = templates.layout; };
+    default = {layout = templates.layout;};
   };
 
   site = lib.mkSite {
     inherit pageList;
-    files = files ++ [ ./files ];
+    files = files ++ [./files];
   };
-
 }

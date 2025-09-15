@@ -1,8 +1,10 @@
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
   cfg = config.services.omadad;
   defaultUser = "omadad";
 in {
@@ -89,14 +91,14 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [ cfg.package pkgs.jre ];
+    environment.systemPackages = [cfg.package pkgs.jre];
 
     systemd.services.omadad = {
       description = "Wifi access point controller";
-      wants = [ "network-online.target" ];
-      after = [ "network-online.target" ];
-      wantedBy = [ "multi-user.target" ];
-      path = [ pkgs.bash cfg.mongodb pkgs.nettools pkgs.curl pkgs.procps ];
+      wants = ["network-online.target"];
+      after = ["network-online.target"];
+      wantedBy = ["multi-user.target"];
+      path = [pkgs.bash cfg.mongodb pkgs.nettools pkgs.curl pkgs.procps];
 
       serviceConfig = let
         java_opts = "-classpath '${cfg.dataDir}/lib/*' -server -Xms128m -Xmx1024m -XX:MaxHeapFreeRatio=60 -XX:MinHeapFreeRatio=30 -XX:+HeapDumpOnOutOfMemoryError -DhttpPort=${toString cfg.httpPort} -DhttpsPort=${toString cfg.httpsPort} -DmongoPort=${toString cfg.mongoPort} -DdataDir=${cfg.dataDir}/data -Deap.home=${cfg.dataDir}";
@@ -110,43 +112,43 @@ in {
       };
 
       preStart = ''
-          mkdir -p ${cfg.dataDir}/data/db
-          mkdir -p ${cfg.dataDir}/data/portal
-          mkdir -p ${cfg.dataDir}/data/map
-          mkdir -p ${cfg.dataDir}/data/keystore
-          mkdir -p ${cfg.dataDir}/data/pdf
-          mkdir -p ${cfg.dataDir}/logs
-          mkdir -p ${cfg.dataDir}/work
-          # Some stuff has to be writeable, so we make dataDir home and
-          rm -rf ${cfg.dataDir}/lib
-          cp -a ${cfg.package}/lib ${cfg.dataDir}/lib
-          chmod -R +rw ${cfg.dataDir}/lib
-          rm -f ${cfg.dataDir}/bin && ln -sf ${cfg.package}/bin ${cfg.dataDir}/bin
-          rm -f ${cfg.dataDir}/data/html && ln -sf ${cfg.package}/data/html ${cfg.dataDir}/data/html
-          rm -rf ${cfg.dataDir}/properties
-          cp -a ${cfg.package}/properties ${cfg.dataDir}/properties
-          chmod -R +rw ${cfg.dataDir}/properties
+        mkdir -p ${cfg.dataDir}/data/db
+        mkdir -p ${cfg.dataDir}/data/portal
+        mkdir -p ${cfg.dataDir}/data/map
+        mkdir -p ${cfg.dataDir}/data/keystore
+        mkdir -p ${cfg.dataDir}/data/pdf
+        mkdir -p ${cfg.dataDir}/logs
+        mkdir -p ${cfg.dataDir}/work
+        # Some stuff has to be writeable, so we make dataDir home and
+        rm -rf ${cfg.dataDir}/lib
+        cp -a ${cfg.package}/lib ${cfg.dataDir}/lib
+        chmod -R +rw ${cfg.dataDir}/lib
+        rm -f ${cfg.dataDir}/bin && ln -sf ${cfg.package}/bin ${cfg.dataDir}/bin
+        rm -f ${cfg.dataDir}/data/html && ln -sf ${cfg.package}/data/html ${cfg.dataDir}/data/html
+        rm -rf ${cfg.dataDir}/properties
+        cp -a ${cfg.package}/properties ${cfg.dataDir}/properties
+        chmod -R +rw ${cfg.dataDir}/properties
       '';
     };
 
     networking.firewall.allowedTCPPorts = mkIf cfg.openFirewall [cfg.httpPort cfg.httpsPort];
 
     users.users = optionalAttrs (cfg.user == defaultUser) {
-      ${defaultUser} =
-        { description = "omadad server daemon owner";
-          group = defaultUser;
-          isSystemUser = true;
-          # uid = config.ids.uids.omadad;
-          home = cfg.dataDir;
-          createHome = true;
-        };
+      ${defaultUser} = {
+        description = "omadad server daemon owner";
+        group = defaultUser;
+        isSystemUser = true;
+        # uid = config.ids.uids.omadad;
+        home = cfg.dataDir;
+        createHome = true;
+      };
     };
 
     users.groups = optionalAttrs (cfg.user == defaultUser) {
-      ${defaultUser} =
-        { # gid = config.ids.gids.omadad;
-          members = [ defaultUser ];
-        };
+      ${defaultUser} = {
+        # gid = config.ids.gids.omadad;
+        members = [defaultUser];
+      };
     };
   };
 }

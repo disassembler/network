@@ -1,11 +1,12 @@
-{ config, pkgs, lib, ... }:
-
-with lib;
-
-let
-  cfg = config.profiles.x11;
-in
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.profiles.x11;
+in {
   options.profiles.x11 = {
     enable = mkEnableOption "x11 server profile";
 
@@ -73,7 +74,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    fonts.fonts = [ pkgs.cantarell_fonts pkgs.ttf_bitstream_vera ];
+    fonts.fonts = [pkgs.cantarell_fonts pkgs.ttf_bitstream_vera];
 
     services.compton.enable = cfg.compositor;
     services.compton.extraOptions = ''
@@ -114,23 +115,23 @@ in
 
     environment.variables = {
       # Set GTK_PATH so that GTK+ can find the Xfce theme engines
-      GTK_PATH = [ "${config.system.path}/lib/gtk-2.0" ];
+      GTK_PATH = ["${config.system.path}/lib/gtk-2.0"];
 
       # GTK3: add /etc/xdg/gtk-3.0 to search path for settings.ini
       # We use /etc/xdg/gtk-3.0/settings.ini to set the icon and theme name for GTK 3
-      XDG_CONFIG_DIRS = [ "/etc/xdg" ];
+      XDG_CONFIG_DIRS = ["/etc/xdg"];
 
       # GTK3: add themes to search path
-      XDG_DATA_DIRS = [ "${config.system.path}/share" ];
+      XDG_DATA_DIRS = ["${config.system.path}/share"];
 
       # Find the cursors
-      XCURSOR_PATH = [ "${config.system.path}/share/icons" ];
+      XCURSOR_PATH = ["${config.system.path}/share/icons"];
 
       # SVG loader for pixbuf (needed for GTK svg icon themes)
       GDK_PIXBUF_MODULE_FILE = "${pkgs.librsvg.out}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache";
 
-      # Set GTK_DATA_PREFIX so that GTK+ can find the themes 
-      GTK_DATA_PREFIX = [ "${config.system.path}" ];
+      # Set GTK_DATA_PREFIX so that GTK+ can find the themes
+      GTK_DATA_PREFIX = ["${config.system.path}"];
 
       # Set gtk2 rc file
       GTK2_RC_FILES = [
@@ -141,11 +142,11 @@ in
         ''))
       ];
 
-      GIO_EXTRA_MODULES = [ "${pkgs.gnome3.dconf}/lib/gio/modules" ];
+      GIO_EXTRA_MODULES = ["${pkgs.gnome3.dconf}/lib/gio/modules"];
     };
 
     # Needed for themes and backgrounds
-    environment.pathsToLink = [ "/share" ];
+    environment.pathsToLink = ["/share"];
 
     # custom Xresources
     services.xserver.displayManager.sessionCommands = ''
