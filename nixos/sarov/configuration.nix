@@ -12,6 +12,7 @@
   };
 
   imports = [
+    inputs.cardano-parts.cardano-parts.cluster.groups.default.meta.cardano-node-service
     #inputs.cardano-parts.nixosModules.profile-cardano-parts
     #inputs.cardano-parts.nixosModules.role-relay
   ];
@@ -98,31 +99,37 @@
   # List services that you want to enable:
   #
   # TODO: switch to cardano-parts
-  #services.cardano-node = {
-  #  enable = true;
-  #  useNewTopology = true;
-  #  environment = "mainnet";
-  #  package = cardano-node.packages.x86_64-linux.cardano-node;
-  #  shareIpv6port = false;
-  #  hostAddr = "0.0.0.0";
-  #  environments = cardano-node.environments.x86_64-linux;
-  #  nodeConfig = cardano-node.environments.x86_64-linux.mainnet.nodeConfig // {
-  #    hasPrometheus = [ "0.0.0.0" 12798 ];
-  #    TraceMempool = true;
-  #    setupScribes = [{
-  #      scKind = "JournalSK";
-  #      scName = "cardano";
-  #      scFormat = "ScText";
-  #    }];
-  #    defaultScribes = [
-  #      [
-  #        "JournalSK"
-  #        "cardano"
-  #      ]
-  #    ];
-  #  };
-  #};
-  #systemd.services.cardano-node.after = lib.mkForce [ "network-online.target" ];
+  services.cardano-node = with inputs.cardano-parts; let
+    cardanoEnvs = builtins.trace (builtins.attrNames config) (cardano-parts.pkgs.special.cardanoLib "x86_64-linux").environments;
+  in {
+    enable = true;
+    useNewTopology = true;
+    environment = "mainnet";
+    package = packages.x86_64-linux.cardano-node;
+    shareIpv6port = false;
+    hostAddr = "0.0.0.0";
+    environments = cardanoEnvs;
+    nodeConfig =
+      cardanoEnvs.mainnet.nodeConfig
+      // {
+        hasPrometheus = ["0.0.0.0" 12798];
+        TraceMempool = true;
+        setupScribes = [
+          {
+            scKind = "JournalSK";
+            scName = "cardano";
+            scFormat = "ScText";
+          }
+        ];
+        defaultScribes = [
+          [
+            "JournalSK"
+            "cardano"
+          ]
+        ];
+      };
+  };
+  systemd.services.cardano-node.after = lib.mkForce ["network-online.target"];
   services.trezord.enable = true;
   services.udev.extraRules = ''
     ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{authorized}=="0", ATTR{authorized}="1"

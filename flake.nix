@@ -48,7 +48,6 @@
     ...
   } @ inputs: let
     inherit ((import ./flake/lib.nix {inherit inputs;}).flake.lib) recursiveImports;
-    inherit (inputs.nixpkgs.lib) mkOption types;
   in
     flake-parts.lib.mkFlake {inherit inputs;} {
       imports =
@@ -58,18 +57,12 @@
         ]
         ++ [
           inputs.treefmt-nix.flakeModule
-          inputs.cardano-parts.flakeModules.aws
-          inputs.cardano-parts.flakeModules.cluster
-          inputs.cardano-parts.flakeModules.entrypoints
-          inputs.cardano-parts.flakeModules.jobs
-          inputs.cardano-parts.flakeModules.lib
-          inputs.cardano-parts.flakeModules.pkgs
-          inputs.cardano-parts.flakeModules.process-compose
-          inputs.cardano-parts.flakeModules.shell
-          {options.flake.opentofu = mkOption {type = types.attrs;};}
         ];
       systems = [
         "x86_64-linux"
       ];
+    }
+    // {
+      inherit inputs;
     };
 }
