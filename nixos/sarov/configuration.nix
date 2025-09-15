@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   lib,
   inputs,
@@ -12,14 +11,15 @@
   };
 
   imports = [
-    inputs.cardano-parts.cardano-parts.cluster.groups.default.meta.cardano-node-service
-    #inputs.cardano-parts.nixosModules.profile-cardano-parts
-    #inputs.cardano-parts.nixosModules.role-relay
+    # TODO: switch off ng after next cardano-parts release
+    inputs.cardano-parts.cardano-parts.cluster.groups.default.meta.cardano-node-service-ng
+    #inputs.cardano-parts.cardano-parts.cluster.groups.default.meta.cardano-tracer-service-ng
   ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.zfs.requestEncryptionCredentials = [];
 
   nix = {
     settings.sandbox = true;
@@ -33,9 +33,6 @@
   };
 
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.permittedInsecurePackages = [
-    "broadcom-sta-6.30.223.271-57-6.12.46"
-  ];
   networking = {
     hostName = "sarov";
     hostId = "d11ab455";
@@ -97,10 +94,8 @@
   };
 
   # List services that you want to enable:
-  #
-  # TODO: switch to cardano-parts
   services.cardano-node = with inputs.cardano-parts; let
-    cardanoEnvs = builtins.trace (builtins.attrNames config) (cardano-parts.pkgs.special.cardanoLib "x86_64-linux").environments;
+    cardanoEnvs = (cardano-parts.pkgs.special.cardanoLibNg "x86_64-linux").environments;
   in {
     enable = true;
     useNewTopology = true;
@@ -112,21 +107,7 @@
     nodeConfig =
       cardanoEnvs.mainnet.nodeConfig
       // {
-        hasPrometheus = ["0.0.0.0" 12798];
-        TraceMempool = true;
-        setupScribes = [
-          {
-            scKind = "JournalSK";
-            scName = "cardano";
-            scFormat = "ScText";
-          }
-        ];
-        defaultScribes = [
-          [
-            "JournalSK"
-            "cardano"
-          ]
-        ];
+        ConsensusMode = "GenesisMode";
       };
   };
   systemd.services.cardano-node.after = lib.mkForce ["network-online.target"];

@@ -13,7 +13,6 @@
             nix.nixPath = [
               "nixpkgs=${pkgs.path}"
             ];
-            # TODO: remove when switching to 22.05
             nix.package = lib.mkForce inputs.nix.packages.x86_64-linux.nix;
             nix.extraOptions = ''
               experimental-features = nix-command flakes

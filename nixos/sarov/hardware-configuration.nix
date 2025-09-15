@@ -9,7 +9,6 @@
 }: {
   boot.initrd.availableKernelModules = ["xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod"];
   boot.kernelModules = ["kvm-intel" "wl"];
-  boot.extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
 
   fileSystems."/" = {
     device = "sarov/root";
@@ -29,6 +28,7 @@
   fileSystems."/iog" = {
     device = "sarov/iog";
     fsType = "zfs";
+    options = ["noauto"];
   };
 
   fileSystems."/boot" = {

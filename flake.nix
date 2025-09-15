@@ -32,7 +32,7 @@
     niri.url = "github:sodiboo/niri-flake/d5ccd8c5e6198bdac760ea65dd6c46e83a55b6f6?";
 
     # cardano stuff
-    cardano-parts.url = "github:input-output-hk/cardano-parts/v2025-08-14";
+    cardano-parts.url = "github:input-output-hk/cardano-parts/next-2025-08-14";
     adawallet.url = "github:input-output-hk/adawallet";
     adawallet.inputs.cardano-parts.follows = "cardano-parts";
 
