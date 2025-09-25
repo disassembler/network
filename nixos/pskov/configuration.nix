@@ -475,6 +475,7 @@ in {
     displayManager = {
       defaultSession = "niri";
     };
+    picom.enable = lib.mkForce false;
     pulseaudio = {
       enable = false;
       package = pkgs.pulseaudioFull;
@@ -653,7 +654,7 @@ in {
       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2c97"
       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2581"
     '';
-    udev.packages = [pkgs.yubikey-personalization];
+    udev.packages = with pkgs; [yubikey-personalization platformio-core.udev];
 
     compton = {
       enable = true;
@@ -731,10 +732,6 @@ in {
     kbfs = {
       enable = true;
       mountPoint = "/keybase";
-    };
-    redshift = {
-      enable = true;
-      package = pkgs.gammastep;
     };
   };
   location.provider = "geoclue2";
@@ -843,6 +840,10 @@ in {
     '';
     deps = [];
   };
+
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
+  home-manager.users.sam = ../../home/sam.nix;
 
   systemd.user.services = {};
   system.stateVersion = "23.05";

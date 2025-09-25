@@ -16,6 +16,7 @@
       pkgs.mkShell
       {
         packages = with pkgs; [
+          wireguard-tools
           jq
           age
           ssh-to-age
@@ -27,6 +28,7 @@
           ssh-to-pgp
           sops-init-gpg-key
           treefmtEval.config.package
+          inputs.cardano-parts.packages.x86_64-linux.cardano-node
         ];
 
         shellHook = ''

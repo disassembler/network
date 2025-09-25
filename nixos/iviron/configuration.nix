@@ -296,6 +296,7 @@ in {
     #});
   in [
     inputs.home-manager.packages.x86_64-linux.home-manager
+    platformio
     telegram-desktop
     polychromatic
     pciutils
@@ -684,7 +685,7 @@ in {
       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2c97"
       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2581"
     '';
-    udev.packages = [pkgs.yubikey-personalization];
+    udev.packages = with pkgs; [ yubikey-personalization platformio-core.udev ];
 
     compton = {
       enable = true;

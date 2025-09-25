@@ -80,8 +80,11 @@ in {
     hostName = machine;
     inherit hostId;
     #nameservers = [ "127.0.0.1" ];
-    networkmanager.enable = true;
-    networkmanager.unmanaged = ["interface-name:ve-*" "ens9"];
+    networkmanager = {
+      enable = true;
+      unmanaged = ["interface-name:ve-*" "ens9"];
+      wifi.powersave = false;
+    };
     extraHosts = ''
       # If DNS is broke, we still want to be able to deploy
       10.40.33.20 optina.wedlake.lan
@@ -185,6 +188,32 @@ in {
   ];
 
   environment.systemPackages = with pkgs; let
+    platformioFHS = pkgs.buildFHSEnv {
+      name = "platformio-fhs";
+      targetPkgs = pkgs:
+        with pkgs; [
+          platformio
+          glibc
+          zlib
+          openssl
+          (python3.withPackages (python-pkgs:
+            with python-pkgs; [
+              pip
+            ]))
+          arduino-cli
+          avrdude
+        ];
+      runScript = ''
+        # Optional: Initialize PlatformIO if needed (e.g., if installed via pip)
+        # ${pkgs.python3}/bin/pip install platformio
+        # Start a shell within the FHS environment
+        ${pkgs.bash}/bin/bash
+      '';
+      # Optional: Add extra build commands if necessary for specific setups
+      # extraBuildCommands = ''
+      #   mkdir -p $out/lib
+      # '';
+    };
     #startSway = pkgs.writeTextFile {
     #  name = "startsway";
     #  destination = "/bin/startsway";
@@ -214,6 +243,9 @@ in {
     #});
   in [
     inputs.home-manager.packages.x86_64-linux.home-manager
+    platformio
+    platformioFHS
+    avrdude
     kitty
     wofi
     obsStudio
@@ -372,6 +404,7 @@ in {
     displayManager = {
       defaultSession = "niri";
     };
+    picom.enable = lib.mkForce false;
     pulseaudio = {
       enable = false;
       package = pkgs.pulseaudioFull;
@@ -532,7 +565,7 @@ in {
       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2c97"
       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2581"
     '';
-    udev.packages = [pkgs.yubikey-personalization];
+    udev.packages = with pkgs; [yubikey-personalization platformio-core.udev];
 
     compton = {
       enable = true;
@@ -610,10 +643,6 @@ in {
     kbfs = {
       enable = true;
       mountPoint = "/keybase";
-    };
-    redshift = {
-      enable = true;
-      package = pkgs.gammastep;
     };
   };
   location.provider = "geoclue2";
@@ -713,6 +742,10 @@ in {
     '';
     deps = [];
   };
+
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
+  home-manager.users.sam = ../../home/sam.nix;
 
   systemd.user.services = {};
   system.stateVersion = "23.05";

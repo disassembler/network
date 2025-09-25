@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   lib,
   inputs,
@@ -58,8 +59,8 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.variables = {
-    #CARDANO_NODE_SOCKET_PATH = config.services.cardano-node.socketPath 0;
-    #CARDANO_NODE_NETWORK_ID = "mainnet";
+    CARDANO_NODE_SOCKET_PATH = config.services.cardano-node.socketPath 0;
+    CARDANO_NODE_NETWORK_ID = "mainnet";
   };
   environment.systemPackages = with pkgs;
   with inputs.cardano-parts.packages.x86_64-linux; [
