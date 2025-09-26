@@ -79,6 +79,7 @@
     snapshot-converter
     orchestrator-cli
     cc-sign
+    cardano-signer
     tx-bundle
     python3Packages.ipython
     sqlite-interactive

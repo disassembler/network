@@ -15,7 +15,9 @@ in {
   };
 
   deployment = {
-    targetHost = "10.40.33.61";
+    #targetHost = "127.0.0.1";
+    #targetHost = "10.40.33.61";
+    targetHost = "10.70.0.1";
     targetPort = 22;
     targetUser = "root";
   };
@@ -84,6 +86,27 @@ in {
       enable = true;
       unmanaged = ["interface-name:ve-*" "ens9"];
       wifi.powersave = false;
+    };
+    wireguard.interfaces = {
+      wg0 = {
+        ips = ["10.70.0.1/24"];
+        postSetup = ''
+          ip link set mtu 1392 dev wg0
+        '';
+        privateKeyFile = "/var/lib/wg-keys/wg0.key";
+        peers = [
+          {
+            publicKey = "RtwIQ8Ni8q+/E5tgYPFUnHrOhwAnkGOEe98h+vUYmyg=";
+            allowedIPs = [
+              "10.40.33.0/24"
+              "10.40.9.0/24"
+              #"192.168.0.0/24"
+            ];
+            endpoint = "prophet.samleathers.com:51820";
+            persistentKeepalive = 30;
+          }
+        ];
+      };
     };
     extraHosts = ''
       # If DNS is broke, we still want to be able to deploy
@@ -241,92 +264,100 @@ in {
     #    sha256 = "sha256:0r0j0y0ii62ppawc8qqjyaq0fkmmb0zk1xb3f9navxp556w2dljv";
     #  };
     #});
-  in [
-    inputs.home-manager.packages.x86_64-linux.home-manager
-    platformio
-    platformioFHS
-    avrdude
-    kitty
-    wofi
-    obsStudio
-    headscale
-    gopass
-    iamb
-    starship
-    direnv
-    nix-direnv
-    discord
-    heimdall-gui
-    ledger-live-desktop
-    #trezor
-    gopass
-    arduino
-    #startSway
-    strace
-    mplayer
-    gpgme.dev
-    yubioath-flutter
-    yubikey-manager
-    pinentry-gtk2
-    bat
-    slurp
-    grim
-    ripgrep
-    opensc
-    pavucontrol
-    hledger
-    psmisc
-    #hie82
-    sqlite-interactive
-    manymans
-    hlint
-    gist
-    dmenu
-    google-chrome
-    gnupg
-    gnupg1compat
-    podman-compose
-    niff
-    tmate
-    htop
-    feh
-    imagemagick
-    magic-wormhole
-    weechat
-    pv
-    rxvt-unicode
-    termite
-    wezterm
-    xsel
-    tcpdump
-    inetutils
-    p11-kit
-    openconnect
-    openconnect_gnutls
-    gnutls
-    nix-prefetch-git
-    gitAndTools.gitFull
-    gitAndTools.hub
-    tig
-    unzip
-    zip
-    scrot
-    tdesktop
-    keybase
-    keybase-gui
-    slack
-    signal-desktop
-    neomutt
-    notmuch
-    taskwarrior3
-    jq
-    cabal2nix
-    haskellPackages.ghcid
-    virt-manager
-    xdg-utils
-    inotifyTools
-    zoom-us
-  ];
+  in
+    with inputs.cardano-parts.packages.x86_64-linux; [
+      inputs.home-manager.packages.x86_64-linux.home-manager
+      platformio
+      platformioFHS
+      avrdude
+      kitty
+      wofi
+      bech32
+      cardano-node
+      cardano-cli
+      snapshot-converter
+      orchestrator-cli
+      cc-sign
+      cardano-signer
+      obsStudio
+      headscale
+      gopass
+      iamb
+      starship
+      direnv
+      nix-direnv
+      discord
+      heimdall-gui
+      ledger-live-desktop
+      #trezor
+      gopass
+      arduino
+      #startSway
+      strace
+      mplayer
+      gpgme.dev
+      yubioath-flutter
+      yubikey-manager
+      pinentry-gtk2
+      bat
+      slurp
+      grim
+      ripgrep
+      opensc
+      pavucontrol
+      hledger
+      psmisc
+      #hie82
+      sqlite-interactive
+      manymans
+      hlint
+      gist
+      dmenu
+      google-chrome
+      gnupg
+      gnupg1compat
+      podman-compose
+      niff
+      tmate
+      htop
+      feh
+      imagemagick
+      magic-wormhole
+      weechat
+      pv
+      rxvt-unicode
+      termite
+      wezterm
+      xsel
+      tcpdump
+      inetutils
+      p11-kit
+      openconnect
+      openconnect_gnutls
+      gnutls
+      nix-prefetch-git
+      gitAndTools.gitFull
+      gitAndTools.hub
+      tig
+      unzip
+      zip
+      scrot
+      tdesktop
+      keybase
+      keybase-gui
+      slack
+      signal-desktop
+      neomutt
+      notmuch
+      taskwarrior3
+      jq
+      cabal2nix
+      haskellPackages.ghcid
+      virt-manager
+      xdg-utils
+      inotifyTools
+      zoom-us
+    ];
 
   hardware = {
     opentabletdriver.enable = true;
@@ -418,7 +449,9 @@ in {
       # If you want to use JACK applications, uncomment this
       #jack.enable = true;
     };
-    tailscale.enable = false;
+    tailscale.enable = true;
+
+    flatpak.enable = true;
 
     #rabbitmq = {
     #  enable = true;
