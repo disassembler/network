@@ -379,18 +379,18 @@ in {
       };
     };
     # TODO: run omadad and unifi in a controller with an older nixpkgs
-    omadad = {
-      enable = true;
-      httpPort = 8089;
-      httpsPort = 10443;
-      mongodb = legacyPkgs.mongodb;
-    };
-    unifi = {
-      enable = true;
-      unifiPackage = legacyPkgs.unifi6;
-      mongodbPackage = legacyPkgs.mongodb-4_4;
-      openFirewall = true;
-    };
+    #omadad = {
+    #  enable = true;
+    #  httpPort = 8089;
+    #  httpsPort = 10443;
+    #  mongodb = legacyPkgs.mongodb;
+    #};
+    #unifi = {
+    #  enable = true;
+    #  unifiPackage = legacyPkgs.unifi6;
+    #  mongodbPackage = legacyPkgs.mongodb-4_4;
+    #  openFirewall = true;
+    #};
     #telegraf = {
     #  enable = true;
     #  extraConfig = {

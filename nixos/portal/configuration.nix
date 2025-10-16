@@ -180,6 +180,16 @@ in {
           proto = "udp";
         }
         {
+          sourcePort = 7807;
+          destination = "10.40.33.21:7807";
+          proto = "udp";
+        }
+        {
+          sourcePort = 7808;
+          destination = "10.40.33.21:7808";
+          proto = "udp";
+        }
+        {
           sourcePort = 27015;
           destination = "10.40.33.21:27015";
           proto = "udp";
@@ -192,6 +202,11 @@ in {
         {
           sourcePort = 27017;
           destination = "10.40.33.21:27017";
+          proto = "udp";
+        }
+        {
+          sourcePort = 27018;
+          destination = "10.40.33.21:27018";
           proto = "udp";
         }
       ];
@@ -287,7 +302,7 @@ in {
             # allow traffic with existing state
             ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
             # Allow forwarding the following ports from Internet via IPv6 only
-            ${forwardPortToHost 3001 "enp1s0" "tcp" "2601:98a:4100:1700:1046:d1ff:feea:9276"}
+            ${forwardPortToHost 3001 "enp1s0" "tcp" "2601:98a:94b0:1700:1046:d1ff:feea:9276"}
             # block forwarding from external interface
             ip6tables -A FORWARD -i enp1s0 -j DROP
           ''
@@ -830,7 +845,7 @@ in {
     #        key /var/lib/openvpn/crate.wedlake.lan.key
     #        dh /var/lib/openvpn/dh2048.pem
     #        server 10.40.12.0 255.255.255.0
-    #        server-ipv6 2601:98a:4101:bff3::/64
+    #        server-ipv6 2601:98a:94b1:bff3::/64
     #        push "route 10.40.33.0 255.255.255.0"
     #        push "route-ipv6 2000::/3"
     #        push "dhcp-option DNS 10.40.12.1"
