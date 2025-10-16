@@ -210,7 +210,7 @@ in {
   };
 
   nixpkgs.overlays = [
-    inputs.niri.overlays.niri
+    #inputs.niri.overlays.niri
     #(self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
     #inputs.vivarium.overlay
   ];
@@ -459,10 +459,11 @@ in {
     };
     niri = {
       enable = true;
-      package = pkgs.niri-unstable;
+      package = inputs.niri.packages.x86_64-linux.niri-unstable;
     };
     sway = {
       enable = true;
+      extraOptions = [ "--unsupported-gpu" ];
     };
 
     #hyprland.package = inputs.hyprland.packages.x86_64-linux.hyprland;
@@ -488,6 +489,7 @@ in {
 
   services = {
     picom.enable = lib.mkForce false;
+    desktopManager.cosmic.enable = true;
     xserver = {
       videoDrivers = ["nvidia"];
       #  enable = true;

@@ -1,5 +1,5 @@
 [formatter.alejandra]
-command = "/nix/store/3ld518xmv8c88z7pfcszdqkvy5ngakcq-alejandra-4.0.0/bin/alejandra"
+command = "/nix/store/p1ffhw473splv51yspyh466gv6ir9qb9-alejandra-4.0.0/bin/alejandra"
 excludes = []
 includes = ["*.nix"]
 options = []

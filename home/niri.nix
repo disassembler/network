@@ -1,13 +1,15 @@
 {
+  inputs,
   config,
   pkgs,
   ...
 }: let
   niri = "${config.programs.niri.package}/bin/niri";
 in {
+  programs.niri.package = inputs.niri.packages.x86_64-linux.niri-unstable;
   programs.niri.settings = {
     debug = {
-      render-drm-device = "/dev/dri/renderD129";
+      render-drm-device = "/dev/dri/renderD128";
     };
     prefer-no-csd = true;
     spawn-at-startup = [
