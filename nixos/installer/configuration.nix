@@ -34,4 +34,5 @@ in {
   systemd.services.sshd.wantedBy = lib.mkForce ["multi-user.target"];
   users.users.root.openssh.authorizedKeys.keys = shared.sam_ssh_keys;
   networking.hostName = "kexec";
+  system.stateVersion = "23.05";
 }

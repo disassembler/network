@@ -22,6 +22,7 @@
           inputs.sops-nix.nixosModules.sops
         ];
       }
+      inputs.nixvim.nixosModules.nixvim
       inputs.home-manager.nixosModules.home-manager
       {
         home-manager.extraSpecialArgs = {
@@ -89,6 +90,14 @@
       imports = [
         ../nixos/valaam/configuration.nix
         ../nixos/valaam/hardware-configuration.nix
+        inputs.wled-sequencer.nixosModules.wled-sequencer
+      ];
+    };
+
+    kazan = {...}: {
+      imports = [
+        ../nixos/kazan/configuration.nix
+        ../nixos/kazan/hardware-configuration.nix
       ];
     };
 

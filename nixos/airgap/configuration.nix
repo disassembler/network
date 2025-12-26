@@ -75,9 +75,8 @@
     ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{authorized}=="0", ATTR{authorized}="1"
   '';
   services.udev.packages = [pkgs.yubikey-personalization];
-  services.xserver.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
   services.trezord.enable = true;
   networking = {
     #networkmanager.enable = lib.mkForce false;

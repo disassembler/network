@@ -156,7 +156,7 @@ in {
   };
 
   nixpkgs.overlays = [
-    inputs.niri.overlays.niri
+    #inputs.niri.overlays.niri
     #(self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
   ];
 
@@ -333,16 +333,15 @@ in {
       inetutils
       p11-kit
       openconnect
-      openconnect_gnutls
       gnutls
       nix-prefetch-git
-      gitAndTools.gitFull
-      gitAndTools.hub
+      gitFull
+      hub
       tig
       unzip
       zip
       scrot
-      tdesktop
+      telegram-desktop
       keybase
       keybase-gui
       slack
@@ -355,7 +354,7 @@ in {
       haskellPackages.ghcid
       virt-manager
       xdg-utils
-      inotifyTools
+      inotify-tools
       zoom-us
     ];
 
@@ -365,7 +364,7 @@ in {
     facetimehd.enable = true;
     graphics.enable = true;
     graphics.enable32Bit = true;
-    graphics.extraPackages = [pkgs.vaapiIntel];
+    graphics.extraPackages = [pkgs.intel-vaapi-driver];
     bluetooth = {
       enable = true;
       settings = {
@@ -389,7 +388,7 @@ in {
     dejavu_fonts
     bakoma_ttf
     gentium
-    ubuntu_font_family
+    ubuntu-classic
     terminus_font
     unifont # some international languages
   ];
@@ -419,21 +418,19 @@ in {
     };
     niri = {
       enable = true;
-      package = pkgs.niri-unstable;
+      package = inputs.niri.packages.x86_64-linux.niri-unstable;
     };
   };
 
   services = {
-    xserver = {
-      desktopManager.gnome.enable = true;
-      displayManager.gdm = {
+    desktopManager.gnome.enable = true;
+    displayManager = {
+      defaultSession = "niri";
+      gdm = {
         enable = true;
         wayland = true;
         autoSuspend = false;
       };
-    };
-    displayManager = {
-      defaultSession = "niri";
     };
     picom.enable = lib.mkForce false;
     pulseaudio = {
@@ -778,6 +775,9 @@ in {
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
+  home-manager.extraSpecialArgs = {
+    hostname = "irkutsk";
+  };
   home-manager.users.sam = ../../home/sam.nix;
 
   systemd.user.services = {};

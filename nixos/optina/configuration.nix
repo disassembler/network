@@ -12,6 +12,7 @@ with lib; let
       allowUnfree = true;
       # required for mongodb 3.4
       permittedInsecurePackages = ["openssl-1.0.2u"];
+      system.stateVersion = "25.05";
     };
   };
   shared = import ../../shared.nix;
@@ -42,6 +43,7 @@ with lib; let
           (pkgs.path + "/nixos/modules/installer/netboot/netboot-minimal.nix")
           ./justdoit.nix
           module
+  	  { system.stateVersion = "25.05"; }
         ];
       }).config.system.build;
   in
@@ -109,7 +111,7 @@ in {
     };
   };
   boot.supportedFilesystems = ["zfs"];
-  #profiles.vim.enable = false;
+  profiles.vim.enable = lib.mkForce false;
   profiles.zsh.enable = true;
   profiles.tmux.enable = true;
   profiles.weechat = {
@@ -219,6 +221,7 @@ in {
   };
 
   environment.systemPackages = with pkgs; [
+    neovim
     direnv
     hello
     qemu_kvm
@@ -240,7 +243,6 @@ in {
     fasd
     dnsutils
     #openssl
-    powerdns
     virt-manager
     config.services.home-assistant.package
   ];
@@ -291,6 +293,7 @@ in {
       config = {
         signupsAllowed = false;
         domain = "https://vw.lan.disasm.us";
+	increase_note_size_limit = true;
       };
     };
     udev.extraRules = ''
@@ -340,28 +343,16 @@ in {
       '';
     };
 
-    displayManager = {
-      defaultSession = "none+i3";
-    };
-    xserver = {
-      autorun = true;
+
+    displayManager.gdm = {
       enable = true;
-      xkb.layout = "us";
-      windowManager.i3 = {
-        enable = true;
-        #extraSessionCommands = ''
-        #  ${pkgs.feh} --bg-scale /home/sam/photos/20170503_183237.jpg
-        #'';
-        package = pkgs.i3-gaps;
-      };
-      displayManager.lightdm = {
-        enable = true;
-        background = "/etc/lightdm/background.jpg";
-      };
+      wayland = true;
     };
+    desktopManager.gnome.enable = true;
+
     bitlbee = {
       enable = true;
-      libpurple_plugins = [pkgs.purple-discord];
+      libpurple_plugins = [pkgs.pidginPackages.purple-discord];
     };
     gitea = {
       enable = false;
@@ -1020,11 +1011,11 @@ in {
 
     mopidy = {
       enable = false;
-      configuration = ''
-        [local]
-        enabled = true
-        media_dir = /data/pvr/music
-      '';
+      #configuration = ''
+      #  [local]
+      #  enabled = true
+      #  media_dir = /data/pvr/music
+      #'';
     };
     mpd = {
       enable = false;
@@ -1130,7 +1121,9 @@ in {
         isNormalUser = true;
         uid = 10001;
       };
+      system.stateVersion = "25.05"; # Did you read the comment?
     };
+
   };
   # TODO move omada and unifi here
   containers.wifiController = {
@@ -1152,6 +1145,7 @@ in {
         tmux
         sudo
       ];
+      system.stateVersion = "25.05"; # Did you read the comment?
     };
   };
   users.users.sam = {
@@ -1184,6 +1178,7 @@ in {
     isNormalUser = true;
     uid = 1004;
   };
+  programs.ssh.startAgent = lib.mkForce false;
   # don't change this without reading release notes
-  system.stateVersion = "22.05";
+  system.stateVersion = "25.05"; # Did you read the comment?
 }

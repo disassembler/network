@@ -302,7 +302,7 @@ in {
             # allow traffic with existing state
             ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
             # Allow forwarding the following ports from Internet via IPv6 only
-            ${forwardPortToHost 3001 "enp1s0" "tcp" "2601:98a:94b0:1700:1046:d1ff:feea:9276"}
+            ${forwardPortToHost 3001 "enp1s0" "tcp" "2601:985:4c00:c880:1046:d1ff:feea:9276"}
             # block forwarding from external interface
             ip6tables -A FORWARD -i enp1s0 -j DROP
           ''
@@ -330,7 +330,7 @@ in {
           }
           {
             publicKey = "mFn9gVTlPTEa+ZplilmKiZ0pYqzzof75IaDiG9q/pko=";
-            allowedIPs = ["10.40.9.39/32" "10.39.0.0/24" "2601:98a:4000:9ed0::1/64" "fd00::39/128"];
+            allowedIPs = ["10.40.9.39/32" "10.39.0.0/24" "2601:985:4c00:c880::1/64" "fd00::39/128"];
           }
           {
             publicKey = "b1mP5d9m041QyP0jbXicP145BOUYwNefUOOqo6XXwF8=";
@@ -632,6 +632,11 @@ in {
                   hostname = "roof-wled";
                   hw-address = "dc:4f:22:52:e1:d3";
                   ip-address = "10.40.8.60";
+                }
+                {
+                  hostname = "attic-wled";
+                  hw-address = "48:55:19:ee:35:9a";
+                  ip-address = "10.40.8.61";
                 }
                 {
                   hostname = "camera-dvr";

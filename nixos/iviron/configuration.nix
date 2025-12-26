@@ -296,6 +296,10 @@ in {
     #});
   in [
     inputs.home-manager.packages.x86_64-linux.home-manager
+    inputs.shadowharvester.packages.x86_64-linux.shadow-harvester
+    xlights
+    code-cursor
+    mitmproxy
     platformio
     telegram-desktop
     polychromatic
@@ -360,16 +364,15 @@ in {
     inetutils
     p11-kit
     openconnect
-    openconnect_gnutls
     gnutls
     nix-prefetch-git
-    gitAndTools.gitFull
-    gitAndTools.hub
+    gitFull
+    hub
     tig
     unzip
     zip
     scrot
-    tdesktop
+    telegram-desktop
     keybase
     keybase-gui
     slack
@@ -382,7 +385,7 @@ in {
     haskellPackages.ghcid
     virt-manager
     xdg-utils
-    inotifyTools
+    inotify-tools
     zoom-us
   ];
 
@@ -445,7 +448,7 @@ in {
     dejavu_fonts
     bakoma_ttf
     gentium
-    ubuntu_font_family
+    ubuntu-classic
     terminus_font
     unifont # some international languages
   ];
@@ -490,15 +493,14 @@ in {
   services = {
     picom.enable = lib.mkForce false;
     desktopManager.cosmic.enable = true;
+    desktopManager.gnome.enable = true;
+    displayManager.gdm = {
+      enable = true;
+      wayland = true;
+      autoSuspend = false;
+    };
     xserver = {
       videoDrivers = ["nvidia"];
-      #  enable = true;
-      desktopManager.gnome.enable = true;
-      displayManager.gdm = {
-        enable = true;
-        wayland = true;
-        autoSuspend = false;
-      };
     };
     displayManager = {
       #sddm = {
@@ -795,6 +797,9 @@ in {
   virtualisation.libvirtd.enable = true;
   security.sudo.wheelNeedsPassword = true;
   security.rtkit.enable = true;
+  security.pki.certificates = [
+    "/etc/ssl/certs/mitm-proxy.crt"
+  ];
 
   # Custom dotfiles for sam user
   environment = {
@@ -881,6 +886,9 @@ in {
   systemd.user.services = {};
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
+  home-manager.extraSpecialArgs = {
+    hostname = "iviron";
+  };
   home-manager.users.sam = ../../home/sam.nix;
   system.stateVersion = "23.05";
 }

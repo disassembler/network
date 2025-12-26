@@ -100,7 +100,6 @@
     cardanoEnvs = (cardano-parts.pkgs.special.cardanoLibNg "x86_64-linux").environments;
   in {
     enable = true;
-    useNewTopology = true;
     environment = "mainnet";
     package = packages.x86_64-linux.cardano-node;
     shareIpv6port = false;

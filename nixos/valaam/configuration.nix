@@ -3,6 +3,7 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 {
   config,
+  system,
   pkgs,
   lib,
   inputs,
@@ -92,7 +93,7 @@
     dejavu_fonts
     bakoma_ttf
     gentium
-    ubuntu_font_family
+    ubuntu-classic
     terminus_font
     unifont # some international languages
   ];
@@ -126,6 +127,7 @@
 
   environment.systemPackages = with pkgs; [
     inputs.home-manager.packages.x86_64-linux.home-manager
+    inputs.shadowharvester.packages.x86_64-linux.shadow-harvester
     google-chrome
     wget
     vim
@@ -170,6 +172,14 @@
   };
 
   services = {
+    wled-sequencer = {
+      enable = true;
+      package = inputs.wled-sequencer.packages.${pkgs.stdenv.hostPlatform.system}.wled-sequencer;
+      settings = {
+      	host = "10.40.8.61";
+	file = "/var/lib/wled-sequencer/christmas-light-show-2025.fseq";
+      };
+    };
     udev.extraRules = let
       dependencies = with pkgs; [coreutils gnupg gawk gnugrep];
       clearYubikey = pkgs.writeScript "clear-yubikey" ''
@@ -208,13 +218,10 @@
       enable = true;
     };
 
-    xserver = {
+    desktopManager.gnome.enable = true;
+    displayManager.gdm = {
       enable = true;
-      desktopManager.gnome.enable = true;
-      displayManager.gdm = {
-        enable = true;
-        wayland = true;
-      };
+      wayland = true;
     };
   };
   # Open ports in the firewall.

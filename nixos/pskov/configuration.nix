@@ -372,16 +372,15 @@ in {
     inetutils
     p11-kit
     openconnect
-    openconnect_gnutls
     gnutls
     nix-prefetch-git
-    gitAndTools.gitFull
-    gitAndTools.hub
+    gitFull
+    hub
     tig
     unzip
     zip
     scrot
-    tdesktop
+    telegram-desktop
     keybase
     keybase-gui
     slack
@@ -394,7 +393,7 @@ in {
     haskellPackages.ghcid
     virt-manager
     xdg-utils
-    inotifyTools
+    inotify-tools
     zoom-us
   ];
 
@@ -404,7 +403,7 @@ in {
     enableRedistributableFirmware = true;
     graphics.enable = true;
     graphics.enable32Bit = true;
-    graphics.extraPackages = [pkgs.vaapiIntel];
+    graphics.extraPackages = [pkgs.intel-vaapi-driver];
     facetimehd.enable = true;
     bluetooth = {
       enable = true;
@@ -429,7 +428,7 @@ in {
     dejavu_fonts
     bakoma_ttf
     gentium
-    ubuntu_font_family
+    ubuntu-classic
     terminus_font
     unifont # some international languages
   ];
@@ -464,17 +463,15 @@ in {
   };
 
   services = {
-    xserver = {
-      desktopManager.gnome.enable = true;
-      displayManager.gdm = {
-        enable = true;
-        wayland = true;
-        autoSuspend = false;
-      };
+    displayManager.gdm = {
+      enable = true;
+      wayland = true;
+      autoSuspend = false;
     };
     displayManager = {
       defaultSession = "niri";
     };
+    desktopManager.gnome.enable = true;
     picom.enable = lib.mkForce false;
     pulseaudio = {
       enable = false;
@@ -843,6 +840,9 @@ in {
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
+  home-manager.extraSpecialArgs = {
+    hostname = "pskov";
+  };
   home-manager.users.sam = ../../home/sam.nix;
 
   systemd.user.services = {};
