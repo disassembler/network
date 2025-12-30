@@ -24,6 +24,12 @@
   #        builtins.attrValues zfsCompatibleKernelPackages
   #        )
   #        );
+  unstablePkgs = import inputs.nixpkgsUnstable {
+    system = "x86_64-linux";
+    config = {
+      allowUnfree = true;
+    };
+  };
 in {
   deployment = {
     targetHost = "127.0.0.1";
@@ -296,7 +302,8 @@ in {
     #});
   in [
     inputs.home-manager.packages.x86_64-linux.home-manager
-    inputs.shadowharvester.packages.x86_64-linux.shadow-harvester
+    unstablePkgs.mcpelauncher-client
+    unstablePkgs.mcpelauncher-ui-qt
     xlights
     code-cursor
     mitmproxy

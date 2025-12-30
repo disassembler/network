@@ -20,6 +20,10 @@
   sops.secrets.pool_vrf_skey = {};
   sops.secrets.pool_kes_skey = {};
 
+  imports = [
+    ./minecraft-bedrock-server.nix
+  ];
+
   # Use the systemd-boot EFI boot loader.
   boot = {
     kernel.sysctl = {
@@ -180,6 +184,7 @@
 	file = "/var/lib/wled-sequencer/christmas-light-show-2025.fseq";
       };
     };
+    minecraft-bedrock-server.enable = true;
     udev.extraRules = let
       dependencies = with pkgs; [coreutils gnupg gawk gnugrep];
       clearYubikey = pkgs.writeScript "clear-yubikey" ''
@@ -222,6 +227,7 @@
     displayManager.gdm = {
       enable = true;
       wayland = true;
+      autoSuspend = false;
     };
   };
   # Open ports in the firewall.

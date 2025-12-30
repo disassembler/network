@@ -145,7 +145,7 @@ in {
         }
         {
           sourcePort = 19132;
-          destination = "10.40.33.20:19132";
+          destination = "10.40.33.21:19132";
           proto = "udp";
         }
         # Ark Survival Ascended
@@ -430,6 +430,7 @@ in {
       allowUnfree = true;
     };
   };
+  profiles.vim.enable = lib.mkForce false;
 
   environment.systemPackages = with pkgs; [
     jq
@@ -460,7 +461,7 @@ in {
       enable = true;
       settings = {
         address = [
-          "/hivebedrock.network/10.40.33.20"
+          "/hivebedrock.network/10.40.33.21"
         ];
       };
     };
@@ -518,7 +519,7 @@ in {
               reservations = [
                 {
                   hostname = "optina";
-                  hw-address = "d4:3d:7e:4d:c4:7f";
+                  hw-address = "74:d4:35:9b:84:62";
                   ip-address = "10.40.33.20";
                 }
                 {

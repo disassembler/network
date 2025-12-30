@@ -287,7 +287,6 @@ in {
       enable = false;
       configPath = "/etc/nixos/matterbridge.toml";
     };
-    minecraft-bedrock-server.enable = true;
     vaultwarden = {
       enable = true;
       config = {
@@ -347,6 +346,7 @@ in {
     displayManager.gdm = {
       enable = true;
       wayland = true;
+      autoSuspend = false;
     };
     desktopManager.gnome.enable = true;
 
