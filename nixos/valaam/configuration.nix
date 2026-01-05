@@ -181,7 +181,7 @@
       package = inputs.wled-sequencer.packages.${pkgs.stdenv.hostPlatform.system}.wled-sequencer;
       settings = {
       	host = "10.40.8.61";
-	file = "/var/lib/wled-sequencer/christmas-light-show-2025.fseq";
+	file = "/var/lib/wled-sequencer/newyears.fseq";
       };
     };
     minecraft-bedrock-server.enable = true;
@@ -239,9 +239,12 @@
     7788
     7797
     7798
+    7807
+    7808
     27015
     27016
     27017
+    27018
   ];
   # TODO: pull users from secrets.nix instead
   users.users.sam = {

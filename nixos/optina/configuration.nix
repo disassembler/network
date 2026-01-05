@@ -74,7 +74,6 @@ in {
     lego-knot-credentials.owner = "acme";
   };
   imports = [
-    ./minecraft-bedrock-server.nix
   ];
   _module.args = {
     inherit shared;
@@ -344,11 +343,11 @@ in {
 
 
     displayManager.gdm = {
-      enable = true;
+      enable = false;
       wayland = true;
       autoSuspend = false;
     };
-    desktopManager.gnome.enable = true;
+    desktopManager.gnome.enable = false;
 
     bitlbee = {
       enable = true;
