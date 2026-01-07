@@ -22,10 +22,10 @@ in {
       enable = true;
       viAlias = true;
       vimAlias = true;
-
       colorschemes.gruvbox.enable = true;
-
-      globals = {
+      globals.mapleader = " ";
+      globals.maplocalleader = " ";
+      opts = {
         # Tab/Indent Settings
         tabstop = 2;
         shiftwidth = 2;
@@ -38,22 +38,23 @@ in {
         relativenumber = true;
 
         # Leader/Clipboard/Junk Files
-        mapleader = " ";
-        maplocalleader = " ";
         clipboard = "unnamedplus";
-        noswapfile = true;
-        nobackup = true;
-        nowritebackup = true;
+        swapfile = false;
+
+        # Undo
+        backup = true;
+        writebackup = true;
+        undofile = true;
+        undolevels = 1000;
 
         # Appearance/Term
         termguicolors = true;
-        t_Co = 256;
 
         # Other Basic Settings
         mouse = "a";
         cmdheight = 2;
         updatetime = 300;
-        signcolumn = true;
+        signcolumn = "yes";
         splitbelow = true;
         splitright = true;
         virtualedit = "none";
@@ -64,17 +65,6 @@ in {
         autoread = true;
         wildmenu = true;
       };
-
-      globals = {
-        gruvbox_bold = true;
-        gruvbox_italic = true;
-        gruvbox_transparent_bg = true;
-        gruvbox_hls_cursor = true;
-        nord_uniform_status_line = true;
-        nvim_tree_side = true;
-        nvim_tree_width = true;
-      };
-
       keymaps = [
         {
           key = "<leader>lA";
@@ -155,14 +145,14 @@ in {
           enable = true;
           servers = {
             hls = {
-	      enable = true;
+              enable = true;
               installGhc = false;
-	    };
+            };
             rust_analyzer = {
-	      enable = true;
-	      installCargo = false;
+              enable = true;
+              installCargo = false;
               installRustc = false;
-	    };
+            };
             pyright.enable = true;
             ts_ls.enable = true;
             phpactor.enable = true;
@@ -221,7 +211,6 @@ in {
         vim-dadbod-ui.enable = true;
         vim-test.enable = true;
       };
-
       extraPackages = with pkgs; [
         ripgrep
         fd
