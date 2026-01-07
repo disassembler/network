@@ -1,4 +1,5 @@
 {
+  pkgs,
   lib,
   modulesPath,
   ...
@@ -7,18 +8,7 @@
 in {
   imports = [
     (modulesPath + "/installer/cd-dvd/installation-cd-graphical-gnome.nix")
-    ./kexec.nix
-    ./justdoit.nix
   ];
-
-  kexec.justdoit = {
-    bootSize = 1024;
-    bootType = "zfs";
-    swapSize = 1 * 1024;
-    luksEncrypt = false;
-    uefi = true;
-    nvme = false;
-  };
 
   boot.supportedFilesystems = ["zfs"];
   boot.loader.grub.enable = false;
@@ -49,8 +39,18 @@ in {
       }
     ];
   };
-  services.openssh.enable = true;
+  environment.systemPackages = with pkgs; [
+    yubikey-personalization
+  ];
+  services = {
+    openssh.enable = true;
+    udev.extraRules = ''
+      ACTION=="add|change", SUBSYSTEM=="usb", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0407", TAG+="uaccess"
+    '';
+    udev.packages = with pkgs; [yubikey-personalization];
+    pcscd.enable = true;
+  };
   systemd.services.sshd.wantedBy = lib.mkForce ["multi-user.target"];
   users.users.root.openssh.authorizedKeys.keys = shared.sam_ssh_keys;
-  networking.hostName = "kexec";
+  networking.hostName = "disasm-installer";
 }
