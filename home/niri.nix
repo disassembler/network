@@ -421,7 +421,10 @@ in {
         "0-eDP-2" = {
           name = "eDP-2";
           focus-at-startup = true;
-          position = { x = 0; y = 0; };
+          position = {
+            x = 0;
+            y = 0;
+          };
           mode = {
             width = 2560;
             height = 1600;
@@ -432,7 +435,10 @@ in {
         # 2. HDMI-A-1: External Monitor (To the right of eDP-2)
         "HDMI-A-1" = {
           # Starts at X=2560 (the width of eDP-2) and Y=0
-          position = { x = 1706; y = 0; };
+          position = {
+            x = 1706;
+            y = 0;
+          };
           mode = {
             width = 1920;
             height = 1080;

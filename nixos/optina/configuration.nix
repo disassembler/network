@@ -43,7 +43,7 @@ with lib; let
           (pkgs.path + "/nixos/modules/installer/netboot/netboot-minimal.nix")
           ./justdoit.nix
           module
-  	  { system.stateVersion = "25.05"; }
+          {system.stateVersion = "25.05";}
         ];
       }).config.system.build;
   in
@@ -291,7 +291,7 @@ in {
       config = {
         signupsAllowed = false;
         domain = "https://vw.lan.disasm.us";
-	increase_note_size_limit = true;
+        increase_note_size_limit = true;
       };
     };
     udev.extraRules = ''
@@ -340,7 +340,6 @@ in {
          }
       '';
     };
-
 
     displayManager.gdm = {
       enable = false;
@@ -1122,7 +1121,6 @@ in {
       };
       system.stateVersion = "25.05"; # Did you read the comment?
     };
-
   };
   # TODO move omada and unifi here
   containers.wifiController = {
