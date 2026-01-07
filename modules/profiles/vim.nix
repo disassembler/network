@@ -25,6 +25,10 @@ in {
       colorschemes.gruvbox.enable = true;
       globals.mapleader = " ";
       globals.maplocalleader = " ";
+      highlight = {
+        IndentOdd.bg = "#222222";
+        IndentEven.bg = "#333333";
+      };
       opts = {
         # Tab/Indent Settings
         tabstop = 2;
@@ -32,6 +36,7 @@ in {
         softtabstop = 2;
         expandtab = true;
         autoindent = true;
+        smartindent = true;
 
         # Line Numbers
         number = true;
@@ -99,14 +104,6 @@ in {
           action = "<cmd>lua vim.diagnostic.setloclist()<CR>";
         }
         {
-          key = "[d";
-          action = "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>";
-        }
-        {
-          key = "]d";
-          action = "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>";
-        }
-        {
           key = "<leader>t";
           action = "<cmd>terminal<CR>";
         }
@@ -137,13 +134,46 @@ in {
       ];
 
       plugins = {
-        avante = {
+        nix.enable = true;
+        conform-nvim = {
           enable = true;
+          settings = {
+            format_on_save = {
+              lsp_fallback = true;
+              timeout_ms = 500;
+            };
+            formatters_by_ft = {
+              # Use treefmt for everything
+              # This tells conform to just call the 'treefmt' command
+              "*" = ["treefmt"];
+              nix = ["treefmt"];
+              go = ["treefmt"];
+              javascript = ["treefmt"];
+            };
+          };
         };
+        indent-blankline = {
+          enable = true;
+          settings = {
+            indent.char = " ";
+            # If you want to use those specific highlight groups:
+            # (This syntax varies slightly depending on indent-blankline version)
+            indent.highlight = ["IndentOdd" "IndentEven"];
+          };
+        };
+        avante.enable = true;
 
         lsp = {
           enable = true;
+          postConfig = ''
+            vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+            vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
+          '';
           servers = {
+            nixd = {
+              enable = true;
+              settings.formatting.command = ["alejandra"];
+            };
             hls = {
               enable = true;
               installGhc = false;
@@ -170,6 +200,12 @@ in {
             yamlls.enable = true;
             zls.enable = true;
           };
+          keymaps.diagnostic = {
+            "<leader>e" = "open_float";
+            "[d" = "goto_prev";
+            "]d" = "goto_next";
+            "<leader>q" = "setloclist";
+          };
         };
 
         cmp = {enable = true;};
@@ -179,6 +215,10 @@ in {
 
         treesitter = {
           enable = true;
+          settings = {
+            indent.enable = true;
+            highlight.enable = true;
+          };
           grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
             nix
             haskell
@@ -205,7 +245,6 @@ in {
 
         which-key.enable = true;
         colorizer.enable = true;
-        indent-blankline.enable = true;
         telescope.enable = true;
         lualine.enable = true;
         vim-dadbod-ui.enable = true;
