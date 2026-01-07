@@ -180,8 +180,31 @@
       enable = true;
       package = inputs.wled-sequencer.packages.${pkgs.stdenv.hostPlatform.system}.wled-sequencer;
       settings = {
-      	host = "10.40.8.61";
-	file = "/var/lib/wled-sequencer/newyears.fseq";
+        host = "10.40.8.61";
+        file = "/var/lib/wled-sequencer/newyears.fseq";
+      };
+    };
+    zrepl = {
+      enable = true;
+      settings = {
+        jobs = [
+          {
+            name = "sink_for_bower_law";
+            type = "sink";
+            root_fs = "bolt/law-backups"; # Where files will land
+            serve = {
+              type = "stdinserver";
+              client_identities = [
+                "bower_law_backups"
+              ];
+            };
+            recv = {
+              placeholder = {
+                encryption = "inherit"; # Use the encryption properties of root_fs
+              };
+            };
+          }
+        ];
       };
     };
     minecraft-bedrock-server.enable = true;
@@ -256,6 +279,7 @@
   users.users.root = {
     openssh.authorizedKeys.keys = [
       "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDEPOLnk4+mWNGOXd309PPxal8wgMzKXHnn7Jbu/SpSUYEc1EmjgnrVBcR0eDxgDmGD9zJ69wEH/zLQLPWjaTusiuF+bqAM/x7z7wwy1nZ48SYJw3Q+Xsgzeb0nvmNsPzb0mfnpI6av8MTHNt+xOqDnpC5B82h/voQ4m5DGMQz60ok2hMeh+sy4VIvX5zOVTOFPQqFR6BGDwtALiP5PwMfyScYXlebWHhDRdX9B0j9t+cqiy5utBUsl4cIUInE0KW7Z8Kf6gIsmQnfSZadqI857kdozU3IbaLoJc1C6LyVjzPFyC4+KUC11BmemTGdCjwcoqEZ0k5XtJaKFXacYYXi1l5MS7VdfHldFDZmMEMvfJG/PwvXN4prfOIjpy1521MJHGBNXRktvWhlNBgI1NUQlx7rGmPZmtrYdeclVnnY9Y4HIpkhm0iEt/XUZTMQpXhedd1BozpMp0h135an4uorIEUQnotkaGDwZIV3mSL8x4n6V02Qe2CYvqf4DcCSBv7D91N3JplJJKt7vV4ltwrseDPxDtCxXrQfSIQd0VGmwu1D9FzzDOuk/MGCiCMFCKIKngxZLzajjgfc9+rGLZ94iDz90jfk6GF4hgF78oFNfPEwoGl0soyZM7960QdBcHgB5QF9+9Yd6QhCb/6+ENM9sz6VLdAY7f/9hj/3Aq0Lm4Q== samuel.leathers@iohk.io"
+      "command=\"/run/current-system/sw/bin/zrepl stdinserver bower_law_backups\",restrict ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDM1FWXFSeAsxgn0VNTJcsxNHyv2NCMivQWxjCH8H3m51pbUQwSC0J8+DB/z9l5cNqiCB0HDA4k6+nBoxkQkH1ehLCH0pZRfJUwFk3IKax9kt6uvvIbA+3weWGcE3vDZ+UTDhGg8RAw3h4hP8gvf2LeSmw5cVppH0aBUjp1irHAPeD3pgJsZjg5mamDwn7z0ncyYZ6qq6Ma1OEnaRR8Ssp+2udfJB5rL7hCnrfQad5EtK5IAXoElnFR2FhQGZdBUWHXsH+ugGun1B2/CE6vhkTVl9KFNOtFk0fvQw0hGYtj9DHeVAAbsIdcXOB9FBDxFhXGVrdovD1aeFsW4+rfyDsrrus9IvSO3zY0w99pMfR9E0uQu0p4urIwSwzYt3TvyZO5uXwAVkoQmRoPN+3eJnKIxxreta02dcuF6dnhm4JIBJQLBUjlKOog7M5B+m75PhSNEmTkrgbTKURn/fsH6so03E7b2gCCRPCW9zR9g+Ymq55sregImXTFncqhkQNVHls= root@server"
     ];
     shell = pkgs.lib.mkOverride 50 "${pkgs.bashInteractive}/bin/bash";
   };
