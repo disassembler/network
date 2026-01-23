@@ -7,7 +7,6 @@
 with lib; {
   config = {
     profiles.tmux.enable = true;
-    profiles.vim.enable = true;
     time.timeZone = mkDefault "America/New_York";
 
     # You are allowed to manage users manually

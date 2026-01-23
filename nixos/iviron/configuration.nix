@@ -9,43 +9,16 @@
   shared = import ../../shared.nix;
   machine = "iviron";
   hostId = "7a6c1214";
-  #isUnstable = config.boot.zfs.package == pkgs.zfsUnstable;
-  #zfsCompatibleKernelPackages = lib.filterAttrs (
-  #  name: kernelPackages:
-  #  (builtins.match "linux_[0-9]+_[0-9]+" name) != null
-  #  && (builtins.tryEval kernelPackages).success
-  #  && (
-  #    (!isUnstable && !kernelPackages.zfs.meta.broken)
-  #    || (isUnstable && !kernelPackages.zfs_unstable.meta.broken)
-  #    )
-  #    ) pkgs.linuxKernel.packages;
-  #    latestKernelPackage = lib.last (
-  #      lib.sort (a: b: (lib.versionOlder a.kernel.version b.kernel.version)) (
-  #        builtins.attrValues zfsCompatibleKernelPackages
-  #        )
-  #        );
-  unstablePkgs = import inputs.nixpkgsUnstable {
-    system = "x86_64-linux";
-    config = {
-      allowUnfree = true;
-    };
-  };
 in {
   deployment = {
     targetHost = "127.0.0.1";
-    #targetHost = "127.0.0.1"; when deploying remotely
+    #targetHost = "10.40.33.60"; when deploying remotely
     targetPort = 22;
     targetUser = "root";
   };
   #sops.defaultSopsFile = ./secrets.yaml;
-  #sops.secrets.openvpn_prophet_ca = { };
   #sops.secrets.docker_auth = { };
-  #sops.secrets.openvpn_prophet_cert = { };
-  #sops.secrets.openvpn_prophet_key = { };
-  #sops.secrets.openvpn_prophet_tls = { };
-  #sops.secrets.openvpn_bower_ca = { };
-  #sops.secrets.openvpn_bower_cert = { };
-  #sops.secrets.openvpn_bower_key = { };
+
   _module.args = {
     inherit shared;
   };
@@ -63,9 +36,6 @@ in {
     theme = pkgs.nixos-grub2-theme;
     memtest86.enable = true;
   };
-  #boot.blacklistedKernelModules = [ "amdgpu" ];
-  #boot.kernelPackages = latestKernelPackage;
-  #boot.zfs.package = pkgs.zfs_unstable;
 
   boot.supportedFilesystems = ["exfat" "zfs"];
   boot.tmp.cleanOnBoot = true;
@@ -109,7 +79,7 @@ in {
     #nameservers = [ "127.0.0.1" ];
     wireguard.interfaces = {
       #wg0 = {
-      #  ips = [ "10.70.0.1/24" ];
+      #  ips = ["10.70.0.1/24"];
       #  postSetup = ''
       #    ip link set mtu 1392 dev wg0
       #  '';
@@ -182,13 +152,8 @@ in {
       127.0.0.1 wp.dev
       10.40.9.9 offline.doom.lan
     '';
-    nat = {
-      enable = true;
-      internalInterfaces = ["ve-+"];
-      externalInterface = "wlp195s0";
-    };
     firewall = {
-      enable = false;
+      enable = true;
       allowedUDPPorts = [53 4919 69];
       allowedTCPPorts = [4444 8081 3478 3000 8080 5900 3100 3001];
     };
@@ -199,8 +164,6 @@ in {
   in {
     settings.sandbox = true;
     settings.cores = 4;
-    #settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" "/etc/skopeo/auth.json=${config.sops.secrets.docker_auth.path}" ];
-    #settings.extra-sandbox-paths = [ "/etc/nsswitch.conf" "/etc/protocols" ];
     settings.substituters = ["https://cache.iog.io"];
     settings.trusted-public-keys = ["hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="];
     settings.trusted-users = ["sam"];
@@ -215,31 +178,11 @@ in {
     '';
   };
 
-  nixpkgs.overlays = [
-    #inputs.niri.overlays.niri
-    #(self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
-    #inputs.vivarium.overlay
-  ];
+  nixpkgs.overlays = [];
 
   nixpkgs.config = {
     allowUnfree = true;
-    allowBroken = false;
     android_sdk.accept_license = true;
-    packageOverrides = super: let
-      self = super.pkgs;
-    in {
-      manymans = with pkgs;
-        buildEnv {
-          name = "manymans";
-          ignoreCollisions = true;
-          paths = [
-            man-pages
-            man-pages-posix
-            stdmanpages
-            glibcInfo
-          ];
-        };
-    };
   };
 
   users.groups.plugdev = {};
@@ -247,156 +190,29 @@ in {
     isNormalUser = true;
     description = "Sam Leathers";
     uid = 1000;
-    extraGroups = ["wheel" "podman" "disk" "video" "libvirtd" "adbusers" "dialout" "plugdev" "cexplorer"];
+    extraGroups = ["wheel" "podman" "disk" "video" "libvirtd" "adbusers" "dialout" "plugdev" "cexplorer" "input"];
     openssh.authorizedKeys.keys = shared.sam_ssh_keys;
   };
   #users.users.cardano-node.isSystemUser = true;
 
-  profiles.zsh = {
+  programs.zsh = {
     enable = true;
-    autosuggest = true;
   };
   programs.bash = {
-    interactiveShellInit = ''
-      eval "$(direnv hook bash)"
-      eval "$(starship init bash)"
-    '';
-  };
-
-  profiles.vim = {
     enable = true;
-    dev = true;
   };
-  #profiles.vivarium.enable = true;
 
-  environment.pathsToLink = [
-    "/share/nix-direnv"
-  ];
   environment.systemPackages = with pkgs; let
-    #startSway = pkgs.writeTextFile {
-    #  name = "startsway";
-    #  destination = "/bin/startsway";
-    #  executable = true;
-    #  text = ''
-    #    #! ${pkgs.bash}/bin/bash
-    #    # first import environment variables from the login manager
-    #    systemctl --user import-environment
-    #    # then start the service
-    #    exec systemctl --user start sway.service
-    #  '';
-    #};
-    obsStudio = pkgs.wrapOBS {
-      plugins = with pkgs.obs-studio-plugins; [
-        scrcpy
-        wlrobs
-        obs-backgroundremoval
-        obs-pipewire-audio-capture
-      ];
-    };
-    #trezor = python3Packages.trezor.overrideAttrs (oldAttrs: {
-    #  src = python3Packages.fetchPypi {
-    #    pname = "trezor";
-    #    version = "0.12.2";
-    #    sha256 = "sha256:0r0j0y0ii62ppawc8qqjyaq0fkmmb0zk1xb3f9navxp556w2dljv";
-    #  };
-    #});
   in [
     inputs.home-manager.packages.x86_64-linux.home-manager
-    unstablePkgs.mcpelauncher-client
-    unstablePkgs.mcpelauncher-ui-qt
-    xlights
-    code-cursor
-    mitmproxy
-    platformio
-    telegram-desktop
     polychromatic
-    pciutils
-    steamcmd
-    wineWowPackages.waylandFull
-    winetricks
-    lshw
-    kitty
-    wofi
-    obsStudio
-    headscale
-    gopass
-    iamb
-    starship
-    direnv
-    nix-direnv
-    discord
-    heimdall-gui
-    ledger-live-desktop
-    #trezor
-    gopass
-    arduino
-    #startSway
-    strace
-    mplayer
-    gpgme.dev
-    yubioath-flutter
+    libfido2
     yubikey-manager
-    pinentry-gtk2
-    bat
-    slurp
-    grim
-    ripgrep
-    opensc
-    pavucontrol
-    hledger
-    psmisc
-    #hie82
-    sqlite-interactive
-    manymans
-    hlint
-    gist
-    dmenu
-    google-chrome
-    gnupg
-    gnupg1compat
-    podman-compose
-    niff
-    tmate
-    htop
-    feh
-    imagemagick
-    magic-wormhole
-    weechat
-    pv
-    rxvt-unicode
-    termite
-    wezterm
-    xsel
-    tcpdump
-    inetutils
-    p11-kit
-    openconnect
-    gnutls
-    nix-prefetch-git
-    gitFull
-    hub
-    tig
-    unzip
-    zip
-    scrot
-    telegram-desktop
-    keybase
-    keybase-gui
-    slack
-    signal-desktop
-    neomutt
-    notmuch
-    taskwarrior3
-    jq
-    cabal2nix
-    haskellPackages.ghcid
-    virt-manager
-    xdg-utils
-    inotify-tools
-    zoom-us
   ];
 
   hardware = {
+    sane.enable = true;
+    gpgSmartcards.enable = true;
     opentabletdriver.enable = true;
     openrazer = {
       enable = true;
@@ -411,16 +227,7 @@ in {
       modesetting.enable = true;
       powerManagement.enable = false;
       powerManagement.finegrained = false;
-      #package = config.boot.kernelPackages.nvidiaPackages.beta;
       open = true;
-      #package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-      #  version = "580.82.07"; # Replace with your desired version
-      #  sha256_64bit = "sha256-Bh5I4R/lUiMglYEdCxzqm3GLolQNYFB0/yJ/zgYoeYw="; # Replace with the correct SHA256
-      #  sha256_aarch64 = "sha256-xcff4TPRlOJ6r5S54h5W6PT6/3Zy2R4ASNFPu8TSHKM="; # Replace with the correct SHA256
-      #  openSha256 = "sha256-9l8N83Spj0MccA8+8R1uqiXBS0Ag4JrLPjrU3TaXHnM="; # Optional: If using open source driver
-      #  settingsSha256 = "sha256-XMk+FvTlGpMquM8aE8kgYK2PIEszUZD2+Zmj2OpYrzU="; # Optional: For settings package
-      #  persistencedSha256 = lib.fakeSha256; # Use fakeSha256 for persistence
-      #};
       nvidiaSettings = true;
       prime = {
         offload = {
@@ -476,25 +283,8 @@ in {
       extraOptions = ["--unsupported-gpu"];
     };
 
-    #hyprland.package = inputs.hyprland.packages.x86_64-linux.hyprland;
-    #sway = {
-    #  enable = true;
-    #  extraPackages = with pkgs; [
-    #    swaylock
-    #    swayidle
-    #    xwayland
-    #    waybar
-    #    mako
-    #    kanshi
-    #  ];
-    #};
     waybar.enable = true;
     ssh.startAgent = lib.mkForce false;
-    gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-      pinentryPackage = pkgs.pinentry-gtk2;
-    };
   };
 
   services = {
@@ -566,99 +356,18 @@ in {
       frequent = 8;
       monthly = 1;
     };
-    lorri.enable = true;
     trezord.enable = true;
     resolved.enable = false;
     pcscd.enable = true;
-    #cardano-node = {
-    #  environment = "mainnet";
-    #  enable = false;
-    #  port = 3001;
-    #  hostAddr = "0.0.0.0";
-    #  systemdSocketActivation = true;
-    #  environments = pkgs.cardanoLib.environments;
-    #  package = pkgs.cardano-node;
-    #  cardanoNodePkgs = pkgs;
-    #};
-    #cardano-db-sync = {
-    #  cluster = "mainnet";
-    #  enable = true;
-    #  socketPath = "/run/cardano-node/node.socket";
-    #  user = "cexplorer";
-    #  extended = true;
-    #  postgres = {
-    #    database = "cexplorer";
-    #  };
-    #};
-    #graphql-engine.enable = false;
-    #cardano-graphql = {
-    #  enable = false;
-    #};
-    #postgresql = {
-    #  enable = true;
-    #  enableTCPIP = false;
-    #  settings = {
-    #    max_connections = 200;
-    #    shared_buffers = "2GB";
-    #    effective_cache_size = "6GB";
-    #    maintenance_work_mem = "512MB";
-    #    checkpoint_completion_target = 0.7;
-    #    wal_buffers = "16MB";
-    #    default_statistics_target = 100;
-    #    random_page_cost = 1.1;
-    #    effective_io_concurrency = 200;
-    #    work_mem = "10485kB";
-    #    min_wal_size = "1GB";
-    #    max_wal_size = "2GB";
-    #  };
-    #  identMap = ''
-    #    #explorer-users /root cexplorer
-    #    explorer-users /postgres postgres
-    #    explorer-users /sam cexplorer
-    #    explorer-users /smash smash
-    #    explorer-users /cexplorer cexplorer
-    #  '';
-    #  authentication = ''
-    #    local all all ident map=explorer-users
-    #    local all all trust
-    #  '';
-    #  ensureDatabases = [
-    #    "explorer_python_api"
-    #    "cexplorer"
-    #    "smash"
-    #    "hdb_catalog"
-    #  ];
-    #  ensureUsers = [
-    #    {
-    #      name = "cexplorer";
-    #      ensurePermissions = {
-    #        "DATABASE explorer_python_api" = "ALL PRIVILEGES";
-    #        "DATABASE cexplorer" = "ALL PRIVILEGES";
-    #        "DATABASE hdb_catalog" = "ALL PRIVILEGES";
-    #        "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
-    #      };
-    #    }
-    #    {
-    #      name = "smash";
-    #      ensurePermissions = {
-    #        "DATABASE smash" = "ALL PRIVILEGES";
-    #        "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
-    #      };
-    #    }
-    #    {
-    #      name = "sam";
-    #      ensurePermissions = {
-    #        "DATABASE smash" = "ALL PRIVILEGES";
-    #        #"DATABASE cexplorer" = "ALL PRIVILEGES";
-    #        "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
-    #      };
-    #    }
-    #  ];
-    #};
     printing = {
       enable = true;
-      drivers = [pkgs.hplip];
       browsing = true;
+      drivers = [pkgs.cnijfilter2];
+    };
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+      openFirewall = true;
     };
     dbus.enable = true;
     acpid.enable = true;
@@ -684,6 +393,9 @@ in {
       '';
     in ''
       ACTION=="add|change", SUBSYSTEM=="usb", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0407", RUN+="${clearYubikeySam}"
+      # Allow user access to Yubikey HIDRAW nodes for FIDO2
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", MODE="0666", TAG+="uaccess"
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0407", TAG+="uaccess", GROUP="plugdev", MODE="0660"
       SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="1b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
       SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="2b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
       SUBSYSTEMS=="usb", ATTRS{idVendor}=="2581", ATTRS{idProduct}=="3b7c", MODE="0660", TAG+="uaccess", TAG+="udev-acl"
@@ -696,7 +408,7 @@ in {
       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2c97"
       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2581"
     '';
-    udev.packages = with pkgs; [yubikey-personalization platformio-core.udev];
+    udev.packages = with pkgs; [yubikey-personalization platformio-core.udev libfido2];
 
     compton = {
       enable = true;
@@ -729,47 +441,6 @@ in {
       resolveLocalQueries = false;
     };
 
-    #openvpn = {
-    #  servers = {
-    #    prophet = {
-    #      autoStart = false;
-    #      config = ''
-    #        client
-    #        dev tun
-    #        proto udp
-    #        remote prophet.samleathers.com 1195
-    #        nobind
-    #        persist-key
-    #        persist-tun
-    #        ca ${config.sops.secrets.openvpn_prophet_ca.path}
-    #        cert ${config.sops.secrets.openvpn_prophet_cert.path}
-    #        key ${config.sops.secrets.openvpn_prophet_key.path}
-    #        tls-auth ${config.sops.secrets.openvpn_prophet_tls.path}
-    #        key-direction 1
-    #        comp-lzo
-    #        verb 3
-    #      '';
-    #    };
-    #    bower = {
-    #      autoStart = false;
-    #      config = ''
-    #        client
-    #        dev tun
-    #        proto udp
-    #        remote 73.230.94.119 1194
-    #        nobind
-    #        persist-key
-    #        persist-tun
-    #        cipher AES-256-CBC
-    #        ca ${config.sops.secrets.openvpn_bower_ca.path}
-    #        cert ${config.sops.secrets.openvpn_bower_cert.path}
-    #        key ${config.sops.secrets.openvpn_bower_key.path}
-    #        comp-lzo
-    #        verb 3
-    #        '';
-    #    };
-    #  };
-    #};
     keybase.enable = true;
     kbfs = {
       enable = true;
@@ -781,15 +452,6 @@ in {
     };
   };
   location.provider = "geoclue2";
-  #systemd.services.cardano-db-sync.serviceConfig = {
-  #  SupplementaryGroups = "cardano-node";
-  #  Restart = "always";
-  #  RestartSec = "30s";
-  #};
-  #virtualisation.docker = {
-  #  enable = true;
-  #  storageDriver = "zfs";
-  #};
 
   virtualisation.docker.enable = false;
   virtualisation.podman.enable = true;
@@ -804,18 +466,14 @@ in {
   virtualisation.libvirtd.enable = true;
   security.sudo.wheelNeedsPassword = true;
   security.rtkit.enable = true;
+  security.polkit.enable = true;
   security.pki.certificates = [
     "/etc/ssl/certs/mitm-proxy.crt"
   ];
+  security.pam.u2f.enable = true;
 
-  # Custom dotfiles for sam user
   environment = {
     etc = {
-      "per-user/sam/gitconfig".text = import ../../sam-dotfiles/git-config.nix;
-      "sway/config".source = ../../sam-dotfiles/sway/config;
-      "per-user/sam/wezterm.lua".source = ../../sam-dotfiles/wezterm.lua;
-      "xdg/waybar/config".source = ../../sam-dotfiles/waybar/config;
-      "xdg/waybar/style.css".source = ../../sam-dotfiles/waybar/style.css;
       "sysconfig/lm_sensors".text = ''
         # Generated by sensors-detect on Tue Feb 15 13:12:56 2022
         # This file is sourced by /etc/init.d/lm_sensors and defines the modules to
@@ -828,66 +486,6 @@ in {
         HWMON_MODULES="coretemp"
       '';
     };
-
-    shellInit = ''
-      export GPG_TTY="$(tty)"
-      gpg-connect-agent /bye
-      export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"
-    '';
-  };
-
-  system.activationScripts.samdotfiles = {
-    text = ''
-      mkdir -p /home/sam/.config/sway
-      mkdir -p /home/sam/.config/wezterm
-      ln -sfn /etc/per-user/sam/gitconfig /home/sam/.gitconfig
-      ln -sfn /etc/per-user/sam/wezterm.lua /home/sam/.config/wezterm/wezterm.lua
-      ln -sfn /etc/xdg/waybar /home/sam/.config/waybar
-    '';
-    deps = [];
-  };
-
-  system.activationScripts.starship = let
-    starshipConfig = pkgs.writeText "starship.toml" ''
-      [username]
-      show_always = true
-      [hostname]
-      ssh_only = true
-      [git_commit]
-      tag_disabled = false
-      only_detached = false
-      [memory_usage]
-      format = "via $symbol[''${ram_pct}]($style) "
-      disabled = false
-      threshold = -1
-      [time]
-      format = '[\[ $time \]]($style) '
-      disabled = false
-      [[battery.display]]
-      threshold = 100
-      style = "bold green"
-      [[battery.display]]
-      threshold = 50
-      style = "bold orange"
-      [[battery.display]]
-      threshold = 20
-      style = "bold red"
-      [status]
-      map_symbol = true
-      disabled = false
-    '';
-  in {
-    text = ''
-      mkdir -p /etc/per-user/shared
-      cp ${starshipConfig} /etc/per-user/shared/starship.toml
-      mkdir -p /home/sam/.config
-      mkdir -p /root/.config
-      chown sam:users /home/sam/.config
-      chown root /root/.config
-      ln -sf /etc/per-user/shared/starship.toml /home/sam/.config/starship.toml
-      ln -sf /etc/per-user/shared/starship.toml /root/.config/starship.toml
-    '';
-    deps = [];
   };
 
   systemd.user.services = {};

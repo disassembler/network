@@ -1,264 +1,199 @@
 {pkgs, ...}: {
-  programs = {
-    waybar = {
-      enable = true;
-      systemd.enable = true;
+  programs.waybar = {
+    enable = true;
+    systemd.enable = false;
+    settings = [
+      {
+        layer = "top";
+        position = "top";
+        spacing = 0; # We manage spacing via CSS margins for the "pill" look
 
-      settings = [
-        {
-          id = "top";
-          height = 32;
-          margin-top = 4;
-          margin-left = 4;
-          margin-right = 4;
-          name = "top";
-          layer = "top";
+        modules-left = ["niri/workspaces" "niri/window"];
+        modules-center = ["clock" "mpris"];
+        modules-right = ["pulseaudio" "cpu" "memory" "temperature" "battery" "network" "tray"];
 
-          modules-right = [
-            "tray"
-            "disk"
-            "memory"
-            "cpu"
-            "network"
-            "pulseaudio"
-            "idle_inhibitor"
-            "clock"
-          ];
+        "niri/workspaces" = {
+          format = "{index}"; # Just the number/name for a clean look
+          format-active = "󰮯 {index}"; # Adds a distinct "focused" icon
+        };
 
-          modules-center = [
-            "niri/window"
-          ];
-
-          modules-left = [
-            "niri/workspaces"
-          ];
-
-          "niri/window" = {
-            format = "{}";
-            separate-outputs = true;
+        "niri/window" = {
+          format = "󰣆 {title}";
+          max-length = 30;
+          rewrite = {
+            "(.*) - Brave" = "󰖟 $1";
           };
+        };
 
-          "niri/workspaces" = {
-            disable-scroll = false;
-            alphabetical_sort = true;
-            format = "{icon}";
-            persistent_workspaces = builtins.listToAttrs (
-              builtins.genList
-              (i: {
-                name = toString (i + 1);
-                value = {};
-              })
-              10
-            );
-            format-icons = {
-              "1" = "1";
-              "2" = "2";
-              "3" = "3";
-              "4" = "4";
-              "5" = "5";
-              "6" = "6";
-              "7" = "7";
-              "8" = "8";
-              "9" = "9";
-              "10" = "10";
-            };
+        "clock" = {
+          format = "󰃭 {:%A, %B %d, %Y %H:%M}";
+          tooltip-format = "<tt><small>{calendar}</small></tt>";
+        };
+
+        "mpris" = {
+          format = " {player_icon} {title} ";
+          format-paused = " {status_icon} <i>{title}</i> ";
+          player-icons = {
+            default = "▶";
+            google-chrome = "󰖟";
           };
-
-          "clock" = {
-            format = "{:%e %B %H:%M}";
-            tooltip = true;
-            tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+          status-icons = {
+            paused = "󰏤";
           };
+          max-length = 40;
+        };
 
-          network = {
-            format = "{icon}";
-            format-icons = {
-              wifi = [
-                "󰖩"
-              ];
-              ethernet = [
-                "󰈀"
-              ];
-              disconnected = [
-                "󰈂"
-              ];
-            };
-            format-alt-click = "click-right";
-            format-wifi = "󰖩";
-            format-ethernet = "󰈀";
-            format-disconnected = "󰖪";
-            tooltip-format = "{ifname} via {gwaddr}";
-            tooltip-format-wifi = "    {essid} 󰘊\n{ipaddr} {signalStrength}%";
-            tooltip-format-ethernet = "{ifname} {ipaddr} 󰈀";
-            tooltip-format-disconnected = "Disconnected";
-            on-click = "gnome-control-center network";
-            tooltip = true;
-          };
+        "network" = {
+          # This uses icons and actual info instead of interface names
+          format-wifi = "  {essid} ({ipaddr})";
+          format-ethernet = "󰈀  {ipaddr}";
+          format-disconnected = "󰖪  Offline";
+          tooltip-format = "{ifname} via {gwaddr}";
+          max-length = 30;
+        };
 
-          backlight = {
-            device = "intel_backlight";
-            format = "{icon}";
-            format-icons = [
-              "󰃜"
-              "󰃛"
-              "󰃚"
-            ];
-            on-scroll-up = "exec brightnessctl set 5%+";
-            on-scroll-down = "brightnessctl set 5%-";
-            states = {
-              low = 0;
-              mid = 50;
-              high = 75;
-            };
-            smooth-scrolling-threshold = 1;
-          };
+        "battery" = {
+          format = "{icon} {capacity}%";
+          format-icons = ["󰂎" "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
+        };
 
-          pulseaudio = {
-            format = "{icon} {volume}% {format_source}";
-            format-bluetooth = "{icon} {volume}% {format_source}";
-            format-bluetooth-muted = "󰖁 {format_source}";
-            format-muted = "󰖁 {format_source}";
-            format-source = " {volume}%";
-            format-source-muted = "";
-            on-click = "${pkgs.ponymix}/bin/ponymix -N -t sink toggle";
-            on-click-right = "${pkgs.ponymix}/bin/ponymix -N -t source toggle";
-            format-icons = {
-              car = "";
-              default = ["🔈" "🔉" "🔊"];
-              handsfree = "";
-              headphones = "";
-              headset = "";
-              phone = "";
-              portable = "";
-            };
-          };
+        "cpu" = {format = " {usage}%";};
+        "memory" = {format = " {percentage}%";};
 
-          # cpu = {
-          #   interval = 10;
-          #   format = "";
-          #   format-alt-click = "click-right";
-          #   on-click = "~/.config/waybar/custom/stats.sh cpu";
-          #   states = {
-          #     low = 0;
-          #     mid = 25;
-          #     high = 50;
-          #   };
-          # };
+        "temperature" = {
+          # thermal-zone = 2; # You might need to adjust this for your CPU
+          hwmon-path = "/sys/class/hwmon/hwmon2/temp1_input"; # Standard path for many laptops
+          critical-threshold = 80;
+          format = "{icon} {temperatureF}°F";
+          format-icons = ["" "" ""];
+        };
 
-          cpu = {
-            # format = "󰍛 {icon}";
-            format = "{icon}";
-            format-icons = ["▁" "▂" "▃" "▄" "▅" "▆" "▇" "█"];
-            tooltip = false;
-            interval = 1;
-            states = {
-              low = 0;
-              mid = 50;
-              high = 75;
-            };
-          };
+        "custom/power" = {
+          # Extracts power in Watts from hwmon7
+          exec = "awk '{print $1/1000000 \" W\"}' /sys/class/hwmon/hwmon7/power1_input";
+          interval = 5;
+          format = "󱐋 {}";
+          tooltip = false;
+        };
 
-          memory = {
-            interval = 30;
-            format = "";
-            tooltip-format = "{used:0.1f}G used\n{avail:0.1f}G available\n{total:0.1f}G total";
-            format-alt-click = "click-right";
-            on-click = "~/.config/waybar/custom/stats.sh memory";
-            states = {
-              low = 0;
-              mid = 50;
-              high = 75;
-            };
-          };
+        "pulseaudio" = {
+          format = "{icon} {volume}%";
+          format-icons = {default = ["󰕿" "󰖀" "󰕾"];};
+        };
+      }
+    ];
 
-          disk = {
-            interval = 30;
-            format = "󰋊";
-            format-alt-click = "click-right";
-            tooltip-format = "{used} used\n{free} free\n{total} total";
-            on-click = "~/.config/waybar/custom/disk_stats.sh";
-            path = "/";
-            states = {
-              low = 0;
-              mid = 25;
-              high = 50;
-            };
-          };
+    style = ''
+      /* This gives the modules room to breathe away from the screen edges */
+      .modules-left {
+          margin: 5px 0 0 15px;
+      }
 
-          idle_inhibitor = {
-            format = "{icon}";
-            format-icons = {
-              activated = "󰛐";
-              deactivated = "󰛑";
-            };
-          };
+      .modules-center {
+          margin: 5px 0 0 0;
+      }
 
-          tray = {
-            icon-size = 12;
-            spacing = 10;
-          };
+      .modules-right {
+          margin: 5px 15px 0 0;
+      }
 
-          "wlr/taskbar" = {
-            format = "{icon}";
-            sort-by-app-id = true;
-            icon-size = 13;
-            icon-theme = "Numix-Circle";
-            tooltip-format = "{title}";
-            on-click = "activate";
-            on-click-right = "close";
-            markup = true;
-            ignore-list = [
-              "kitty"
-            ];
-          };
-        }
-      ];
-
-      # https://www.nerdfonts.com/cheat-sheet
-      style = ''
-        * {
-          border: none;
-          border-radius: 0;
-          font-family:
-            "Roboto Mono for Powerline",
-            "FontAwesome6Free",
-            "PowerlineExtraSymbols"
-            ;
-          font-size: 14px;
-          min-height: 12px;
-          margin: 0px;
-        }
-
-        #workspaces {
-          padding: 0px;
-          margin: 0px;
-        }
-
-        #workspaces button {
-          padding: 0 2px;
-          margin: 0px;
+      #workspaces {
           background: transparent;
-          border: 1px solid #1b1d1e;
-          font-weight: bold;
-        }
+      }
 
-        #workspaces button:hover {
-          box-shadow: inherit;
-          text-shadow: inherit;
-        }
+      #workspaces button {
+          color: #ebdbb2;
+          /* Clean underline style */
+          border-bottom: 3px solid transparent;
+          transition: all 0.3s ease;
+      }
 
-        #workspaces button.focused {
-          background: #00afd7;
-        }
+      #workspaces button.active {
+          color: #ebdbb2;
+          border-bottom: 3px solid #458588;
+      }
 
-        #clock, #battery, #cpu, #memory, #network, #pulseaudio, #custom-spotify, #tray, #mode {
-          padding: 0 3px;
-          margin: 0 2px;
-        }
+      * {
+        font-family: "JetBrainsMono Nerd Font";
+        font-size: 13px;
+        font-weight: bold;
+        border: none;
+      }
 
-        #network.disconnected { background: #f53c3c; }
-        #pulseaudio.muted { }
-      '';
-    };
+      window#waybar {
+        background: transparent; /* Makes the main bar invisible */
+      }
+
+      /* Base styling for every "Island" */
+      #workspaces, #window, #clock, #mpris, #cpu, #memory, #temperature, #pulseaudio, #battery, #network, #tray {
+        padding: 0 15px;
+        margin: 4px 3px;
+        border-radius: 15px;
+        background: rgba(69, 133, 136, 0.3);
+        color: #ebdbb2;
+      }
+
+      #window {
+        color: #ebdbb2;
+      }
+
+      #clock {
+        color: #282828;
+      }
+
+      #clock {
+          color: #ebdbb3;      /* Light cream text */
+      }
+
+      /* Make the icons inside the pills a different color than the text */
+      #clock span {
+          color: #fabd2f; /* Yellow icon color */
+      }
+
+      #pulseaudio {
+        color: #282828;
+      }
+      /* Individual module styling for better separation */
+      #cpu, #memory, #temperature, #network, #battery {
+          color: #ebdbb2;      /* Gruvbox Light Text */
+      }
+
+      /* Specific icon colors to make them "pop" without the big background blocks */
+      #cpu { color: #83a598; }      /* Blue icon/text */
+      #memory { color: #b8bb26; }   /* Green icon/text */
+      #temperature { color: #fabd2f; } /* Yellow icon/text */
+      #temperature.critical { color: #fb4934; } /* Red when hot */
+      /* 1. The "Invisible" Base State (Startup) */
+      #mpris {
+          background: none;
+          border: none;
+          margin: 0;
+          padding: 0;
+          font-size: 0;
+      }
+
+      /* 2. The "Visible" Island State (Active/Paused/Stopped) */
+      #mpris.playing,
+      #mpris.paused,
+      #mpris.stopped {
+          background: rgba(69, 133, 136, 0.3);
+          border: 1px solid #504945;
+          border-radius: 15px;
+          padding: 0 15px;
+          margin: 4px 3px;
+          font-size: 13px; /* Brings the text back */
+      }
+
+      /* 3. Text Colors for states */
+      #mpris.playing { color: #8ec07c; } /* Aqua */
+      #mpris.paused, #mpris.stopped { color: #928374; } /* Muted Gray */
+
+      /* Fix the network pill to match */
+      #network {
+          color: #d3869b; /* Purple tint */
+      }
+
+
+    '';
   };
 }

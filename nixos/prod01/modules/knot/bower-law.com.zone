@@ -1,4 +1,4 @@
-@ 3600 IN SOA bower-law.com. root.bower-law.com. 2022012200 7200 3600 86400 3600
+@ 3600 IN SOA bower-law.com. root.bower-law.com. 2026011300 7200 3600 86400 3600
 
 ; Warning - every name in this file is ABSOLUTE!
 @	7200	IN	NS	ns1.bower-law.com.
@@ -23,7 +23,16 @@ mail	300	IN	CNAME	ghs.google.com.
 sites	300	IN	CNAME	ghs.google.com.
 start	300	IN	CNAME	ghs.google.com.
 
-*.lan	7200	IN	A	73.230.94.119
+; lan
+udm.lan 300 IN A 10.38.1.1
+server.lan 300 IN A 10.38.1.2
+backup.lan 300 IN A 192.168.0.254
+ddns.lan 300 IN CNAME server.lan
+handbook.lan 300 IN CNAME server.lan
+status.lan 300 IN CNAME server.lan
+git.lan 300 IN CNAME server.lan
+unifi.lan 300 IN CNAME backup.lan
+
 localhost	7200	IN	A	127.0.0.1
 ns1	300	IN	A	45.76.4.212
 ns2	300	IN	A	45.63.23.13

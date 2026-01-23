@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2025110101 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 2026010701 7200 3600 86400 3600
 
 $TTL 600
 
@@ -7,7 +7,6 @@ $TTL 600
 @ 300 IN NS ns2.samleathers.com.
 @ 300 IN NS ns1.disasm.us.
 @ 300 IN NS ns2.disasm.us.
-_acme-challenge.lan IN NS ns1.disasm.us
 
 ; letsencrypt rules
 @ IN CAA 0 issue "letsencrypt.org"

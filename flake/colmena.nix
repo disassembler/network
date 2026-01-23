@@ -118,7 +118,7 @@
 
     prod03 = {...}: {
       imports = [
-        ../nixos/prod01/configuration.nix
+        ../nixos/prod03/configuration.nix
       ];
     };
   };

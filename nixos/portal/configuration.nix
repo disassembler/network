@@ -32,7 +32,8 @@
   '';
 in {
   deployment = {
-    targetHost = "10.40.33.1";
+    #targetHost = "10.40.33.1";
+    targetHost = "prophet.samleathers.com";
     targetPort = 22;
     targetUser = "root";
   };
@@ -142,6 +143,11 @@ in {
           sourcePort = 32400;
           destination = "10.40.33.20:32400";
           proto = "tcp";
+        }
+        {
+          sourcePort = 51821;
+          destination = "10.40.33.156:51820";
+          proto = "udp";
         }
         {
           sourcePort = 19132;
@@ -308,7 +314,7 @@ in {
           ''
         ];
       allowedTCPPorts = [32400 5222 5060 53 3001];
-      allowedUDPPorts = [51820 1194 1195 5060 5222 53 19132 5353];
+      allowedUDPPorts = [51820 51821 1194 1195 5060 5222 53 19132 5353];
     };
     wireguard.interfaces = {
       wg0 = {
@@ -342,10 +348,6 @@ in {
             allowedIPs = ["10.42.1.1/32"];
           }
           {
-            publicKey = "dCKIaTC40Y5sQqbdsYw1adSgVDmV+1SZMV4DVx1ctSk=";
-            allowedIPs = ["10.38.0.0/24" "fd00::38/128"];
-          }
-          {
             publicKey = "eR6I+LI/BayJ90Kjt0wJyfJUsoSmayD+cb6Kb7qdCV4=";
             allowedIPs = ["10.37.4.0/24" "10.37.6.1/32" "fd00::37/128"];
           }
@@ -361,15 +363,9 @@ in {
           }
           {
             # bower-office
-            publicKey = "rsRvtd4mm4hucE5W1QqCjWJwmSlhWnSWaIWts/Z8/xY=";
-            allowedIPs = ["10.38.0.1/32" "192.168.0.0/24"];
-            endpoint = "174.175.23.241:51820";
-          }
-          {
-            # bower-home
-            publicKey = "3sHFhvDxx6nVX/DBroIGTdHfehl9I/OOB4Fo5v7Vvxc=";
-            allowedIPs = ["10.38.0.2/32" "192.168.1.0/24" "192.168.10.0/24"];
-            endpoint = "98.235.35.253:51820";
+            publicKey = "vTj/lpoqdzFPtrQs7w9Wox58Puu1seMxOKSjWICLiGg=";
+            allowedIPs = ["10.38.0.3/32" "10.38.1.0/24"];
+            endpoint = "vpn.bower-law.com:51820";
           }
           {
             # clever
@@ -430,7 +426,6 @@ in {
       allowUnfree = true;
     };
   };
-  profiles.vim.enable = lib.mkForce false;
 
   environment.systemPackages = with pkgs; [
     jq

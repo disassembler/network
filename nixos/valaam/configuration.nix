@@ -19,6 +19,7 @@
   sops.secrets.pool_opcert = {};
   sops.secrets.pool_vrf_skey = {};
   sops.secrets.pool_kes_skey = {};
+  sops.secrets.wg0_private = {};
 
   imports = [
     ./minecraft-bedrock-server.nix
@@ -64,6 +65,7 @@
         interfaces = ["enp4s0"];
       };
     };
+
     useDHCP = false;
     interfaces.br0.mtu = 1492;
     interfaces.br0.useDHCP = true;
@@ -181,7 +183,7 @@
       package = inputs.wled-sequencer.packages.${pkgs.stdenv.hostPlatform.system}.wled-sequencer;
       settings = {
         host = "10.40.8.61";
-        file = "/var/lib/wled-sequencer/newyears.fseq";
+        file = "/var/lib/wled-sequencer/winter.fseq";
       };
     };
     zrepl = {

@@ -5,9 +5,14 @@
 }: {
   imports = [
     inputs.niri.homeModules.niri
+    inputs.nixvim.homeModules.nixvim
     ./niri.nix
     ./hyprland.nix
     ./waybar.nix
+    ./apps.nix
+    ./cli.nix
+    ./vim.nix
+    ./gpg.nix
   ];
   programs = {
   };

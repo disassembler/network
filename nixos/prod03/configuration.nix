@@ -26,6 +26,8 @@
     ./modules/knot
   ];
 
+  profiles.vim.enable = lib.mkForce false;
+
   security.polkit.enable = lib.mkForce false;
 
   services.openssh.enable = true;

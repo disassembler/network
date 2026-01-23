@@ -73,8 +73,6 @@ in {
           template: slave
         - domain: rats.fail
           template: slave
-        - domain: _acme-challenge.lan.disasm.us
-          template: slave
     '';
   };
 
