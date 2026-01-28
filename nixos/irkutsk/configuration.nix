@@ -63,6 +63,7 @@ in {
   boot.initrd.luks.devices = {
     linuxroot = {
       device = "/dev/disk/by-uuid/47a5b911-4dfe-4bf5-8a5c-c911e211cda0";
+      preLVM = true;
     };
   };
   #systemd.additionalUpstreamSystemUnits = [
@@ -175,16 +176,12 @@ in {
   };
   #users.users.cardano-node.isSystemUser = true;
 
-
   programs.zsh = {
     enable = true;
   };
 
   programs.bash = {
-    interactiveShellInit = ''
-      eval "$(direnv hook bash)"
-      eval "$(starship init bash)"
-    '';
+    enable = true;
   };
   profiles.vim = {
     enable = true;
@@ -287,9 +284,6 @@ in {
       # If you want to use JACK applications, uncomment this
       #jack.enable = true;
     };
-    tailscale.enable = true;
-
-    flatpak.enable = true;
 
     #rabbitmq = {
     #  enable = true;
@@ -306,7 +300,6 @@ in {
       frequent = 8;
       monthly = 1;
     };
-    lorri.enable = true;
     trezord.enable = true;
     resolved.enable = false;
     pcscd.enable = true;
