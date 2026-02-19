@@ -183,7 +183,7 @@
       package = inputs.wled-sequencer.packages.${pkgs.stdenv.hostPlatform.system}.wled-sequencer;
       settings = {
         host = "10.40.8.61";
-        file = "/var/lib/wled-sequencer/winter.fseq";
+        file = "/var/lib/wled-sequencer/vday.fseq";
       };
     };
     zrepl = {
