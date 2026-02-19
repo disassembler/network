@@ -81,6 +81,7 @@
         # Niri/Wayland specific
         command = "${pkgs.zsh}/bin/zsh"; # Or your preferred shell
         confirm-close-surface = false; # Don't ask to close
+        keybind = "shift+enter=text:\x1b[13;2u";
       };
     };
     chromium = {

@@ -285,6 +285,7 @@
     nix-prefetch-git # Prefetch source code from Git for Nix expressions
     code-cursor # AI-powered code editor (VS Code fork)
     nix-direnv
+    claude-code
 
     # --- Git & Version Control ---
     tig # Text-mode interface for Git
