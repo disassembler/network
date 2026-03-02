@@ -27,6 +27,7 @@
 
   # Use the systemd-boot EFI boot loader.
   boot = {
+    enableContainers = true;
     kernel.sysctl = {
       "net.ipv4.conf.all.forwarding" = true;
     };
@@ -41,6 +42,23 @@
     kernelModules = ["amdgpu" "kvm-amd"];
     extraModulePackages = [];
   };
+
+  #containers.night-val-1 = {
+  #  autoStart = true;
+  #  privateNetwork = true;
+  #  hostBridge = "br0";
+
+  #  ephemeral = false;
+
+  #  config = {...}: {
+  #    networking.interfaces.eth0.useDHCP = true;
+  #    nix.enable = true;
+  #    services.openssh.enable = true;
+  #    users.users.root.openssh.authorizedKeys.keys = ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDEPOLnk4+mWNGOXd309PPxal8wgMzKXHnn7Jbu/SpSUYEc1EmjgnrVBcR0eDxgDmGD9zJ69wEH/zLQLPWjaTusiuF+bqAM/x7z7wwy1nZ48SYJw3Q+Xsgzeb0nvmNsPzb0mfnpI6av8MTHNt+xOqDnpC5B82h/voQ4m5DGMQz60ok2hMeh+sy4VIvX5zOVTOFPQqFR6BGDwtALiP5PwMfyScYXlebWHhDRdX9B0j9t+cqiy5utBUsl4cIUInE0KW7Z8Kf6gIsmQnfSZadqI857kdozU3IbaLoJc1C6LyVjzPFyC4+KUC11BmemTGdCjwcoqEZ0k5XtJaKFXacYYXi1l5MS7VdfHldFDZmMEMvfJG/PwvXN4prfOIjpy1521MJHGBNXRktvWhlNBgI1NUQlx7rGmPZmtrYdeclVnnY9Y4HIpkhm0iEt/XUZTMQpXhedd1BozpMp0h135an4uorIEUQnotkaGDwZIV3mSL8x4n6V02Qe2CYvqf4DcCSBv7D91N3JplJJKt7vV4ltwrseDPxDtCxXrQfSIQd0VGmwu1D9FzzDOuk/MGCiCMFCKIKngxZLzajjgfc9+rGLZ94iDz90jfk6GF4hgF78oFNfPEwoGl0soyZM7960QdBcHgB5QF9+9Yd6QhCb/6+ENM9sz6VLdAY7f/9hj/3Aq0Lm4Q== samuel.leathers@iohk.io"];
+
+  #    system.stateVersion = "25.11";
+  #  };
+  #};
 
   nix = {
     settings.sandbox = true;
@@ -67,7 +85,6 @@
     };
 
     useDHCP = false;
-    interfaces.br0.mtu = 1492;
     interfaces.br0.useDHCP = true;
     interfaces.wlp3s0.useDHCP = true;
     networkmanager.enable = false;
@@ -183,7 +200,7 @@
       package = inputs.wled-sequencer.packages.${pkgs.stdenv.hostPlatform.system}.wled-sequencer;
       settings = {
         host = "10.40.8.61";
-        file = "/var/lib/wled-sequencer/vday.fseq";
+        file = "/var/lib/wled-sequencer/lent.fseq";
       };
     };
     zrepl = {

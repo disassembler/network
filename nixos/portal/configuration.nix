@@ -548,6 +548,11 @@ in {
                   ip-address = "10.40.33.24";
                 }
                 {
+                  hostname = "night-val-1";
+                  hw-address = "42:3c:d8:19:86:16";
+                  ip-address = "10.40.33.25";
+                }
+                {
                   hostname = "printer";
                   hw-address = "a4:5d:36:d6:22:d9";
                   ip-address = "10.40.33.50";

@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   programs = {
     zsh = {
       enable = true;
@@ -286,6 +290,7 @@
     code-cursor # AI-powered code editor (VS Code fork)
     nix-direnv
     claude-code
+    inputs.llm-agents.packages.x86_64-linux.gemini-cli
 
     # --- Git & Version Control ---
     tig # Text-mode interface for Git

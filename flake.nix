@@ -43,6 +43,7 @@
     # Styx static site generator
     # TODO: migrate to docusaurus?
     styx.url = "github:disassembler/styx";
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs = {
