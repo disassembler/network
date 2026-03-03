@@ -48,7 +48,7 @@ in {
           update-type: [TXT]
           update-owner: name
           update-owner-match: equal
-          update-owner-name: [acme-challenge.lan.disasm.us.]
+          update-owner-name: [_acme-challenge.lan.disasm.us.]
 
         # ACME ACL for bower-law.com - Strictly limited to its specific TXT record
         - id: acme_bower_limited

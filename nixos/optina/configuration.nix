@@ -901,6 +901,23 @@ in {
             '';
           };
         };
+        "rpc-sanchonet.lan.disasm.us" = {
+          useACMEHost = "lan.disasm.us";
+          forceSSL = true;
+          locations."/" = {
+            proxyPass = "http://10.40.33.25:9944";
+            proxyWebsockets = true;
+            extraConfig = ''
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection "upgrade";
+              proxy_read_timeout 86400;
+            '';
+          };
+        };
         "hledger.lan.disasm.us" = {
           useACMEHost = "lan.disasm.us";
           forceSSL = true;
