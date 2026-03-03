@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2026030100 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 2026030300 7200 3600 86400 3600
 
 $TTL 600
 
@@ -59,6 +59,7 @@ noc.lan 300 IN CNAME optina.lan
 stg.lan 300 IN CNAME optina.lan
 unifi.lan 300 IN CNAME optina.lan
 rpc-sanchonet.lan 300 IN CNAME optina.lan
+demo.lan 300 IN CNAME optina.lan
 
 ; laptops
 iviron.lan 300 IN A 10.40.33.60
