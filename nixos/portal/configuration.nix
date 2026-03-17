@@ -308,7 +308,7 @@ in {
             # allow traffic with existing state
             ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
             # Allow forwarding the following ports from Internet via IPv6 only
-            ${forwardPortToHost 3001 "enp1s0" "tcp" "2601:985:4c00:c880:1046:d1ff:feea:9276"}
+            ${forwardPortToHost 3001 "enp1s0" "tcp" "::1046:d1ff:feea:9276/::ffff:ffff:ffff:ffff"}
             # block forwarding from external interface
             ip6tables -A FORWARD -i enp1s0 -j DROP
           ''
@@ -336,7 +336,7 @@ in {
           }
           {
             publicKey = "mFn9gVTlPTEa+ZplilmKiZ0pYqzzof75IaDiG9q/pko=";
-            allowedIPs = ["10.40.9.39/32" "10.39.0.0/24" "2601:985:4c00:c880::1/64" "fd00::39/128"];
+            allowedIPs = ["10.40.9.39/32" "10.39.0.0/24" "fd00::39/128"];
           }
           {
             publicKey = "b1mP5d9m041QyP0jbXicP145BOUYwNefUOOqo6XXwF8=";

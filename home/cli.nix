@@ -289,8 +289,10 @@
     nix-prefetch-git # Prefetch source code from Git for Nix expressions
     code-cursor # AI-powered code editor (VS Code fork)
     nix-direnv
-    claude-code
     inputs.llm-agents.packages.x86_64-linux.gemini-cli
+    inputs.llm-agents.packages.x86_64-linux.claude-code
+    inputs.llm-agents.packages.x86_64-linux.code
+    inputs.llm-agents.packages.x86_64-linux.opencode
 
     # --- Git & Version Control ---
     tig # Text-mode interface for Git

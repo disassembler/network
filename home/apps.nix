@@ -1,4 +1,11 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  inputs,
+  ...
+}: let
+  system = "x86_64-linux";
+  pkgsUnstable = import inputs.nixpkgsUnstable {inherit system;};
+in {
   fonts.fontconfig.enable = true;
   home.sessionVariables = {
     # --- System Defaults ---
@@ -189,15 +196,15 @@
     steamcmd # Command-line version of the Steam client
     wineWowPackages.waylandFull # Run Windows apps on Wayland via Wine
     winetricks # Helper script to download/install Wine runtime libraries
-    mcpelauncher-client # Minecraft: Bedrock Edition Linux launcher
-    mcpelauncher-ui-qt # GUI for the Bedrock Edition launcher
+    pkgsUnstable.mcpelauncher-client # Minecraft: Bedrock Edition Linux launcher
+    pkgsUnstable.mcpelauncher-ui-qt # GUI for the Bedrock Edition launcher
 
     # --- Communication & Media ---
     slack # Team communication and collaboration platform
     discord # Voice, video, and text chat for communities
     zoom-us # Video conferencing and online meetings
     weechat # Extensible chat client (CLI)
-    telegram-desktop # Fast and secure mobile and desktop messaging app
+    pkgsUnstable.telegram-desktop # Fast and secure mobile and desktop messaging app
     iamb # Matrix client for the terminal
 
     # Custom Signal Wrapper for Wayland & Secure Passwords
