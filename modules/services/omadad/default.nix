@@ -7,6 +7,12 @@
 with lib; let
   cfg = config.services.omadad;
   defaultUser = "omadad";
+  # mongodb-ce is SSPL (unfree); import a local pkgs with allowUnfree so the
+  # default works even when the system nixpkgs config doesn't set it globally.
+  unfreePkgs = import pkgs.path {
+    inherit (pkgs) system;
+    config.allowUnfree = true;
+  };
 in {
   options.services.omadad = {
     enable = mkOption {
@@ -41,7 +47,8 @@ in {
       example = "/home/omadad/.omadad/";
       type = types.path;
       description = ''
-        The state directory for omadad.
+        The state directory for omadad.  This is the effective OMADA_HOME;
+        relative paths in omada.properties resolve from dataDir/lib/.
       '';
     };
 
@@ -59,7 +66,7 @@ in {
 
     mongoPort = mkOption {
       type = types.int;
-      default = 27212;
+      default = 27217;
       description = "Mongo database connection port.  Specify alternate if running multiple instances.";
     };
 
@@ -67,6 +74,7 @@ in {
       type = types.package;
       default = pkgs.callPackage ./package.nix {
         mongodb = cfg.mongodb;
+        commonsDaemon = pkgs.commonsDaemon;
       };
       description = ''
         Omada package
@@ -75,9 +83,19 @@ in {
 
     mongodb = mkOption {
       type = types.package;
-      default = pkgs.mongodb-4_4;
+      default = unfreePkgs.mongodb-ce;
       description = ''
-        mongodb package
+        mongodb package.  Omada 6.x supports MongoDB 8.x (use pkgs.mongodb-ce).
+      '';
+    };
+
+    java = mkOption {
+      type = types.package;
+      default = pkgs.jdk17_headless;
+      description = ''
+        JDK package for jsvc.  Must be Java 17+.  The .home attribute is used
+        to pass the correct JAVA_HOME to jsvc, since nixpkgs JDK packages place
+        the JVM under lib/openjdk rather than at the package root.
       '';
     };
 
@@ -91,7 +109,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [cfg.package pkgs.jre];
+    environment.systemPackages = [cfg.package];
 
     systemd.services.omadad = {
       description = "Wifi access point controller";
@@ -101,33 +119,52 @@ in {
       path = [pkgs.bash cfg.mongodb pkgs.nettools pkgs.curl pkgs.procps];
 
       serviceConfig = let
-        java_opts = "-classpath '${cfg.dataDir}/lib/*' -server -Xms128m -Xmx1024m -XX:MaxHeapFreeRatio=60 -XX:MinHeapFreeRatio=30 -XX:+HeapDumpOnOutOfMemoryError -DhttpPort=${toString cfg.httpPort} -DhttpsPort=${toString cfg.httpsPort} -DmongoPort=${toString cfg.mongoPort} -DdataDir=${cfg.dataDir}/data -Deap.home=${cfg.dataDir}";
         main_class = "com.tplink.smb.omada.starter.OmadaLinuxMain";
+        java_opts = "-server -XX:MaxHeapFreeRatio=60 -XX:MinHeapFreeRatio=30 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${cfg.dataDir}/logs/java_heapdump.hprof -Djava.awt.headless=true";
+        classpath = "${cfg.dataDir}/lib/*:${cfg.dataDir}/properties";
       in {
-        Type = "simple";
+        Type = "forking";
+        PIDFile = "/run/omadad/jsvc.pid";
+        RuntimeDirectory = "omadad";
+        TimeoutStartSec = 300;
         User = cfg.user;
         Group = cfg.group;
-        ExecStart = "${pkgs.openjdk8}/bin/java ${java_opts} ${main_class}";
-        WorkingDirectory = "${cfg.dataDir}/data";
+        # Working directory is OMADA_HOME/lib so that relative paths in
+        # omada.properties (e.g. ../data/db) resolve correctly.
+        WorkingDirectory = "${cfg.dataDir}/lib";
+        ExecStart = "${pkgs.jsvc}/bin/jsvc -java-home ${cfg.java.home} -cwd ${cfg.dataDir}/lib -pidfile /run/omadad/jsvc.pid -outfile ${cfg.dataDir}/logs/startup.log -errfile ${cfg.dataDir}/logs/startup.log -cp ${classpath} -procname omadad ${java_opts} ${main_class}";
       };
 
       preStart = ''
+        # Mutable data directories
         mkdir -p ${cfg.dataDir}/data/db
         mkdir -p ${cfg.dataDir}/data/portal
         mkdir -p ${cfg.dataDir}/data/map
         mkdir -p ${cfg.dataDir}/data/keystore
         mkdir -p ${cfg.dataDir}/data/pdf
+        mkdir -p ${cfg.dataDir}/data/autobackup
         mkdir -p ${cfg.dataDir}/logs
         mkdir -p ${cfg.dataDir}/work
-        # Some stuff has to be writeable, so we make dataDir home and
+
+        # lib must be writable (Omada may modify JARs at runtime)
         rm -rf ${cfg.dataDir}/lib
         cp -a ${cfg.package}/lib ${cfg.dataDir}/lib
         chmod -R +rw ${cfg.dataDir}/lib
+
         rm -f ${cfg.dataDir}/bin && ln -sf ${cfg.package}/bin ${cfg.dataDir}/bin
+
+        # Static web assets from the package (read-only symlinks)
+        mkdir -p ${cfg.dataDir}/data
         rm -f ${cfg.dataDir}/data/html && ln -sf ${cfg.package}/data/html ${cfg.dataDir}/data/html
+        rm -f ${cfg.dataDir}/data/static && ln -sf ${cfg.package}/data/static ${cfg.dataDir}/data/static
+
+        # Fresh properties (writable, with port substitutions applied)
         rm -rf ${cfg.dataDir}/properties
         cp -a ${cfg.package}/properties ${cfg.dataDir}/properties
         chmod -R +rw ${cfg.dataDir}/properties
+        sed -i 's/^manage\.http\.port=.*/manage.http.port=${toString cfg.httpPort}/' ${cfg.dataDir}/properties/omada.properties
+        sed -i 's/^manage\.https\.port=.*/manage.https.port=${toString cfg.httpsPort}/' ${cfg.dataDir}/properties/omada.properties
+        sed -i 's/^eap\.mongod\.port=.*/eap.mongod.port=${toString cfg.mongoPort}/' ${cfg.dataDir}/properties/omada.properties
       '';
     };
 
@@ -138,7 +175,6 @@ in {
         description = "omadad server daemon owner";
         group = defaultUser;
         isSystemUser = true;
-        # uid = config.ids.uids.omadad;
         home = cfg.dataDir;
         createHome = true;
       };
@@ -146,7 +182,6 @@ in {
 
     users.groups = optionalAttrs (cfg.user == defaultUser) {
       ${defaultUser} = {
-        # gid = config.ids.gids.omadad;
         members = [defaultUser];
       };
     };

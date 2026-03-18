@@ -367,13 +367,12 @@ in {
         passwordFile = config.sops.secrets.gitea_dbpass.path;
       };
     };
-    # TODO: run omadad and unifi in a controller with an older nixpkgs
-    #omadad = {
-    #  enable = true;
-    #  httpPort = 8089;
-    #  httpsPort = 10443;
-    #  mongodb = legacyPkgs.mongodb;
-    #};
+    omadad = {
+      enable = true;
+      httpPort = 8089;
+      httpsPort = 8043;
+      inherit (pkgs) mongodb;
+    };
     #unifi = {
     #  enable = true;
     #  unifiPackage = legacyPkgs.unifi6;
