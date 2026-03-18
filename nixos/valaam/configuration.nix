@@ -200,7 +200,7 @@
       package = inputs.wled-sequencer.packages.${pkgs.stdenv.hostPlatform.system}.wled-sequencer;
       settings = {
         host = "10.40.8.61";
-        file = "/var/lib/wled-sequencer/lent.fseq";
+        file = "/var/lib/wled-sequencer/stpatricks.fseq";
       };
     };
     zrepl = {
