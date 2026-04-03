@@ -23,6 +23,37 @@ build-machines *ARGS:
   let nodes = (nix eval --json '.#nixosConfigurations' --apply builtins.attrNames | from json)
   for node in $nodes {just build-machine $node {{ARGS}}}
 
+provision-disko machine ip:
+  #!/usr/bin/env bash
+  set -euo pipefail
+
+  echo "--- Partitioning and Formatting ---"
+  # Build the script locally and store the path
+  DISKO_SCRIPT=$(nix build .#nixosConfigurations.{{machine}}.config.system.build.diskoScript --no-link --print-out-paths)
+  
+  # Copy the closure and execute
+  nix copy --to ssh://root@{{ip}} "$DISKO_SCRIPT"
+  ssh root@{{ip}} "$DISKO_SCRIPT"
+  export HOSTID="$(ssh root@{{ip}} "$(head -c 8 /etc/machine-id)")"
+  echo "Edit configuration.nix and set hostId to $HOSTID"
+  echo "Then run: just provision-deploy {{machine}} {{ip}}"
+
+provision-deploy machine ip:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  echo "Building and Pushing System Closure ---"
+  TOPLEVEL=$(nix build .#nixosConfigurations.{{machine}}.config.system.build.toplevel --no-link --print-out-paths)
+  nix copy --to ssh://root@{{ip}} "$TOPLEVEL"
+
+  echo "Installing to /mnt ---"
+  ssh root@{{ip}} "nixos-install --system $TOPLEVEL --no-root-passwd --no-channel-copy"
+
+  echo "--- Cleaning up ---"
+  ssh root@{{ip}} "umount -R /mnt && zpool export zpool"
+
+  echo "--- DONE ---"
+  echo "Reboot the machine!"
+
 
 # Generate age key
 generate-age-key:
