@@ -523,16 +523,6 @@ in {
                   ip-address = "10.40.33.21";
                 }
                 {
-                  hostname = "mice-rel-1";
-                  hw-address = "12:46:d1:ea:92:76";
-                  ip-address = "10.40.33.30";
-                }
-                {
-                  hostname = "mice-bp-1";
-                  hw-address = "3a:58:ab:bd:83:d1";
-                  ip-address = "10.40.33.31";
-                }
-                {
                   hostname = "atari";
                   hw-address = "94:08:53:84:9b:9d";
                   ip-address = "10.40.33.22";
@@ -551,6 +541,21 @@ in {
                   hostname = "night-val-1";
                   hw-address = "42:3c:d8:19:86:16";
                   ip-address = "10.40.33.25";
+                }
+                {
+                  hostname = "kazan";
+                  hw-address = "74:d4:35:9b:84:62";
+                  ip-address = "10.40.33.26";
+                }
+                {
+                  hostname = "mice-rel-1";
+                  hw-address = "12:46:d1:ea:92:76";
+                  ip-address = "10.40.33.30";
+                }
+                {
+                  hostname = "mice-bp-1";
+                  hw-address = "3a:58:ab:bd:83:d1";
+                  ip-address = "10.40.33.31";
                 }
                 {
                   hostname = "printer";

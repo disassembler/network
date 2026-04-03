@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2026030900 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 2026040301 7200 3600 86400 3600
 
 $TTL 600
 
@@ -40,7 +40,10 @@ resume  300 IN  CNAME www
 optina.lan 300 IN A 10.40.33.20
 optina.lan 300 IN AAAA 2601:985:4c82:4950:76d4:35ff:fe9b:8462
 sarov.lan 300 IN A 10.40.33.40
-optina.lan 300 IN AAAA 2601:985:4c82:4950:76d4:35ff:fe9b:8462
+kursk.lan 300 IN A 10.40.33.70
+kursk.lan 300 IN AAAA 2601:985:4c82:4950::70
+ai.lan 300 IN A 10.40.33.71
+ai.lan 300 IN AAAA 2601:985:4c82:4950::71
 valaam.lan 300 IN A 10.40.33.21
 valaam.lan 300 IN AAAA 2601:985:4c82:4950:2c0:8ff:fe9d:ba42
 relay.valaam.lan 300 IN AAAA 2601:985:4c82:4950:1046:d1ff:feea:9276
@@ -49,17 +52,20 @@ atari.lan 300 IN A 10.40.33.22
 atari.lan 300 IN AAAA 2601:985:4c82:4950:9608:53ff:fe84:9b9d
 portal.lan 300 IN A 10.40.33.1
 portal.lan 300 IN AAAA 2601:985:4c82:4950::1
-vw.lan 300 IN CNAME optina.lan
-omada.lan 300 IN CNAME optina.lan
-hass.lan 300 IN CNAME optina.lan
-hledger.lan 300 IN CNAME optina.lan
-irc.lan 300 IN CNAME optina.lan
+; kursk services
+vw.lan 300 IN CNAME kursk.lan
+hass.lan 300 IN CNAME kursk.lan
+hledger.lan 300 IN CNAME kursk.lan
+irc.lan 300 IN CNAME kursk.lan
+git.lan 300 IN CNAME kursk.lan
+rpc-sanchonet.lan 300 IN CNAME kursk.lan
+demo.lan 300 IN CNAME kursk.lan
+; optina services (pending migration)
 plex.lan 300 IN CNAME optina.lan
-noc.lan 300 IN CNAME optina.lan
-stg.lan 300 IN CNAME optina.lan
 unifi.lan 300 IN CNAME optina.lan
-rpc-sanchonet.lan 300 IN CNAME optina.lan
-demo.lan 300 IN CNAME optina.lan
+; pending kursk migration
+noc.lan 300 IN CNAME optina.lan
+omada.lan 300 IN CNAME optina.lan
 
 ; laptops
 iviron.lan 300 IN A 10.40.33.60
