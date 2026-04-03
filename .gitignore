@@ -2,3 +2,4 @@ result*
 *.qcow2
 /.direnv*
 /treefmt.toml
+.claude/settings.local.json

@@ -116,9 +116,17 @@ in {
           -c shared_preload_libraries=pg_search,vector \
           -c shared_buffers=16GB \
           -c work_mem=1GB \
-          -c max_parallel_workers_per_gather=8 \
+          -c effective_cache_size=48GB \
           -c random_page_cost=1.1 \
-          -c effective_cache_size=48GB
+          -c max_parallel_workers_per_gather=8 \
+          -c max_parallel_workers=8 \
+          -c max_worker_processes=16 \
+          -c maintenance_work_mem=2GB \
+          -c max_wal_size=4GB \
+          -c wal_buffers=64MB \
+          -c effective_io_concurrency=200 \
+          -c huge_pages=try \
+          -c pg_search.enable_telemetry=false
       '';
 
       MemoryHigh = "64G";
