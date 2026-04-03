@@ -10,14 +10,16 @@ keys:
   - &prod01 3d773929692a08fa37a311b389fd40790a6817a1
   - &prod03 57e2079f23192ec7a2d1451c1390d0ea9c007a56
   - &valaam 3a02059e51009758d7b8154f0a41cee7579dd6e6
+  - &kursk 7da67e39c85bd53781942cce7985b264b10c6f27
 creation_rules:
   - path_regex: secrets.yaml$
     key_groups:
-    - pgp:
-      - *admin_disasm
-      - *optina
-      - *portal
-      - *pskov
-      - *prod01
-      - *prod03
-      - *valaam
+      - pgp:
+          - *admin_disasm
+          - *optina
+          - *portal
+          - *pskov
+          - *prod01
+          - *prod03
+          - *valaam
+          - *kursk

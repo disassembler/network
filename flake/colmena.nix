@@ -85,6 +85,12 @@
         ../nixos/optina/hardware-configuration.nix
       ];
     };
+    kursk = {...}: {
+      imports = [
+        ../nixos/kursk/configuration.nix
+        ../nixos/kursk/disko.nix
+      ];
+    };
 
     valaam = {...}: {
       imports = [

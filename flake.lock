@@ -644,6 +644,26 @@
         "type": "github"
       }
     },
+    "disko": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773889306,
+        "narHash": "sha256-PAqwnsBSI9SVC2QugvQ3xeYCB0otOwCacB1ueQj2tgw=",
+        "owner": "nix-community",
+        "repo": "disko",
+        "rev": "5ad85c82cc52264f4beddc934ba57f3789f28347",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "disko",
+        "type": "github"
+      }
+    },
     "elixir-nvim": {
       "flake": false,
       "locked": {
@@ -3098,6 +3118,7 @@
         "adawallet": "adawallet",
         "cardano-parts": "cardano-parts",
         "colmena": "colmena_2",
+        "disko": "disko",
         "flake-parts": "flake-parts_4",
         "flake-utils": "flake-utils_4",
         "home-manager": "home-manager",

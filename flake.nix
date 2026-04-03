@@ -8,6 +8,8 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     colmena.url = "github:zhaofengli/colmena";
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
 
     # personal configs
     neovim-flake.url = "github:disassembler/neovim-flake/sl/rust";
