@@ -74,6 +74,7 @@ in {
   hardware = {
     gpgSmartcards.enable = true;
     enableRedistributableFirmware = true;
+    cpu.amd.updateMicrocode = true;
   };
 
   environment.systemPackages = with pkgs; [

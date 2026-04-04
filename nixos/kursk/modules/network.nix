@@ -64,10 +64,23 @@
     };
   };
 
-  # Rename the NIC by MAC address so the interface name is stable regardless of
+  boot.kernelModules = ["nct6775" "kvm-amd"];
+
+  boot.initrd.availableKernelModules = [
+    "nvme"
+    "xhci_pci"
+    "thunderbolt"
+    "usbhid"
+    "usb_storage"
+    "sd_mod"
+  ];
+
+  boot.kernelParams = ["iommu=pt"];
+
+  # Rename the 10Gb NIC by MAC so the interface name is stable regardless of
   # kernel enumeration order.
   services.udev.extraRules = ''
-    ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="74:d4:35:9b:84:62", NAME="enp11s0"
+    ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="bc:fc:e7:e7:10:cd", NAME="enp11s0"
   '';
 
   systemd.network = {
