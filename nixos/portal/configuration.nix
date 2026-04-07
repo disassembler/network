@@ -288,6 +288,8 @@ in {
               547 # DHCPv6
               9100 # prometheus
               5201 # iperf
+              6666 # Tuya device discovery (legacy)
+              6667 # Tuya device discovery
             ])
           (lib.concatMapStrings dropPortNoLog
             [
@@ -438,6 +440,21 @@ in {
   ];
 
   services = {
+    udp-broadcast-relay = {
+      enable = true;
+      instances = {
+        tuya-primary = {
+          id = 1;
+          port = 6667;
+          interfaces = ["lan" "iot"];
+        };
+        tuya-legacy = {
+          id = 2;
+          port = 6666;
+          interfaces = ["lan" "iot"];
+        };
+      };
+    };
     avahi = {
       enable = true;
       allowInterfaces = ["lan" "iot" "mgmt"];

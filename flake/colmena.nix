@@ -76,6 +76,7 @@
       imports = [
         ../nixos/portal/configuration.nix
         ../nixos/portal/hardware-configuration.nix
+        self.nixosModules.udp-broadcast-relay
       ];
     };
 
