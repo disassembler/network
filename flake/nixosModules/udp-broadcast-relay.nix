@@ -48,7 +48,7 @@
             wantedBy = ["multi-user.target"];
             after = ["network.target"];
             serviceConfig = {
-              ExecStart = "${cfg.package}/bin/udp-broadcast-relay-rs -id ${toString inst.id} --port ${toString inst.port} ${concatMapStringsSep " " (i: "--dev ${i}") inst.interfaces}";
+              ExecStart = "${cfg.package}/bin/udp-broadcast-relay-rs --id ${toString inst.id} --port ${toString inst.port} ${concatMapStringsSep " " (i: "--dev ${i}") inst.interfaces}";
               Restart = "on-failure";
               DynamicUser = true;
               AmbientCapabilities = ["CAP_NET_RAW"];
