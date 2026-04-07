@@ -15,6 +15,7 @@
     neovim-flake.url = "github:disassembler/neovim-flake/sl/rust";
     wled-sequencer.url = "github:disassembler/wled-sequencer";
     vivarium.url = "github:nrdxp/vivarium";
+    crane.url = "github:ipetkov/crane";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
     home-manager = {
