@@ -5,6 +5,7 @@
   ...
 }: let
   poolName = "zpool";
+  mediaPool = "media";
 
   # Single source of truth for ZFS datasets.
   # Referenced by both the disko config below and the activation script,
@@ -91,6 +92,50 @@
     };
   };
 
+  # 4x Samsung 870 QVO 8TB SATA SSDs
+  mediaDisks = {
+    sata1 = "/dev/disk/by-id/ata-Samsung_SSD_870_QVO_8TB_S5VUNJ0W703456T";
+    sata2 = "/dev/disk/by-id/ata-Samsung_SSD_870_QVO_8TB_S5VUNJ0W709468T";
+    sata3 = "/dev/disk/by-id/ata-Samsung_SSD_870_QVO_8TB_S5VUNJ0W705710B";
+    sata4 = "/dev/disk/by-id/ata-Samsung_SSD_870_QVO_8TB_S5VUNJ0W202766Z";
+  };
+
+  mediaDatasets = {
+    "media" = {
+      type = "zfs_fs";
+      mountpoint = "/data/media";
+      options = {
+        mountpoint = "legacy";
+        recordsize = "1M";
+        compression = "zstd";
+        atime = "off";
+        "com.sun:auto-snapshot" = "false";
+      };
+    };
+    "backup" = {
+      type = "zfs_fs";
+      mountpoint = "/data/backup";
+      options = {
+        mountpoint = "legacy";
+        recordsize = "1M";
+        compression = "zstd";
+        atime = "off";
+        "com.sun:auto-snapshot" = "true";
+      };
+    };
+    "downloads" = {
+      type = "zfs_fs";
+      mountpoint = "/data/downloads";
+      options = {
+        mountpoint = "legacy";
+        recordsize = "1M";
+        compression = "zstd";
+        atime = "off";
+        "com.sun:auto-snapshot" = "false";
+      };
+    };
+  };
+
   # Generate a shell snippet that creates a single dataset if it doesn't exist.
   # mapAttrsToList sorts keys alphabetically, which conveniently means parents
   # (e.g. nixos/var) are always created before children (nixos/var/postgresql).
@@ -105,6 +150,18 @@
         ${pkgs.zfs}/bin/zfs create ${opts} ${lib.escapeShellArg "${poolName}/${name}"}
       fi
     '';
+
+  mkCreateMediaDataset = name: ds:
+    let
+      opts = lib.concatStringsSep " " (
+        lib.mapAttrsToList (k: v: "-o ${lib.escapeShellArg "${k}=${v}"}") (ds.options or {})
+      );
+    in ''
+      if ! ${pkgs.zfs}/bin/zfs list ${lib.escapeShellArg "${mediaPool}/${name}"} > /dev/null 2>&1; then
+        echo "zfs-datasets: creating ${mediaPool}/${name}"
+        ${pkgs.zfs}/bin/zfs create ${opts} ${lib.escapeShellArg "${mediaPool}/${name}"}
+      fi
+    '';
 in {
   imports = [inputs.disko.nixosModules.disko];
 
@@ -113,6 +170,15 @@ in {
   system.activationScripts.zfs-datasets = {
     deps = ["specialfs"];
     text = lib.concatStrings (lib.mapAttrsToList mkCreateDataset datasets);
+  };
+
+  system.activationScripts.zfs-media-datasets = {
+    deps = ["specialfs"];
+    text = ''
+      if ${pkgs.zfs}/bin/zpool list ${lib.escapeShellArg mediaPool} > /dev/null 2>&1; then
+        ${lib.concatStrings (lib.mapAttrsToList mkCreateMediaDataset mediaDatasets)}
+      fi
+    '';
   };
 
   disko.devices = {
@@ -148,6 +214,66 @@ in {
           };
         };
       };
+    };
+    disk.sata1 = {
+      device = mediaDisks.sata1;
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions.zfs = {
+          size = "100%";
+          content = {type = "zfs"; pool = mediaPool;};
+        };
+      };
+    };
+    disk.sata2 = {
+      device = mediaDisks.sata2;
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions.zfs = {
+          size = "100%";
+          content = {type = "zfs"; pool = mediaPool;};
+        };
+      };
+    };
+    disk.sata3 = {
+      device = mediaDisks.sata3;
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions.zfs = {
+          size = "100%";
+          content = {type = "zfs"; pool = mediaPool;};
+        };
+      };
+    };
+    disk.sata4 = {
+      device = mediaDisks.sata4;
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions.zfs = {
+          size = "100%";
+          content = {type = "zfs"; pool = mediaPool;};
+        };
+      };
+    };
+    zpool.${mediaPool} = {
+      type = "zpool";
+      mode = "raidz1";
+      options = {
+        ashift = "12";
+        autotrim = "on";
+      };
+      rootFsOptions = {
+        compression = "zstd";
+        atime = "off";
+        xattr = "sa";
+        dnodesize = "auto";
+        mountpoint = "none";
+      };
+      datasets = mediaDatasets;
     };
     zpool.${poolName} = {
       type = "zpool";
