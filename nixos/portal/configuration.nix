@@ -428,6 +428,20 @@ in {
           interfaces-config = {
             interfaces = ["lan" "mgmt" "guest" "iot"];
           };
+
+          # Control socket — lets synaptex-router push dynamic reservations
+          # via the host_cmds hook (reservation-add / reservation-del).
+          control-socket = {
+            socket-type = "unix";
+            socket-name = "/run/kea/kea-dhcp4.sock";
+          };
+
+          # host_cmds hook: enables reservation-add/del/get over control socket.
+          # Reservations are in-memory; synaptex-router re-syncs them at startup.
+          hooks-libraries = [
+            { library = "${pkgs.kea}/lib/kea/hooks/libdhcp_host_cmds.so"; }
+          ];
+
           lease-database = {
             name = "/var/lib/kea/dhcp4.leases";
             persist = true;
