@@ -1,4 +1,5 @@
 {
+  inputs,
   lib,
   config,
   pkgs,
@@ -7,15 +8,6 @@
   # TODO: move to flake
   shared = import ../../shared.nix;
   externalInterface = "enp1s0";
-  internalInterfaces = [
-    "mgmt"
-    "lan"
-    "guest"
-    "voip"
-    "iot"
-    "wg0"
-    "tun0"
-  ];
   ipxe' = pkgs.ipxe.overrideDerivation (drv: {
     installPhase = ''
       ${drv.installPhase}
@@ -48,6 +40,7 @@ in {
   boot.loader.grub.device = "/dev/sda";
   boot.kernelParams = ["console=ttyS0,115200n8"];
   boot.kernel.sysctl = {
+    "net.ipv4.conf.all.forwarding" = true;
     "net.ipv6.conf.all.forwarding" = true;
     "net.ipv6.conf.enp1s0.accept_ra" = 2;
   };
@@ -133,190 +126,108 @@ in {
         ];
       };
     };
-    nat = {
-      enable = true;
-      externalInterface = "${externalInterface}";
-      internalIPs = ["10.40.33.0/24" "10.40.40.0/24" "10.40.3.0/24" "10.40.10.0/24"];
-      internalInterfaces = ["iot" "voip" "lan" "guest" "mgmt" "ovpn-guest"];
-      forwardPorts = [
-        {
-          sourcePort = 32400;
-          destination = "10.40.33.20:32400";
-          proto = "tcp";
-        }
-        {
-          sourcePort = 51821;
-          destination = "10.40.33.156:51820";
-          proto = "udp";
-        }
-        {
-          sourcePort = 19132;
-          destination = "10.40.33.21:19132";
-          proto = "udp";
-        }
-        # Ark Survival Ascended
-        {
-          sourcePort = 7777;
-          destination = "10.40.33.21:7777";
-          proto = "udp";
-        }
-        {
-          sourcePort = 7778;
-          destination = "10.40.33.21:7778";
-          proto = "udp";
-        }
-        {
-          sourcePort = 7787;
-          destination = "10.40.33.21:7787";
-          proto = "udp";
-        }
-        {
-          sourcePort = 7788;
-          destination = "10.40.33.21:7788";
-          proto = "udp";
-        }
-        {
-          sourcePort = 7797;
-          destination = "10.40.33.21:7797";
-          proto = "udp";
-        }
-        {
-          sourcePort = 7798;
-          destination = "10.40.33.21:7798";
-          proto = "udp";
-        }
-        {
-          sourcePort = 7807;
-          destination = "10.40.33.21:7807";
-          proto = "udp";
-        }
-        {
-          sourcePort = 7808;
-          destination = "10.40.33.21:7808";
-          proto = "udp";
-        }
-        {
-          sourcePort = 27015;
-          destination = "10.40.33.21:27015";
-          proto = "udp";
-        }
-        {
-          sourcePort = 27016;
-          destination = "10.40.33.21:27016";
-          proto = "udp";
-        }
-        {
-          sourcePort = 27017;
-          destination = "10.40.33.21:27017";
-          proto = "udp";
-        }
-        {
-          sourcePort = 27018;
-          destination = "10.40.33.21:27018";
-          proto = "udp";
-        }
-      ];
-    };
     enableIPv6 = true;
     dhcpcd.persistent = true;
-    # NOTE: 3 is taken by openvpn
     dhcpcd.extraConfig = ''
       noipv6rs
       interface ${externalInterface}
       ia_na 1
       ia_pd 2/::/60 lan/0/64 mgmt/1/64 guest/2/64 iot/4/64
     '';
-    firewall = {
+    firewall.enable = false;
+    nftables = {
       enable = true;
-      allowPing = true;
-      extraCommands = let
-        dropPortNoLog = port: ''
-          ip46tables -A nixos-fw -p tcp \
-          --dport ${toString port} -j nixos-fw-refuse
-          ip46tables -A nixos-fw -p udp \
-          --dport ${toString port} -j nixos-fw-refuse
-        '';
+      tables."portal" = {
+        family = "inet";
+        content = ''
+          chain input {
+            type filter hook input priority filter; policy drop;
+            ct state established,related accept
+            ct state invalid drop
+            iifname "lo" accept
+            ip protocol icmp log prefix "nftables[icmp]: " accept
+            ip6 nexthdr icmpv6 log prefix "nftables[icmp-v6]: " accept
 
-        dropPortIcmpLog = ''
-          iptables -A nixos-fw -p icmp \
-          -j LOG --log-prefix "iptables[icmp]: "
-          ip6tables -A nixos-fw -p ipv6-icmp \
-          -j LOG --log-prefix "iptables[icmp-v6]: "
-        '';
+            # Noisy ports — drop silently before general rules
+            tcp dport { 23, 139, 143, 515 } drop
+            udp dport { 23, 139, 143, 515 } drop
 
-        refusePortOnInterface = port: interface: ''
-          ip46tables -A nixos-fw -i ${interface} -p tcp \
-          --dport ${toString port} -j nixos-fw-log-refuse
-          ip46tables -A nixos-fw -i ${interface} -p udp \
-          --dport ${toString port} -j nixos-fw-log-refuse
-        '';
-        acceptPortOnInterface = port: interface: ''
-          ip46tables -A nixos-fw -i ${interface} -p tcp \
-          --dport ${toString port} -j nixos-fw-accept
-          ip46tables -A nixos-fw -i ${interface} -p udp \
-          --dport ${toString port} -j nixos-fw-accept
-        '';
-        # IPv6 flat forwarding. For ipv4, see nat.forwardPorts
-        forwardPortToHost = port: interface: proto: host: ''
-          ip6tables -A FORWARD -i ${interface} \
-          -p ${proto} -d ${host} \
-          --dport ${toString port} -j ACCEPT
-          ip6tables -A nixos-fw -i ${interface} \
-          -p ${proto} -d ${host} \
-          --dport ${toString port} -j ACCEPT
-        '';
+            # Public services (all interfaces)
+            tcp dport { 22, 53, 3001, 5060, 5222, 32400 } accept
+            udp dport { 53, 5060, 5222, 5353, 19132, 51820, 51821 } accept
 
-        privatelyAcceptPort = port:
-          lib.concatMapStrings
-          (interface: acceptPortOnInterface port interface)
-          internalInterfaces;
+            # Internal-only services
+            iifname { "mgmt", "lan", "guest", "voip", "iot", "wg0" } tcp dport { 67, 69, 546, 547, 5201, 9100 } accept
+            iifname { "mgmt", "lan", "guest", "voip", "iot", "wg0" } udp dport { 67, 69, 546, 547, 5201, 9100 } accept
 
-        publiclyRejectPort = port:
-          refusePortOnInterface port externalInterface;
+            # synaptex-router
+            iifname "lan" tcp dport 50052 accept
+            iifname { "lan", "iot" } udp dport { 6666, 6667 } accept
 
-        allowPortOnlyPrivately = port: ''
-          ${privatelyAcceptPort port}
-          ${publiclyRejectPort port}
+            # DHCPv6 client on WAN — allow ISP server responses (ADVERTISE/REPLY → port 546)
+            iifname "enp1s0" udp dport 546 accept
+
+            # IPv6: port 3001 from WAN to mice-rel-1 (EUI-64 match)
+            iifname "enp1s0" ip6 daddr & ::ffff:ffff:ffff:ffff == ::1046:d1ff:feea:9276 tcp dport 3001 accept
+          }
+
+          chain forward {
+            type filter hook forward priority filter; policy drop;
+            ct state established,related accept
+            ct state invalid drop
+
+            # Allow trusted interfaces → WAN
+            iifname { "lan", "mgmt", "guest", "voip", "iot", "wg0" } oifname "enp1s0" accept
+
+            # Allow WAN → port-forwarded internal servers (Plex, gaming, WG relay)
+            iifname "enp1s0" ip daddr { 10.40.33.20, 10.40.33.21, 10.40.33.156 } accept
+
+            # Allow WireGuard ↔ internal networks
+            iifname "wg0" oifname { "lan", "mgmt" } accept
+            iifname { "lan", "mgmt" } oifname "wg0" accept
+
+            # Tuya: lan → iot device communication
+            iifname "lan" oifname "iot" tcp dport 6668 accept
+            iifname "lan" oifname "iot" ip protocol icmp accept
+
+            # IPv6: port 3001 from WAN → mice-rel-1
+            iifname "enp1s0" ip6 daddr & ::ffff:ffff:ffff:ffff == ::1046:d1ff:feea:9276 tcp dport 3001 accept
+
+            # Drop all other IPv6 inbound from WAN
+            iifname "enp1s0" meta nfproto ipv6 drop
+          }
         '';
-      in
-        lib.concatStrings [
-          (lib.concatMapStrings allowPortOnlyPrivately
-            [
-              67 # DHCP
-              69 # TFTP
-              546 # DHCPv6
-              547 # DHCPv6
-              9100 # prometheus
-              5201 # iperf
-              6666 # Tuya device discovery (legacy)
-              6667 # Tuya device discovery
-            ])
-          (lib.concatMapStrings dropPortNoLog
-            [
-              23 # Common from public internet
-              143 # Common from public internet
-              139 # From RT AP
-              515 # From RT AP
-              9100 # From RT AP
-            ])
-          dropPortIcmpLog
-          ''
-            # block internal traffic from guest vpn
-            ip46tables -A FORWARD -m state --state NEW -i ovpn-guest -o br0 -j DROP
-            # allow from trusted interfaces
-            ip46tables -A FORWARD -m state --state NEW -i br0 -o enp1s0 -j ACCEPT
-            ip46tables -A FORWARD -m state --state NEW -i wg0 -o enp1s0 -j ACCEPT
-            ip46tables -A FORWARD -m state --state NEW -i tun0 -o enp1s0 -j ACCEPT
-            # allow traffic with existing state
-            ip46tables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
-            # Allow forwarding the following ports from Internet via IPv6 only
-            ${forwardPortToHost 3001 "enp1s0" "tcp" "::1046:d1ff:feea:9276/::ffff:ffff:ffff:ffff"}
-            # block forwarding from external interface
-            ip6tables -A FORWARD -i enp1s0 -j DROP
-          ''
-        ];
-      allowedTCPPorts = [32400 5222 5060 53 3001];
-      allowedUDPPorts = [51820 51821 1194 1195 5060 5222 53 19132 5353];
+      };
+      tables."portal-nat" = {
+        family = "ip";
+        content = ''
+          chain prerouting {
+            type nat hook prerouting priority dstnat;
+
+            # Plex
+            iifname "enp1s0" tcp dport 32400 dnat to 10.40.33.20:32400
+
+            # WireGuard relay (port remap 51821→51820)
+            iifname "enp1s0" udp dport 51821 dnat to 10.40.33.156:51820
+
+            # Minecraft Bedrock
+            iifname "enp1s0" udp dport 19132 dnat to 10.40.33.21
+
+            # Ark Survival Ascended
+            iifname "enp1s0" udp dport { 7777, 7778, 7787, 7788, 7797, 7798, 7807, 7808 } dnat to 10.40.33.21
+
+            # Steam
+            iifname "enp1s0" udp dport { 27015, 27016, 27017, 27018 } dnat to 10.40.33.21
+          }
+
+          chain postrouting {
+            type nat hook postrouting priority srcnat;
+
+            # Masquerade internal subnets out WAN
+            oifname "enp1s0" iifname { "lan", "mgmt", "guest", "voip", "iot" } masquerade
+          }
+        '';
+      };
     };
     wireguard.interfaces = {
       wg0 = {
@@ -440,20 +351,12 @@ in {
   ];
 
   services = {
-    udp-broadcast-relay = {
+    synaptex-router = {
       enable = true;
-      instances = {
-        tuya-primary = {
-          id = 1;
-          port = 6667;
-          interfaces = ["lan" "iot"];
-        };
-        tuya-legacy = {
-          id = 2;
-          port = 6666;
-          interfaces = ["lan" "iot"];
-        };
-      };
+      package = inputs.synaptex.packages.x86_64-linux.synaptex-router;
+      interfaces = ["iot" "lan"];
+      # TODO deploy with sops
+      # clientCaFile = /path/to/core.crt;  # enable mTLS
     };
     avahi = {
       enable = true;
@@ -559,11 +462,11 @@ in {
                   hw-address = "42:3c:d8:19:86:16";
                   ip-address = "10.40.33.25";
                 }
-                {
-                  hostname = "kazan";
-                  hw-address = "74:d4:35:9b:84:62";
-                  ip-address = "10.40.33.26";
-                }
+                #{
+                #  hostname = "kazan";
+                #  hw-address = "74:d4:35:9b:84:62";
+                #  ip-address = "10.40.33.26";
+                #}
                 {
                   hostname = "mice-rel-1";
                   hw-address = "12:46:d1:ea:92:76";
@@ -860,63 +763,6 @@ in {
         ];
       };
     };
-    #openvpn = {
-    #  servers = {
-    #    wedlake = {
-    #      config = ''
-    #        dev tun
-    #        proto udp
-    #        port 1194
-    #        tun-ipv6
-    #        ca /var/lib/openvpn/ca.crt
-    #        cert /var/lib/openvpn/crate.wedlake.lan.crt
-    #        key /var/lib/openvpn/crate.wedlake.lan.key
-    #        dh /var/lib/openvpn/dh2048.pem
-    #        server 10.40.12.0 255.255.255.0
-    #        server-ipv6 2601:98a:94b1:bff3::/64
-    #        push "route 10.40.33.0 255.255.255.0"
-    #        push "route-ipv6 2000::/3"
-    #        push "dhcp-option DNS 10.40.12.1"
-    #        duplicate-cn
-    #        keepalive 10 120
-    #        tls-auth /var/lib/openvpn/ta.key 0
-    #        comp-lzo
-    #        user openvpn
-    #        group root
-    #        persist-key
-    #        persist-tun
-    #        status openvpn-status.log
-    #        verb 3
-    #      '';
-    #    };
-    #    guest = {
-    #      config = ''
-    #        dev ovpn-guest
-    #        dev-type tun
-    #        proto udp
-    #        port 1195
-    #        tun-ipv6
-    #        ca /var/lib/openvpn/ca.crt
-    #        cert /var/lib/openvpn/crate.wedlake.lan.crt
-    #        key /var/lib/openvpn/crate.wedlake.lan.key
-    #        dh /var/lib/openvpn/dh2048.pem
-    #        server 10.40.13.0 255.255.255.0
-    #        push "redirect-gateway def1"
-    #        push "dhcp-option DNS 8.8.8.8"
-    #        duplicate-cn
-    #        keepalive 10 120
-    #        tls-auth /var/lib/openvpn/ta-guest.key 0
-    #        comp-lzo
-    #        user openvpn
-    #        group root
-    #        persist-key
-    #        persist-tun
-    #        status openvpn-status.log
-    #        verb 3
-    #      '';
-    #    };
-    #  };
-    #};
   };
   users.extraUsers.sam = {
     isNormalUser = true;
@@ -927,10 +773,6 @@ in {
   };
   users.extraUsers.root = {
     openssh.authorizedKeys.keys = shared.sam_ssh_keys;
-  };
-  users.extraUsers.openvpn = {
-    isNormalUser = true;
-    uid = 1003;
   };
   system.stateVersion = "17.09";
 }

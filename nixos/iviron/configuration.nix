@@ -50,6 +50,7 @@ in {
   boot.kernelModules = [
     "v4l2loopback"
   ];
+  boot.blacklistedKernelModules = ["nouveau"];
 
   # Splash screen to make boot look nice
   boot.plymouth.enable = false;
@@ -154,7 +155,7 @@ in {
     '';
     firewall = {
       enable = true;
-      allowedUDPPorts = [53 4919 69];
+      allowedUDPPorts = [53 4919 69 6666 6667 6668];
       allowedTCPPorts = [4444 8081 3478 3000 8080 5900 3100 3001];
     };
   };
@@ -204,6 +205,9 @@ in {
 
   environment.systemPackages = with pkgs; let
   in [
+    nvtopPackages.nvidia
+    cudaPackages.cudatoolkit
+    config.boot.kernelPackages.nvidiaPackages.stable
     inputs.home-manager.packages.x86_64-linux.home-manager
     polychromatic
     libfido2

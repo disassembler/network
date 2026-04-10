@@ -43,6 +43,9 @@
     adawallet.inputs.cardano-parts.follows = "cardano-parts";
     shadowharvester.url = "github:disassembler/shadowharvester/sl/defensio";
 
+    # iot
+    synaptex.url = "github:nixedge/synaptex";
+
     # Styx static site generator
     # TODO: migrate to docusaurus?
     styx.url = "github:disassembler/styx";
