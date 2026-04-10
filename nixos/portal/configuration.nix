@@ -206,6 +206,7 @@ in {
             type filter hook forward priority filter; policy drop;
             ct state established,related accept
             ct state invalid drop
+            tcp flags syn tcp option maxseg size set rt mtu
 
             # Allow trusted interfaces → WAN
             iifname { "lan", "mgmt", "guest", "voip", "iot", "wg0" } oifname "enp1s0" accept
