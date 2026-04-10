@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2026041001 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 2026041002 7200 3600 86400 3600
 
 $TTL 600
 
@@ -51,6 +51,9 @@ irc.lan 300 IN CNAME kursk.lan
 git.lan 300 IN CNAME kursk.lan
 rpc-sanchonet.lan 300 IN CNAME kursk.lan
 demo.lan 300 IN CNAME kursk.lan
+; optina — static IP (pending retirement)
+optina.lan 1800 IN A 10.40.33.20
+
 ; optina services (pending migration)
 plex.lan 300 IN CNAME optina.lan
 unifi.lan 300 IN CNAME optina.lan
