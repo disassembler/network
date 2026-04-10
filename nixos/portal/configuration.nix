@@ -394,6 +394,18 @@ in {
       interfaces = ["iot" "lan"];
       # TODO deploy with sops
       # clientCaFile = /path/to/core.crt;  # enable mTLS
+
+      # Kea DHCP integration
+      keaSocket     = "/run/synaptex-router/kea-hook.sock";
+      keaIotRelay   = ["10.40.8.1"];
+      keaCtrlSocket = "/run/kea/kea-dhcp4.sock";
+      keaSubnetId   = 10408;
+
+      # Managed IP allocation: .21–.223 in 10.40.8.0/24
+      # .20 reserved for camera DVR; .224/27 is the Kea default pool
+      managedSubnet    = "10.40.8";
+      managedHostStart = 21;
+      managedHostEnd   = 223;
     };
     avahi = {
       enable = true;
@@ -438,8 +450,15 @@ in {
 
           # host_cmds hook: enables reservation-add/del/get over control socket.
           # Reservations are in-memory; synaptex-router re-syncs them at startup.
+          #
+          # synaptex hook: forwards pkt4_receive to synaptex-router for
+          # device classification (SYNAPTEX_KNOWN / IOT_DEVICE / vendor classes).
           hooks-libraries = [
-            { library = "${pkgs.kea}/lib/kea/hooks/libdhcp_host_cmds.so"; }
+            {library = "${pkgs.kea}/lib/kea/hooks/libdhcp_host_cmds.so";}
+            {
+              library = "${inputs.synaptex.packages.x86_64-linux.kea-hook}/lib/kea/hooks/synaptex_hook.so";
+              parameters.socket = "/run/synaptex-router/kea-hook.sock";
+            }
           ];
 
           lease-database = {
@@ -610,7 +629,7 @@ in {
             {
               pools = [
                 {
-                  pool = "10.40.8.100 - 10.40.8.200";
+                  pool = "10.40.8.224 - 10.40.8.254";
                 }
               ];
               option-data = [
@@ -623,6 +642,12 @@ in {
               id = 10408;
               reservations = [
                 {
+                  hostname = "camera-dvr";
+                  hw-address = "3c:1b:f8:72:04:ca";
+                  ip-address = "10.40.8.20";
+                }
+                # TODO remove once wled added to synaptex
+                {
                   hostname = "roof-wled";
                   hw-address = "dc:4f:22:52:e1:d3";
                   ip-address = "10.40.8.60";
@@ -632,12 +657,10 @@ in {
                   hw-address = "48:55:19:ee:35:9a";
                   ip-address = "10.40.8.61";
                 }
-                {
-                  hostname = "camera-dvr";
-                  hw-address = "3c:1b:f8:72:04:ca";
-                  ip-address = "10.40.8.20";
-                }
               ];
+              "valid-lifetime" = 60; # Total lease duration
+              "renew-timer" = 30; # T1: Client checks in every 30s
+              "rebind-timer" = 52; # T2: Client panics/broadcasts at 52s
             }
             {
               pools = [
