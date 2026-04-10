@@ -642,6 +642,23 @@ in {
                   data = "10.40.33.20";
                 }
               ];
+              reservations = [
+                {
+                  hostname = "eap610-1";
+                  hw-address = "54:af:97:96:75:ac";
+                  ip-address = "10.40.3.20";
+                }
+                {
+                  hostname = "eap610-2";
+                  hw-address = "54:af:97:96:77:7e";
+                  ip-address = "10.40.3.21";
+                }
+                {
+                  hostname = "eap610-3";
+                  hw-address = "54:af:97:96:77:a6";
+                  ip-address = "10.40.3.22";
+                }
+              ];
               subnet = "10.40.3.0/24";
               id = 10403;
             }
