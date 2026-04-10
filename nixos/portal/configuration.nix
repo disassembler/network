@@ -217,6 +217,11 @@ in {
             iifname "wg0" oifname { "lan", "mgmt" } accept
             iifname { "lan", "mgmt" } oifname "wg0" accept
 
+            # lan ↔ mgmt: full lan access to mgmt (switch web UIs etc.)
+            iifname "lan" oifname "mgmt" accept
+            # mgmt → lan: only optina and kursk
+            iifname "mgmt" oifname "lan" ip daddr { 10.40.33.20, 10.40.33.70 } accept
+
             # Tuya: lan → iot device communication
             iifname "lan" oifname "iot" tcp dport 6668 accept
             iifname "lan" oifname "iot" ip protocol icmp accept
