@@ -636,6 +636,11 @@ in {
                   name = "routers";
                   data = "10.40.3.1";
                 }
+                {
+                  # TP-Link Omada controller discovery (RFC 5415 CAPWAP, reused by Omada)
+                  code = 138;
+                  data = "10.40.33.20";
+                }
               ];
               subnet = "10.40.3.0/24";
               id = 10403;
