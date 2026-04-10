@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2026040901 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 2026041001 7200 3600 86400 3600
 
 $TTL 600
 
@@ -37,7 +37,11 @@ www 300 IN  A 45.76.4.212
 resume  300 IN  CNAME www
 
 ; lan — A/AAAA records managed via DDNS from portal (kea-dhcp-ddns + prefix-change hook)
-portal.lan 300 IN A 10.40.33.1
+portal.lan 1800 IN A 10.40.33.1
+
+; kursk — static IPs (multiple services bind same port on different IPs)
+kursk.lan  1800 IN A 10.40.33.70
+ai.lan     1800 IN A 10.40.33.71
 
 ; kursk services
 vw.lan 300 IN CNAME kursk.lan

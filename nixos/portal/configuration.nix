@@ -22,6 +22,36 @@
     cp -vi ${ipxe'}/x86_64-ipxe.efi $out/x86_64-ipxe.efi
     cp -vi ${ipxe'}/i386-ipxe.efi $out/i386-ipxe.efi
   '';
+  keaDdnsConf = pkgs.writeText "kea-dhcp-ddns.conf" ''
+    {
+      "DhcpDdns": {
+        "ip-address": "127.0.0.1",
+        "port": 53001,
+        "dns-server-timeout": 500,
+        "ncr-protocol": "UDP",
+        "ncr-format": "JSON",
+        "tsig-keys": [ <?include "${config.sops.secrets.portal_knot_tsig.path}" ?> ],
+        "forward-ddns": {
+          "ddns-domains": [
+            {
+              "name": "disasm.us.",
+              "dns-servers": [
+                { "ip-address": "10.40.9.2", "port": 53, "key-name": "portal" }
+              ]
+            }
+          ]
+        },
+        "reverse-ddns": { "ddns-domains": [] },
+        "loggers": [
+          {
+            "name": "kea-dhcp-ddns",
+            "output-options": [{ "output": "syslog" }],
+            "severity": "INFO"
+          }
+        ]
+      }
+    }
+  '';
 in {
   deployment = {
     #targetHost = "10.40.33.1";
@@ -31,6 +61,7 @@ in {
   };
   sops.defaultSopsFile = ./secrets.yaml;
   sops.secrets.portal_wg0_private = {};
+  sops.secrets.portal_knot_tsig.owner = "kea";
   _module.args = {
     inherit shared;
   };
@@ -416,6 +447,17 @@ in {
           renew-timer = 1000;
           valid-lifetime = 4000;
 
+          # Disable DDNS globally; only the lan subnet opts in
+          ddns-send-updates = false;
+
+          dhcp-ddns = {
+            enable-updates = true;
+            server-ip = "127.0.0.1";
+            server-port = 53001;
+            ncr-protocol = "UDP";
+            ncr-format = "JSON";
+          };
+
           subnet4 = [
             {
               pools = [
@@ -431,6 +473,12 @@ in {
               ];
               subnet = "10.40.33.0/24";
               id = 104033;
+              ddns-send-updates = true;
+              ddns-override-no-update = true;
+              ddns-override-client-update = true;
+              ddns-replace-client-name = "when-not-present";
+              ddns-qualifying-suffix = "lan.disasm.us.";
+              ddns-update-on-renew = true;
               reservations = [
                 {
                   hostname = "optina";
@@ -588,6 +636,10 @@ in {
             }
           ];
         };
+      };
+      dhcp-ddns = {
+        enable = true;
+        configFile = keaDdnsConf;
       };
     };
 

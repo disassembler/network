@@ -6,6 +6,7 @@
 }: let
   ip4 = config.networking.prod01.ipv4.address;
   ip6 = lib.head config.networking.prod01.ipv6.addresses;
+  wg0IP = "10.40.9.2";
 in {
   sops.secrets."knot-keys.conf".owner = "knot";
 
@@ -19,6 +20,7 @@ in {
       server:
         listen: ${ip4}@53
         listen: ${ip6}@53
+        listen: ${wg0IP}@53
 
       log:
         - target: syslog
@@ -41,13 +43,13 @@ in {
           key: prod03
           action: [transfer, notify]
 
-        # DDNS ACL for portal — A/AAAA updates for *.lan.disasm.us
+        # DDNS ACL for portal — A/AAAA/DHCID updates for *.lan.disasm.us
         - id: acl_portal_ddns
           key: portal
           action: update
-          update-type: [A, AAAA]
+          update-type: [A, AAAA, DHCID]
           update-owner: name
-          update-owner-match: suffix
+          update-owner-match: sub
           update-owner-name: [lan.disasm.us.]
 
         # ACME ACL for disasm.us - Strictly limited to its specific TXT record
