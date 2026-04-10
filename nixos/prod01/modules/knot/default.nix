@@ -41,6 +41,15 @@ in {
           key: prod03
           action: [transfer, notify]
 
+        # DDNS ACL for portal — A/AAAA updates for *.lan.disasm.us
+        - id: acl_portal_ddns
+          key: portal
+          action: update
+          update-type: [A, AAAA]
+          update-owner: name
+          update-owner-match: suffix
+          update-owner-name: [lan.disasm.us.]
+
         # ACME ACL for disasm.us - Strictly limited to its specific TXT record
         - id: acme_disasm_limited
           key: acme
@@ -95,7 +104,7 @@ in {
           zonefile-load: difference
           journal-content: changes
           notify: prod03
-          acl: [ acme_disasm_limited, prod03_acl, admin_xfr_acl ]
+          acl: [ acl_portal_ddns, acme_disasm_limited, prod03_acl, admin_xfr_acl ]
 
         - id: domain-bower
           semantic-checks: on
