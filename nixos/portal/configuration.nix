@@ -409,6 +409,10 @@ in {
       managedSubnet = "10.40.8";
       managedHostStart = 21;
       managedHostEnd = 223;
+
+      # Managed devices get 24 h leases with T1=12 h, T2=21 h,
+      # overriding the short timers set at the subnet level.
+      managedLeaseSecs = 86400;
     };
     avahi = {
       enable = true;
