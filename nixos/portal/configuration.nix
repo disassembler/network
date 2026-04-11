@@ -451,14 +451,13 @@ in {
           # host_cmds hook: enables reservation-add/del/get over control socket.
           # Reservations are in-memory; synaptex-router re-syncs them at startup.
           #
-          # synaptex hook: forwards pkt4_receive to synaptex-router for
-          # device classification (SYNAPTEX_KNOWN / IOT_DEVICE / vendor classes).
+          # synaptex hook: disabled until kea-with-hook is deployed.
+          # Kea 2.5+ requires hook libraries to live under its own store path.
+          # Fix: nixpkgs overlay bundles synaptex_hook.so into pkgs.kea so both
+          # the running binary and the hook share the same store prefix.
+          # See nixpkgs.overlays in this file.
           hooks-libraries = [
             {library = "${pkgs.kea}/lib/kea/hooks/libdhcp_host_cmds.so";}
-            {
-              library = "${inputs.synaptex.packages.x86_64-linux.kea-hook}/lib/kea/hooks/synaptex_hook.so";
-              parameters.socket = "/run/synaptex-router/kea-hook.sock";
-            }
           ];
 
           lease-database = {
