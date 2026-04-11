@@ -55,7 +55,7 @@
 in {
   deployment = {
     #targetHost = "10.40.33.1";
-    targetHost = "prophet.samleathers.com";
+    targetHost = "portal.lan.disasm.us";
     targetPort = 22;
     targetUser = "root";
   };
@@ -375,21 +375,6 @@ in {
     config = {
       allowUnfree = true;
     };
-    overlays = [
-      # Bundle synaptex_hook.so into kea's own store path so Kea's hook
-      # library security check (introduced in 2.5+) accepts it.
-      # Kea validates that hook libraries reside under its own installation
-      # prefix; a separate derivation has a different store hash and fails.
-      (_final: prev: {
-        kea = prev.kea.overrideAttrs (old: {
-          postInstall = (old.postInstall or "") + ''
-            install -Dm755 \
-              ${inputs.synaptex.packages.x86_64-linux.kea-hook}/lib/kea/hooks/synaptex_hook.so \
-              $out/lib/kea/hooks/synaptex_hook.so
-          '';
-        });
-      })
-    ];
   };
 
   environment.systemPackages = with pkgs; [
@@ -411,16 +396,16 @@ in {
       # clientCaFile = /path/to/core.crt;  # enable mTLS
 
       # Kea DHCP integration
-      keaSocket     = "/run/synaptex-router/kea-hook.sock";
-      keaIotRelay   = ["10.40.8.1"];
+      keaSocket = "/run/synaptex-router/kea-hook.sock";
+      keaIotRelay = ["10.40.8.1"];
       keaCtrlSocket = "/run/kea/kea-dhcp4.sock";
-      keaSubnetId   = 10408;
+      keaSubnetId = 10408;
 
       # Managed IP allocation: .21–.223 in 10.40.8.0/24
       # .20 reserved for camera DVR; .224/27 is the Kea default pool
-      managedSubnet    = "10.40.8";
+      managedSubnet = "10.40.8";
       managedHostStart = 21;
-      managedHostEnd   = 223;
+      managedHostEnd = 223;
     };
     avahi = {
       enable = true;
