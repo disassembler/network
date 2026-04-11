@@ -401,7 +401,6 @@ in {
       # Kea DHCP integration
       keaSocket = "/run/synaptex-router/kea-hook.sock";
       keaIotRelay = ["10.40.8.1"];
-      keaCtrlSocket = "/run/kea/kea-dhcp4.sock";
       keaSubnetId = 10408;
 
       # Managed IP allocation: .21–.223 in 10.40.8.0/24
@@ -409,10 +408,6 @@ in {
       managedSubnet = "10.40.8";
       managedHostStart = 21;
       managedHostEnd = 223;
-
-      # Managed devices get 24 h leases with T1=12 h, T2=21 h,
-      # overriding the short timers set at the subnet level.
-      managedLeaseSecs = 86400;
     };
     avahi = {
       enable = true;
@@ -448,21 +443,12 @@ in {
             interfaces = ["lan" "mgmt" "guest" "iot"];
           };
 
-          # Control socket — lets synaptex-router push dynamic reservations
-          # via the host_cmds hook (reservation-add / reservation-del).
-          control-socket = {
-            socket-type = "unix";
-            socket-name = "/run/kea/kea-dhcp4.sock";
-          };
-
-          # host_cmds hook: enables reservation-add/del/get over control socket.
+          # synaptex hook: classifies DHCP packets (SYNAPTEX_KNOWN / IOT_DEVICE)
+          # and manages reservations in-process via Kea's HostMgr API.
           # Reservations are in-memory; synaptex-router re-syncs them at startup.
-          #
-          # synaptex hook: classifies DHCP packets (SYNAPTEX_KNOWN / IOT_DEVICE).
-          # Both libraries reference pkgs.kea which is extended via nixpkgs.overlays
-          # to include synaptex_hook.so, satisfying Kea's store-path security check.
+          # pkgs.kea is extended via nixpkgs.overlays to include synaptex_hook.so,
+          # satisfying Kea's store-path security check.
           hooks-libraries = [
-            {library = "${pkgs.kea}/lib/kea/hooks/libdhcp_host_cmds.so";}
             {
               library = "${pkgs.kea}/lib/kea/hooks/synaptex_hook.so";
               parameters.socket = "/run/synaptex-router/kea-hook.sock";
@@ -887,6 +873,18 @@ in {
           "ksmd"
         ];
       };
+    };
+  };
+  systemd.services.kea-dhcp4-server = {
+    serviceConfig = {
+      RuntimeDirectoryMode = lib.mkForce "0770";
+    };
+  };
+  systemd.services.kea-dhcp-ddns-server = {
+    serviceConfig = {
+      DynamicUser = lib.mkForce false;
+      User = "kea";
+      Group = "kea";
     };
   };
   users.extraUsers.sam = {
