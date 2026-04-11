@@ -460,6 +460,15 @@ in {
             persist = true;
             type = "memfile";
           };
+
+          # Log to stderr (journald) — avoids log4cplus trying to create
+          # /run/kea/logger_lockfile on a read-only filesystem.
+          loggers = [{
+            name = "kea-dhcp4";
+            output_options = [{ output = "stderr"; }];
+            severity = "INFO";
+            debuglevel = 0;
+          }];
           option-data = [
             {
               name = "domain-name-servers";
