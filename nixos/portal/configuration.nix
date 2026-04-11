@@ -395,6 +395,9 @@ in {
       # TODO deploy with sops
       # clientCaFile = /path/to/core.crt;  # enable mTLS
 
+      # Build synaptex_hook.so against this system's kea (version-matched).
+      keaHookSrc = inputs.synaptex + "/src/kea-hook";
+
       # Kea DHCP integration
       keaSocket = "/run/synaptex-router/kea-hook.sock";
       keaIotRelay = ["10.40.8.1"];
