@@ -375,6 +375,21 @@ in {
     config = {
       allowUnfree = true;
     };
+    overlays = [
+      # Bundle synaptex_hook.so into kea's own store path so Kea's hook
+      # library security check (introduced in 2.5+) accepts it.
+      # Kea validates that hook libraries reside under its own installation
+      # prefix; a separate derivation has a different store hash and fails.
+      (_final: prev: {
+        kea = prev.kea.overrideAttrs (old: {
+          postInstall = (old.postInstall or "") + ''
+            install -Dm755 \
+              ${inputs.synaptex.packages.x86_64-linux.kea-hook}/lib/kea/hooks/synaptex_hook.so \
+              $out/lib/kea/hooks/synaptex_hook.so
+          '';
+        });
+      })
+    ];
   };
 
   environment.systemPackages = with pkgs; [
@@ -451,13 +466,15 @@ in {
           # host_cmds hook: enables reservation-add/del/get over control socket.
           # Reservations are in-memory; synaptex-router re-syncs them at startup.
           #
-          # synaptex hook: disabled until kea-with-hook is deployed.
-          # Kea 2.5+ requires hook libraries to live under its own store path.
-          # Fix: nixpkgs overlay bundles synaptex_hook.so into pkgs.kea so both
-          # the running binary and the hook share the same store prefix.
-          # See nixpkgs.overlays in this file.
+          # synaptex hook: classifies DHCP packets (SYNAPTEX_KNOWN / IOT_DEVICE).
+          # Both libraries reference pkgs.kea which is extended via nixpkgs.overlays
+          # to include synaptex_hook.so, satisfying Kea's store-path security check.
           hooks-libraries = [
             {library = "${pkgs.kea}/lib/kea/hooks/libdhcp_host_cmds.so";}
+            {
+              library = "${pkgs.kea}/lib/kea/hooks/synaptex_hook.so";
+              parameters.socket = "/run/synaptex-router/kea-hook.sock";
+            }
           ];
 
           lease-database = {
