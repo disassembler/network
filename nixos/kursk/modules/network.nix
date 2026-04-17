@@ -132,4 +132,12 @@
       workstation = true;
     };
   };
+
+  # ── NETWORK CONTROLLER ───────────────────────────────────────────────────────
+  services.omadad = {
+    enable = true;
+    httpPort = 8089;
+    httpsPort = 8043;
+    inherit (pkgs) mongodb;
+  };
 }

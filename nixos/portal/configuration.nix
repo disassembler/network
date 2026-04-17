@@ -212,7 +212,7 @@ in {
             iifname { "lan", "mgmt", "guest", "voip", "iot", "wg0" } oifname "enp1s0" accept
 
             # Allow WAN → port-forwarded internal servers (Plex, gaming, WG relay)
-            iifname "enp1s0" ip daddr { 10.40.33.20, 10.40.33.21, 10.40.33.156 } accept
+            iifname "enp1s0" ip daddr { 10.40.33.70, 10.40.33.21, 10.40.33.156 } accept
 
             # Allow WireGuard ↔ internal networks
             iifname "wg0" oifname { "lan", "mgmt" } accept
@@ -226,6 +226,8 @@ in {
             # Tuya: lan → iot device communication
             iifname "lan" oifname "iot" tcp dport 6668 accept
             iifname "lan" oifname "iot" ip protocol icmp accept
+            # lan → iot: general TCP/UDP access
+            iifname "lan" oifname "iot" meta l4proto { tcp, udp } accept
 
             # IPv6: port 3001 from WAN → mice-rel-1
             iifname "enp1s0" ip6 daddr & ::ffff:ffff:ffff:ffff == ::1046:d1ff:feea:9276 tcp dport 3001 accept
@@ -242,7 +244,7 @@ in {
             type nat hook prerouting priority dstnat;
 
             # Plex
-            iifname "enp1s0" tcp dport 32400 dnat to 10.40.33.20:32400
+            iifname "enp1s0" tcp dport 32400 dnat to 10.40.33.70:32400
 
             # WireGuard relay (port remap 51821→51820)
             iifname "enp1s0" udp dport 51821 dnat to 10.40.33.156:51820
@@ -406,7 +408,7 @@ in {
       # Managed IP allocation: .21–.223 in 10.40.8.0/24
       # .20 reserved for camera DVR; .224/27 is the Kea default pool
       managedSubnet = "10.40.8";
-      managedHostStart = 21;
+      managedHostStart = 20;
       managedHostEnd = 223;
     };
     avahi = {
@@ -463,12 +465,14 @@ in {
 
           # Log to stderr (journald) — avoids log4cplus trying to create
           # /run/kea/logger_lockfile on a read-only filesystem.
-          loggers = [{
-            name = "kea-dhcp4";
-            output_options = [{ output = "stderr"; }];
-            severity = "INFO";
-            debuglevel = 0;
-          }];
+          loggers = [
+            {
+              name = "kea-dhcp4";
+              output_options = [{output = "stderr";}];
+              severity = "INFO";
+              debuglevel = 0;
+            }
+          ];
           option-data = [
             {
               name = "domain-name-servers";
@@ -499,6 +503,16 @@ in {
             ncr-protocol = "UDP";
             ncr-format = "JSON";
           };
+
+          # Devices classified as SYNAPTEX_KNOWN by the synaptex-router hook
+          # (i.e. registered/managed) get a 24-hour lease.  Everything else
+          # falls through to the subnet default (60s for IoT, longer for others).
+          "client-classes" = [
+            {
+              name = "SYNAPTEX_KNOWN";
+              "valid-lifetime" = 86400;
+            }
+          ];
 
           subnet4 = [
             {
@@ -644,11 +658,6 @@ in {
               subnet = "10.40.8.0/24";
               id = 10408;
               reservations = [
-                {
-                  hostname = "camera-dvr";
-                  hw-address = "3c:1b:f8:72:04:ca";
-                  ip-address = "10.40.8.20";
-                }
                 # TODO remove once wled added to synaptex
                 {
                   hostname = "roof-wled";
@@ -661,9 +670,9 @@ in {
                   ip-address = "10.40.8.61";
                 }
               ];
-              "valid-lifetime" = 60; # Total lease duration
-              "renew-timer" = 30; # T1: Client checks in every 30s
-              "rebind-timer" = 52; # T2: Client panics/broadcasts at 52s
+              "valid-lifetime" = 60; # default; SYNAPTEX_KNOWN class overrides to 24h
+              "renew-timer" = 30;
+              "rebind-timer" = 52;
             }
             {
               pools = [
@@ -679,7 +688,7 @@ in {
                 {
                   # TP-Link Omada controller discovery (RFC 5415 CAPWAP, reused by Omada)
                   code = 138;
-                  data = "10.40.33.20";
+                  data = "10.40.33.70";
                 }
               ];
               reservations = [

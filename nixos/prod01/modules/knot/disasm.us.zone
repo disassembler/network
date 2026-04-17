@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2026041002 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 2026041703 7200 3600 86400 3600
 
 $TTL 600
 
@@ -44,6 +44,8 @@ kursk.lan  1800 IN A 10.40.33.70
 ai.lan     1800 IN A 10.40.33.71
 
 ; kursk services
+iot.lan 300 IN CNAME kursk.lan
+noc.lan 300 IN CNAME kursk.lan
 vw.lan 300 IN CNAME kursk.lan
 hass.lan 300 IN CNAME kursk.lan
 hledger.lan 300 IN CNAME kursk.lan
@@ -55,11 +57,10 @@ demo.lan 300 IN CNAME kursk.lan
 optina.lan 1800 IN A 10.40.33.20
 
 ; optina services (pending migration)
-plex.lan 300 IN CNAME optina.lan
+plex.lan 300 IN CNAME kursk.lan
 unifi.lan 300 IN CNAME optina.lan
 ; pending kursk migration
-noc.lan 300 IN CNAME optina.lan
-omada.lan 300 IN CNAME optina.lan
+omada.lan 300 IN CNAME kursk.lan
 
 bp01.lan 300 IN A 147.28.148.163
 relay01.lan 300 IN A 147.28.149.209

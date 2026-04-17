@@ -7,11 +7,11 @@
 }: let
   # pg_search (ParadeDB) and pgvector may lag or be broken in nixos-25.11;
   # pull postgresql_16 + extensions from unstable to stay current.
-  unstablePkgs = import inputs.nixpkgsUnstable {
+  pkgsUnstable = import inputs.nixpkgsUnstable {
     system = "x86_64-linux";
     config.allowUnfree = true;
   };
-  pgAiPackage = unstablePkgs.postgresql_17.withPackages (ps: [
+  pgAiPackage = pkgsUnstable.postgresql_17.withPackages (ps: [
     ps.pg_search # ParadeDB BM25 / full-text search
     ps.pgvector # Vector similarity — shared library loaded as 'vector'
   ]);
@@ -50,6 +50,7 @@ in {
   # ── OLLAMA ──────────────────────────────────────────────────────────────────
   services.ollama = {
     enable = true;
+    package = pkgsUnstable.ollama;
     acceleration = "cuda";
     host = "10.40.33.71";
     environmentVariables = {
@@ -57,7 +58,7 @@ in {
     };
     loadModels = [
       "phi4-mini"
-      "qwen2.5-coder:14b"
+      "gemma4:26b"
       "hf.co/jinaai/jina-code-embeddings-1.5b-GGUF:Q8_0"
     ];
   };

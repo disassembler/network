@@ -1096,7 +1096,7 @@ in {
     postgresqlBackup.enable = true;
     # Plex
     plex = {
-      enable = true;
+      enable = false;
       #package = pkgs.plex.overrideAttrs (x: let
       #version = "1.24.5.5173-8dcc73a59";
       #sha256 = "sha256-vyTOeb3ySegH6cUJIP+WoLIRQyAVyanQFJDRSTGjV8w=";

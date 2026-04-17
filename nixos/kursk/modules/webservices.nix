@@ -23,18 +23,17 @@
       # TODO: set up netboot (needs netboot_root derivation, see optina for reference)
       #"netboot.lan.disasm.us" = { ... };
 
-      # "noc.lan.disasm.us" disabled — grafana migration pending
-      #"noc.lan.disasm.us" = {
-      #  useACMEHost = "lan.disasm.us";
-      #  forceSSL = true;
-      #  locations."/" = {
-      #    proxyPass = "http://10.40.33.70:3000";
-      #    extraConfig = ''
-      #      proxy_set_header Host $host;
-      #      proxy_set_header X-Forwarded-Proto $scheme;
-      #    '';
-      #  };
-      #};
+      "noc.lan.disasm.us" = {
+        useACMEHost = "lan.disasm.us";
+        forceSSL = true;
+        locations."/" = {
+          proxyPass = "http://10.40.33.70:3000";
+          extraConfig = ''
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+          '';
+        };
+      };
       "demo.lan.disasm.us" = {
         useACMEHost = "lan.disasm.us";
         forceSSL = true;
@@ -132,14 +131,21 @@
           proxy_set_header Connection "upgrade";
         '';
       };
-      # "omada.lan.disasm.us" disabled — omada migration pending
-      #"omada.lan.disasm.us" = {
-      #  useACMEHost = "lan.disasm.us";
-      #  forceSSL = true;
-      #  locations."/".extraConfig = ''
-      #    proxy_pass https://localhost:8043;
-      #  '';
-      #};
+      "omada.lan.disasm.us" = {
+        useACMEHost = "lan.disasm.us";
+        forceSSL = true;
+        locations."/" = {
+          proxyPass = "https://localhost:8844";
+          proxyWebsockets = true;
+          extraConfig = ''
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_ssl_verify off;
+          '';
+        };
+      };
       "git.lan.disasm.us" = {
         useACMEHost = "lan.disasm.us";
         forceSSL = true;
@@ -545,92 +551,4 @@
     '';
   };
   services.postgresqlBackup.enable = true;
-
-  # ── MEDIA / FILE SHARING ─────────────────────────────────────────────────────
-  services.plex.enable = true;
-
-  services.samba = {
-    enable = true;
-    settings = {
-      global = {
-        "guest account" = "nobody";
-        "map to guest" = "bad user";
-      };
-      meganbackup = {
-        path = "/data/backups/other/megan";
-        "valid users" = "sam megan";
-        writable = "yes";
-        comment = "Megan's Backup";
-      };
-      musicdrive = {
-        path = "/data/pvr/music";
-        "valid users" = "sam megan";
-        writable = "yes";
-        comment = "music share";
-      };
-    };
-  };
-
-  services.printing = {
-    enable = true;
-    drivers = [pkgs.hplip];
-    defaultShared = true;
-    browsing = true;
-    listenAddresses = ["*:631"];
-    allowFrom = ["all"];
-    extraConf = ''
-      ServerAlias *
-    '';
-  };
-
-  services.mopidy.enable = false;
-
-  services.mpd = {
-    enable = false;
-    musicDirectory = "/data/pvr/music";
-    credentials = [
-      {
-        #passwordFile = config.sops.secrets.mpd_pw.path;
-        permissions = ["admin" "read" "add" "control"];
-      }
-      {
-        #passwordFile = config.sops.secrets.mpd_icecast_pw.path;
-        permissions = ["read" "add" "control"];
-      }
-    ];
-    extraConfig = ''
-      log_level "verbose"
-      restore_paused "no"
-      metadata_to_use "artist,album,title,track,name,genre,date,composer,performer,disc,comment"
-      bind_to_address "10.40.33.70"
-      input {
-      plugin "curl"
-      }
-      audio_output {
-      type        "shout"
-      encoding    "ogg"
-      name        "Icecast stream"
-      host        "prophet.samleathers.com"
-      port        "8000"
-      mount       "/mpd.ogg"
-      public      "yes"
-      bitrate     "192"
-      format      "44100:16:1"
-      user        "mpd"
-      }
-      audio_output {
-      type "alsa"
-      name "fake out"
-      driver "null"
-      }
-    '';
-  };
-
-  # ── NETWORK CONTROLLER ───────────────────────────────────────────────────────
-  services.omadad = {
-    enable = false;
-    httpPort = 8089;
-    httpsPort = 8043;
-    inherit (pkgs) mongodb;
-  };
 }

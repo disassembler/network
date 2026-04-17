@@ -22,6 +22,7 @@ in {
     "vaultwarden-env".owner = "vaultwarden";
     gitea_dbpass.owner = "gitea";
     "lego-knot-credentials".owner = "acme";
+    "synaptex-router-cert".owner = "synaptex-core";
     #mpd_pw = {};
     #mpd_icecast_pw = {};
     #alertmanager = {};
@@ -30,7 +31,9 @@ in {
   imports = [
     ./modules/network.nix
     ./modules/ai.nix
-    ./modules/home-automation.nix
+    #./modules/home-automation.nix
+    ./modules/iot.nix
+    ./modules/media.nix
     ./modules/webservices.nix
   ];
 
