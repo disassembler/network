@@ -103,8 +103,8 @@ in {
           semantic-checks: on
           dnssec-signing: on
           zonefile-sync: -1
-          zonefile-load: difference
-          journal-content: changes
+          zonefile-load: difference-no-serial
+          journal-content: all
           notify: prod03
           acl: [ acl_portal_ddns, acme_disasm_limited, prod03_acl, admin_xfr_acl ]
 

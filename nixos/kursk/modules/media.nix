@@ -10,6 +10,11 @@
   #   Transcoder default download directory = /tmp/plex-transcode
   services.plex.enable = true;
 
+  systemd.services.plex = {
+    after = [ "data-media.mount" "tmp-plex\\x2dtranscode.mount" ];
+    requires = [ "data-media.mount" "tmp-plex\\x2dtranscode.mount" ];
+  };
+
   services.samba = {
     enable = true;
     settings = {

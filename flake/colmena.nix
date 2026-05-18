@@ -48,6 +48,7 @@
       imports = [
         ../nixos/iviron/configuration.nix
         ../nixos/iviron/hardware-configuration.nix
+        inputs.deployable-containers.nixosModules.deployable-containers
       ];
     };
     irkutsk = {...}: {
@@ -90,6 +91,7 @@
       imports = [
         ../nixos/kursk/configuration.nix
         ../nixos/kursk/disko.nix
+        inputs.synaptex.nixosModules.synaptex-core
       ];
     };
 
@@ -98,6 +100,7 @@
         ../nixos/valaam/configuration.nix
         ../nixos/valaam/hardware-configuration.nix
         inputs.wled-sequencer.nixosModules.wled-sequencer
+        inputs.deployable-containers.nixosModules.deployable-containers
       ];
     };
 

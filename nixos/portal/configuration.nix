@@ -212,7 +212,7 @@ in {
             iifname { "lan", "mgmt", "guest", "voip", "iot", "wg0" } oifname "enp1s0" accept
 
             # Allow WAN → port-forwarded internal servers (Plex, gaming, WG relay)
-            iifname "enp1s0" ip daddr { 10.40.33.70, 10.40.33.21, 10.40.33.156 } accept
+            iifname "enp1s0" ip daddr { 10.40.33.70, 10.40.33.21, 10.40.33.156, 10.40.33.32 } accept
 
             # Allow WireGuard ↔ internal networks
             iifname "wg0" oifname { "lan", "mgmt" } accept
@@ -242,6 +242,10 @@ in {
         content = ''
           chain prerouting {
             type nat hook prerouting priority dstnat;
+
+            # Rats-Priv — allowlisted peers only
+            # sec.str8pool.com=212.83.42.61, hornet.happystaking.io=194.14.207.232
+            iifname "enp1s0" ip saddr { 18.218.108.33, 3.23.33.230, 35.156.84.105, 94.136.30.221, 3.19.175.63, 212.83.42.61, 194.14.207.232, 4.17.145.226, 100.50.105.78 } tcp dport { 3042, 12798 } dnat to 10.40.33.32
 
             # Plex
             iifname "enp1s0" tcp dport 32400 dnat to 10.40.33.70:32400
@@ -580,6 +584,11 @@ in {
                   hostname = "mice-bp-1";
                   hw-address = "3a:58:ab:bd:83:d1";
                   ip-address = "10.40.33.31";
+                }
+                {
+                  hostname = "rats-priv";
+                  hw-address = "06:a0:c5:91:e4:32";
+                  ip-address = "10.40.33.32";
                 }
                 {
                   hostname = "printer";

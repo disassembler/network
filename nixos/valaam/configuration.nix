@@ -23,6 +23,7 @@
 
   imports = [
     ./minecraft-bedrock-server.nix
+    ./modules/containers.nix
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -150,7 +151,7 @@
 
   environment.systemPackages = with pkgs; [
     inputs.home-manager.packages.x86_64-linux.home-manager
-    inputs.shadowharvester.packages.x86_64-linux.shadow-harvester
+    #inputs.shadowharvester.packages.x86_64-linux.shadow-harvester
     google-chrome
     wget
     vim
@@ -164,7 +165,6 @@
     steamcmd
     wineWowPackages.waylandFull
     winetricks
-    starship
   ];
 
   programs = {
@@ -178,7 +178,6 @@
     bash = {
       interactiveShellInit = ''
         eval "$(direnv hook bash)"
-        eval "$(starship init bash)"
       '';
     };
     hyprland = {
@@ -315,53 +314,16 @@
     });
   '';
 
-  system.activationScripts.starship = let
-    starshipConfig = pkgs.writeText "starship.toml" ''
-      [username]
-      show_always = true
-      [hostname]
-      ssh_only = true
-      [git_commit]
-      tag_disabled = false
-      only_detached = false
-      [memory_usage]
-      format = "via $symbol[''${ram_pct}]($style) "
-      disabled = false
-      threshold = -1
-      [time]
-      format = '[\[ $time \]]($style) '
-      disabled = false
-      [[battery.display]]
-      threshold = 100
-      style = "bold green"
-      [[battery.display]]
-      threshold = 50
-      style = "bold orange"
-      [[battery.display]]
-      threshold = 20
-      style = "bold red"
-      [status]
-      map_symbol = true
-      disabled = false
-    '';
-  in {
-    text = ''
-      mkdir -p /etc/per-user/shared
-      cp ${starshipConfig} /etc/per-user/shared/starship.toml
-      mkdir -p /home/sam/.config
-      mkdir -p /root/.config
-      chown sam:users /home/sam/.config
-      chown root /root/.config
-      ln -sf /etc/per-user/shared/starship.toml /home/sam/.config/starship.toml
-      ln -sf /etc/per-user/shared/starship.toml /root/.config/starship.toml
-    '';
-    deps = [];
-  };
-
   powerManagement.enable = false;
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database
   # servers. You should change this only after NixOS release notes say you
   # should.
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
+  home-manager.extraSpecialArgs = {
+    hostname = "valaam";
+  };
+  home-manager.users.sam = ../../home/sam.nix;
   system.stateVersion = "25.05"; # Did you read the comment?
 }

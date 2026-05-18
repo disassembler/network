@@ -8,8 +8,8 @@
   zlib,
   curl,
 }: let
-  version = "1.26.2.1";
-  sha256 = "sha256-m+UTs/f8kQ46sQt/QwVdLxR2ZwkWWelgZe+YT3IrJo8=";
+  version = "1.26.14.1";
+  sha256 = "sha256-g9XaCRI8PwtgPFS+kpaOXA5DdbWE1RTWEID2Nuekx3Q=";
   rpath = lib.makeLibraryPath [zlib openssl stdenv.cc.cc curl];
 in
   stdenv.mkDerivation rec {

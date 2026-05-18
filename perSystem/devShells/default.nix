@@ -25,9 +25,9 @@
           sops-init-gpg-key
           config.treefmt.build.wrapper
           inputs.cardano-parts.packages.x86_64-linux.cardano-node
-          config.packages.mongodb
-          config.packages.mongosh
-          config.packages.mongodb-ce
+          #config.packages.mongodb
+          #config.packages.mongosh
+          #config.packages.mongodb-ce
         ];
       };
   };

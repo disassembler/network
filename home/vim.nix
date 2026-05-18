@@ -131,7 +131,7 @@
         settings = {
           format_on_save = {
             lsp_fallback = true;
-            timeout_ms = 500;
+            timeout_ms = 2000;
           };
           formatters_by_ft = {
             # Use treefmt for everything
@@ -140,6 +140,12 @@
             nix = ["treefmt"];
             go = ["treefmt"];
             javascript = ["treefmt"];
+          };
+          formatters = {
+            treefmt = {
+              require_cwd = true;
+              cwd.__raw = ''require("conform.util").root_file({ "flake.nix", "treefmt.toml" })'';
+            };
           };
         };
       };
@@ -186,7 +192,13 @@
             installRustc = false;
           };
           pyright.enable = true;
-          ts_ls.enable = true;
+          ts_ls = {
+            enable = true;
+            onAttach.function = ''
+              client.server_capabilities.documentFormattingProvider = false
+              client.server_capabilities.documentRangeFormattingProvider = false
+            '';
+          };
           phpactor.enable = true;
           elmls.enable = true;
           bashls.enable = true;

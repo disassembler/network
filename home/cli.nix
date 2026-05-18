@@ -293,6 +293,9 @@
     inputs.llm-agents.packages.x86_64-linux.claude-code
     inputs.llm-agents.packages.x86_64-linux.code
     inputs.llm-agents.packages.x86_64-linux.opencode
+    inputs.agentix.packages.x86_64-linux.claude-jail
+    inputs.agentix.packages.x86_64-linux.mcp-server
+    inputs.agentix.packages.x86_64-linux.ingest
 
     # --- Git & Version Control ---
     tig # Text-mode interface for Git

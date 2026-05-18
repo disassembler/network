@@ -43,6 +43,7 @@ provision-deploy machine ip:
   set -euo pipefail
   echo "Building and Pushing System Closure ---"
   TOPLEVEL=$(nix build .#nixosConfigurations.{{machine}}.config.system.build.toplevel --no-link --print-out-paths)
+  echo "toplevel: $TOPLEVEL"
   nix copy --to ssh://root@{{ip}} "$TOPLEVEL"
 
   echo "Installing to /mnt ---"

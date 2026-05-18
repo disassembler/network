@@ -27,7 +27,7 @@
     };
 
     # nix and nixpkgs pins
-    nix.url = "github:NixOS/nix/2.29.0";
+    nix.url = "github:NixOS/nix/2.34.6";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     nixpkgsUnstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     # used for unifi
@@ -46,10 +46,17 @@
     # iot
     synaptex.url = "github:nixedge/synaptex";
 
+    # deployable containers
+    deployable-containers.url = "github:nixedge/deployable-containers";
+    deployable-containers.inputs.nixpkgs.follows = "nixpkgs";
+    deployable-containers.inputs.flake-parts.follows = "flake-parts";
+    deployable-containers.inputs.treefmt-nix.follows = "treefmt-nix";
+
     # Styx static site generator
     # TODO: migrate to docusaurus?
     styx.url = "github:disassembler/styx";
     llm-agents.url = "github:numtide/llm-agents.nix";
+    agentix.url = "github:nixedge/agentix";
   };
 
   outputs = {

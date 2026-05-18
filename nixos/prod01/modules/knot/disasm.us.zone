@@ -1,4 +1,4 @@
-@ 3600 IN SOA disasm.us. root.disasm.us. 2026041703 7200 3600 86400 3600
+@ 3600 IN SOA disasm.us. root.disasm.us. 1 7200 3600 86400 3600
 
 $TTL 600
 

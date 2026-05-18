@@ -134,17 +134,9 @@
       "omada.lan.disasm.us" = {
         useACMEHost = "lan.disasm.us";
         forceSSL = true;
-        locations."/" = {
-          proxyPass = "https://localhost:8844";
-          proxyWebsockets = true;
-          extraConfig = ''
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_ssl_verify off;
-          '';
-        };
+        locations."/".extraConfig = ''
+          proxy_pass https://localhost:8043;
+        '';
       };
       "git.lan.disasm.us" = {
         useACMEHost = "lan.disasm.us";
@@ -476,6 +468,22 @@
   services.grafana = {
     enable = true;
     settings.server.http_addr = "10.40.33.70";
+    provision = {
+      enable = true;
+      datasources.settings.datasources = [
+        {
+          name = "Prometheus";
+          type = "prometheus";
+          url = "http://10.40.33.70:9090";
+          isDefault = true;
+        }
+        {
+          name = "rats";
+          type = "prometheus";
+          url = "http://10.42.1.1:9090";
+        }
+      ];
+    };
   };
 
   # ── WEB APPS ────────────────────────────────────────────────────────────────

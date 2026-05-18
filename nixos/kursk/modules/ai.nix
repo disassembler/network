@@ -50,7 +50,7 @@ in {
   # ── OLLAMA ──────────────────────────────────────────────────────────────────
   services.ollama = {
     enable = true;
-    package = pkgsUnstable.ollama;
+    package = pkgsUnstable.ollama-cuda;
     acceleration = "cuda";
     host = "10.40.33.71";
     environmentVariables = {
