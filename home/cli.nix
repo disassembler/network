@@ -289,10 +289,9 @@
     nix-prefetch-git # Prefetch source code from Git for Nix expressions
     code-cursor # AI-powered code editor (VS Code fork)
     nix-direnv
-    inputs.llm-agents.packages.x86_64-linux.gemini-cli
     inputs.llm-agents.packages.x86_64-linux.claude-code
-    inputs.llm-agents.packages.x86_64-linux.code
-    inputs.llm-agents.packages.x86_64-linux.opencode
+    inputs.llm-agents.packages.x86_64-linux.pi
+    inputs.llm-agents.packages.x86_64-linux.herdr
     inputs.agentix.packages.x86_64-linux.claude-jail
     inputs.agentix.packages.x86_64-linux.mcp-server
     inputs.agentix.packages.x86_64-linux.ingest
@@ -318,4 +317,19 @@
     heimdall-gui # GUI for flashing firmware on Samsung devices
     podman-compose # Tool for running multi-container applications with Podman
   ];
+  home.file.".pi/agent/models.json".text = builtins.toJSON {
+    providers = {
+      agentix = {
+        baseUrl = "http://localhost:11430/v1";
+        api = "openai-completions";
+        apiKey = "local";
+        compat.supportsDeveloperRole = false;
+        models = [
+          {id = "qwen2.5-coder-32b-instruct-q4_k_m.gguf";}
+          {id = "claude-sonnet-4-6";}
+          {id = "claude-haiku-4-5-20251001";}
+        ];
+      };
+    };
+  };
 }
