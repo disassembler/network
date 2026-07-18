@@ -337,6 +337,7 @@ in {
       pulse.enable = true;
       # If you want to use JACK applications, uncomment this
       #jack.enable = true;
+      wireplumber.enable = true;
     };
     tailscale.enable = false;
     # Better scheduling for CPU cycles - thanks System76!!!
@@ -468,6 +469,19 @@ in {
     redshift = {
       enable = false;
       package = pkgs.gammastep;
+    };
+  };
+  xdg.portal = {
+    enable = true;
+    wlr.enable = pkgs.lib.mkForce false;
+
+    # Use GNOME portal for window/screen picking
+    extraPortals = [pkgs.xdg-desktop-portal-gnome];
+
+    config = {
+      common = {
+        default = ["gnome" "gtk"];
+      };
     };
   };
   location.provider = "geoclue2";
