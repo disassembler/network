@@ -66,6 +66,7 @@
     settings.cores = 4;
     settings.substituters = ["https://cache.nixos.org" "https://cache.iog.io"];
     settings.trusted-public-keys = ["hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="];
+    settings.require-sigs = false;
     extraOptions = ''
       experimental-features = nix-command flakes fetch-closure
     '';
@@ -199,7 +200,7 @@
       package = inputs.wled-sequencer.packages.${pkgs.stdenv.hostPlatform.system}.wled-sequencer;
       settings = {
         host = "10.40.8.61";
-        file = "/var/lib/wled-sequencer/stpatricks.fseq";
+        file = "/var/lib/wled-sequencer/flag.fseq";
       };
     };
     zrepl = {
