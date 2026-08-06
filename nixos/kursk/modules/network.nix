@@ -2,8 +2,14 @@
   lib,
   config,
   pkgs,
+  inputs,
   ...
-}: {
+}: let
+  unstablePkgs = import inputs.nixpkgsUnstable {
+    system = "x86_64-linux";
+    config.allowUnfree = true;
+  };
+in {
   networking = {
     hostName = "kursk";
     domain = "lan.disasm.us";
@@ -133,11 +139,18 @@
     };
   };
 
-  # ── NETWORK CONTROLLER ───────────────────────────────────────────────────────
+  # ── NETWORK CONTROLLERS ──────────────────────────────────────────────────────
   services.omadad = {
     enable = true;
     httpPort = 8089;
     httpsPort = 8043;
     inherit (pkgs) mongodb;
+  };
+
+  services.unifi = {
+    enable = true;
+    unifiPackage = unstablePkgs.unifi;
+    jrePackage = unstablePkgs.jdk25_headless;
+    openFirewall = true;
   };
 }

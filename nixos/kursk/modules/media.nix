@@ -53,7 +53,7 @@
 
   services.mpd = {
     enable = false;
-    musicDirectory = "/data/pvr/music";
+    settings.music_directory = "/data/pvr/music";
     credentials = [
       {
         permissions = ["admin" "read" "add" "control"];
@@ -62,31 +62,5 @@
         permissions = ["read" "add" "control"];
       }
     ];
-    extraConfig = ''
-      log_level "verbose"
-      restore_paused "no"
-      metadata_to_use "artist,album,title,track,name,genre,date,composer,performer,disc,comment"
-      bind_to_address "10.40.33.70"
-      input {
-      plugin "curl"
-      }
-      audio_output {
-      type        "shout"
-      encoding    "ogg"
-      name        "Icecast stream"
-      host        "prophet.samleathers.com"
-      port        "8000"
-      mount       "/mpd.ogg"
-      public      "yes"
-      bitrate     "192"
-      format      "44100:16:1"
-      user        "mpd"
-      }
-      audio_output {
-      type "alsa"
-      name "fake out"
-      driver "null"
-      }
-    '';
   };
 }

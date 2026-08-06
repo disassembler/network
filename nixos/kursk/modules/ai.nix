@@ -51,7 +51,6 @@ in {
   services.ollama = {
     enable = true;
     package = pkgsUnstable.ollama-cuda;
-    acceleration = "cuda";
     host = "10.40.33.71";
     environmentVariables = {
       OLLAMA_FLASH_ATTENTION = "1";

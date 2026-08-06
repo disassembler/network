@@ -29,7 +29,7 @@
     };
     "nixos/var/prometheus" = {
       type = "zfs_fs";
-      mountpoint = "/var/lib/prometheus";
+      mountpoint = "/var/lib/prometheus2";
       options = {
         mountpoint = "legacy";
         "com.sun:auto-snapshot" = "false";
@@ -139,29 +139,27 @@
   # Generate a shell snippet that creates a single dataset if it doesn't exist.
   # mapAttrsToList sorts keys alphabetically, which conveniently means parents
   # (e.g. nixos/var) are always created before children (nixos/var/postgresql).
-  mkCreateDataset = name: ds:
-    let
-      opts = lib.concatStringsSep " " (
-        lib.mapAttrsToList (k: v: "-o ${lib.escapeShellArg "${k}=${v}"}") (ds.options or {})
-      );
-    in ''
-      if ! ${pkgs.zfs}/bin/zfs list ${lib.escapeShellArg "${poolName}/${name}"} > /dev/null 2>&1; then
-        echo "zfs-datasets: creating ${poolName}/${name}"
-        ${pkgs.zfs}/bin/zfs create ${opts} ${lib.escapeShellArg "${poolName}/${name}"}
-      fi
-    '';
+  mkCreateDataset = name: ds: let
+    opts = lib.concatStringsSep " " (
+      lib.mapAttrsToList (k: v: "-o ${lib.escapeShellArg "${k}=${v}"}") (ds.options or {})
+    );
+  in ''
+    if ! ${pkgs.zfs}/bin/zfs list ${lib.escapeShellArg "${poolName}/${name}"} > /dev/null 2>&1; then
+      echo "zfs-datasets: creating ${poolName}/${name}"
+      ${pkgs.zfs}/bin/zfs create ${opts} ${lib.escapeShellArg "${poolName}/${name}"}
+    fi
+  '';
 
-  mkCreateMediaDataset = name: ds:
-    let
-      opts = lib.concatStringsSep " " (
-        lib.mapAttrsToList (k: v: "-o ${lib.escapeShellArg "${k}=${v}"}") (ds.options or {})
-      );
-    in ''
-      if ! ${pkgs.zfs}/bin/zfs list ${lib.escapeShellArg "${mediaPool}/${name}"} > /dev/null 2>&1; then
-        echo "zfs-datasets: creating ${mediaPool}/${name}"
-        ${pkgs.zfs}/bin/zfs create ${opts} ${lib.escapeShellArg "${mediaPool}/${name}"}
-      fi
-    '';
+  mkCreateMediaDataset = name: ds: let
+    opts = lib.concatStringsSep " " (
+      lib.mapAttrsToList (k: v: "-o ${lib.escapeShellArg "${k}=${v}"}") (ds.options or {})
+    );
+  in ''
+    if ! ${pkgs.zfs}/bin/zfs list ${lib.escapeShellArg "${mediaPool}/${name}"} > /dev/null 2>&1; then
+      echo "zfs-datasets: creating ${mediaPool}/${name}"
+      ${pkgs.zfs}/bin/zfs create ${opts} ${lib.escapeShellArg "${mediaPool}/${name}"}
+    fi
+  '';
 in {
   imports = [inputs.disko.nixosModules.disko];
 
@@ -222,7 +220,10 @@ in {
         type = "gpt";
         partitions.zfs = {
           size = "100%";
-          content = {type = "zfs"; pool = mediaPool;};
+          content = {
+            type = "zfs";
+            pool = mediaPool;
+          };
         };
       };
     };
@@ -233,7 +234,10 @@ in {
         type = "gpt";
         partitions.zfs = {
           size = "100%";
-          content = {type = "zfs"; pool = mediaPool;};
+          content = {
+            type = "zfs";
+            pool = mediaPool;
+          };
         };
       };
     };
@@ -244,7 +248,10 @@ in {
         type = "gpt";
         partitions.zfs = {
           size = "100%";
-          content = {type = "zfs"; pool = mediaPool;};
+          content = {
+            type = "zfs";
+            pool = mediaPool;
+          };
         };
       };
     };
@@ -255,7 +262,10 @@ in {
         type = "gpt";
         partitions.zfs = {
           size = "100%";
-          content = {type = "zfs"; pool = mediaPool;};
+          content = {
+            type = "zfs";
+            pool = mediaPool;
+          };
         };
       };
     };

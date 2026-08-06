@@ -13,7 +13,7 @@
     group = "nginx";
     keyType = "ec384";
     dnsProvider = "rfc2136";
-    credentialsFile = config.sops.secrets."lego-knot-credentials".path;
+    environmentFile = config.sops.secrets."lego-knot-credentials".path;
   };
 
   # ── NGINX ───────────────────────────────────────────────────────────────────
@@ -231,6 +231,34 @@
         "ksmd"
       ];
     };
+    postgres = {
+      enable = true;
+      runAsLocalSuperUser = true;
+    };
+    unpoller = {
+      enable = true;
+      controllers = [{
+        url = "https://127.0.0.1:8443";
+        user = "prometheus";
+        pass = config.sops.secrets."unifi-exporter-password".path;
+        verify_ssl = false;
+      }];
+    };
+  };
+
+  # Second postgres_exporter instance for the AI postgres on 10.40.33.71:5432.
+  # The primary exporters.postgres only supports one unix-socket instance.
+  systemd.services.prometheus-postgres-ai-exporter = {
+    description = "Prometheus PostgreSQL exporter for AI instance";
+    wantedBy = ["multi-user.target"];
+    after = ["postgresql-ai.service" "network-online.target"];
+    environment.DATA_SOURCE_NAME = "postgresql://postgres-ai@10.40.33.71:5432/postgres?sslmode=disable";
+    serviceConfig = {
+      ExecStart = "${pkgs.prometheus-postgres-exporter}/bin/postgres_exporter --web.listen-address=:9188";
+      DynamicUser = true;
+      Restart = "always";
+      RestartSec = "5s";
+    };
   };
 
   services.prometheus = {
@@ -240,8 +268,8 @@
     alertmanagers = [
       {
         scheme = "http";
-        path_prefix = "/";
-        static_configs = [{targets = ["kursk.lan.disasm.us:9093"];}];
+        path_prefix = "/alertmanager";
+        static_configs = [{targets = ["10.40.33.70:3000"];}];
       }
     ];
     rules = [
@@ -377,6 +405,59 @@
             targets = ["10.40.9.2:9100"];
             labels.alias = "prod01.samleathers.com";
           }
+          {
+            targets = ["10.40.33.21:9100"];
+            labels.alias = "valaam.lan.disasm.us";
+          }
+        ];
+      }
+      {
+        job_name = "postgres";
+        scrape_interval = "30s";
+        static_configs = [{targets = ["localhost:9187"];}];
+      }
+      {
+        job_name = "gitea";
+        scrape_interval = "30s";
+        metrics_path = "/metrics";
+        static_configs = [{targets = ["127.0.0.1:3001"];}];
+      }
+      {
+        job_name = "grafana";
+        scrape_interval = "30s";
+        metrics_path = "/metrics";
+        static_configs = [{targets = ["10.40.33.70:3000"];}];
+      }
+      {
+        job_name = "blackbox-https";
+        scrape_interval = "60s";
+        metrics_path = "/probe";
+        params.module = ["https_2xx"];
+        static_configs = [{
+          targets = [
+            "https://noc.lan.disasm.us"
+            "https://vw.lan.disasm.us"
+            "https://hledger.lan.disasm.us"
+            "https://git.lan.disasm.us"
+            "https://irc.lan.disasm.us"
+            "https://unifi.lan.disasm.us"
+            "https://omada.lan.disasm.us"
+          ];
+        }];
+        relabel_configs = [
+          {
+            source_labels = ["__address__"];
+            target_label = "__param_target";
+          }
+          {
+            source_labels = ["__param_target"];
+            target_label = "instance";
+          }
+          {
+            source_labels = [];
+            target_label = "__address__";
+            replacement = "127.0.0.1:9115";
+          }
         ];
       }
       {
@@ -429,47 +510,68 @@
           }
         ];
       }
+      {
+        job_name = "unifi";
+        scrape_interval = "30s";
+        static_configs = [{
+          targets = ["localhost:9130"];
+          labels.alias = "kursk.lan.disasm.us";
+        }];
+      }
+      {
+        job_name = "postgres-ai";
+        scrape_interval = "30s";
+        static_configs = [{targets = ["localhost:9188"];}];
+      }
     ];
   };
 
-  services.prometheus.alertmanager = {
-    enable = true;
-    #environmentFile = config.sops.secrets.alertmanager.path;
-    listenAddress = "10.40.33.70";
-    configuration = {
-      "global" = {
-        "smtp_smarthost" = "smtp.gmail.com:587";
-        "smtp_from" = "alertmanager@samleathers.com";
-        "smtp_auth_username" = "disasm@gmail.com";
-        "smtp_auth_password" = "$SMTP_PW";
-      };
-      "route" = {
-        "group_by" = ["alertname" "alias"];
-        "group_wait" = "30s";
-        "group_interval" = "2m";
-        "repeat_interval" = "4h";
-        "receiver" = "team-admins";
-      };
-      "receivers" = [
-        {
-          "name" = "team-admins";
-          "email_configs" = [
-            {
-              "to" = "disasm@gmail.com";
-              "send_resolved" = true;
-            }
-          ];
-          "pagerduty_configs" = [{"service_key" = "$PAGERDUTY_TOKEN";}];
-        }
-      ];
-    };
-  };
+  services.prometheus.alertmanager.enable = false;
 
   services.grafana = {
     enable = true;
-    settings.server.http_addr = "10.40.33.70";
+    settings = {
+      server = {
+        http_addr = "10.40.33.70";
+        root_url = "https://noc.lan.disasm.us";
+      };
+      "auth.google" = {
+        enabled = true;
+        client_id = "$__env{GF_AUTH_GOOGLE_CLIENT_ID}";
+        client_secret = "$__env{GF_AUTH_GOOGLE_CLIENT_SECRET}";
+        scopes = "openid email profile";
+        auth_url = "https://accounts.google.com/o/oauth2/auth";
+        token_url = "https://oauth2.googleapis.com/token";
+        allowed_domains = "nixedge.com";
+        allow_sign_up = true;
+      };
+      smtp = {
+        enabled = true;
+        host = "smtp.gmail.com:587";
+        user = "sam@nixedge.com";
+        password = "$__env{GF_SMTP_PASSWORD}";
+        from_address = "grafana@nixedge.com";
+        from_name = "Grafana";
+      };
+      security.secret_key = "$__env{GF_SECURITY_SECRET_KEY}";
+      unified_alerting.enabled = true;
+      alerting.enabled = false;
+      metrics.enabled = true;
+    };
     provision = {
       enable = true;
+      dashboards.settings = {
+        apiVersion = 1;
+        providers = [{
+          name = "provisioned";
+          orgId = 1;
+          folder = "Provisioned";
+          type = "file";
+          disableDeletion = false;
+          updateIntervalSeconds = 30;
+          options.path = ./grafana-dashboards;
+        }];
+      };
       datasources.settings.datasources = [
         {
           name = "Prometheus";
@@ -483,8 +585,46 @@
           url = "http://10.42.1.1:9090";
         }
       ];
+      alerting = {
+        contactPoints.settings = {
+          apiVersion = 1;
+          contactPoints = [
+            {
+              orgId = 1;
+              name = "Team Admins";
+              receivers = [
+                {
+                  uid = "email-admin";
+                  type = "email";
+                  settings.addresses = "sam@nixedge.com";
+                }
+                {
+                  uid = "pagerduty-admin";
+                  type = "pagerduty";
+                  settings.integrationKey = "$__env{GF_PAGERDUTY_KEY}";
+                }
+              ];
+            }
+          ];
+        };
+        policies.settings = {
+          apiVersion = 1;
+          policies = [
+            {
+              orgId = 1;
+              receiver = "Team Admins";
+              group_by = ["alertname" "alias"];
+              group_wait = "30s";
+              group_interval = "2m";
+              repeat_interval = "4h";
+            }
+          ];
+        };
+      };
     };
   };
+
+  systemd.services.grafana.serviceConfig.EnvironmentFile = config.sops.secrets."grafana-creds".path;
 
   # ── WEB APPS ────────────────────────────────────────────────────────────────
   services.vaultwarden = {
@@ -518,6 +658,7 @@
       HTTP_ADDR = "127.0.0.1";
       DOMAIN = "git.lan.disasm.us";
     };
+    settings.metrics.ENABLED = true;
     database = {
       type = "postgres";
       port = 5432;

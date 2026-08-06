@@ -23,9 +23,8 @@ in {
     gitea_dbpass.owner = "gitea";
     "lego-knot-credentials".owner = "acme";
     "synaptex-router-cert".owner = "synaptex-core";
-    #mpd_pw = {};
-    #mpd_icecast_pw = {};
-    #alertmanager = {};
+    "grafana-creds".owner = "grafana";
+    "unifi-exporter-password".owner = "unpoller-exporter";
   };
 
   imports = [
@@ -58,6 +57,7 @@ in {
     efi.canTouchEfiVariables = false;
   };
   boot.supportedFilesystems = ["zfs"];
+  boot.zfs.forceImportRoot = false;
 
   profiles.vim.enable = lib.mkForce false;
   profiles.zsh.enable = true;
