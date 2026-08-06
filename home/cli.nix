@@ -258,7 +258,7 @@
     # --- System Monitoring & Information ---
     htop # Interactive process viewer and system monitor
     btop # Modern, visually appealing resource monitor
-    neofetch # System information tool with ASCII distro logo
+    fastfetch
     lshw # Detailed hardware configuration lister
     pciutils # Programs for inspecting and configuring PCI devices
     psmisc # Small utilities that manage processes (killall, pstree)
@@ -274,7 +274,7 @@
 
     # --- Networking & Secure Transfer ---
     wget # Non-interactive network downloader
-    inetutils # Common network programs (ftp, telnet, hostname)
+    iputils # Common network programs (ftp, telnet, hostname)
     tcpdump # Command-line network packet analyzer
     tmate # Instant terminal sharing (fork of tmux)
     magic-wormhole # Get things from one computer to another, safely

@@ -20,9 +20,9 @@ in {
       {command = ["${pkgs.waybar}/bin/waybar"];}
       {command = ["${pkgs.mako}/bin/mako"];} # Notification daemon
       {command = ["${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"];} # Auth agent
-      {command = ["swww-daemon"];}
+      {command = ["${pkgs.awww}/bin/awww-daemon"];}
       # This sets the image immediately after the daemon starts
-      {command = ["swww" "img" "~/images/background.png"];}
+      {command = ["${pkgs.awww}/bin/awww" "img" "~/images/background.png"];}
     ];
 
     screenshot-path = "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png";
@@ -229,8 +229,8 @@ in {
 
   # Host-specific settings for iviron
   programs.niri.settings.outputs = lib.optionalAttrs (hostname == "iviron") {
-    "0-eDP-2" = {
-      name = "eDP-2";
+    "0-eDP-1" = {
+      name = "eDP-1";
       focus-at-startup = true;
       position = {
         x = 0;
@@ -252,5 +252,12 @@ in {
         height = 1080;
       };
     };
+  };
+
+  # eDP-1 is wired to the AMD iGPU (renderD129), not the NVIDIA dGPU (renderD128).
+  # Forcing niri to render on the AMD device avoids a cross-GPU 10-bit (XB30)
+  # copy to eDP-1 that NVIDIA's GLES driver can't read back (niri #4374).
+  programs.niri.settings.debug = lib.optionalAttrs (hostname == "iviron") {
+    render-drm-device = "/dev/dri/renderD129";
   };
 }

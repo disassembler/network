@@ -44,6 +44,10 @@ in {
   boot.supportedFilesystems = ["exfat" "zfs"];
   boot.tmp.cleanOnBoot = true;
   boot.zfs.devNodes = "/dev";
+  boot.zfs.forceImportRoot = false;
+  # Cap ZFS ARC at 16GiB (of 61GiB total) so it can't grow unbounded and
+  # starve the NVIDIA driver / apps of memory under pressure.
+  boot.kernelParams = ["zfs.zfs_arc_max=17179869184"];
 
   boot.extraModprobeConfig = ''
     options v4l2loopback exclusive_caps=1 card_label="Virtual Webcam"
@@ -69,10 +73,16 @@ in {
   powerManagement = {
     enable = true;
     cpuFreqGovernor = "powersave";
-    powerUpCommands = ''
-      echo XHC > /proc/acpi/wakeup
-    '';
     powertop.enable = true;
+  };
+  systemd.services.disable-xhc-wakeup = {
+    description = "Disable XHC USB wakeup";
+    wantedBy = ["multi-user.target"];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash -c 'echo XHC > /proc/acpi/wakeup'";
+      RemainAfterExit = true;
+    };
   };
   time.timeZone = "America/New_York";
   #time.timeZone = "Asia/Dubai";
@@ -102,25 +112,25 @@ in {
       #    }
       #  ];
       #};
-      wg1 = {
-        ips = ["10.250.192.2/32"];
-        mtu = 1280;
-        privateKeyFile = "/var/lib/wg-keys/wg1.key";
-        peers = [
-          {
-            publicKey = "W8Mqo7sGVNUVXe/+3Yb0DqiN/QPKGpc6BHB8H10jagE=";
-            allowedIPs = [
-              "10.200.128.0/24"
-              "10.200.129.0/24"
-              "10.160.0.0/22"
-              "10.101.0.0/21"
-              "10.140.0.0/24"
-            ];
-            endpoint = "64.78.224.166:51821";
-            persistentKeepalive = 30;
-          }
-        ];
-      };
+      #wg1 = {
+      #  ips = ["10.250.192.2/32"];
+      #  mtu = 1280;
+      #  privateKeyFile = "/var/lib/wg-keys/wg1.key";
+      #  peers = [
+      #    {
+      #      publicKey = "W8Mqo7sGVNUVXe/+3Yb0DqiN/QPKGpc6BHB8H10jagE=";
+      #      allowedIPs = [
+      #        "10.200.128.0/24"
+      #        "10.200.129.0/24"
+      #        "10.160.0.0/22"
+      #        "10.101.0.0/21"
+      #        "10.140.0.0/24"
+      #      ];
+      #      endpoint = "64.78.224.166:51821";
+      #      persistentKeepalive = 30;
+      #    }
+      #  ];
+      #};
       #wg2 = {
       #  ips = [ "10.44.2.3/32" ];
       #  listenPort = 52024;
@@ -216,16 +226,19 @@ in {
     polychromatic
     libfido2
     yubikey-manager
+    android-tools
+    brightnessctl
   ];
 
   hardware = {
     sane.enable = true;
     gpgSmartcards.enable = true;
     opentabletdriver.enable = true;
-    openrazer = {
-      enable = true;
-      users = ["sam"];
-    };
+    # disabled because failing to build
+    #openrazer = {
+    #  enable = true;
+    #  users = ["sam"];
+    #};
     enableRedistributableFirmware = true;
     graphics = {
       enable = true;
@@ -242,8 +255,8 @@ in {
           enable = true;
           enableOffloadCmd = true;
         };
-        amdgpuBusId = "PCI:5:0:0";
-        nvidiaBusId = "PCI:6:0:0";
+        amdgpuBusId = "PCI:198:0:0";
+        nvidiaBusId = "PCI:197:0:0";
       };
     };
     facetimehd.enable = true;
@@ -276,8 +289,6 @@ in {
   ];
   programs = {
     mosh.enable = true;
-    adb.enable = true;
-    light.enable = true;
     hyprland = {
       enable = true;
       xwayland.enable = true;
@@ -299,7 +310,6 @@ in {
     ollama = {
       enable = true;
       package = pkgsUnstable.ollama-cuda;
-      acceleration = "cuda";
       environmentVariables = {
         OLLAMA_FLASH_ATTENTION = "1";
       };
@@ -312,7 +322,6 @@ in {
     desktopManager.gnome.enable = true;
     displayManager.gdm = {
       enable = true;
-      wayland = true;
       autoSuspend = false;
     };
     xserver = {
@@ -491,6 +500,12 @@ in {
   virtualisation.podman.dockerCompat = true;
   virtualisation.podman.dockerSocket.enable = true;
   virtualisation.podman.defaultNetwork.settings.dnsenabled = true;
+  # Work around mutter EINVAL on cursor-plane atomic commits when the
+  # built-in panel (amdgpu) and cursor image path (nvidia) are on
+  # different GPUs -- forces a software cursor in the GDM greeter so it
+  # stops blanking eDP-1.
+  systemd.services.display-manager.environment.MUTTER_DEBUG_DISABLE_HW_CURSORS = "1";
+
   systemd.services.podman.path = [pkgs.zfs];
   systemd.services.podman.serviceConfig.ExecStart = lib.mkForce [
     ""

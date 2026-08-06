@@ -26,10 +26,14 @@
   boot.kernelModules = ["kvm-intel"];
   boot.supportedFilesystems = ["zfs"];
   boot.zfs.package = pkgs.zfs_unstable;
+  boot.zfs.forceImportRoot = false;
 
   nixpkgs.config.allowUnfree = true;
   nixpkgs.overlays = [
     inputs.adawallet.overlay
+    (_final: _prev: {
+      cardano-hw-cli = inputs.adawallet.packages.x86_64-linux.cardano-hw-cli;
+    })
     (import ./overlay.nix)
   ];
   services.udev.extraRules = let
@@ -104,7 +108,7 @@
     airgapScripts.signPaymentTx
     airgapScripts.createTx
     kdePackages.kleopatra
-    termite
+    alacritty
     encfs
     chromium
     gnupg

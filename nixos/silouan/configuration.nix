@@ -137,7 +137,7 @@
     srm
     jq
     steamcmd
-    wineWowPackages.waylandFull
+    wineWow64Packages.waylandFull
     winetricks
     starship
     mesa-demos
@@ -220,7 +220,7 @@
 
     ollama = {
       enable = true;
-      acceleration = "cuda";
+      package = pkgs.ollama-cuda;
       # Optional: Preload models on startup.
       loadModels = ["deepseek-llm:7b"];
     };
@@ -268,7 +268,6 @@
     desktopManager.gnome.enable = true;
     displayManager.gdm = {
       enable = true;
-      wayland = true;
     };
     xserver = {
       videoDrivers = ["amdgpu" "nvidia"];

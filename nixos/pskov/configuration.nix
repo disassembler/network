@@ -46,6 +46,7 @@ in {
   boot.supportedFilesystems = ["exfat" "zfs"];
   boot.tmp.cleanOnBoot = true;
   boot.zfs.devNodes = "/dev";
+  boot.zfs.forceImportRoot = false;
 
   boot.extraModprobeConfig = ''
     options kvm_intel nested=1
@@ -73,10 +74,16 @@ in {
   powerManagement = {
     enable = true;
     cpuFreqGovernor = "powersave";
-    powerUpCommands = ''
-      echo XHC > /proc/acpi/wakeup
-    '';
     powertop.enable = true;
+  };
+  systemd.services.disable-xhc-wakeup = {
+    description = "Disable XHC USB wakeup";
+    wantedBy = ["multi-user.target"];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash -c 'echo XHC > /proc/acpi/wakeup'";
+      RemainAfterExit = true;
+    };
   };
   time.timeZone = "America/New_York";
   #time.timeZone = "Asia/Dubai";
@@ -313,6 +320,8 @@ in {
     #});
   in [
     inputs.home-manager.packages.x86_64-linux.home-manager
+    android-tools
+    brightnessctl
     platformio
     platformioFHS
     avrdude
@@ -365,7 +374,6 @@ in {
     weechat
     pv
     rxvt-unicode
-    termite
     wezterm
     xsel
     tcpdump
@@ -434,8 +442,6 @@ in {
   ];
   programs = {
     mosh.enable = true;
-    adb.enable = true;
-    light.enable = true;
     #hyprland.enable = true;
     #hyprland.package = inputs.hyprland.packages.x86_64-linux.hyprland;
     #sway = {
@@ -465,7 +471,6 @@ in {
   services = {
     displayManager.gdm = {
       enable = true;
-      wayland = true;
       autoSuspend = false;
     };
     displayManager = {

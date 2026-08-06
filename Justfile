@@ -19,12 +19,12 @@ build-iso MACHINE *ARGS:
 
 # Build all nixosConfigurations
 build-machines *ARGS:
-  #!/usr/bin/env nu
+  #!/run/current-system/sw/bin/env nu
   let nodes = (nix eval --json '.#nixosConfigurations' --apply builtins.attrNames | from json)
   for node in $nodes {just build-machine $node {{ARGS}}}
 
 provision-disko machine ip:
-  #!/usr/bin/env bash
+  #!/run/current-system/sw/bin/env bash
   set -euo pipefail
 
   echo "--- Partitioning and Formatting ---"
@@ -39,7 +39,7 @@ provision-disko machine ip:
   echo "Then run: just provision-deploy {{machine}} {{ip}}"
 
 provision-deploy machine ip:
-  #!/usr/bin/env bash
+  #!/run/current-system/sw/bin/env bash
   set -euo pipefail
   echo "Building and Pushing System Closure ---"
   TOPLEVEL=$(nix build .#nixosConfigurations.{{machine}}.config.system.build.toplevel --no-link --print-out-paths)
@@ -58,7 +58,7 @@ provision-deploy machine ip:
 
 # Generate age key
 generate-age-key:
-  #!/usr/bin/env bash
+  #!/run/current-system/sw/bin/env bash
   mkdir -p ~/.config/sops/age
   if [ ! -f ~/.config/sops/age/keys.txt ]; then
     echo "Generating private age key..."

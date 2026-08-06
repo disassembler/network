@@ -41,6 +41,7 @@ in {
   #boot.zfs.package = pkgs.zfs_unstable;
 
   boot.supportedFilesystems = ["exfat" "zfs"];
+  boot.zfs.forceImportRoot = false;
 
   boot.extraModulePackages = [
     config.boot.kernelPackages.v4l2loopback
@@ -73,9 +74,15 @@ in {
   powerManagement = {
     enable = true;
     cpuFreqGovernor = "ondemand";
-    powerUpCommands = ''
-      echo XHC > /proc/acpi/wakeup
-    '';
+  };
+  systemd.services.disable-xhc-wakeup = {
+    description = "Disable XHC USB wakeup";
+    wantedBy = ["multi-user.target"];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash -c 'echo XHC > /proc/acpi/wakeup'";
+      RemainAfterExit = true;
+    };
   };
   time.timeZone = "America/New_York";
 
@@ -194,6 +201,8 @@ in {
     polychromatic
     libfido2
     yubikey-manager
+    android-tools
+    brightnessctl
   ];
 
   hardware = {
@@ -232,8 +241,6 @@ in {
   ];
   programs = {
     mosh.enable = true;
-    adb.enable = true;
-    light.enable = true;
     #hyprland.enable = true;
     #hyprland.package = inputs.hyprland.packages.x86_64-linux.hyprland;
     #sway = {
@@ -266,7 +273,6 @@ in {
       defaultSession = "niri";
       gdm = {
         enable = true;
-        wayland = true;
         autoSuspend = false;
       };
     };

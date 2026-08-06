@@ -11,6 +11,7 @@ in {
   ];
 
   boot.supportedFilesystems = ["zfs"];
+  boot.zfs.forceImportRoot = false;
   boot.loader.grub.enable = false;
   nix = {
     settings.sandbox = true;

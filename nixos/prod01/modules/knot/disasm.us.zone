@@ -56,10 +56,8 @@ demo.lan 300 IN CNAME kursk.lan
 ; optina — static IP (pending retirement)
 optina.lan 1800 IN A 10.40.33.20
 
-; optina services (pending migration)
 plex.lan 300 IN CNAME kursk.lan
-unifi.lan 300 IN CNAME optina.lan
-; pending kursk migration
+unifi.lan 300 IN CNAME kursk.lan
 omada.lan 300 IN CNAME kursk.lan
 
 bp01.lan 300 IN A 147.28.148.163

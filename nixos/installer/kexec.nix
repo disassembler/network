@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   config,
   ...
@@ -38,6 +39,7 @@ in {
       '';
     };
   };
+  boot.initrd.systemd.enable = lib.mkForce false;
   boot.initrd.postMountCommands = ''
     mkdir -p /mnt-root/root/.ssh/
     cp /authorized_keys /mnt-root/root/.ssh/

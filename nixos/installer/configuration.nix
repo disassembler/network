@@ -25,6 +25,7 @@ in {
   };
 
   boot.supportedFilesystems = ["zfs"];
+  boot.zfs.forceImportRoot = false;
   boot.loader.grub.enable = false;
   boot.kernelParams = [
     "panic=30"

@@ -81,12 +81,12 @@
       ];
     };
 
-    optina = {...}: {
-      imports = [
-        ../nixos/optina/configuration.nix
-        ../nixos/optina/hardware-configuration.nix
-      ];
-    };
+    #optina = {...}: {
+    #  imports = [
+    #    ../nixos/optina/configuration.nix
+    #    ../nixos/optina/hardware-configuration.nix
+    #  ];
+    #};
     kursk = {...}: {
       imports = [
         ../nixos/kursk/configuration.nix

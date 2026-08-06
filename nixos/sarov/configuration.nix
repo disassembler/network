@@ -21,6 +21,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.zfs.requestEncryptionCredentials = [];
+  boot.zfs.forceImportRoot = false;
 
   nix = {
     settings.sandbox = true;

@@ -94,14 +94,6 @@ in {
     chromium = {
       enable = true;
       package = pkgs.google-chrome;
-      extensions = [
-        {id = "nngceckbapebfimnlniiiahkandclblb";} # Bitwarden
-        {id = "kmhcihpebfmpgmihbkipmjlmmioameka";} # Eternl (Cardano)
-        {id = "gafhhkghbfjjkeiendhlofajokpaflmk";} # Lace (Cardano)
-        {id = "lpfcbjknijpeeillifnkikgncikgfhdo";} # Nami (Cardano)
-        {id = "kfdniefadaanbjodldohaedphafoffoh";} # Typhon Wallet (Cardano)
-      ];
-
       commandLineArgs = [
         "--enable-features=UseOzonePlatform"
         "--ozone-platform=wayland"
@@ -149,12 +141,9 @@ in {
         resumeCommand = "${pkgs.niri}/bin/niri msg action power-on-monitors";
       }
     ];
-    events = [
-      {
-        event = "before-sleep";
-        command = "${pkgs.swaylock}/bin/swaylock -f";
-      }
-    ];
+    events = {
+      before-sleep = "${pkgs.swaylock}/bin/swaylock -f";
+    };
   };
   home.packages = with pkgs; [
     # --- Desktop Environment & GUI Utilities ---
@@ -168,7 +157,7 @@ in {
     xdg-utils # Desktop integration utilities (e.g., xdg-open)
     wl-clipboard # Command-line copy/paste utilities for Wayland
     inotify-tools # Command-line utilities for inotify (file watching)
-    swww
+    awww
 
     # --- Hardware & Security Managers ---
     ledger-live-desktop # Desktop wallet for Ledger hardware
@@ -194,7 +183,7 @@ in {
 
     # --- Gaming ---
     steamcmd # Command-line version of the Steam client
-    wineWowPackages.waylandFull # Run Windows apps on Wayland via Wine
+    wineWow64Packages.waylandFull # Run Windows apps on Wayland via Wine
     winetricks # Helper script to download/install Wine runtime libraries
     pkgsUnstable.mcpelauncher-client # Minecraft: Bedrock Edition Linux launcher
     pkgsUnstable.mcpelauncher-ui-qt # GUI for the Bedrock Edition launcher

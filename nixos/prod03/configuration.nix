@@ -15,6 +15,7 @@
 
   boot.supportedFilesystems = ["zfs"];
   boot.zfs.devNodes = "/dev";
+  boot.zfs.forceImportRoot = false;
   boot.loader.grub = {
     enable = true;
     device = "/dev/vda";

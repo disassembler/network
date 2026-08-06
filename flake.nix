@@ -19,7 +19,7 @@
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs"; # Use system packages list where available
     };
     hy3 = {
@@ -28,14 +28,16 @@
 
     # nix and nixpkgs pins
     nix.url = "github:NixOS/nix/2.34.6";
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgsUnstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     # used for unifi
     nixpkgsLegacy.url = "github:NixOS/nixpkgs/nixos-23.11";
 
-    nixvim.url = "github:nix-community/nixvim/nixos-25.11";
+    nixvim.url = "github:nix-community/nixvim/nixos-26.05";
 
     niri.url = "github:sodiboo/niri-flake";
+    niri.inputs.nixpkgs.follows = "nixpkgs";
+    niri.inputs.nixpkgs-stable.follows = "nixpkgs";
 
     # cardano stuff
     cardano-parts.url = "github:input-output-hk/cardano-parts/next-2025-08-14";

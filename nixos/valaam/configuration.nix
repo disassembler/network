@@ -164,7 +164,7 @@
     srm
     jq
     steamcmd
-    wineWowPackages.waylandFull
+    wineWow64Packages.waylandFull
     winetricks
   ];
 
@@ -226,6 +226,22 @@
         ];
       };
     };
+    prometheus.exporters.node = {
+      enable = true;
+      enabledCollectors = [
+        "systemd"
+        "tcpstat"
+        "diskstats"
+        "filesystem"
+        "loadavg"
+        "meminfo"
+        "netdev"
+        "stat"
+        "time"
+        "vmstat"
+        "logind"
+      ];
+    };
     minecraft-bedrock-server.enable = true;
     udev.extraRules = let
       dependencies = with pkgs; [coreutils gnupg gawk gnugrep];
@@ -268,7 +284,6 @@
     desktopManager.gnome.enable = true;
     displayManager.gdm = {
       enable = true;
-      wayland = true;
       autoSuspend = false;
     };
   };

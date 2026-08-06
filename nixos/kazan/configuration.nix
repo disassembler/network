@@ -131,7 +131,7 @@
     srm
     jq
     steamcmd
-    wineWowPackages.waylandFull
+    wineWow64Packages.waylandFull
     winetricks
     starship
   ];
@@ -203,10 +203,7 @@
     };
 
     desktopManager.gnome.enable = true;
-    displayManager.gdm = {
-      enable = true;
-      wayland = true;
-    };
+    displayManager.gdm.enable = true;
   };
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [3001 9090 9093 3000 3100];

@@ -10,6 +10,7 @@
   ];
   wayland.windowManager.hyprland = {
     enable = true;
+    configType = "hyprlang";
     settings = {
       debug = {
         disable_logs = false;
