@@ -10,6 +10,7 @@
     colmena.url = "github:zhaofengli/colmena";
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
+    daedalus.url = "github:input-output-hk/daedalus/11.5.0";
 
     # personal configs
     neovim-flake.url = "github:disassembler/neovim-flake/sl/rust";
@@ -40,7 +41,7 @@
     niri.inputs.nixpkgs-stable.follows = "nixpkgs";
 
     # cardano stuff
-    cardano-parts.url = "github:input-output-hk/cardano-parts/next-2025-08-14";
+    cardano-parts.url = "github:input-output-hk/cardano-parts/v2026-05-14";
     adawallet.url = "github:input-output-hk/adawallet";
     adawallet.inputs.cardano-parts.follows = "cardano-parts";
     shadowharvester.url = "github:disassembler/shadowharvester/sl/defensio";
@@ -53,6 +54,9 @@
     deployable-containers.inputs.nixpkgs.follows = "nixpkgs";
     deployable-containers.inputs.flake-parts.follows = "flake-parts";
     deployable-containers.inputs.treefmt-nix.follows = "treefmt-nix";
+
+    tome-of-the-math-dragon.url = "github:nittanychristian/tome-of-the-math-dragon";
+    tick-tock-trivia.url = "github:nittanychristian/tick-tock-trivia/master";
 
     # Styx static site generator
     # TODO: migrate to docusaurus?
@@ -77,6 +81,9 @@
         ]
         ++ [
           inputs.treefmt-nix.flakeModule
+          inputs.cardano-parts.flakeModules.cluster
+          inputs.cardano-parts.flakeModules.lib
+          inputs.cardano-parts.flakeModules.pkgs
         ];
       systems = [
         "x86_64-linux"
