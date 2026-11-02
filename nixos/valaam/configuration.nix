@@ -28,6 +28,9 @@
 
   # Use the systemd-boot EFI boot loader.
   boot = {
+    # bolt/law-backups is an encrypted replication target for disaster recovery.
+    # Import the pool without loading keys; unlock backups manually for recovery.
+    zfs.requestEncryptionCredentials = [];
     enableContainers = true;
     kernel.sysctl = {
       "net.ipv4.conf.all.forwarding" = true;
@@ -200,7 +203,7 @@
       package = inputs.wled-sequencer.packages.${pkgs.stdenv.hostPlatform.system}.wled-sequencer;
       settings = {
         host = "10.40.8.61";
-        file = "/var/lib/wled-sequencer/flag.fseq";
+        file = "/var/lib/wled-sequencer/fall.fseq";
       };
     };
     zrepl = {
