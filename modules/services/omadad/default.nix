@@ -10,7 +10,7 @@ with lib; let
   # mongodb-ce is SSPL (unfree); import a local pkgs with allowUnfree so the
   # default works even when the system nixpkgs config doesn't set it globally.
   unfreePkgs = import pkgs.path {
-    inherit (pkgs) system;
+    inherit (pkgs.stdenv.hostPlatform) system;
     config.allowUnfree = true;
   };
 in {
@@ -74,7 +74,6 @@ in {
       type = types.package;
       default = pkgs.callPackage ./package.nix {
         mongodb = cfg.mongodb;
-        commonsDaemon = pkgs.commonsDaemon;
       };
       description = ''
         Omada package

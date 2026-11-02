@@ -3,7 +3,7 @@
   lib,
   fetchurl,
   mongodb,
-  commonsDaemon,
+  commons-daemon,
 }: let
   version = "6.1.0.19";
   url = "https://static.tp-link.com/upload/software/2026/202601/20260121/Omada_Network_Application_v${version}_linux_x64_20260117100056.tar.gz";
@@ -31,7 +31,7 @@ in
 
       mv lib $out/
       # commons-daemon.jar is required in classpath but not bundled; add it from nixpkgs
-      ln -s ${commonsDaemon}/share/java/commons-daemon-${commonsDaemon.version}.jar $out/lib/
+      ln -s ${commons-daemon}/share/java/commons-daemon-${commons-daemon.version}.jar $out/lib/
 
       # Static web assets
       mv data $out/data
