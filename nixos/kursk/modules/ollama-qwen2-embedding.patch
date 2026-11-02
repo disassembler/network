@@ -1,0 +1,65 @@
+diff --git a/llm/server.go b/llm/server.go
+--- a/llm/server.go
++++ b/llm/server.go
+@@ -82,4 +82,6 @@ type LlamaServerConfig struct {
+ 	ContextShift   bool
+ 	EnableMTP      bool
+ 	DraftModelPath string
++	IsEmbedding         bool
++	NeedsDefaultPooling bool
+ }
+diff --git a/llm/llama_server.go b/llm/llama_server.go
+--- a/llm/llama_server.go
++++ b/llm/llama_server.go
+@@ -409,1 +409,4 @@ func startLlamaServer(
+ 	params = appendBatchArgs(params, launch.opts, launch.embedding, launch.numParallel)
++	if launch.config.NeedsDefaultPooling {
++		params = append(params, "--pooling", "mean")
++	}
+@@ -838,4 +841,10 @@ func NewLlamaServerRunner(
+ 	// Check if this is an embedding model
+ 	arch := f.KV().Architecture()
+ 	_, isEmbedding := f.KV()[fmt.Sprintf("%s.pooling_type", arch)]
++	if !isEmbedding {
++		isEmbedding = config.IsEmbedding
++		if isEmbedding {
++			config.NeedsDefaultPooling = true
++		}
++	}
+
+diff --git a/server/sched.go b/server/sched.go
+--- a/server/sched.go
++++ b/server/sched.go
+@@ -581,5 +581,6 @@ func scheduleRunner(
+ 			config := llamaServerConfigForModel(req.model)
+ 			config.ContextShift = req.contextShift
++			config.IsEmbedding = slices.Contains(req.model.Config.Capabilities, string(model.CapabilityEmbedding))
+ 			llama, err = s.newServerFn(systemInfo, loadGpus, req.model.ModelPath, f, req.model.AdapterPaths, req.model.ProjectorPaths, launchOpts, numParallel, config)
+ 			if err != nil {
+ 				// some older models are not compatible with newer versions of llama.cpp
+diff --git a/server/routes.go b/server/routes.go
+--- a/server/routes.go
++++ b/server/routes.go
+@@ -943,4 +943,4 @@ embedWithRetry := func(text string) ([]float32, int, error) {
+-		emb, tokCount, err := r.Embedding(ctx, text)
+-		if err == nil {
++		emb, tokCount, embErr := r.Embedding(ctx, text)
++		if embErr == nil {
+ 			return emb, tokCount, nil
+ 		}
+@@ -948,7 +948,7 @@ embedWithRetry := func(text string) ([]float32, int, error) {
+ 		var serr api.StatusError
+-		if !errors.As(err, &serr) || serr.StatusCode != http.StatusBadRequest {
+-			return nil, 0, err
++		if !errors.As(embErr, &serr) || serr.StatusCode != http.StatusBadRequest {
++			return nil, 0, embErr
+ 		}
+ 		if req.Truncate != nil && !*req.Truncate {
+-			return nil, 0, err
++			return nil, 0, embErr
+ 		}
+@@ -960,3 +960,3 @@ embedWithRetry := func(text string) ([]float32, int, error) {
+ 		if !ok {
+-			return nil, 0, fmt.Errorf("input exceeds maximum context length and cannot be truncated further")
++			return nil, 0, embErr
+ 		}

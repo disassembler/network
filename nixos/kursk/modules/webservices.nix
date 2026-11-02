@@ -252,6 +252,7 @@
     description = "Prometheus PostgreSQL exporter for AI instance";
     wantedBy = ["multi-user.target"];
     after = ["postgresql-ai.service" "network-online.target"];
+    wants = ["network-online.target"];
     environment.DATA_SOURCE_NAME = "postgresql://postgres-ai@10.40.33.71:5432/postgres?sslmode=disable";
     serviceConfig = {
       ExecStart = "${pkgs.prometheus-postgres-exporter}/bin/postgres_exporter --web.listen-address=:9188";

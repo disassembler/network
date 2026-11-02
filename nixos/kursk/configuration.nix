@@ -25,6 +25,7 @@ in {
     "synaptex-router-cert".owner = "synaptex-core";
     "grafana-creds".owner = "grafana";
     "unifi-exporter-password".owner = "unpoller-exporter";
+    "agentix-creds".owner = "agentix";
   };
 
   imports = [
@@ -70,6 +71,7 @@ in {
 
   nixpkgs.config = {
     allowUnfree = true;
+    cudaCapabilities = ["8.6"];
   };
 
   security.pki.certificates = [shared.wedlake_ca_cert];

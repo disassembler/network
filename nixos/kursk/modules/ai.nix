@@ -45,29 +45,79 @@ in {
     nvtopPackages.nvidia
     cudaPackages.cudatoolkit
     config.boot.kernelPackages.nvidiaPackages.stable
+    inputs.agentix.packages.${pkgs.stdenv.hostPlatform.system}.agentix-ourgroceries
   ];
 
-  # ── OLLAMA ──────────────────────────────────────────────────────────────────
-  services.ollama = {
-    enable = true;
-    package = pkgsUnstable.ollama-cuda;
-    host = "10.40.33.71";
-    environmentVariables = {
-      OLLAMA_FLASH_ATTENTION = "1";
+  # ── AGENTIX ─────────────────────────────────────────────────────────────────
+  services.agentix = {
+    agent = {
+      enable = true;
+      package = inputs.agentix.packages.${pkgs.stdenv.hostPlatform.system}.agentix-agent;
+      configFile = "/etc/agentix-agent/agent.toml";
+      environmentFile = config.sops.secrets.agentix-creds.path;
     };
-    loadModels = [
-      "phi4-mini"
-      "gemma4:26b"
-      "hf.co/jinaai/jina-code-embeddings-1.5b-GGUF:Q8_0"
-    ];
+
+    daemon = {
+      enable = true;
+      package = inputs.agentix.packages.${pkgs.stdenv.hostPlatform.system}.agentix-daemon;
+    };
+
+    storage = {
+      enable = true;
+      package = inputs.agentix.packages.${pkgs.stdenv.hostPlatform.system}.agentix-store-server;
+      host = "0.0.0.0";
+    };
+
+    #qwen = {
+    #  enable = false;
+    #  package = inputs.agentix.packages.${pkgs.stdenv.hostPlatform.system}.agentix-qwen-worker;
+    #  modelDir = "/var/lib/agentix/qwen";
+    #  # Defaults match the verified IQ3_S shard filenames and hashes.
+    #  # context = 32768;
+    #};
+
+    llama = {
+      enable = true;
+      package = inputs.agentix.packages.${pkgs.stdenv.hostPlatform.system}.agentix-llama;
+      gpuLayers = -1;
+      vramLimitBytes = 23000000000;
+    };
+
+    whisper = {
+      enable = true;
+      package = inputs.agentix.packages.${pkgs.stdenv.hostPlatform.system}.agentix-whisper;
+      preloadedModels = ["ggerganov/whisper.cpp:ggml-large-v3-turbo.bin"];
+    };
   };
 
-  # ollama binds to 10.40.33.71 which networkd assigns after the default
-  # network.target; restart on failure so it recovers if it loses the race.
-  systemd.services.ollama = {
-    after = ["network-addresses-enp11s0.service"];
-    serviceConfig.Restart = "on-failure";
-    serviceConfig.RestartSec = "5s";
+  environment.etc."agentix-agent/agent.toml".source = (pkgs.formats.toml {}).generate "agentix-agent.toml" {
+    gateway_url = "http://ai.lan.disasm.us:11434";
+    local_model = "hf.co/bartowski/Qwen2.5-7B-Instruct-GGUF:Qwen2.5-7B-Instruct-Q8_0.gguf";
+    bind_addr = "127.0.0.1:8767";
+    # Separate legacy store; preserve your current path if already using legacy todos.
+    db_path = "/var/lib/agentix-agent/legacy";
+    assistant = {
+      db_path = "/var/lib/agentix-agent/personal";
+      index_path = "/var/lib/agentix-agent/personal-index";
+      inference_timeout_secs = 30;
+      ourgroceries.list_id = "f8xHFUMwxBAD4G3blJvX9m";
+    };
+    ntfy = {
+      url = "";
+      topic = "";
+    };
+    scheduler = {};
+  };
+
+  services.nginx.virtualHosts."ai.lan.disasm.us" = {
+    useACMEHost = "lan.disasm.us";
+    forceSSL = true;
+    locations."/v1/assistant/" = {
+      proxyPass = "http://127.0.0.1:8767";
+      extraConfig = ''
+        proxy_read_timeout 150s;
+      '';
+    };
   };
 
   # ── POSTGRESQL-AI (isolated instance for ParadeDB + pgvector) ───────────────

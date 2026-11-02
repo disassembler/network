@@ -93,6 +93,7 @@
         ../nixos/kursk/configuration.nix
         ../nixos/kursk/disko.nix
         inputs.synaptex.nixosModules.synaptex-core
+        inputs.agentix.nixosModules.agentix
       ];
     };
 
