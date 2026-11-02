@@ -1,6 +1,7 @@
 {
   self,
   inputs,
+  config,
   lib,
   ...
 }: {
@@ -37,6 +38,14 @@
         system = "x86_64-linux";
       };
       specialArgs.inputs = inputs;
+      nodeSpecialArgs = {
+        sarov = {
+          nodeResources = {
+            cpuCount = 4;
+            memMiB = 16384;
+          };
+        };
+      };
     };
     # modules we want on all deployments
     defaults = {...}: {
@@ -117,7 +126,12 @@
       imports = [
         ../nixos/sarov/configuration.nix
         ../nixos/sarov/hardware-configuration.nix
+        inputs.cardano-parts.nixosModules.profile-cardano-parts
+        config.flake.cardano-parts.cluster.groups.default.meta.cardano-node-service-ng
+        config.flake.cardano-parts.cluster.groups.default.meta.cardano-tracer-service-ng
+        inputs.cardano-parts.nixosModules.profile-cardano-node-group
       ];
+      cardano-parts.cluster.group = config.flake.cardano-parts.cluster.groups.default;
     };
 
     # production servers
