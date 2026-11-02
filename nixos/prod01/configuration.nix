@@ -34,6 +34,7 @@ in {
   imports = [
     ./modules/network.nix
     ./modules/knot
+    ./modules/tick-tock-trivia.nix
   ];
 
   profiles.vim.enable = lib.mkForce false;
@@ -79,6 +80,8 @@ in {
   services.fail2ban.enable = true;
   services.nginx = {
     enable = true;
+    recommendedGzipSettings = true;
+    recommendedOptimisation = true;
     virtualHosts = {
       "nixedge.com" = {
         enableACME = true;
@@ -137,6 +140,22 @@ in {
         enableACME = true;
         forceSSL = true;
         root = "/data/web/vhosts/samleathers/util";
+      };
+      "mathdragon.disasm.us" = {
+        enableACME = true;
+        forceSSL = true;
+        root = "${inputs.tome-of-the-math-dragon.packages.x86_64-linux.default}";
+        locations."/" = {
+          extraConfig = ''
+            add_header Cache-Control "no-cache";
+            try_files $uri $uri/ /index.html;
+          '';
+        };
+        locations."~ \\.(js|ttf)$" = {
+          extraConfig = ''
+            add_header Cache-Control "public, max-age=31536000, immutable";
+          '';
+        };
       };
       "centrallakerealty.com" = {
         enableACME = true;

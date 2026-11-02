@@ -67,3 +67,5 @@ relay02.lan 300 IN A 147.28.183.225
 sanchonet 300 IN CNAME input-output-hk.github.io.
 
 doom 300 IN CNAME disasm.us.
+mathdragon 300 IN CNAME prod01.samleathers.com.
+ticktock 300 IN CNAME prod01.samleathers.com.
