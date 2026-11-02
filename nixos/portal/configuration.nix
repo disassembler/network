@@ -214,6 +214,10 @@ in {
             # Allow WAN → port-forwarded internal servers (Plex, gaming, WG relay)
             iifname "enp1s0" ip daddr { 10.40.33.70, 10.40.33.21, 10.40.33.156, 10.40.33.32 } accept
 
+            # ai-remote peer: restrict to ai.lan.disasm.us (10.40.33.71) ollama port only
+            iifname "wg0" ip saddr 10.40.9.101 ip daddr 10.40.33.71 tcp dport 11434 accept
+            iifname "wg0" ip saddr 10.40.9.101 drop
+
             # Allow WireGuard ↔ internal networks
             iifname "wg0" oifname { "lan", "mgmt" } accept
             iifname { "lan", "mgmt" } oifname "wg0" accept
@@ -267,7 +271,7 @@ in {
             type nat hook postrouting priority srcnat;
 
             # Masquerade internal subnets out WAN
-            oifname "enp1s0" iifname { "lan", "mgmt", "guest", "voip", "iot" } masquerade
+            oifname "enp1s0" iifname { "lan", "mgmt", "guest", "voip", "iot", "wg0" } masquerade
           }
         '';
       };
@@ -363,6 +367,11 @@ in {
             # carlos
             publicKey = "/9YVN8nraowBRjhe6ysajY5bp4fUVqJE622OpLpl4Hs=";
             allowedIPs = ["10.40.9.100/32" "fd00::100/128"];
+          }
+          {
+            # ai-remote: restricted to ai.lan.disasm.us ollama only
+            publicKey = "k9q7BhJ1zrN/rcRXPir8SV8zAX3eGSz3BoEe1GbfwhE=";
+            allowedIPs = ["10.40.9.101/32"];
           }
         ];
       };
@@ -904,6 +913,9 @@ in {
   };
   systemd.services.kea-dhcp4-server = {
     serviceConfig = {
+      DynamicUser = lib.mkForce false;
+      User = "kea";
+      Group = "kea";
       RuntimeDirectoryMode = lib.mkForce "0770";
     };
   };
