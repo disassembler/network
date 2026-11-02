@@ -54,6 +54,7 @@
     irkutsk = {...}: {
       imports = [
         inputs.nixos-hardware.nixosModules.dell-xps-13-9380
+        inputs.daedalus.nixosModules.daedalus
         ../nixos/irkutsk/configuration.nix
         ../nixos/irkutsk/hardware-configuration.nix
       ];

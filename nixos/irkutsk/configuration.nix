@@ -16,8 +16,8 @@ in {
 
   deployment = {
     #targetHost = "127.0.0.1";
-    #targetHost = "10.40.33.61";
-    targetHost = "10.70.0.1";
+    targetHost = "10.40.33.61";
+    #targetHost = "10.70.0.1";
     targetPort = 22;
     targetUser = "root";
   };
@@ -265,6 +265,12 @@ in {
       enable = true;
       package = inputs.niri.packages.x86_64-linux.niri-unstable;
     };
+  };
+
+  services.daedalus = {
+    enable = true;
+    clusters = ["preview"];
+    packages.preview = inputs.daedalus.packages.x86_64-linux."nixos-package-preview";
   };
 
   services = {
