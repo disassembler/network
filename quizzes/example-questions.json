@@ -1,0 +1,335 @@
+{
+  "title": "The Bright Minds Warm-Up",
+  "questions": [
+    {
+      "question": "Which planet is known as the Red Planet?",
+      "choices": [
+        "Venus",
+        "Mars",
+        "Jupiter",
+        "Saturn"
+      ],
+      "answer": 1,
+      "explanation": "Iron-rich dust gives Mars its reddish appearance."
+    },
+    {
+      "question": "What is 12 × 8?",
+      "choices": [
+        "86",
+        "94",
+        "96",
+        "108"
+      ],
+      "answer": 2,
+      "explanation": "12 × 8 = (10 × 8) + (2 × 8) = 80 + 16 = 96."
+    },
+    {
+      "question": "Which part of a plant absorbs water from the soil?",
+      "choices": [
+        "Flower",
+        "Leaf",
+        "Stem",
+        "Roots"
+      ],
+      "answer": 3,
+      "explanation": "Roots absorb water and minerals from the soil."
+    },
+    {
+      "question": "Which word is a noun?",
+      "choices": [
+        "Quickly",
+        "Mountain",
+        "Jump",
+        "Bright"
+      ],
+      "answer": 1,
+      "explanation": "A noun names a person, place, thing or idea. Mountain names a thing."
+    },
+    {
+      "question": "How many sides does a hexagon have?",
+      "choices": [
+        "Five",
+        "Six",
+        "Seven",
+        "Eight"
+      ],
+      "answer": 1,
+      "explanation": "The prefix hexa- means six."
+    },
+    {
+      "question": "What is the largest ocean on Earth?",
+      "choices": [
+        "Atlantic",
+        "Arctic",
+        "Pacific",
+        "Indian"
+      ],
+      "answer": 2,
+      "explanation": "The Pacific is the largest and deepest ocean."
+    },
+    {
+      "question": "Which gas do plants take in for photosynthesis?",
+      "choices": [
+        "Oxygen",
+        "Helium",
+        "Nitrogen",
+        "Carbon dioxide"
+      ],
+      "answer": 3,
+      "explanation": "Plants use carbon dioxide, water and sunlight to make sugars."
+    },
+    {
+      "question": "What is three quarters written as a decimal?",
+      "choices": [
+        "0.25",
+        "0.34",
+        "0.75",
+        "1.25"
+      ],
+      "answer": 2,
+      "explanation": "3 divided by 4 is 0.75."
+    },
+    {
+      "question": "Who wrote Romeo and Juliet?",
+      "choices": [
+        "William Shakespeare",
+        "Charles Dickens",
+        "Jane Austen",
+        "Mark Twain"
+      ],
+      "answer": 0,
+      "explanation": "William Shakespeare wrote this play in the 1590s."
+    },
+    {
+      "question": "What force pulls objects toward Earth?",
+      "choices": [
+        "Magnetism",
+        "Friction",
+        "Gravity",
+        "Electricity"
+      ],
+      "answer": 2,
+      "explanation": "Gravity attracts objects with mass toward each other."
+    },
+    {
+      "question": "How many degrees are in a right angle?",
+      "choices": [
+        "45",
+        "60",
+        "90",
+        "180"
+      ],
+      "answer": 2,
+      "explanation": "A right angle is one quarter of a full 360-degree turn."
+    },
+    {
+      "question": "Which organ pumps blood around your body?",
+      "choices": [
+        "Lungs",
+        "Heart",
+        "Brain",
+        "Stomach"
+      ],
+      "answer": 1,
+      "explanation": "The heart contracts to pump blood through blood vessels."
+    },
+    {
+      "question": "What is the capital of France?",
+      "choices": [
+        "Rome",
+        "Madrid",
+        "Paris",
+        "Berlin"
+      ],
+      "answer": 2,
+      "explanation": "Paris is the capital of France."
+    },
+    {
+      "question": "Which of these numbers is prime?",
+      "choices": [
+        "9",
+        "15",
+        "21",
+        "23"
+      ],
+      "answer": 3,
+      "explanation": "23 has exactly two positive factors: 1 and 23."
+    },
+    {
+      "question": "What do we call water changing from liquid to gas?",
+      "choices": [
+        "Freezing",
+        "Melting",
+        "Condensation",
+        "Evaporation"
+      ],
+      "answer": 3,
+      "explanation": "Evaporation turns liquid water into water vapor."
+    },
+    {
+      "question": "Which punctuation mark ends a question?",
+      "choices": [
+        "Comma",
+        "Question mark",
+        "Colon",
+        "Full stop"
+      ],
+      "answer": 1,
+      "explanation": "A direct question ends with a question mark (?)."
+    },
+    {
+      "question": "What is 144 divided by 12?",
+      "choices": [
+        "10",
+        "11",
+        "12",
+        "14"
+      ],
+      "answer": 2,
+      "explanation": "12 × 12 = 144, so 144 ÷ 12 = 12."
+    },
+    {
+      "question": "On which continent is Egypt?",
+      "choices": [
+        "Asia",
+        "Europe",
+        "Africa",
+        "South America"
+      ],
+      "answer": 2,
+      "explanation": "Egypt is primarily in northeast Africa; its Sinai Peninsula is in Asia."
+    },
+    {
+      "question": "Which is the smallest unit of life?",
+      "choices": [
+        "Organ",
+        "Tissue",
+        "Cell",
+        "Atom"
+      ],
+      "answer": 2,
+      "explanation": "Cells are the basic structural and functional units of living things."
+    },
+    {
+      "question": "What is the past tense of go?",
+      "choices": [
+        "Goed",
+        "Gone",
+        "Going",
+        "Went"
+      ],
+      "answer": 3,
+      "explanation": "Go is an irregular verb. Its simple past tense is went."
+    },
+    {
+      "question": "How many centimeters make one meter?",
+      "choices": [
+        "10",
+        "100",
+        "1,000",
+        "10,000"
+      ],
+      "answer": 1,
+      "explanation": "Centi- means one hundredth, so 100 centimeters = 1 meter."
+    },
+    {
+      "question": "What is the closest star to Earth?",
+      "choices": [
+        "Sirius",
+        "Polaris",
+        "The Sun",
+        "Alpha Centauri"
+      ],
+      "answer": 2,
+      "explanation": "The Sun is our closest star."
+    },
+    {
+      "question": "Which fraction is equivalent to one half?",
+      "choices": [
+        "2/3",
+        "3/4",
+        "4/8",
+        "5/8"
+      ],
+      "answer": 2,
+      "explanation": "Divide both 4 and 8 by 4 to get 1/2."
+    },
+    {
+      "question": "What is the process by which a caterpillar becomes a butterfly?",
+      "choices": [
+        "Photosynthesis",
+        "Metamorphosis",
+        "Germination",
+        "Erosion"
+      ],
+      "answer": 1,
+      "explanation": "Metamorphosis changes an animal’s body as it develops."
+    },
+    {
+      "question": "What is the main job of the lungs?",
+      "choices": [
+        "Digest food",
+        "Exchange gases",
+        "Pump blood",
+        "Store memories"
+      ],
+      "answer": 1,
+      "explanation": "Lungs take oxygen into the blood and remove carbon dioxide."
+    },
+    {
+      "question": "Which of these is a renewable energy source?",
+      "choices": [
+        "Coal",
+        "Oil",
+        "Sunlight",
+        "Natural gas"
+      ],
+      "answer": 2,
+      "explanation": "Sunlight is replenished naturally, unlike fossil fuels."
+    },
+    {
+      "question": "What is the perimeter of a square with 5 cm sides?",
+      "choices": [
+        "10 cm",
+        "15 cm",
+        "20 cm",
+        "25 cm"
+      ],
+      "answer": 2,
+      "explanation": "A square has four equal sides. 4 × 5 = 20 cm."
+    },
+    {
+      "question": "Which word means the opposite of ancient?",
+      "choices": [
+        "Old",
+        "Historic",
+        "Modern",
+        "Early"
+      ],
+      "answer": 2,
+      "explanation": "Modern means relating to the present or recent times."
+    },
+    {
+      "question": "What instrument measures temperature?",
+      "choices": [
+        "Barometer",
+        "Thermometer",
+        "Ruler",
+        "Compass"
+      ],
+      "answer": 1,
+      "explanation": "A thermometer measures temperature."
+    },
+    {
+      "question": "Which layer of Earth do we live on?",
+      "choices": [
+        "Inner core",
+        "Outer core",
+        "Mantle",
+        "Crust"
+      ],
+      "answer": 3,
+      "explanation": "The crust is Earth’s thin outermost solid layer."
+    }
+  ]
+}

@@ -1,0 +1,951 @@
+{
+  "title": "Bible: Life in New Testament Times",
+  "questions": [
+    {
+      "question": "Which three patriarchs are connected with the Abrahamic covenant in the notes?",
+      "choices": [
+        "Abraham, Isaac, and Jacob",
+        "Saul, David, and Solomon",
+        "Moses, Aaron, and Joshua",
+        "Herod, Caesar, and Pilate"
+      ],
+      "answer": 0,
+      "explanation": "The notes connect the Abrahamic covenant with Abraham, Isaac, and Jacob."
+    },
+    {
+      "question": "Where were the Israelites held captive before the conquest of the Promised Land?",
+      "choices": [
+        "Persia",
+        "Egypt",
+        "Rome",
+        "Greece"
+      ],
+      "answer": 1,
+      "explanation": "Egyptian captivity comes before the conquest of the Promised Land in the notes."
+    },
+    {
+      "question": "Which sequence matches the early history outlined in the notes?",
+      "choices": [
+        "Jewish self-rule, Egyptian captivity, conquest of the Promised Land",
+        "Conquest of the Promised Land, Jewish self-rule, Egyptian captivity",
+        "Egyptian captivity, conquest of the Promised Land, Jewish self-rule",
+        "Egyptian captivity, Jewish self-rule, conquest of the Promised Land"
+      ],
+      "answer": 2,
+      "explanation": "The outline places captivity first, then conquest, and then self-rule."
+    },
+    {
+      "question": "Which kings ruled Israel's united kingdom in the order listed?",
+      "choices": [
+        "David, Saul, Solomon",
+        "Solomon, David, Saul",
+        "Saul, Solomon, David",
+        "Saul, David, Solomon"
+      ],
+      "answer": 3,
+      "explanation": "The notes list Saul, then David, then Solomon."
+    },
+    {
+      "question": "After the kingdom divided, which kingdom was in the north?",
+      "choices": [
+        "Israel",
+        "Judah",
+        "Egypt",
+        "Babylon"
+      ],
+      "answer": 0,
+      "explanation": "The notes place Israel in the north and Judah in the south."
+    },
+    {
+      "question": "Which kingdom lay south of Israel after the kingdom divided?",
+      "choices": [
+        "Assyria",
+        "Judah",
+        "Persia",
+        "Samaria"
+      ],
+      "answer": 1,
+      "explanation": "Judah was the southern kingdom in the divided-kingdom outline."
+    },
+    {
+      "question": "Which empire conquered the northern kingdom of Israel?",
+      "choices": [
+        "Persia",
+        "Rome",
+        "Assyria",
+        "Greece"
+      ],
+      "answer": 2,
+      "explanation": "The historical outline identifies Assyria as the conqueror of northern Israel."
+    },
+    {
+      "question": "What does it mean that Judah became a vassal state under Assyria?",
+      "choices": [
+        "Judah ruled the Assyrian Empire",
+        "Judah became part of Egypt's royal family",
+        "Judah gained complete independence",
+        "Judah was subject to Assyrian authority"
+      ],
+      "answer": 3,
+      "explanation": "A vassal state is subordinate to a stronger power; the notes describe Judah this way under Assyria."
+    },
+    {
+      "question": "Which empire conquered Babylon, according to the outline?",
+      "choices": [
+        "Persia",
+        "Assyria",
+        "Egypt",
+        "Rome"
+      ],
+      "answer": 0,
+      "explanation": "The notes say Persia conquered Babylon."
+    },
+    {
+      "question": "Which sequence matches the later empires in the notes?",
+      "choices": [
+        "Persian, Babylonian, Roman, Greek",
+        "Babylonian, Persian, Greek, Roman",
+        "Greek, Persian, Babylonian, Roman",
+        "Roman, Greek, Persian, Babylonian"
+      ],
+      "answer": 1,
+      "explanation": "The outline moves from Babylonian captivity through Persian and Greek rule to Roman rule."
+    },
+    {
+      "question": "According to the notes, where did more Jews live during the Roman period?",
+      "choices": [
+        "Only in Jerusalem",
+        "Only in Bethlehem",
+        "Outside Israel",
+        "Inside the Temple grounds"
+      ],
+      "answer": 2,
+      "explanation": "The notes state that more Jews lived outside Israel than inside it."
+    },
+    {
+      "question": "Which religious concession did Rome make to the Jews in the notes?",
+      "choices": [
+        "They could no longer offer Temple sacrifices",
+        "They had to pay taxes only to the Temple",
+        "They could choose the Roman emperor",
+        "They did not have to celebrate pagan rituals"
+      ],
+      "answer": 3,
+      "explanation": "The notes list exemption from pagan rituals among Rome's concessions to the Jews."
+    },
+    {
+      "question": "Where were Jews allowed to offer sacrifices under the arrangement described?",
+      "choices": [
+        "At the Temple",
+        "At the Roman Senate",
+        "At a Roman military road",
+        "At the emperor's palace"
+      ],
+      "answer": 0,
+      "explanation": "The notes say Jews were allowed to offer sacrifices at the Temple."
+    },
+    {
+      "question": "Which institution was allowed to collect the Temple tax from Jewish men across the empire?",
+      "choices": [
+        "The Roman Senate",
+        "The Temple",
+        "The Assyrian army",
+        "The royal family of Egypt"
+      ],
+      "answer": 1,
+      "explanation": "The continuation at the top of 7023 says the Temple could collect its tax from Jewish men in the empire."
+    },
+    {
+      "question": "Which covenant is described as the seed of the Jewish faith?",
+      "choices": [
+        "Rome's tax agreement",
+        "The Assyrian vassal agreement",
+        "The Abrahamic covenant",
+        "Herod's building plan"
+      ],
+      "answer": 2,
+      "explanation": "The notes call Abraham's covenant the seed of the Jewish faith."
+    },
+    {
+      "question": "What does the outline connect with the giving of the Law?",
+      "choices": [
+        "The Roman Senate and its roads",
+        "The Pax Romana and its taxes",
+        "Herod's palace and aqueducts",
+        "The Ten Commandments and Deuteronomy"
+      ],
+      "answer": 3,
+      "explanation": "The notes connect the giving of the Law with the Ten Commandments and Deuteronomy."
+    },
+    {
+      "question": "What does the term Diaspora describe in these notes?",
+      "choices": [
+        "Jews scattered from Israel and resettled in other lands",
+        "The rebuilding of Jerusalem's roads",
+        "The division of Israel into farming districts",
+        "The collection of the Temple tax"
+      ],
+      "answer": 0,
+      "explanation": "Diaspora refers to the scattering and resettlement of Jews outside Israel."
+    },
+    {
+      "question": "What role did synagogues serve in Jewish communities?",
+      "choices": [
+        "Roman army headquarters",
+        "Centers of Jewish religious life",
+        "Royal grain warehouses",
+        "Offices for appointing emperors"
+      ],
+      "answer": 1,
+      "explanation": "The notes describe synagogues as centers of Jewish religious life."
+    },
+    {
+      "question": "After Jews returned to Israel, what political condition does the outline describe?",
+      "choices": [
+        "They ruled the whole Roman Empire",
+        "They never again faced foreign rule",
+        "They remained under various outside authorities",
+        "They immediately restored the united kingdom"
+      ],
+      "answer": 2,
+      "explanation": "The notes say Jews returned under various political authorities and still were not free."
+    },
+    {
+      "question": "Which ruler is identified as the king during the period discussed around Jesus' birth?",
+      "choices": [
+        "Solomon",
+        "Saul",
+        "Cyrus",
+        "Herod the Great"
+      ],
+      "answer": 3,
+      "explanation": "The first-century section focuses on King Herod the Great."
+    },
+    {
+      "question": "Who put Herod the Great in power, according to the notes?",
+      "choices": [
+        "The Roman Senate",
+        "The Assyrian army",
+        "The priests of Babylon",
+        "The kings of the united kingdom"
+      ],
+      "answer": 0,
+      "explanation": "The notes describe Herod as a vassal king installed by the Roman Senate."
+    },
+    {
+      "question": "Which Jerusalem structure did Herod especially expand and improve?",
+      "choices": [
+        "The Egyptian pyramids",
+        "The Temple",
+        "The walls of Babylon",
+        "The palace of Solomon in Egypt"
+      ],
+      "answer": 1,
+      "explanation": "The notes emphasize Herod's expansion and improvement of Jerusalem, especially the Temple."
+    },
+    {
+      "question": "In the biblical account summarized in the notes, why did Herod order the killing of young boys in Bethlehem?",
+      "choices": [
+        "He was collecting the Temple tax",
+        "He was rebuilding Jerusalem",
+        "He was attempting to kill Jesus",
+        "He was fighting the Assyrians"
+      ],
+      "answer": 2,
+      "explanation": "The notes connect the killings in Bethlehem with Herod's attempt to kill Jesus."
+    },
+    {
+      "question": "What kind of Messiah were people expecting in the notes?",
+      "choices": [
+        "A Roman tax collector who would increase taxes",
+        "An Assyrian king who would destroy Judah",
+        "A farmer who would stop all travel",
+        "A human military rescuer who would free them from oppressors"
+      ],
+      "answer": 3,
+      "explanation": "The notes describe an expectation of a military Messiah who would rescue the people and restore a golden age."
+    },
+    {
+      "question": "What does Pax Romana mean?",
+      "choices": [
+        "Roman Peace",
+        "Roman Tax",
+        "Jewish Law",
+        "Greek Kingdom"
+      ],
+      "answer": 0,
+      "explanation": "The notes translate Pax Romana as Roman Peace."
+    },
+    {
+      "question": "How did travel and trade change during the Pax Romana in the notes?",
+      "choices": [
+        "They declined sharply",
+        "They increased dramatically",
+        "They were limited to the city of Rome",
+        "They were limited to military supplies"
+      ],
+      "answer": 1,
+      "explanation": "The economics section links the Pax Romana with a large increase in travel and trade."
+    },
+    {
+      "question": "Why would greater political peace help travel and trade?",
+      "choices": [
+        "Peace reduced the demand for farm products",
+        "Peace removed the need to move goods",
+        "More stable conditions made movement and exchange easier",
+        "Peace meant every village produced everything it needed"
+      ],
+      "answer": 2,
+      "explanation": "This is an application of the notes' connection between political peace and increased travel and trade."
+    },
+    {
+      "question": "What was the main economic activity described for the population?",
+      "choices": [
+        "Deep-sea exploration",
+        "Industrial factory work",
+        "Large-scale banking",
+        "Agriculture"
+      ],
+      "answer": 3,
+      "explanation": "The notes describe an agrarian economy, centered on farming."
+    },
+    {
+      "question": "What is a subsistence farmer?",
+      "choices": [
+        "A farmer who produces just enough to get by",
+        "A ruler who collects taxes from farmers",
+        "A merchant who buys all food from abroad",
+        "A landowner who grows only luxury exports"
+      ],
+      "answer": 0,
+      "explanation": "The notes explain subsistence farming as producing just enough to get by."
+    },
+    {
+      "question": "Which group contains grains listed in the notes?",
+      "choices": [
+        "Olives, figs, dates, and grapes",
+        "Wheat, barley, millet, and rice",
+        "Lentils, beans, peppers, and ginger",
+        "Onions, leeks, squash, and radishes"
+      ],
+      "answer": 1,
+      "explanation": "Wheat, barley, millet, and rice appear in the grain list."
+    },
+    {
+      "question": "Which group contains fruits listed in the notes?",
+      "choices": [
+        "Wheat, barley, millet, and rice",
+        "Salt, pepper, and ginger",
+        "Olives, figs, dates, and grapes",
+        "Lentils, beans, and cabbage"
+      ],
+      "answer": 2,
+      "explanation": "The notes list olives, figs, dates, and grapes as fruits."
+    },
+    {
+      "question": "Which pair is listed as legumes?",
+      "choices": [
+        "Wheat and barley",
+        "Figs and dates",
+        "Salt and ginger",
+        "Lentils and beans"
+      ],
+      "answer": 3,
+      "explanation": "Lentils and beans are the legumes listed in the notes."
+    },
+    {
+      "question": "Which group is listed with spices and seasonings?",
+      "choices": [
+        "Salt, pepper, and ginger",
+        "Onions, leeks, and radishes",
+        "Lentils, beans, and barley",
+        "Olives, dates, and grapes"
+      ],
+      "answer": 0,
+      "explanation": "The notes group salt, pepper, and ginger under spices."
+    },
+    {
+      "question": "Which meat in the notes is specifically marked as a Gentile food?",
+      "choices": [
+        "Lamb",
+        "Pork",
+        "Fish",
+        "Goat"
+      ],
+      "answer": 1,
+      "explanation": "The meat list marks pigs as Gentile food, distinguishing pork from the other listed foods."
+    },
+    {
+      "question": "Which group is listed among the landowning elite?",
+      "choices": [
+        "Tenant farmers",
+        "Wage laborers",
+        "Royal families",
+        "Small landowners in the peasantry"
+      ],
+      "answer": 2,
+      "explanation": "The notes place royal families among the landowning elite."
+    },
+    {
+      "question": "Besides royal families, who is listed among the elite?",
+      "choices": [
+        "All wage laborers",
+        "All tenant farmers",
+        "All small landowners",
+        "Religious leaders and priests"
+      ],
+      "answer": 3,
+      "explanation": "Religious leaders and priests are the other group listed under the elite."
+    },
+    {
+      "question": "Which group belongs to the peasantry in the notes?",
+      "choices": [
+        "Tenant farmers",
+        "Royal families",
+        "Roman senators",
+        "Elite priests"
+      ],
+      "answer": 0,
+      "explanation": "The notes include small landowners, tenant farmers, and wage laborers in the peasantry."
+    },
+    {
+      "question": "How does a wage laborer earn a living?",
+      "choices": [
+        "By collecting rent on all village farmland",
+        "By working in return for pay",
+        "By receiving tribute as a royal ruler",
+        "By collecting the Temple tax as a priest"
+      ],
+      "answer": 1,
+      "explanation": "A wage laborer works for wages; this explains one of the groups in the notes' peasantry list."
+    },
+    {
+      "question": "Which kind of trade supplied most of Judea's trade in the notes?",
+      "choices": [
+        "International trade",
+        "Trade only with Egypt",
+        "Internal trade",
+        "Trade only with Greece"
+      ],
+      "answer": 2,
+      "explanation": "The trade section says most trade was internal to Judea."
+    },
+    {
+      "question": "Why did subsistence farming limit the ability to buy extra goods?",
+      "choices": [
+        "Farmers spent all their money on foreign travel",
+        "All extra money went into building roads",
+        "Farmers could buy goods only from the Senate",
+        "People had little or no money left for amenities"
+      ],
+      "answer": 3,
+      "explanation": "The notes say people had little or no extra money to spend on amenities."
+    },
+    {
+      "question": "Why did having few surplus products limit international trade?",
+      "choices": [
+        "There was little extra produce to sell abroad",
+        "Local farmers were required to export all grain",
+        "Overseas buyers accepted only luxury goods",
+        "The same products were never grown abroad"
+      ],
+      "answer": 0,
+      "explanation": "The notes list little extra produce to sell abroad as a reason for limited international trade."
+    },
+    {
+      "question": "What additional barrier to international trade is mentioned in the notes?",
+      "choices": [
+        "A complete absence of farming",
+        "Religious disinclination toward international commerce",
+        "A ban on every form of local exchange",
+        "A lack of demand for any food"
+      ],
+      "answer": 1,
+      "explanation": "The notes list religious disinclination toward international commerce alongside limited money and surplus goods."
+    },
+    {
+      "question": "Which oil is listed as an export?",
+      "choices": [
+        "Whale oil",
+        "Petroleum",
+        "Olive oil",
+        "Coconut oil"
+      ],
+      "answer": 2,
+      "explanation": "Olive oil appears in the export list at the top of 7026."
+    },
+    {
+      "question": "Which fruit is listed as an export?",
+      "choices": [
+        "Apples",
+        "Pears",
+        "Peaches",
+        "Dates"
+      ],
+      "answer": 3,
+      "explanation": "Dates are named in the notes' export list."
+    },
+    {
+      "question": "What was opobalsam, called the Balm of Gilead in the notes?",
+      "choices": [
+        "An aromatic resinous juice",
+        "A Roman road-building material",
+        "A type of grain",
+        "A tax paid to the Roman Senate"
+      ],
+      "answer": 0,
+      "explanation": "The notes describe opobalsam as an aromatic resinous juice from a shrub, called the Balm of Gilead."
+    },
+    {
+      "question": "Why was Israel subject to Roman taxation?",
+      "choices": [
+        "It controlled Rome's treasury",
+        "It was part of the Roman Empire",
+        "It collected taxes from Roman provinces",
+        "It had no local religious institutions"
+      ],
+      "answer": 1,
+      "explanation": "The taxation section says Israel was taxed as part of the Roman Empire."
+    },
+    {
+      "question": "About how much work did the annual Temple tax represent in the notes?",
+      "choices": [
+        "Two hours' wages",
+        "Two months' wages",
+        "Two days' wages",
+        "Two years' wages"
+      ],
+      "answer": 2,
+      "explanation": "The notes describe the Temple tax for each Jewish man as about two days' wages."
+    },
+    {
+      "question": "What approximate total taxation rate do the notes give?",
+      "choices": [
+        "3 percent",
+        "10 percent",
+        "90 percent",
+        "30 percent"
+      ],
+      "answer": 3,
+      "explanation": "The notes estimate total taxation at about 30 percent."
+    },
+    {
+      "question": "Which group contains technological advances listed in the notes?",
+      "choices": [
+        "Cement, water wheels, and millstones",
+        "Steam engines, railways, and steel mills",
+        "Telegraphs, radios, and electric motors",
+        "Printing presses, telescopes, and cameras"
+      ],
+      "answer": 0,
+      "explanation": "The technology section lists cement, the water wheel, and millstones before discussing roads and arches."
+    },
+    {
+      "question": "Where were roads more common, according to the notes?",
+      "choices": [
+        "Only inside the Temple",
+        "Outside Israel",
+        "Only around Bethlehem",
+        "Only on Judean farms"
+      ],
+      "answer": 1,
+      "explanation": "The notes describe roads as more common outside Israel."
+    },
+    {
+      "question": "About how wide was an average Roman road in the notes?",
+      "choices": [
+        "1 meter, or about 3 feet",
+        "20 meters, or about 66 feet",
+        "6 meters, or about 20 feet",
+        "60 meters, or about 200 feet"
+      ],
+      "answer": 2,
+      "explanation": "The notes give an average width of around 6 meters, approximately 20 feet."
+    },
+    {
+      "question": "What military benefit did Roman roads provide?",
+      "choices": [
+        "They replaced soldiers with tax collectors",
+        "They prevented travel between military bases",
+        "They limited armies to travel by sea",
+        "They improved the movement of military forces"
+      ],
+      "answer": 3,
+      "explanation": "The notes connect roads with military advantage and identify military roads."
+    },
+    {
+      "question": "How did Roman roads affect communication?",
+      "choices": [
+        "They increased its speed",
+        "It restricted messages to a single town",
+        "It stopped communication between provinces",
+        "It required all messages to pass through Jerusalem"
+      ],
+      "answer": 0,
+      "explanation": "The notes specifically say roads increased communication speed."
+    },
+    {
+      "question": "What do the notes say about some Roman roads today?",
+      "choices": [
+        "Every road was replaced by a canal",
+        "Some are still used",
+        "All are used only as military bases",
+        "None has survived"
+      ],
+      "answer": 1,
+      "explanation": "The technology section says some Roman roads are still used today."
+    },
+    {
+      "question": "According to the notes, what did the Romans do with arches?",
+      "choices": [
+        "Used them only in temporary tents",
+        "Restricted their use to farm tools",
+        "Perfected their use",
+        "Abandoned their use in construction"
+      ],
+      "answer": 2,
+      "explanation": "The notes say arches were perfected by the Romans during this period."
+    },
+    {
+      "question": "Which group lists uses of arches in the notes?",
+      "choices": [
+        "Grain, vegetables, and fruit",
+        "Tax records, coins, and wages",
+        "Swords, shields, and helmets",
+        "Doorways and gates, bridges, and aqueducts"
+      ],
+      "answer": 3,
+      "explanation": "The notes list buildings' doors and gates, bridges, and aqueducts as uses of arches."
+    },
+    {
+      "question": "Which thinker is associated with calculating Earth's circumference in the notes?",
+      "choices": [
+        "Eratosthenes",
+        "Herod the Great",
+        "Saul",
+        "Abraham"
+      ],
+      "answer": 0,
+      "explanation": "The notes associate Eratosthenes with recognizing Earth's shape and calculating its circumference; the questionable date is excluded."
+    },
+    {
+      "question": "What field did the notes associate with Eratosthenes?",
+      "choices": [
+        "Tax collection",
+        "Geography",
+        "Temple construction",
+        "Royal succession"
+      ],
+      "answer": 1,
+      "explanation": "The notes call Eratosthenes the Father of Geography."
+    },
+    {
+      "question": "Which procedure is listed as something ancient doctors performed?",
+      "choices": [
+        "MRI scanning",
+        "Laser eye surgery",
+        "Amputation",
+        "Heart transplantation"
+      ],
+      "answer": 2,
+      "explanation": "The medicine section lists amputations, eye operations, and tracheotomies; it does not list modern procedures."
+    },
+    {
+      "question": "Which material do the notes say was used for dental fillings?",
+      "choices": [
+        "Cement from roads",
+        "Olive oil",
+        "Ginger",
+        "Gold"
+      ],
+      "answer": 3,
+      "explanation": "The dental-work section mentions fillings made with gold."
+    },
+    {
+      "question": "How close to the actual value do the notes say Eratosthenes' calculation was?",
+      "choices": [
+        "Within 1 percent",
+        "Within 10 percent",
+        "Within 25 percent",
+        "Within 50 percent"
+      ],
+      "answer": 0,
+      "explanation": "The notes say his calculation was within 1 percent of the actual value."
+    },
+    {
+      "question": "What circumference of Earth is given in the notes?",
+      "choices": [
+        "2,400 miles",
+        "24,000 miles",
+        "240,000 miles",
+        "12,000 miles"
+      ],
+      "answer": 1,
+      "explanation": "The notes describe Earth's circumference as 24,000 miles."
+    },
+    {
+      "question": "According to the class notes, what did ancient doctors lack when performing operations?",
+      "choices": [
+        "Surgical procedures",
+        "Patients needing treatment",
+        "Anesthetics",
+        "Knowledge of amputations"
+      ],
+      "answer": 2,
+      "explanation": "The notes say doctors performed operations but had no anesthetics."
+    },
+    {
+      "question": "What sources of material for false teeth are listed in the notes?",
+      "choices": [
+        "Stone and clay",
+        "Olive wood and resin",
+        "Cement and glass",
+        "Animal and human teeth"
+      ],
+      "answer": 3,
+      "explanation": "The notes say false teeth were made using animal and human teeth."
+    },
+    {
+      "question": "How many years of silence from God before Jesus are described in the class notes?",
+      "choices": [
+        "450 years",
+        "40 years",
+        "100 years",
+        "1,000 years"
+      ],
+      "answer": 0,
+      "explanation": "The notes describe 450 years of silence from God before the time of Jesus."
+    },
+    {
+      "question": "What reason do the class notes give for creating synagogues in towns?",
+      "choices": [
+        "The Roman Senate had moved to Judea",
+        "The Temple had been destroyed",
+        "All Jews had become farmers",
+        "Herod had banned all religious gatherings"
+      ],
+      "answer": 1,
+      "explanation": "The notes say synagogues were created in towns as centers of Jewish religion because the Temple had been destroyed."
+    },
+    {
+      "question": "What share of the population do the notes identify as the elite?",
+      "choices": [
+        "30 percent",
+        "50 percent",
+        "10 percent",
+        "90 percent"
+      ],
+      "answer": 2,
+      "explanation": "The notes place the landowning elite at 10 percent."
+    },
+    {
+      "question": "What share of the population do the notes identify as the peasantry?",
+      "choices": [
+        "7 percent",
+        "10 percent",
+        "30 percent",
+        "90 percent"
+      ],
+      "answer": 3,
+      "explanation": "The notes place the peasantry at 90 percent."
+    },
+    {
+      "question": "What percentage of the Roman Empire's population do the class notes say was Jewish?",
+      "choices": [
+        "7 percent",
+        "1 percent",
+        "30 percent",
+        "70 percent"
+      ],
+      "answer": 0,
+      "explanation": "The notes state that Jews made up 7 percent of the empire."
+    },
+    {
+      "question": "During what years do the notes place Herod's expansion and improvement of the Temple?",
+      "choices": [
+        "722–701 BC",
+        "20–16 BC",
+        "1050–930 BC",
+        "27 BC–180 AD"
+      ],
+      "answer": 1,
+      "explanation": "The notes give 20–16 BC for Herod's expansion and improvement of the Temple."
+    },
+    {
+      "question": "Using the corrected class-note date, about when did Eratosthenes calculate Earth's circumference?",
+      "choices": [
+        "2000 BC",
+        "200 AD",
+        "200 BC",
+        "2000 AD"
+      ],
+      "answer": 2,
+      "explanation": "The intended class-note date is about 200 BC, with the extra zero removed as requested."
+    },
+    {
+      "question": "About how long did Egyptian captivity last in the class outline?",
+      "choices": [
+        "7 years",
+        "40 years",
+        "120 years",
+        "400 years"
+      ],
+      "answer": 3,
+      "explanation": "The notes give approximately 400 years for Egyptian captivity."
+    },
+    {
+      "question": "How long does the outline give for the conquest of the Promised Land?",
+      "choices": [
+        "7 years",
+        "40 years",
+        "120 years",
+        "400 years"
+      ],
+      "answer": 0,
+      "explanation": "The notes give approximately seven years for the conquest of the Promised Land."
+    },
+    {
+      "question": "About how long did Jewish self-rule last in the early historical outline?",
+      "choices": [
+        "7 years",
+        "400 years",
+        "40 years",
+        "120 years"
+      ],
+      "answer": 1,
+      "explanation": "The outline places roughly 400 years of Jewish self-rule after the conquest."
+    },
+    {
+      "question": "What dates do the notes give for Israel's united kingdom?",
+      "choices": [
+        "930–720 BC",
+        "720–701 BC",
+        "1050–930 BC",
+        "63–27 BC"
+      ],
+      "answer": 2,
+      "explanation": "The notes date the united kingdom from 1050 to 930 BC."
+    },
+    {
+      "question": "How long did each of Saul, David, and Solomon reign, according to the notes?",
+      "choices": [
+        "7 years",
+        "20 years",
+        "60 years",
+        "40 years"
+      ],
+      "answer": 3,
+      "explanation": "The notes give each of these three kings a reign of 40 years."
+    },
+    {
+      "question": "When does the class outline place the beginning of the divided kingdom?",
+      "choices": [
+        "930 BC",
+        "1050 BC",
+        "539 BC",
+        "63 BC"
+      ],
+      "answer": 0,
+      "explanation": "The divided-kingdom section begins at 930 BC in the notes."
+    },
+    {
+      "question": "What year does the outline give for Babylonian captivity?",
+      "choices": [
+        "701 BC",
+        "587 BC",
+        "539 BC",
+        "63 BC"
+      ],
+      "answer": 1,
+      "explanation": "The notes place Babylonian captivity at 587 BC."
+    },
+    {
+      "question": "What year do the notes give for Persia's conquest of Babylon?",
+      "choices": [
+        "701 BC",
+        "587 BC",
+        "539 BC",
+        "63 BC"
+      ],
+      "answer": 2,
+      "explanation": "The notes say Persia conquered Babylon in 539 BC."
+    },
+    {
+      "question": "What date is written beside the Greek Empire in the class outline?",
+      "choices": [
+        "539 BC",
+        "587 BC",
+        "63 BC",
+        "329 BC"
+      ],
+      "answer": 3,
+      "explanation": "The class outline gives 329 BC for the Greek Empire."
+    },
+    {
+      "question": "What date marks the beginning of Roman rule in the class outline?",
+      "choices": [
+        "63 BC",
+        "329 BC",
+        "539 BC",
+        "701 BC"
+      ],
+      "answer": 0,
+      "explanation": "The notes give 63 BC beside the Roman Empire."
+    },
+    {
+      "question": "When do the notes say Assyria made Judah a vassal state?",
+      "choices": [
+        "1050 BC",
+        "701 BC",
+        "930 BC",
+        "539 BC"
+      ],
+      "answer": 1,
+      "explanation": "The notes place Judah's vassal status under Assyria at 701 BC."
+    },
+    {
+      "question": "Which group contains vegetables listed in the notes?",
+      "choices": [
+        "Wheat, barley, millet, and rice",
+        "Olives, figs, dates, and grapes",
+        "Onions, leeks, squash, and radishes",
+        "Salt, pepper, and ginger"
+      ],
+      "answer": 2,
+      "explanation": "The vegetable list includes onions, garlic, leeks, squash, cabbage, radishes, and beets."
+    },
+    {
+      "question": "Who was required to pay the Temple tax in the notes?",
+      "choices": [
+        "Only Jewish men living in Jerusalem",
+        "Only members of royal families",
+        "Only Roman soldiers in Judea",
+        "Every Jewish man"
+      ],
+      "answer": 3,
+      "explanation": "The notes describe the Temple tax as applying to every Jewish man."
+    },
+    {
+      "question": "Which period does the outline call the golden age of Israel?",
+      "choices": [
+        "The united kingdom",
+        "Egyptian captivity",
+        "Babylonian captivity",
+        "Roman rule"
+      ],
+      "answer": 0,
+      "explanation": "The notes label the united kingdom the golden age of Israel."
+    },
+    {
+      "question": "Besides fillings and false teeth, what dental practice is mentioned in the notes?",
+      "choices": [
+        "Fitting metal braces",
+        "Polishing teeth",
+        "Using electric drills",
+        "Taking dental X-rays"
+      ],
+      "answer": 1,
+      "explanation": "The dental-work section also mentions polishing teeth."
+    }
+  ]
+}

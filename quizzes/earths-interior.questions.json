@@ -1,0 +1,445 @@
+{
+  "title": "Earth’s Interior — Core, Seismic Waves, Mantle and Crust",
+  "questions": [
+    {
+      "question": "Where is Earth’s core located?",
+      "choices": [
+        "At the center of Earth",
+        "Between the crust and the mantle",
+        "In the thin outermost layer",
+        "Above the mantle but below the crust"
+      ],
+      "answer": 0,
+      "explanation": "The notes identify the core as the central portion of Earth."
+    },
+    {
+      "question": "Which two parts make up Earth’s core?",
+      "choices": [
+        "The crust and the mantle",
+        "The inner core and the outer core",
+        "The continental crust and the oceanic crust",
+        "The lithosphere and the asthenosphere"
+      ],
+      "answer": 1,
+      "explanation": "The core has two parts: a solid inner core and a liquid outer core."
+    },
+    {
+      "question": "What is the physical state of Earth’s outer core?",
+      "choices": [
+        "Solid",
+        "Gas",
+        "Liquid",
+        "Plasma"
+      ],
+      "answer": 2,
+      "explanation": "The outer core is the liquid layer surrounding the inner core."
+    },
+    {
+      "question": "What is the physical state of Earth’s inner core?",
+      "choices": [
+        "Liquid",
+        "Gas",
+        "Plasma",
+        "Solid"
+      ],
+      "answer": 3,
+      "explanation": "The inner core is solid, even though it is extremely hot."
+    },
+    {
+      "question": "Why does the inner core stay solid despite its high temperature?",
+      "choices": [
+        "The pressure is extremely high",
+        "It is cooler than Earth’s outer core",
+        "The pressure at Earth’s center is very low",
+        "It contains no iron"
+      ],
+      "answer": 0,
+      "explanation": "Intense pressure keeps the inner core solid despite the heat."
+    },
+    {
+      "question": "Which metal is a major component of Earth’s core?",
+      "choices": [
+        "Aluminum",
+        "Iron",
+        "Copper",
+        "Zinc"
+      ],
+      "answer": 1,
+      "explanation": "Iron is a major component of the core. The notes also mention sulfur as a possible additional component."
+    },
+    {
+      "question": "What is produced by the movement of conducting liquid in Earth’s outer core?",
+      "choices": [
+        "The force of gravity itself",
+        "The solid continental crust directly",
+        "Earth’s magnetic field",
+        "The heat received from the Sun"
+      ],
+      "answer": 2,
+      "explanation": "Moving liquid metal in the outer core helps generate Earth’s magnetic field."
+    },
+    {
+      "question": "Which part of Earth is hottest?",
+      "choices": [
+        "The outer core",
+        "The mantle",
+        "The crust",
+        "The inner core"
+      ],
+      "answer": 3,
+      "explanation": "The sketch identifies the innermost solid core as the hottest region and labels the outer core as hot."
+    },
+    {
+      "question": "What does the P in P waves stand for?",
+      "choices": [
+        "Primary",
+        "Periodic",
+        "Planetary",
+        "Peripheral"
+      ],
+      "answer": 0,
+      "explanation": "P waves are primary seismic waves."
+    },
+    {
+      "question": "What does the S in S waves stand for?",
+      "choices": [
+        "Surface",
+        "Secondary",
+        "Subsurface",
+        "Spherical"
+      ],
+      "answer": 1,
+      "explanation": "S waves are secondary seismic waves. Surface waves are a different category."
+    },
+    {
+      "question": "P and S waves leave an earthquake at the same time and travel along comparable paths through the same solid material. Which arrives first?",
+      "choices": [
+        "The S waves",
+        "They must arrive at the same time",
+        "The P waves",
+        "Their order depends only on the size of the earthquake"
+      ],
+      "answer": 2,
+      "explanation": "P waves travel faster than S waves, so they arrive first under these conditions."
+    },
+    {
+      "question": "Through which states of matter can P waves travel?",
+      "choices": [
+        "Solids only",
+        "Solids and liquids, but not gases",
+        "Liquids and gases, but not solids",
+        "Solids, liquids and gases"
+      ],
+      "answer": 3,
+      "explanation": "The notes state that P waves can travel through solids, liquids and gases."
+    },
+    {
+      "question": "Through which state of matter can S waves travel?",
+      "choices": [
+        "Solids",
+        "Liquids",
+        "Gases",
+        "Solids, liquids and gases"
+      ],
+      "answer": 0,
+      "explanation": "S waves travel through solids; they do not pass through liquids or gases."
+    },
+    {
+      "question": "What natural event produces the seismic waves used to study Earth’s interior in these notes?",
+      "choices": [
+        "A mantle convection current",
+        "An earthquake",
+        "A change in Earth’s magnetic field",
+        "The heating of the crust by sunlight"
+      ],
+      "answer": 1,
+      "explanation": "The diagrams mark an earthquake as the source of waves that travel through Earth."
+    },
+    {
+      "question": "Which observation supports the conclusion that Earth’s outer core is liquid?",
+      "choices": [
+        "S waves cross it faster than P waves",
+        "Both P and S waves pass through it unchanged",
+        "P waves can pass through it, but S waves cannot",
+        "Only S waves can pass through it"
+      ],
+      "answer": 2,
+      "explanation": "S waves cannot travel through liquid. Their failure to pass through the outer core is important evidence that it is liquid."
+    },
+    {
+      "question": "Which wave type can pass through the liquid outer core on a path toward the inner core?",
+      "choices": [
+        "S waves",
+        "Both P and S waves",
+        "Neither P nor S waves",
+        "P waves"
+      ],
+      "answer": 3,
+      "explanation": "P waves can travel through liquid, so liquid in the outer core does not prevent them from traveling toward the inner core."
+    },
+    {
+      "question": "In a laboratory test, both P waves and S waves pass directly through a sample. Which state is consistent with that result?",
+      "choices": [
+        "Solid",
+        "Liquid",
+        "Gas",
+        "Either liquid or gas, but not solid"
+      ],
+      "answer": 0,
+      "explanation": "Both wave types can travel through a solid. A liquid or gas would not transmit S waves."
+    },
+    {
+      "question": "Which measurements can help scientists investigate the core without traveling there?",
+      "choices": [
+        "Only the temperature of ocean water",
+        "The paths and arrival times of earthquake waves",
+        "Direct rock samples collected from the inner core",
+        "The number of visible cracks in surface rocks alone"
+      ],
+      "answer": 1,
+      "explanation": "The drawings connect wave paths, travel times and Earth’s internal structure. These provide indirect evidence about the core."
+    },
+    {
+      "question": "Where does the mantle lie?",
+      "choices": [
+        "Between the inner core and the outer core",
+        "Outside the crust",
+        "Between the crust and the outer core",
+        "Inside the inner core"
+      ],
+      "answer": 2,
+      "explanation": "The mantle extends from beneath the crust down to the outer core."
+    },
+    {
+      "question": "Which main layer makes up most of Earth’s volume?",
+      "choices": [
+        "The crust",
+        "The outer core alone",
+        "The inner core alone",
+        "The mantle"
+      ],
+      "answer": 3,
+      "explanation": "The mantle occupies roughly four-fifths of Earth’s volume, so it makes up most of the planet by volume."
+    },
+    {
+      "question": "Approximately what percentage of Earth’s mass is in the mantle?",
+      "choices": [
+        "67%",
+        "17%",
+        "33%",
+        "97%"
+      ],
+      "answer": 0,
+      "explanation": "The notes state that the mantle accounts for about 67% of Earth’s mass, or roughly two-thirds."
+    },
+    {
+      "question": "What is the circulation of a fluid called when hotter, less dense material rises and denser material sinks?",
+      "choices": [
+        "Seismic wave motion",
+        "Convection currents",
+        "Magnetic field reversal",
+        "Motion along a fault"
+      ],
+      "answer": 1,
+      "explanation": "Convection currents are circulating flows: hotter, less dense material rises while denser material sinks, creating a cycle of motion."
+    },
+    {
+      "question": "Which movement produces a convection current?",
+      "choices": [
+        "Hotter, less dense material sinks while denser material rises",
+        "Both hotter and cooler material move only downward",
+        "Hotter, less dense material rises while denser material sinks",
+        "Both hotter and cooler material move only upward"
+      ],
+      "answer": 2,
+      "explanation": "Rising hotter, less dense material and sinking denser material create circulating motion. Mantle rock can flow very slowly while remaining mostly solid."
+    },
+    {
+      "question": "How do temperature differences help drive convection currents?",
+      "choices": [
+        "They give all material the same density",
+        "They allow S waves to pass through liquids",
+        "They prevent material from moving",
+        "They create density differences that allow material to rise and sink"
+      ],
+      "answer": 3,
+      "explanation": "Hotter material is less dense and rises; denser material sinks. Together these movements form a circulating current."
+    },
+    {
+      "question": "What does mantle convection help transfer from Earth’s hotter interior toward cooler regions near the crust?",
+      "choices": [
+        "Heat",
+        "Cold ocean water",
+        "Magnetic poles",
+        "Earthquake vibrations"
+      ],
+      "answer": 0,
+      "explanation": "The illustrated movement carries warmer material toward cooler regions, helping transfer heat through the mantle."
+    },
+    {
+      "question": "Which main layer is outermost in the Earth cross-section sketches?",
+      "choices": [
+        "The mantle",
+        "The crust",
+        "The outer core",
+        "The inner core"
+      ],
+      "answer": 1,
+      "explanation": "The crust is Earth’s thin, hard outer layer, surrounding the mantle."
+    },
+    {
+      "question": "Which pair names the two main types of Earth’s crust?",
+      "choices": [
+        "Inner crust and outer crust",
+        "Primary crust and secondary crust",
+        "Continental crust and oceanic crust",
+        "Continental core and oceanic core"
+      ],
+      "answer": 2,
+      "explanation": "The worksheet lists continental crust and oceanic crust under Features of Earth’s Crust."
+    },
+    {
+      "question": "Starting at Earth’s surface and moving toward the center, which order is correct?",
+      "choices": [
+        "Mantle → crust → outer core → inner core",
+        "Crust → outer core → mantle → inner core",
+        "Crust → mantle → inner core → outer core",
+        "Crust → mantle → outer core → inner core"
+      ],
+      "answer": 3,
+      "explanation": "The crust surrounds the mantle; the mantle surrounds the outer core; and the inner core is at the center."
+    },
+    {
+      "question": "What does it mean to describe mantle rock as plastic or pliable?",
+      "choices": [
+        "It is made of manufactured plastic",
+        "It can slowly bend and deform under pressure",
+        "It is a gas that fills empty spaces",
+        "It cannot change shape under any force"
+      ],
+      "answer": 1,
+      "explanation": "Plastic or pliable rock can deform slowly; this does not mean that the mantle is a liquid ocean."
+    },
+    {
+      "question": "The asthenosphere is part of which main layer of Earth?",
+      "choices": [
+        "The inner core",
+        "The outer core",
+        "The upper mantle",
+        "The continental crust"
+      ],
+      "answer": 2,
+      "explanation": "The notes place the asthenosphere in the upper mantle."
+    },
+    {
+      "question": "What makes up Earth’s rigid lithosphere?",
+      "choices": [
+        "Only the crust",
+        "Only the stiff uppermost mantle",
+        "The crust and the liquid outer core",
+        "The crust and the stiff uppermost portion of the mantle"
+      ],
+      "answer": 3,
+      "explanation": "The lithosphere includes the crust and the stiff uppermost mantle, which form a rigid outer layer together."
+    },
+    {
+      "question": "Which two layers meet at the Moho Discontinuity?",
+      "choices": [
+        "The crust and the mantle",
+        "The mantle and the outer core",
+        "The outer core and the inner core",
+        "The atmosphere and the crust"
+      ],
+      "answer": 0,
+      "explanation": "The Moho Discontinuity is the boundary between Earth’s crust and mantle."
+    },
+    {
+      "question": "Which type of crust supports the continents?",
+      "choices": [
+        "Oceanic crust",
+        "Continental crust",
+        "The outer core",
+        "The asthenosphere"
+      ],
+      "answer": 1,
+      "explanation": "Continental crust is the crust on which the continents rest."
+    },
+    {
+      "question": "Which type of crust forms the ocean floor?",
+      "choices": [
+        "Continental crust",
+        "The lithosphere’s mantle portion",
+        "Oceanic crust",
+        "The outer core"
+      ],
+      "answer": 2,
+      "explanation": "Oceanic crust is the crust beneath the oceans."
+    },
+    {
+      "question": "What average thickness do the notes give for continental crust?",
+      "choices": [
+        "7 km",
+        "21.7 km",
+        "67 km",
+        "35 km"
+      ],
+      "answer": 3,
+      "explanation": "The notes give an average continental-crust thickness of 35 km, or about 21.7 miles. Thickness varies from place to place."
+    },
+    {
+      "question": "What average thickness do the notes give for oceanic crust?",
+      "choices": [
+        "7 km",
+        "35 km",
+        "4.3 km",
+        "67 km"
+      ],
+      "answer": 0,
+      "explanation": "The notes give an average oceanic-crust thickness of 7 km, or about 4.3 miles. This is thinner than the continental average."
+    },
+    {
+      "question": "Which rock is associated with continental crust in the notes?",
+      "choices": [
+        "Basalt",
+        "Granite",
+        "Gabbro",
+        "Peridotite"
+      ],
+      "answer": 1,
+      "explanation": "The notes associate continental crust with granite. Continental crust has an overall composition similar to granite; it contains other rocks too."
+    },
+    {
+      "question": "Which pair of rocks is associated with oceanic crust in the notes?",
+      "choices": [
+        "Granite and marble",
+        "Sandstone and limestone",
+        "Basalt and gabbro",
+        "Slate and quartzite"
+      ],
+      "answer": 2,
+      "explanation": "The notes name basalt and gabbro as rocks of oceanic crust."
+    },
+    {
+      "question": "Which borehole is identified in the notes as the deepest human-made hole into Earth?",
+      "choices": [
+        "The Moho Discontinuity",
+        "The continental crust",
+        "The asthenosphere",
+        "The Kola Superdeep Borehole"
+      ],
+      "answer": 3,
+      "explanation": "The Kola Superdeep Borehole is known for the greatest vertical penetration into Earth’s crust, rather than the longest total drilling path."
+    },
+    {
+      "question": "How does S-wave speed change in more dense material?",
+      "choices": [
+        "S waves travel faster",
+        "S waves travel slower",
+        "S waves always stop",
+        "S waves become P waves"
+      ],
+      "answer": 0,
+      "explanation": "S waves travel faster through more dense material."
+    }
+  ]
+}
