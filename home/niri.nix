@@ -254,10 +254,14 @@ in {
     };
   };
 
-  # eDP-1 is wired to the AMD iGPU (renderD129), not the NVIDIA dGPU (renderD128).
-  # Forcing niri to render on the AMD device avoids a cross-GPU 10-bit (XB30)
-  # copy to eDP-1 that NVIDIA's GLES driver can't read back (niri #4374).
+  # eDP-1 is wired to the AMD iGPU, not the NVIDIA dGPU. Forcing niri to render
+  # on the AMD device avoids a cross-GPU 10-bit (XB30) copy to eDP-1 that
+  # NVIDIA's GLES driver can't read back (niri #4374). Use the PCI-address
+  # by-path symlink rather than /dev/dri/renderD1XX: the numeric render node
+  # assigned to each GPU is not stable across reboots (driver load order),
+  # and this has already caused the workaround to silently point at the
+  # wrong GPU after a reboot.
   programs.niri.settings.debug = lib.optionalAttrs (hostname == "iviron") {
-    render-drm-device = "/dev/dri/renderD129";
+    render-drm-device = "/dev/dri/by-path/pci-0000:c6:00.0-render";
   };
 }

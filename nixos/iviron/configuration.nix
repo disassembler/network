@@ -57,6 +57,7 @@ in {
   ];
   boot.kernelModules = [
     "v4l2loopback"
+    "kvm-amd"
   ];
   boot.blacklistedKernelModules = ["nouveau"];
 
@@ -223,11 +224,14 @@ in {
     cudaPackages.cudatoolkit
     config.boot.kernelPackages.nvidiaPackages.stable
     inputs.home-manager.packages.x86_64-linux.home-manager
+    inputs.agentix.packages.x86_64-linux.ax-jail
     polychromatic
     libfido2
     yubikey-manager
     android-tools
     brightnessctl
+    virt-viewer
+    spice-gtk
   ];
 
   hardware = {
@@ -242,6 +246,7 @@ in {
     enableRedistributableFirmware = true;
     graphics = {
       enable = true;
+      enable32Bit = true;
       extraPackages = with pkgs; [nvidia-vaapi-driver];
     };
     nvidia = {
@@ -308,7 +313,7 @@ in {
 
   services = {
     ollama = {
-      enable = true;
+      enable = false;
       package = pkgsUnstable.ollama-cuda;
       environmentVariables = {
         OLLAMA_FLASH_ATTENTION = "1";
@@ -511,7 +516,15 @@ in {
     ""
     "${config.virtualisation.podman.package}/bin/podman --storage-driver zfs $LOGGING system service"
   ];
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      package = pkgs.qemu_kvm;
+      runAsRoot = true;
+      swtpm.enable = true;
+    };
+  };
+  programs.virt-manager.enable = true;
   security.sudo.wheelNeedsPassword = true;
   security.rtkit.enable = true;
   security.polkit.enable = true;
@@ -523,6 +536,7 @@ in {
   environment = {
     variables = {
       AGENTIC_NIX_DAEMON = "/run/nix-container-daemon/socket";
+      AGENTIX_GATEWAY_URL = "http://ai.lan.disasm.us:11434";
     };
     etc = {
       "sysconfig/lm_sensors".text = ''
