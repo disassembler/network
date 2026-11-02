@@ -271,12 +271,13 @@
     zip # Package and compress (archive) files into zip format
     jq # Lightweight and flexible command-line JSON processor
     pv # Monitor the progress of data through a pipe
+    gh # github CLI tool
 
     # --- Networking & Secure Transfer ---
     wget # Non-interactive network downloader
     iputils # Common network programs (ftp, telnet, hostname)
     tcpdump # Command-line network packet analyzer
-    tmate # Instant terminal sharing (fork of tmux)
+    #tmate # Instant terminal sharing (fork of tmux)
     magic-wormhole # Get things from one computer to another, safely
     mitmproxy # Interactive TLS-capable intercepting HTTP proxy
 
@@ -293,8 +294,9 @@
     inputs.llm-agents.packages.x86_64-linux.pi
     inputs.llm-agents.packages.x86_64-linux.herdr
     inputs.agentix.packages.x86_64-linux.claude-jail
-    inputs.agentix.packages.x86_64-linux.mcp-server
-    inputs.agentix.packages.x86_64-linux.ingest
+    inputs.agentix.packages.x86_64-linux.codex-jail
+    inputs.agentix.packages.x86_64-linux.agentix-mcp-server
+    inputs.agentix.packages.x86_64-linux.agentix-indexer
 
     # --- Git & Version Control ---
     tig # Text-mode interface for Git

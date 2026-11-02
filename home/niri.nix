@@ -22,7 +22,7 @@ in {
       {command = ["${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"];} # Auth agent
       {command = ["${pkgs.awww}/bin/awww-daemon"];}
       # This sets the image immediately after the daemon starts
-      {command = ["${pkgs.awww}/bin/awww" "img" "~/images/background.png"];}
+      {command = ["${pkgs.awww}/bin/awww" "img" "${config.home.homeDirectory}/images/background.png"];}
     ];
 
     screenshot-path = "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png";

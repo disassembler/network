@@ -95,10 +95,16 @@ in {
       enable = true;
       package = pkgs.google-chrome;
       commandLineArgs = [
-        "--enable-features=UseOzonePlatform"
         "--ozone-platform=wayland"
-        "--enable-features=WebRTCPipeWireCapturer" # Good for Niri screen sharing too
-        "--password-store=gnome-libsecret" # Securely uses your Linux keyring
+        "--enable-features=UseOzonePlatform,WebRTCPipeWireCapturer"
+        # Chrome on this NixOS build only allows ANGLE-wrapped GL backends.
+        # Raw EGL (gl=egl-gles2) is not in the allowed list; ANGLE over OpenGL ES is.
+        # Vulkan skipped: VK ICD files in /run/opengl-driver are not reachable
+        # from the sandboxed GPU process.
+        "--use-gl=angle"
+        "--use-angle=gl"
+        "--ignore-gpu-blocklist"
+        "--password-store=gnome-libsecret"
       ];
     };
     rbw = {
@@ -182,11 +188,11 @@ in {
     })
 
     # --- Gaming ---
-    steamcmd # Command-line version of the Steam client
-    wineWow64Packages.waylandFull # Run Windows apps on Wayland via Wine
-    winetricks # Helper script to download/install Wine runtime libraries
-    pkgsUnstable.mcpelauncher-client # Minecraft: Bedrock Edition Linux launcher
-    pkgsUnstable.mcpelauncher-ui-qt # GUI for the Bedrock Edition launcher
+    #steamcmd # Command-line version of the Steam client
+    #wineWow64Packages.waylandFull # Run Windows apps on Wayland via Wine
+    #winetricks # Helper script to download/install Wine runtime libraries
+    #pkgsUnstable.mcpelauncher-client # Minecraft: Bedrock Edition Linux launcher
+    #pkgsUnstable.mcpelauncher-ui-qt # GUI for the Bedrock Edition launcher
 
     # --- Communication & Media ---
     slack # Team communication and collaboration platform
