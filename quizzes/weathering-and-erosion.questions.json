@@ -1,0 +1,742 @@
+{
+  "title": "ES 1.5 — Weathering and Erosion",
+  "questions": [
+    {
+      "question": "What is weathering?",
+      "choices": [
+        "The breaking down of rocks into smaller pieces",
+        "The transport of loose material to another place",
+        "The formation of new rock from melted material",
+        "The piling up of sediments in layers"
+      ],
+      "answer": 0,
+      "explanation": "Weathering breaks rocks down through physical or chemical processes."
+    },
+    {
+      "question": "What makes weathering mechanical?",
+      "choices": [
+        "Rocks combine with oxygen",
+        "Compounds react chemically with water",
+        "Carbonic acid reacts with minerals",
+        "Rocks are broken down by physical means"
+      ],
+      "answer": 3,
+      "explanation": "Mechanical weathering breaks rock physically."
+    },
+    {
+      "question": "Which group lists causes of mechanical weathering?",
+      "choices": [
+        "Rust, carbonic acid, and acid rain",
+        "Sulfur dioxide, nitrogen oxides, and carbon dioxide",
+        "Temperature, ice, water, and living things",
+        "Hydrolysis, carbonation, and oxidation"
+      ],
+      "answer": 2,
+      "explanation": "The lesson lists temperature, ice, water, and living things as physical weathering agents."
+    },
+    {
+      "question": "What is ice wedging?",
+      "choices": [
+        "The downhill flow of mud after rain",
+        "Rock damage caused by repeated freezing and thawing",
+        "Rock breakdown by carbonic acid",
+        "Sediment sorting by melting glaciers"
+      ],
+      "answer": 1,
+      "explanation": "Cycles of freezing and thawing damage rock through expansion."
+    },
+    {
+      "question": "Why does freezing water help break a rock apart?",
+      "choices": [
+        "It dissolves the rock through carbonation",
+        "It expands and pushes against the rock",
+        "It reacts with oxygen to form rust",
+        "It turns the entire rock into soil"
+      ],
+      "answer": 1,
+      "explanation": "Ice wedging damages rock through the expansion of freezing water."
+    },
+    {
+      "question": "How can temperature extremes cause rock material to separate?",
+      "choices": [
+        "Materials expand at different rates",
+        "All minerals melt at the same temperature",
+        "Temperature changes always produce carbonic acid",
+        "Cold conditions turn rock into rust"
+      ],
+      "answer": 0,
+      "explanation": "Different rates of expansion can cause materials in rock to separate."
+    },
+    {
+      "question": "What can the mechanical action of tides cause along a rocky coast?",
+      "choices": [
+        "Oxidation of every rock layer",
+        "The formation of glacial till",
+        "The downhill movement called soil creep",
+        "Uneven weathering"
+      ],
+      "answer": 3,
+      "explanation": "The lesson describes tides as a cause of uneven mechanical weathering."
+    },
+    {
+      "question": "Tree roots grow between stones and push them apart. What kind of weathering is this?",
+      "choices": [
+        "Chemical weathering by carbonation",
+        "Chemical weathering by hydrolysis",
+        "Mechanical weathering by living things",
+        "Chemical weathering by oxidation"
+      ],
+      "answer": 2,
+      "explanation": "Roots can physically damage and break down stone, as shown in the temple photographs."
+    },
+    {
+      "question": "What is chemical weathering?",
+      "choices": [
+        "The physical splitting of rocks by roots",
+        "The freezing of water in cracks",
+        "The breakdown of rocks by chemical processes",
+        "The transport of rocks without changing them"
+      ],
+      "answer": 2,
+      "explanation": "Chemical weathering breaks down rock through chemical processes."
+    },
+    {
+      "question": "Which example illustrates chemical weathering in the lesson?",
+      "choices": [
+        "Tides physically wearing a coastal cliff",
+        "The green surface of the copper Statue of Liberty",
+        "Roots pushing apart temple stones",
+        "Ice expanding inside a rock crack"
+      ],
+      "answer": 1,
+      "explanation": "The Statue of Liberty's copper surface is used as an example of chemical weathering."
+    },
+    {
+      "question": "What is hydrolysis?",
+      "choices": [
+        "The breakdown of a compound by a chemical reaction with water",
+        "The chemical combination of a substance with oxygen",
+        "The transport of sediment by moving water",
+        "The physical splitting of rock by freezing water"
+      ],
+      "answer": 0,
+      "explanation": "Hydrolysis breaks down a compound through a chemical reaction with water."
+    },
+    {
+      "question": "Which atmospheric gases are listed as reacting with water to form acid rain?",
+      "choices": [
+        "Oxygen, helium, and hydrogen",
+        "Nitrogen, argon, and helium",
+        "Hydrogen, methane, and neon",
+        "Sulfur dioxides, nitrogen oxides, and carbon dioxide"
+      ],
+      "answer": 3,
+      "explanation": "The lesson lists sulfur dioxides, nitrogen oxides, and carbon dioxide reacting with atmospheric water and precipitating."
+    },
+    {
+      "question": "What effect does acid rain have on chemical weathering?",
+      "choices": [
+        "It stops it completely",
+        "It changes it into ice wedging",
+        "It prevents water from reacting with rock",
+        "It speeds it up"
+      ],
+      "answer": 3,
+      "explanation": "Acid rain speeds up chemical weathering."
+    },
+    {
+      "question": "Which human activity can accelerate acid rain?",
+      "choices": [
+        "Moving rocks into the shade",
+        "Building a wind barrier",
+        "Burning fossil fuels",
+        "Planting trees on a hillside"
+      ],
+      "answer": 2,
+      "explanation": "The lesson says acid rain can occur naturally and can be accelerated by burning fossil fuels."
+    },
+    {
+      "question": "What is carbonation?",
+      "choices": [
+        "The breaking of rock by temperature changes",
+        "The reaction of carbonic acid with other substances",
+        "The reaction of a substance with oxygen",
+        "The sorting of sediment by a glacier"
+      ],
+      "answer": 1,
+      "explanation": "Carbonation is the process in which carbonic acid reacts with other substances."
+    },
+    {
+      "question": "What is oxidation?",
+      "choices": [
+        "A chemical change in which a substance combines with oxygen",
+        "A physical change caused by ice expansion",
+        "The removal of sediment by wind",
+        "The reaction of carbonic acid with other substances"
+      ],
+      "answer": 0,
+      "explanation": "Oxidation occurs when a substance combines with oxygen."
+    },
+    {
+      "question": "Which substance is an example of oxidation in the lesson?",
+      "choices": [
+        "Iron oxide, or rust",
+        "Glacial till",
+        "Regolith",
+        "A mound of windblown sand"
+      ],
+      "answer": 0,
+      "explanation": "Rust is iron oxide and is the lesson's example of oxidation."
+    },
+    {
+      "question": "Water splits one rock by freezing and breaks down another through a chemical reaction. Which processes are involved, in that order?",
+      "choices": [
+        "Hydrolysis and ice wedging",
+        "Carbonation and oxidation",
+        "Oxidation and carbonation",
+        "Ice wedging and hydrolysis"
+      ],
+      "answer": 3,
+      "explanation": "Freezing and expansion cause ice wedging; a compound reacting chemically with water undergoes hydrolysis."
+    },
+    {
+      "question": "Which rock group is generally most easily weathered, especially mechanically?",
+      "choices": [
+        "Metamorphic rocks",
+        "All rock groups equally",
+        "Sedimentary rocks",
+        "Igneous rocks"
+      ],
+      "answer": 2,
+      "explanation": "The lesson identifies sedimentary rocks as generally the most easily weathered, especially mechanically."
+    },
+    {
+      "question": "Which rock does the lesson identify as easily weathered chemically?",
+      "choices": [
+        "Basalt",
+        "Limestone",
+        "Granite",
+        "Quartzite"
+      ],
+      "answer": 1,
+      "explanation": "Limestone is listed as easily weathered chemically."
+    },
+    {
+      "question": "How does rock size affect weathering in the lesson?",
+      "choices": [
+        "Small rocks cannot undergo mechanical weathering",
+        "Small rocks weather more quickly than large rocks",
+        "Large rocks always weather faster than small rocks",
+        "Rock size prevents all chemical weathering"
+      ],
+      "answer": 1,
+      "explanation": "Under amount of exposure, the lesson states that small rocks weather more quickly than large rocks."
+    },
+    {
+      "question": "What is the greatest factor in weathering in the lesson?",
+      "choices": [
+        "Climate",
+        "Rock color",
+        "Distance from a city",
+        "The age of nearby buildings"
+      ],
+      "answer": 0,
+      "explanation": "Climate is identified as the greatest factor in weathering, with temperature extremes and precipitation emphasized."
+    },
+    {
+      "question": "Which conditions does the lesson emphasize as promoting weathering?",
+      "choices": [
+        "Unchanging temperatures and no precipitation",
+        "Little exposure and no water",
+        "Only darkness and low air pressure",
+        "Extreme temperatures and lots of precipitation"
+      ],
+      "answer": 3,
+      "explanation": "The climate section emphasizes extreme temperatures and lots of precipitation."
+    },
+    {
+      "question": "What is topography?",
+      "choices": [
+        "The speed of a glacier",
+        "The oxygen content of a rock",
+        "The surface features of a region",
+        "The chemical composition of rain"
+      ],
+      "answer": 2,
+      "explanation": "Topography describes a region's surface features."
+    },
+    {
+      "question": "Why can mountaintops experience strong weathering and loss of particles?",
+      "choices": [
+        "They collect all the water flowing out of valleys",
+        "They are protected from temperature changes",
+        "They have greater temperature extremes, and gravity pulls particles away",
+        "They never experience freezing or thawing"
+      ],
+      "answer": 2,
+      "explanation": "The lesson links mountaintops with temperature extremes and particles being pulled away by gravity."
+    },
+    {
+      "question": "Why can valleys have more biological weathering?",
+      "choices": [
+        "They experience no chemical reactions",
+        "They collect water",
+        "They contain no living things",
+        "They prevent roots from growing"
+      ],
+      "answer": 1,
+      "explanation": "The lesson says valleys collect water and have more biological weathering."
+    },
+    {
+      "question": "What is erosion?",
+      "choices": [
+        "The removal and transport of material by wind, water, ice, or gravity",
+        "The breakdown of rock without any movement",
+        "A chemical change that creates rust",
+        "The expansion of water as it freezes"
+      ],
+      "answer": 0,
+      "explanation": "Erosion removes material and transports it by wind, water, ice, or gravity."
+    },
+    {
+      "question": "Which example shows erosion following weathering?",
+      "choices": [
+        "A rock cracks but every piece stays in place",
+        "Iron combines with oxygen and stays in place",
+        "A root widens a crack without moving the fragments away",
+        "A rock breaks into pieces, and water carries the pieces away"
+      ],
+      "answer": 3,
+      "explanation": "Breaking the rock is weathering; carrying the pieces away is erosion."
+    },
+    {
+      "question": "What is mass wasting?",
+      "choices": [
+        "Rock breakdown caused only by oxygen",
+        "The formation of sand dunes by wind",
+        "The movement of water vapor into the atmosphere",
+        "Downhill movement of loose rocks and soil due to gravity"
+      ],
+      "answer": 3,
+      "explanation": "Gravity causes loose rock and soil to move downhill in mass wasting."
+    },
+    {
+      "question": "What is regolith?",
+      "choices": [
+        "A large mass of moving ice",
+        "A chemical compound formed by oxidation",
+        "The loose layer of rock and soil",
+        "The solid bedrock beneath all loose material"
+      ],
+      "answer": 2,
+      "explanation": "Regolith is the loose layer of rock and soil above bedrock."
+    },
+    {
+      "question": "What is a mudflow?",
+      "choices": [
+        "Rock breakdown by a chemical reaction with water",
+        "Rapid downhill movement of a large mass of mud",
+        "Extremely slow downhill movement of dry soil",
+        "A long tear-shaped mound of till"
+      ],
+      "answer": 1,
+      "explanation": "A mudflow is a large mass of mud moving rapidly downhill."
+    },
+    {
+      "question": "Which form of mass wasting is classified as fastest?",
+      "choices": [
+        "Mudflow",
+        "Landslide",
+        "Earthflow",
+        "Soil creep"
+      ],
+      "answer": 0,
+      "explanation": "The lesson classifies mudflow as the fastest form of mass wasting."
+    },
+    {
+      "question": "What is a landslide in this lesson?",
+      "choices": [
+        "Rapid downhill movement of a large amount of rock and soil",
+        "Sediment deposited in sorted layers by a glacier",
+        "Extremely slow movement of soil",
+        "A depression scooped out by wind"
+      ],
+      "answer": 0,
+      "explanation": "The lesson defines a landslide as rapid downhill movement of a large amount of rock and soil."
+    },
+    {
+      "question": "What is an earthflow in this lesson?",
+      "choices": [
+        "Rapid movement of a large mass of mud",
+        "Sediment carried by a glacier to another region",
+        "A chemical reaction involving carbonic acid",
+        "Slow movement of soil down a steep slope"
+      ],
+      "answer": 3,
+      "explanation": "Earthflow is described as slow movement of soil down a steep slope."
+    },
+    {
+      "question": "Which process is described as the slowest form of mass wasting?",
+      "choices": [
+        "Landslide",
+        "Mudflow",
+        "Soil creep",
+        "Earthflow"
+      ],
+      "answer": 2,
+      "explanation": "Soil creep is an extremely slow downhill slide of soil and is classified as the slowest form of mass wasting."
+    },
+    {
+      "question": "Fence posts on a slope gradually tilt as soil inches downhill. What process does this illustrate?",
+      "choices": [
+        "Ice wedging",
+        "Soil creep",
+        "Mudflow",
+        "Oxidation"
+      ],
+      "answer": 1,
+      "explanation": "The soil-creep illustration shows leaning fence posts associated with extremely slow downhill soil movement."
+    },
+    {
+      "question": "How does the lesson define slump?",
+      "choices": [
+        "A rock carried between regions by a glacier",
+        "An extremely slow downhill slide of soil",
+        "A rapid downhill movement of mud",
+        "A long tear-shaped mound of till"
+      ],
+      "answer": 1,
+      "explanation": "Slump is defined in the lesson as an extremely slow downhill slide of soil."
+    },
+    {
+      "question": "Which sequence puts the four listed forms of mass wasting from fastest to slowest?",
+      "choices": [
+        "Mudflow, landslide, earthflow, soil creep",
+        "Soil creep, earthflow, landslide, mudflow",
+        "Landslide, earthflow, soil creep, mudflow",
+        "Earthflow, mudflow, soil creep, landslide"
+      ],
+      "answer": 0,
+      "explanation": "The lesson labels mudflow fastest, landslide fast, earthflow slow, and soil creep slowest."
+    },
+    {
+      "question": "What is abrasion?",
+      "choices": [
+        "The chemical reaction of a substance with oxygen",
+        "The buildup of ice in a glacier",
+        "The slow movement of soil down a slope",
+        "The wearing away of surfaces by small particles"
+      ],
+      "answer": 3,
+      "explanation": "The wind erosion notes define abrasion as the wearing away of surfaces by small particles."
+    },
+    {
+      "question": "Windblown particles repeatedly strike a rock and wear its surface away. Which process is this?",
+      "choices": [
+        "Carbonation",
+        "Soil creep",
+        "Abrasion",
+        "Hydrolysis"
+      ],
+      "answer": 2,
+      "explanation": "Small particles wearing away a surface is abrasion."
+    },
+    {
+      "question": "What is a rock pedestal?",
+      "choices": [
+        "A large mass of moving ice",
+        "A loose layer of rock and soil",
+        "A mushroom-shaped rock formed by wind",
+        "A long tear-shaped mound of glacial till"
+      ],
+      "answer": 2,
+      "explanation": "The notes describe a rock pedestal as a mushroom-shaped rock formed by wind."
+    },
+    {
+      "question": "What feature is a soil depression formed by the scooping action of wind?",
+      "choices": [
+        "A glacier",
+        "A deflation hollow",
+        "A drumlin",
+        "A rock pedestal"
+      ],
+      "answer": 1,
+      "explanation": "The wind erosion notes label the wind-scooped soil depression a deflation hollow."
+    },
+    {
+      "question": "What is a dune in the wind erosion notes?",
+      "choices": [
+        "A mound of sand deposited by wind",
+        "A boulder transported by a glacier",
+        "A chemically weathered piece of limestone",
+        "A rapid flow of rock and soil downhill"
+      ],
+      "answer": 0,
+      "explanation": "The notes describe a dune as a mound of sand deposited by wind on the leeward side of a barrier."
+    },
+    {
+      "question": "On which side of a barrier do the notes show wind depositing sand to build a dune?",
+      "choices": [
+        "The windward side",
+        "Equally on every side",
+        "Only directly beneath the barrier",
+        "The leeward side"
+      ],
+      "answer": 3,
+      "explanation": "The dune annotation specifies deposition on the leeward side of a barrier."
+    },
+    {
+      "question": "What is a glacier?",
+      "choices": [
+        "Any small patch of frozen water",
+        "A mound of windblown sand",
+        "A rapid downhill movement of mud",
+        "A large mass of moving ice"
+      ],
+      "answer": 3,
+      "explanation": "A glacier is defined as a large mass of moving ice."
+    },
+    {
+      "question": "What causes a glacier to move in the lesson's explanation?",
+      "choices": [
+        "Carbonic acid dissolves its upper surface into moving soil",
+        "Oxidation turns the lower ice into loose rock",
+        "Tons of ice compress it, melting the lower layers so it flows slowly along",
+        "Wind lifts the entire glacier and carries it downhill"
+      ],
+      "answer": 2,
+      "explanation": "The lesson explains glacier movement through compression by tons of ice, melting lower layers, and slow grinding flow."
+    },
+    {
+      "question": "What average glacier movement does the lesson give?",
+      "choices": [
+        "10 inches per year",
+        "10 inches per day",
+        "10 feet per hour",
+        "10 miles per day"
+      ],
+      "answer": 1,
+      "explanation": "The glacier slide gives an average movement of 10 inches per day."
+    },
+    {
+      "question": "What is glacial drift?",
+      "choices": [
+        "Sediments deposited by glaciers as they advance or retreat",
+        "Only the ice that breaks off a glacier",
+        "Sand deposited by wind behind a barrier",
+        "Rock that breaks down through oxidation"
+      ],
+      "answer": 0,
+      "explanation": "Glacial drift consists of sediment deposited by glaciers during advance or retreat."
+    },
+    {
+      "question": "What is till?",
+      "choices": [
+        "Unsorted rocks and sediments deposited by a glacier",
+        "Sediment sorted by weight before deposition",
+        "A large mass of moving ice",
+        "A mushroom-shaped rock made by wind"
+      ],
+      "answer": 0,
+      "explanation": "Till is unsorted rock and sediment deposited by a glacier."
+    },
+    {
+      "question": "What is layered drift in the lesson?",
+      "choices": [
+        "Unsorted rock and sediment deposited directly by a glacier",
+        "A large boulder carried from one region to another",
+        "A loose layer of rock and soil on a hillside",
+        "Material sorted by weight before being deposited"
+      ],
+      "answer": 3,
+      "explanation": "The lesson describes layered drift as material sorted by weight before deposition."
+    },
+    {
+      "question": "What distinguishes till from layered drift?",
+      "choices": [
+        "Till is ice; layered drift is mud",
+        "Till is deposited by wind; layered drift is deposited by gravity alone",
+        "Till is unsorted; layered drift is sorted before deposition",
+        "Till is sorted; layered drift is unsorted"
+      ],
+      "answer": 2,
+      "explanation": "The lesson contrasts unsorted till with drift sorted by weight before deposition."
+    },
+    {
+      "question": "What is a drumlin?",
+      "choices": [
+        "A layer of rock chemically changed by acid rain",
+        "A long tear-shaped mound of till",
+        "A mushroom-shaped rock made by wind",
+        "A depression scooped out by wind"
+      ],
+      "answer": 1,
+      "explanation": "A drumlin is a long tear-shaped mound of till."
+    },
+    {
+      "question": "How does the lesson describe a drumlin forming?",
+      "choices": [
+        "Carbonic acid reacts with a limestone surface",
+        "A glacier pauses to deposit till and then advances",
+        "Wind piles sand behind a barrier",
+        "Water freezes and expands inside a crack"
+      ],
+      "answer": 1,
+      "explanation": "The drumlin slide describes a glacier pausing to deposit till and then advancing."
+    },
+    {
+      "question": "What are glacial erratics?",
+      "choices": [
+        "Enormous boulders carried by glaciers from one area to another",
+        "Small sand grains carried only by wind",
+        "Soil moving extremely slowly down a slope",
+        "Rock compounds broken down by reaction with water"
+      ],
+      "answer": 0,
+      "explanation": "The lesson describes erratics as enormous boulders transported between areas by glaciers."
+    },
+    {
+      "question": "A long tear-shaped hill consists of unsorted sediment left by a glacier. Which pairing identifies the hill and its material?",
+      "choices": [
+        "Dune and layered drift",
+        "Rock pedestal and regolith",
+        "Deflation hollow and rust",
+        "Drumlin and till"
+      ],
+      "answer": 3,
+      "explanation": "A drumlin is a long tear-shaped mound of till, and till is unsorted glacial sediment."
+    },
+    {
+      "question": "What is a moraine in the glacier notes?",
+      "choices": [
+        "A long tear-shaped mound of till",
+        "A long horizontal formation made as a glacier pushes material",
+        "A mushroom-shaped rock formed by wind",
+        "A soil depression formed by wind"
+      ],
+      "answer": 1,
+      "explanation": "The notes describe a moraine as a long horizontal formation caused by a glacier pushing material."
+    },
+    {
+      "question": "Which landform can result when a glacier carves a path through mountains?",
+      "choices": [
+        "A rock pedestal",
+        "A sand dune",
+        "A deflation hollow",
+        "A glacial valley"
+      ],
+      "answer": 3,
+      "explanation": "The glacier illustration shows a valley left along the glacier's path through mountains."
+    },
+    {
+      "question": "A large body of ice remains in one place without moving. Which feature from the notes would it need to qualify as a glacier?",
+      "choices": [
+        "Movement of the ice",
+        "A covering of loose soil",
+        "Layers of sorted sediment",
+        "A single enormous boulder"
+      ],
+      "explanation": "The definition requires a large mass of moving ice; size and ice alone do not satisfy it.",
+      "answer": 0
+    },
+    {
+      "question": "Two glacial deposits are examined. Deposit A mixes large rocks with small particles; Deposit B separates particles into layers. How should they be classified?",
+      "choices": [
+        "Both are layered drift because both were deposited",
+        "A is till; B is layered drift",
+        "A is layered drift; B is till",
+        "Both are till because both contain rock"
+      ],
+      "explanation": "The till sketch mixes particles, while the layered-drift sketch groups them into layers.",
+      "answer": 1
+    },
+    {
+      "question": "What do till and layered drift have in common despite their different arrangements?",
+      "choices": [
+        "Both must be single enormous boulders",
+        "Both must be long tear-shaped hills",
+        "Both belong to the sediments left by glaciers",
+        "Both must form mushroom-shaped rocks"
+      ],
+      "explanation": "Glacial drift is sediment deposited by glaciers; till and layered drift are two forms described in the notes.",
+      "answer": 2
+    },
+    {
+      "question": "A glacier cuts into a mountain valley, carries pieces of rock away, and leaves them farther along its path. Which part of this sequence is erosion?",
+      "choices": [
+        "Leaving the carried pieces behind",
+        "Sorting the carried pieces before leaving them",
+        "Freezing meltwater without moving rock",
+        "Removing and transporting the rock pieces"
+      ],
+      "explanation": "Erosion is the removal and transport of material, so carrying rock away from the valley is the erosion step.",
+      "answer": 3
+    },
+    {
+      "question": "An enormous boulder was carried by a glacier from one region to another. How could finding its original region help study that glacier?",
+      "choices": [
+        "It could connect the boulder's source with a place the glacier carried it",
+        "It could reveal the exact date the glacier melted",
+        "It could show the glacier's exact daily speed",
+        "It could show that every glacier traveled the same route"
+      ],
+      "explanation": "An erratic was transported between areas, so identifying its source can help connect locations along the glacier's travel.",
+      "answer": 0
+    },
+    {
+      "question": "A glacier leaves one enormous boulder at Site A and a long tear-shaped hill of till at Site B. Which labels fit the two sites?",
+      "choices": [
+        "A is a moraine; B is layered drift",
+        "A is an erratic; B is a drumlin",
+        "A is a drumlin; B is an erratic",
+        "A is layered drift; B is an erratic"
+      ],
+      "explanation": "An erratic is a transported boulder; a drumlin is a tear-shaped mound of till.",
+      "answer": 1
+    },
+    {
+      "question": "Which observation best separates a moraine from a drumlin using the descriptions in the notes?",
+      "choices": [
+        "A moraine is a single boulder; a drumlin is a mushroom-shaped rock",
+        "A moraine forms by wind; a drumlin forms by acid rain",
+        "A moraine forms a long horizontal feature; a drumlin is a tear-shaped mound",
+        "A moraine is moving ice; a drumlin is frozen water that never moves"
+      ],
+      "explanation": "The notes describe moraine as a long horizontal formation and drumlin as a long tear-shaped mound of till.",
+      "answer": 2
+    },
+    {
+      "question": "A student says sediment left while a glacier retreats cannot be glacial drift. Which correction follows the notes?",
+      "choices": [
+        "Glacial drift is left only during advance",
+        "Glacial drift is left only when ice stops moving permanently",
+        "Glacial drift is another name for the moving ice itself",
+        "Glacial drift can be left during either advance or retreat"
+      ],
+      "explanation": "The notes explicitly include sediment deposited as glaciers advance or retreat.",
+      "answer": 3
+    },
+    {
+      "question": "A glacier has disappeared from an area. Which finding would still provide evidence that it once carried rock there?",
+      "choices": [
+        "An erratic traced to a different source region",
+        "Rust forming on a locally made iron nail",
+        "A dune currently growing behind a wind barrier",
+        "Roots widening a crack in local stone"
+      ],
+      "explanation": "A transported erratic remains evidence of rock carried from elsewhere even after the glacier is gone.",
+      "answer": 0
+    },
+    {
+      "question": "How do the glacier's actions differ when making a valley and when making a moraine in the notes?",
+      "choices": [
+        "It leaves both as single transported boulders",
+        "It removes material from the valley and pushes material into a formation at the moraine",
+        "It builds both by piling windblown sand",
+        "It forms both by reacting rock with carbonic acid"
+      ],
+      "explanation": "The valley sketch shows a glacier-cut path; the moraine definition describes pushed material forming a long horizontal feature.",
+      "answer": 1
+    }
+  ]
+}

@@ -1,0 +1,1270 @@
+{
+  "title": "Bible Unit 3 — Jesus and the Gospels, Part 1",
+  "questions": [
+    {
+      "question": "Whose birth, life, and ministry are studied as preparation for Jesus's ministry?",
+      "choices": [
+        "Elijah",
+        "John the Baptist",
+        "Joseph",
+        "Mary"
+      ],
+      "answer": 1,
+      "explanation": "The pre-ministry notes study John the Baptist's birth, life, ministry, and function in preparing people for Jesus."
+    },
+    {
+      "question": "How is John the Baptist's baptism described?",
+      "choices": [
+        "A celebration of a completed marriage",
+        "A baptism of repentance for the forgiveness of sins",
+        "A ceremony for proving royal ancestry",
+        "A ritual for recording a family genealogy"
+      ],
+      "answer": 1,
+      "explanation": "The notes describe John's ministry as a baptism of repentance for the forgiveness of sins."
+    },
+    {
+      "question": "What was John the Baptist preparing people to do?",
+      "choices": [
+        "Respond to Jesus",
+        "Write a new genealogy",
+        "Choose a new king for Rome",
+        "Explain Mary's childhood"
+      ],
+      "answer": 0,
+      "explanation": "John's ministry prepared people to respond to Jesus."
+    },
+    {
+      "question": "Whose coming did John the Baptist fulfill in the class notes?",
+      "choices": [
+        "Joseph's",
+        "David's",
+        "Jeremiah's",
+        "Elijah's"
+      ],
+      "answer": 3,
+      "explanation": "John's function is described as fulfilling the coming of Elijah."
+    },
+    {
+      "question": "A student says John's ministry was mainly about explaining family ancestry. Which correction matches the notes?",
+      "choices": [
+        "He listed every member of Mary's family",
+        "He explained when Joseph died",
+        "He called for repentance and prepared people to respond to Jesus",
+        "He established which genealogy was the legal one"
+      ],
+      "answer": 2,
+      "explanation": "The ministry notes emphasize repentance, forgiveness of sins, and preparation to respond to Jesus."
+    },
+    {
+      "question": "By whom was Jesus conceived in the notes?",
+      "choices": [
+        "Joseph",
+        "The Holy Spirit",
+        "John the Baptist",
+        "Elijah"
+      ],
+      "answer": 1,
+      "explanation": "The notes state that Jesus was conceived by the Holy Spirit."
+    },
+    {
+      "question": "How is Mary described in the statement about Jesus's birth?",
+      "choices": [
+        "As the virgin Mary",
+        "As the author of Matthew",
+        "As a descendant of Elijah",
+        "As John's teacher"
+      ],
+      "answer": 0,
+      "explanation": "The notes state that Jesus was born of the virgin Mary."
+    },
+    {
+      "question": "Which two Gospels contain the genealogies discussed in class?",
+      "choices": [
+        "Matthew and Luke",
+        "Mark and John",
+        "Matthew and Mark",
+        "Luke and John"
+      ],
+      "answer": 0,
+      "explanation": "The two genealogies named in the notes are Matthew's and Luke's."
+    },
+    {
+      "question": "Did an ancient genealogy have to list every single member of a lineage?",
+      "choices": [
+        "Yes, every generation had to be included",
+        "Only if it appeared in Matthew",
+        "Only if it appeared in Luke",
+        "No, it could omit members"
+      ],
+      "answer": 3,
+      "explanation": "The notes say ancient genealogies did not have to list every single member of the lineage."
+    },
+    {
+      "question": "An ancient family list skips some generations. What follows from the notes?",
+      "choices": [
+        "The list cannot be considered a genealogy",
+        "Every remaining name must be a later addition",
+        "The skipped names do not by themselves violate the way ancient genealogies worked",
+        "The list must describe two unrelated families"
+      ],
+      "answer": 2,
+      "explanation": "Because ancient genealogies could omit members, a skipped generation alone does not contradict that practice."
+    },
+    {
+      "question": "How many theories are listed to explain the differences between the genealogies?",
+      "choices": [
+        "Five",
+        "Three",
+        "Two",
+        "Four"
+      ],
+      "answer": 1,
+      "explanation": "The notes introduce three theories about why the genealogies differ."
+    },
+    {
+      "question": "In the different-family-lines theory, whose line does Matthew give?",
+      "choices": [
+        "Elijah's",
+        "Joseph's",
+        "Mary's",
+        "John the Baptist's"
+      ],
+      "answer": 1,
+      "explanation": "The first theory identifies Matthew's genealogy as Jesus's genealogy through Joseph."
+    },
+    {
+      "question": "In the different-family-lines theory, whose line does Luke give?",
+      "choices": [
+        "Mary's",
+        "Joseph's",
+        "John the Baptist's",
+        "Jeremiah's"
+      ],
+      "answer": 0,
+      "explanation": "The first theory identifies Luke's genealogy as Jesus's genealogy through Mary."
+    },
+    {
+      "question": "How are the perspectives of Matthew and Luke paired in the first theory?",
+      "choices": [
+        "Matthew with Mary; Luke with Joseph",
+        "Matthew with Elijah; Luke with John",
+        "Matthew with John; Luke with David",
+        "Matthew with Joseph; Luke with Mary"
+      ],
+      "answer": 3,
+      "explanation": "The notes connect Matthew with Joseph's perspective and Luke with Mary's perspective in the first theory."
+    },
+    {
+      "question": "What kind of genealogy is Matthew's in the second theory?",
+      "choices": [
+        "A list of priests only",
+        "A list of John's followers",
+        "Royal or legal",
+        "Physical or actual"
+      ],
+      "answer": 2,
+      "explanation": "The second theory describes Matthew's genealogy as royal or legal."
+    },
+    {
+      "question": "What kind of genealogy is Luke's in the second theory?",
+      "choices": [
+        "A list of prophets only",
+        "A list of Joseph's neighbors",
+        "Physical or actual",
+        "Royal or legal"
+      ],
+      "answer": 2,
+      "explanation": "The second theory describes Luke's genealogy as physical or actual."
+    },
+    {
+      "question": "What does the third theory propose about Joseph?",
+      "choices": [
+        "He had no place in the legal genealogy",
+        "He had two fathers in connection with levirate marriage",
+        "He wrote both genealogies himself",
+        "He was unrelated to either genealogy"
+      ],
+      "answer": 1,
+      "explanation": "The third theory says Joseph had two fathers and connects this with levirate marriage."
+    },
+    {
+      "question": "How do the notes describe the early church's response to the different genealogies?",
+      "choices": [
+        "It rejected Matthew's Gospel",
+        "It rejected Luke's Gospel",
+        "It required both lists to name every generation",
+        "It did not have a problem with them"
+      ],
+      "answer": 3,
+      "explanation": "The class notes say the early church did not have a problem with the genealogies and encourage the same response."
+    },
+    {
+      "question": "Which summary correctly distinguishes the three genealogy theories?",
+      "choices": [
+        "Different birthplaces; different languages; different occupations",
+        "Three unrelated authors; three different mothers; three royal marriages",
+        "Missing books; mistaken dates; unnamed disciples",
+        "Different family lines; legal versus physical lines; two fathers through levirate marriage"
+      ],
+      "answer": 3,
+      "explanation": "The three theories concern different family lines, royal/legal versus physical/actual genealogy, and levirate marriage."
+    },
+    {
+      "question": "What religious identity is listed among the known facts about Mary?",
+      "choices": [
+        "Samaritan",
+        "Greek pagan",
+        "Jewish",
+        "Roman pagan"
+      ],
+      "answer": 2,
+      "explanation": "Jewish is listed under what is known about Mary."
+    },
+    {
+      "question": "Which person is Mary listed as being related to?",
+      "choices": [
+        "Malachi",
+        "Joseph",
+        "John the Baptist",
+        "Jeremiah"
+      ],
+      "answer": 1,
+      "explanation": "The notes list related to Joseph among the known facts about Mary, without specifying the kind of relation there."
+    },
+    {
+      "question": "Who appeared to Mary in the notes?",
+      "choices": [
+        "An angel",
+        "Elijah",
+        "Jeremiah",
+        "A Roman official"
+      ],
+      "answer": 0,
+      "explanation": "An angel appearing to Mary is included among the known facts about her."
+    },
+    {
+      "question": "How is Mary's response to God's plan described?",
+      "choices": [
+        "She was a willing participant",
+        "She refused any involvement",
+        "She required Joseph to write a genealogy first",
+        "She agreed only after John's ministry began"
+      ],
+      "answer": 0,
+      "explanation": "The notes describe Mary as a willing participant in God's plan."
+    },
+    {
+      "question": "Which detail is placed under what is not known about Mary?",
+      "choices": [
+        "Her religious identity",
+        "Her name",
+        "Whether she gave birth to Jesus",
+        "Her birthplace"
+      ],
+      "answer": 3,
+      "explanation": "Mary's birthplace is listed among the unknown details, while the other choices are listed as known."
+    },
+    {
+      "question": "What approximate age is written beside Mary's age even though the notes place her age under unknown details?",
+      "choices": [
+        "25 years old",
+        "30 years old",
+        "13 years old",
+        "18 years old"
+      ],
+      "answer": 2,
+      "explanation": "The notes place age under unknown details but add an estimate of 13 years old."
+    },
+    {
+      "question": "Which pair consists of details listed as unknown about Mary?",
+      "choices": [
+        "Whether she gave birth to Jesus and whether an angel appeared",
+        "Her upbringing and living arrangements",
+        "Her name and religious identity",
+        "Her name and willingness to participate"
+      ],
+      "answer": 1,
+      "explanation": "Upbringing and living arrangements are both listed under what is not known about Mary."
+    },
+    {
+      "question": "A student treats the notes' estimated ages as exact known ages. What should be corrected?",
+      "choices": [
+        "Both ages are listed as exact known facts",
+        "Both ages are listed among unknown details, even though estimates are written beside them",
+        "Only Mary's age is listed among unknown details",
+        "Only Joseph's age is listed among unknown details"
+      ],
+      "answer": 1,
+      "explanation": "The notes place both ages in their unknown sections while adding estimates of 13 and 18–30."
+    },
+    {
+      "question": "What is Mary's song of praise called?",
+      "choices": [
+        "The Magnificat",
+        "The genealogy of Joseph",
+        "The ministry of John",
+        "The prophecy of Malachi"
+      ],
+      "answer": 0,
+      "explanation": "The notes identify Luke 1:46–55 as the Magnificat."
+    },
+    {
+      "question": "What literary form is assigned to the Magnificat?",
+      "choices": [
+        "A legal genealogy",
+        "A marriage contract",
+        "A census record",
+        "Poetry"
+      ],
+      "answer": 3,
+      "explanation": "The first description of the Magnificat in the notes is poetry."
+    },
+    {
+      "question": "Which Old Testament book influenced the Magnificat in the notes?",
+      "choices": [
+        "Deuteronomy",
+        "Jeremiah",
+        "Psalms",
+        "Numbers"
+      ],
+      "answer": 2,
+      "explanation": "The notes describe the Magnificat as influenced by Psalms."
+    },
+    {
+      "question": "What is the Magnificat mainly about in the class notes?",
+      "choices": [
+        "A complete family lineage",
+        "John's childhood",
+        "What God has done",
+        "Joseph's exact age"
+      ],
+      "answer": 2,
+      "explanation": "The notes describe the Magnificat as all about what God has done."
+    },
+    {
+      "question": "How do the notes define the Catholic belief called the Immaculate Conception?",
+      "choices": [
+        "Mary wrote the Gospel of Luke",
+        "Mary was born without sin",
+        "Jesus's genealogy includes every generation",
+        "Joseph received a message through John"
+      ],
+      "answer": 1,
+      "explanation": "The class notes define the Immaculate Conception as the Catholic belief that Mary was born without sin."
+    },
+    {
+      "question": "Which distinction matches the notes about Jesus's conception and the Immaculate Conception?",
+      "choices": [
+        "Jesus was conceived by the Holy Spirit; the Immaculate Conception is described as concerning Mary's sinlessness",
+        "Both terms refer to Joseph having two fathers",
+        "Both terms refer to the order of names in Matthew",
+        "Jesus's conception refers to John's baptism; the Immaculate Conception refers to Joseph's dream"
+      ],
+      "answer": 0,
+      "explanation": "The notes separately discuss Jesus's conception by the Holy Spirit and the Catholic belief about Mary being born without sin."
+    },
+    {
+      "question": "What was Joseph's relationship to Mary before their marriage?",
+      "choices": [
+        "He was her teacher",
+        "He was her Roman guardian",
+        "He was her priest",
+        "He was betrothed to her"
+      ],
+      "answer": 3,
+      "explanation": "The notes list Joseph as betrothed to Mary and also state that they married."
+    },
+    {
+      "question": "How did Joseph initially respond to Mary's claim?",
+      "choices": [
+        "He immediately began John's ministry",
+        "He wrote the Magnificat",
+        "He created a new prophecy list",
+        "He was skeptical"
+      ],
+      "answer": 3,
+      "explanation": "Joseph is described as skeptical at first."
+    },
+    {
+      "question": "What changed Joseph's initial skepticism about Mary?",
+      "choices": [
+        "Mary supplied a complete list of ancestors",
+        "A Roman official explained the prophecy list",
+        "An angel appeared to him in a dream and confirmed Mary's claim",
+        "John gave him a new genealogy"
+      ],
+      "answer": 2,
+      "explanation": "The notes say Joseph believed after an angel appeared in a dream, confirming Mary's claim."
+    },
+    {
+      "question": "Which pairing matches the angelic appearances described in the notes?",
+      "choices": [
+        "Joseph appeared to Mary in a dream; Mary appeared to John",
+        "An angel appeared to Mary; an angel appeared to Joseph in a dream",
+        "An angel appeared to Mary in Joseph's dream; Joseph received no angelic message",
+        "John appeared to Mary; Elijah appeared to Joseph"
+      ],
+      "answer": 1,
+      "explanation": "Mary's known facts include an angel appearing to her; Joseph's account specifies an angel appearing in a dream."
+    },
+    {
+      "question": "What moral description is given to Joseph?",
+      "choices": [
+        "A righteous man",
+        "A dishonest man",
+        "A rebellious man",
+        "An indifferent man"
+      ],
+      "answer": 0,
+      "explanation": "Righteous man appears among the known facts about Joseph."
+    },
+    {
+      "question": "Whose descendant is Joseph said to be?",
+      "choices": [
+        "David's",
+        "Elijah's",
+        "Jeremiah's",
+        "Malachi's"
+      ],
+      "answer": 0,
+      "explanation": "Joseph is listed as a descendant of David."
+    },
+    {
+      "question": "What do the notes say about Joseph and the consummation of his marriage?",
+      "choices": [
+        "He consummated it before the angel's message",
+        "He never married Mary",
+        "The notes place consummation before the betrothal",
+        "He did not consummate it with Mary until after Jesus was born"
+      ],
+      "answer": 3,
+      "explanation": "The notes state that Joseph did not consummate the marriage with Mary until after Jesus was born."
+    },
+    {
+      "question": "Which description concerns Joseph's ability to provide for himself?",
+      "choices": [
+        "Psalm-influenced",
+        "Physical or actual",
+        "Self-sufficient",
+        "Royal or legal"
+      ],
+      "answer": 2,
+      "explanation": "The known-facts list describes Joseph as self-sufficient."
+    },
+    {
+      "question": "What approximate age range is written beside Joseph's age in the unknown section?",
+      "choices": [
+        "50–60 years old",
+        "18–30 years old",
+        "13–15 years old",
+        "35–45 years old"
+      ],
+      "answer": 1,
+      "explanation": "The notes place age under unknown details but add an estimate of 18–30 years old."
+    },
+    {
+      "question": "Which detail do the class notes leave unknown about Joseph?",
+      "choices": [
+        "His betrothal to Mary",
+        "His occupation",
+        "His descent from David",
+        "His righteousness"
+      ],
+      "answer": 1,
+      "explanation": "Occupation appears in the notes' unknown list; the other choices appear in the known list."
+    },
+    {
+      "question": "Which pair of details is listed as unknown about Joseph?",
+      "choices": [
+        "His appearance and when he dies",
+        "His righteousness and descent from David",
+        "His betrothal and initial skepticism",
+        "His dream and self-sufficiency"
+      ],
+      "answer": 0,
+      "explanation": "The unknown list includes Joseph's appearance and when he dies."
+    },
+    {
+      "question": "Which sequence matches Joseph's response to Mary's claim?",
+      "choices": [
+        "Immediate belief, John's baptism, then skepticism",
+        "A royal genealogy, a Roman announcement, then refusal",
+        "A dream of Elijah, a new genealogy, then disbelief",
+        "Initial skepticism, an angel's confirmation in a dream, then belief"
+      ],
+      "answer": 3,
+      "explanation": "The notes say Joseph was skeptical at first and believed after the angel confirmed Mary's claim in a dream."
+    },
+    {
+      "question": "Which detail appears in the unknown lists for both Mary and Joseph?",
+      "choices": [
+        "Birthplace",
+        "Occupation",
+        "Appearance",
+        "Religious identity"
+      ],
+      "answer": 2,
+      "explanation": "Both unknown lists include appearance; birthplace is listed for Mary and occupation for Joseph."
+    },
+    {
+      "question": "What name does Isaiah give to the son promised as a sign?",
+      "choices": [
+        "Immanuel",
+        "John",
+        "Elijah",
+        "Zechariah"
+      ],
+      "explanation": "Isaiah 7:14 names the son Immanuel.",
+      "answer": 0
+    },
+    {
+      "question": "What birth does Isaiah describe as a sign from the Lord?",
+      "choices": [
+        "A priest loses his voice",
+        "A child receives a writing tablet",
+        "A king returns from Babylon",
+        "A virgin conceives and bears a son"
+      ],
+      "explanation": "The promised sign concerns a virgin and the birth of her son.",
+      "answer": 3
+    },
+    {
+      "question": "Which set of titles does Isaiah give the promised child?",
+      "choices": [
+        "Prophet, Levite, scribe, wilderness preacher",
+        "Son of Aaron, temple guard, priest, king's messenger",
+        "Wonderful Counselor, Mighty God, Everlasting Father, Prince of Peace",
+        "High priest, tax collector, soldier, governor"
+      ],
+      "explanation": "These four titles identify the promised child in Isaiah 9:6.",
+      "answer": 2
+    },
+    {
+      "question": "In Isaiah's prophecy about the promised child, what responsibility rests on his shoulders?",
+      "choices": [
+        "Recording every ancestor",
+        "Government",
+        "Collecting taxes for Rome",
+        "Serving incense in the temple"
+      ],
+      "explanation": "The image associates the child with governing authority.",
+      "answer": 1
+    },
+    {
+      "question": "Whose family does Isaiah picture as a stump producing new growth?",
+      "choices": [
+        "Balaam's",
+        "Jesse's",
+        "Aaron's",
+        "Zechariah's"
+      ],
+      "explanation": "The verse pictures new growth coming from Jesse's family.",
+      "answer": 1
+    },
+    {
+      "question": "What kind of ruler does Jeremiah promise from David's line?",
+      "choices": [
+        "A righteous king ruling wisely and justly",
+        "A priest replacing the royal family",
+        "A foreign governor ending David's line",
+        "A ruler who rejects justice"
+      ],
+      "explanation": "The promised descendant of David rules with wisdom and justice.",
+      "answer": 0
+    },
+    {
+      "question": "Which place does Micah identify as the promised ruler's place of origin?",
+      "choices": [
+        "Nazareth",
+        "Jerusalem",
+        "Bethany",
+        "Bethlehem Ephrathah"
+      ],
+      "explanation": "Micah identifies Bethlehem Ephrathah despite its small size.",
+      "answer": 3
+    },
+    {
+      "question": "Over whom does Micah say the promised ruler will rule?",
+      "choices": [
+        "Egypt",
+        "Babylon",
+        "Israel",
+        "Rome"
+      ],
+      "explanation": "The promised ruler is associated with Israel.",
+      "answer": 2
+    },
+    {
+      "question": "Which two images describe the predicted figure coming from Jacob and Israel?",
+      "choices": [
+        "An altar and an incense burner",
+        "A tree and an ax",
+        "A star and a scepter",
+        "A dove and a writing tablet"
+      ],
+      "explanation": "The prediction uses a star and a ruler's scepter.",
+      "answer": 2
+    },
+    {
+      "question": "In the prediction of a star and scepter coming from Jacob and Israel, is the figure immediately present?",
+      "choices": [
+        "No, the figure is described as belonging only to the past",
+        "No, the figure is seen as still distant",
+        "Yes, the figure is standing beside the speaker",
+        "Yes, the figure has already finished ruling"
+      ],
+      "explanation": "The speaker describes the figure as belonging to a time still ahead.",
+      "answer": 1
+    },
+    {
+      "question": "Who were John the Baptist's parents?",
+      "choices": [
+        "Zechariah and Elizabeth",
+        "Joseph and Mary",
+        "Abraham and Sarah",
+        "Boaz and Ruth"
+      ],
+      "explanation": "Luke names Zechariah and Elizabeth as John's parents.",
+      "answer": 0
+    },
+    {
+      "question": "What work was Zechariah performing when the angel appeared?",
+      "choices": [
+        "Collecting taxes",
+        "Guarding Herod's palace",
+        "Writing a royal genealogy",
+        "Priestly service involving incense"
+      ],
+      "explanation": "Zechariah was carrying out a priest's temple duties.",
+      "answer": 3
+    },
+    {
+      "question": "Why did the promised birth seem unlikely to Zechariah?",
+      "choices": [
+        "Elizabeth already had many sons",
+        "The couple had never been married",
+        "He had been told the child would be born in Babylon",
+        "He and Elizabeth were elderly and childless"
+      ],
+      "explanation": "Their age and childlessness made the promise surprising.",
+      "answer": 3
+    },
+    {
+      "question": "Which angel announced John's birth to Zechariah?",
+      "choices": [
+        "Elijah",
+        "David",
+        "Gabriel",
+        "Michael"
+      ],
+      "explanation": "Gabriel identifies himself as the messenger.",
+      "answer": 2
+    },
+    {
+      "question": "Who specified the name John before the child's birth?",
+      "choices": [
+        "Joseph after his dream",
+        "The angel speaking to Zechariah",
+        "The neighbors at the circumcision",
+        "Herod's soldiers"
+      ],
+      "explanation": "The name was given in the angel's announcement.",
+      "answer": 1
+    },
+    {
+      "question": "What restriction was announced for John's life?",
+      "choices": [
+        "He was not to drink wine or other fermented drink",
+        "He was not to enter the wilderness",
+        "He was not to speak publicly",
+        "He was not to teach repentance"
+      ],
+      "explanation": "The angel announced a restriction on alcoholic drink.",
+      "answer": 0
+    },
+    {
+      "question": "When would John first be filled with the Holy Spirit?",
+      "choices": [
+        "Before his birth",
+        "Only after Jesus's baptism",
+        "Only after leaving prison",
+        "Only after his parents died"
+      ],
+      "explanation": "The announcement places this before John's birth.",
+      "answer": 0
+    },
+    {
+      "question": "What happened to Zechariah after he doubted the announcement?",
+      "choices": [
+        "He was imprisoned by Herod",
+        "He was sent into exile",
+        "He immediately became king",
+        "He temporarily lost the ability to speak"
+      ],
+      "explanation": "His doubt was followed by temporary loss of speech.",
+      "answer": 3
+    },
+    {
+      "question": "What name did the relatives expect Elizabeth's son to receive?",
+      "choices": [
+        "David",
+        "Gabriel",
+        "Zechariah",
+        "Joseph"
+      ],
+      "explanation": "They expected the baby to receive his father's name.",
+      "answer": 2
+    },
+    {
+      "question": "On which day did John's circumcision and naming take place?",
+      "choices": [
+        "The fortieth day",
+        "The eighth day",
+        "The first day",
+        "The third day"
+      ],
+      "explanation": "Luke places the naming at the circumcision on day eight.",
+      "answer": 1
+    },
+    {
+      "question": "How did Zechariah confirm the baby's name while unable to speak?",
+      "choices": [
+        "He sent a message through Herod",
+        "He wrote the name on a tablet",
+        "He asked Joseph to speak for him",
+        "He used a temple scroll listing ancestors"
+      ],
+      "explanation": "He confirmed the name John in writing.",
+      "answer": 1
+    },
+    {
+      "question": "What happened immediately after Zechariah confirmed John's name?",
+      "choices": [
+        "His speech returned and he praised God",
+        "He fled into the wilderness",
+        "He stopped serving as a priest forever",
+        "He changed the name to his own"
+      ],
+      "explanation": "His ability to speak returned at the naming.",
+      "answer": 0
+    },
+    {
+      "question": "Which ancestor's covenant oath is recalled in Zechariah's song?",
+      "choices": [
+        "Herod's",
+        "Pilate's",
+        "Gabriel's",
+        "Abraham's"
+      ],
+      "explanation": "The song recalls God's covenant promise to Abraham.",
+      "answer": 3
+    },
+    {
+      "question": "What role does Zechariah predict for his son?",
+      "choices": [
+        "A governor succeeding Pilate",
+        "A priest preventing people from hearing Jesus",
+        "A prophet preparing the Lord's way",
+        "A king replacing David's family"
+      ],
+      "explanation": "Zechariah predicts that John will prepare people for the Lord.",
+      "answer": 2
+    },
+    {
+      "question": "Where did John live before appearing publicly to Israel?",
+      "choices": [
+        "Babylon",
+        "The temple's inner sanctuary",
+        "The wilderness",
+        "Herod's palace"
+      ],
+      "explanation": "Luke describes John's growth before his public appearance in the wilderness.",
+      "answer": 2
+    },
+    {
+      "question": "What reason did John give for calling people to repent?",
+      "choices": [
+        "Elizabeth had ordered a census",
+        "Heaven's kingdom was near",
+        "The genealogies had been lost",
+        "Rome had ended all taxation"
+      ],
+      "explanation": "John linked repentance with the approaching heavenly kingdom.",
+      "answer": 1
+    },
+    {
+      "question": "What did John eat in the wilderness?",
+      "choices": [
+        "Locusts and wild honey",
+        "Bread and fish only",
+        "Lamb and bitter herbs only",
+        "Grapes and wine"
+      ],
+      "explanation": "Matthew names locusts and wild honey as his food.",
+      "answer": 0
+    },
+    {
+      "question": "In which river did John baptize people?",
+      "choices": [
+        "The Nile",
+        "The Euphrates",
+        "The Tigris",
+        "The Jordan"
+      ],
+      "explanation": "Matthew places these baptisms in the Jordan.",
+      "answer": 3
+    },
+    {
+      "question": "Why was claiming Abraham as an ancestor insufficient in John's warning?",
+      "choices": [
+        "Abraham was absent from Israel's history",
+        "Only Roman ancestry mattered",
+        "Family names could replace repentance",
+        "Repentance needed to be shown in how people lived"
+      ],
+      "explanation": "John demanded conduct consistent with repentance rather than reliance on ancestry.",
+      "answer": 3
+    },
+    {
+      "question": "What does John's tree-and-ax image warn about?",
+      "choices": [
+        "The danger of forgetting a family name",
+        "A shortage of trees for royal furniture",
+        "Judgment for failing to produce good fruit",
+        "The need to build a larger temple"
+      ],
+      "explanation": "The unfruitful tree illustrates coming judgment.",
+      "answer": 2
+    },
+    {
+      "question": "How does John compare the coming one's baptism with his own?",
+      "choices": [
+        "John claims his own baptism is more powerful",
+        "John uses water; the coming one baptizes with the Holy Spirit and fire",
+        "John uses fire; the coming one uses water only",
+        "Both baptisms consist only of recording ancestry"
+      ],
+      "explanation": "John contrasts his water baptism with the coming one's greater work.",
+      "answer": 1
+    },
+    {
+      "question": "In John's harvest image, what happens to the wheat and chaff?",
+      "choices": [
+        "The wheat is stored and the chaff burned",
+        "Both are gathered into the same barn",
+        "The wheat is burned and the chaff stored",
+        "Neither is separated from the other"
+      ],
+      "explanation": "Separating grain from waste illustrates the coming separation.",
+      "answer": 0
+    },
+    {
+      "question": "Who was governor of Judea when John's ministry is introduced?",
+      "choices": [
+        "Pontius Pilate",
+        "Zechariah",
+        "Gabriel",
+        "David"
+      ],
+      "explanation": "Luke names Pilate as Judea's governor.",
+      "answer": 0
+    },
+    {
+      "question": "What did John tell people with spare clothing or food to do?",
+      "choices": [
+        "Keep them as proof of ancestry",
+        "Give them only to soldiers",
+        "Sell them to buy a family record",
+        "Share with people who lacked them"
+      ],
+      "explanation": "John gave sharing as a practical response.",
+      "answer": 3
+    },
+    {
+      "question": "What did John tell tax collectors?",
+      "choices": [
+        "Stop all taxes throughout the empire",
+        "Collect only from people without royal ancestry",
+        "Collect only the required amount",
+        "Add extra charges for themselves"
+      ],
+      "explanation": "John required honesty in collecting taxes.",
+      "answer": 2
+    },
+    {
+      "question": "Which instruction did John give soldiers?",
+      "choices": [
+        "Choose a new emperor before repenting",
+        "Avoid extortion and false accusations, and accept their pay",
+        "Use threats to increase their income",
+        "Arrest everyone asking for baptism"
+      ],
+      "explanation": "John rejected abuse of power for personal gain.",
+      "answer": 1
+    },
+    {
+      "question": "What did Herod do after John rebuked him?",
+      "choices": [
+        "Appointed John high priest",
+        "Imprisoned John",
+        "Made John governor",
+        "Asked John to write his genealogy"
+      ],
+      "explanation": "Herod responded by putting John in prison.",
+      "answer": 1
+    },
+    {
+      "question": "What was Jesus doing when heaven opened after his baptism?",
+      "choices": [
+        "Praying",
+        "Writing on a tablet",
+        "Collecting taxes",
+        "Reading a genealogy aloud"
+      ],
+      "explanation": "Luke associates the opening of heaven with Jesus at prayer.",
+      "answer": 0
+    },
+    {
+      "question": "What visible form accompanied the Spirit's descent at Jesus's baptism?",
+      "choices": [
+        "A star above Bethlehem",
+        "A burning tree",
+        "A scepter beside the river",
+        "A dove-like bodily form"
+      ],
+      "explanation": "Luke describes a bodily appearance resembling a dove.",
+      "answer": 3
+    },
+    {
+      "question": "What did the heavenly voice affirm at Jesus's baptism?",
+      "choices": [
+        "Joseph was the priest serving that day",
+        "Herod's rule would never end",
+        "Jesus was God's beloved Son and pleased him",
+        "John was the promised king of Israel"
+      ],
+      "explanation": "The voice affirmed the Father's love and approval of Jesus.",
+      "answer": 2
+    },
+    {
+      "question": "What identity did John explicitly reject when questioned by the delegation?",
+      "choices": [
+        "A person who baptized",
+        "A wilderness preacher",
+        "The Messiah",
+        "Zechariah's son"
+      ],
+      "explanation": "John denied being the Messiah.",
+      "answer": 2
+    },
+    {
+      "question": "Which prophet's words did John use to describe his task?",
+      "choices": [
+        "Balaam's",
+        "Isaiah's",
+        "Jeremiah's",
+        "Micah's"
+      ],
+      "explanation": "John used Isaiah's wilderness-road image for his task.",
+      "answer": 1
+    },
+    {
+      "question": "Where was John baptizing when the delegation questioned his identity?",
+      "choices": [
+        "Bethany across the Jordan",
+        "Bethlehem in Judah",
+        "Nazareth in Galilee",
+        "Inside the Jerusalem temple"
+      ],
+      "explanation": "The narrative identifies Bethany across the Jordan.",
+      "answer": 0
+    },
+    {
+      "question": "What title did John use for Jesus when describing his work against the world's sin?",
+      "choices": [
+        "Governor of Judea",
+        "Son of Aaron",
+        "Voice of Gabriel",
+        "Lamb of God"
+      ],
+      "explanation": "John presented Jesus as the Lamb associated with removing sin.",
+      "answer": 3
+    },
+    {
+      "question": "What sign enabled John to identify the one who would baptize with the Spirit?",
+      "choices": [
+        "He wrote his name on a tablet",
+        "He wore the same clothing as Elijah",
+        "He brought a royal census document",
+        "The Spirit descended and stayed on him"
+      ],
+      "explanation": "The identifying sign was the Spirit descending and remaining.",
+      "answer": 3
+    },
+    {
+      "question": "What similarity links Elijah's description with John's clothing?",
+      "choices": [
+        "Military armor and a spear",
+        "Royal purple and a silver staff",
+        "Hair garments and a leather belt",
+        "Priestly robes and a gold crown"
+      ],
+      "explanation": "Their clothing provides a visible connection between the two figures.",
+      "answer": 2
+    },
+    {
+      "question": "What change in family relationships is linked with Elijah's coming?",
+      "choices": [
+        "Families ending all contact with one another",
+        "Parents and children turning toward one another",
+        "Every family leaving Israel",
+        "Children replacing their parents' names"
+      ],
+      "explanation": "Malachi connects the coming mission with restored family relationships.",
+      "answer": 1
+    },
+    {
+      "question": "In the levirate-marriage law, when brothers live together and one dies without a son, who has the duty to marry his widow?",
+      "choices": [
+        "Her deceased husband's brother",
+        "The local governor",
+        "Any unrelated priest",
+        "Her husband's oldest servant"
+      ],
+      "explanation": "The duty falls to the deceased husband's brother in the stated circumstances.",
+      "answer": 0
+    },
+    {
+      "question": "In levirate marriage, what purpose does the first son's family name serve?",
+      "choices": [
+        "Preserving the deceased brother's name in Israel",
+        "Replacing the mother's name with a royal title",
+        "Showing that the child is a temple priest",
+        "Ending the deceased brother's family line"
+      ],
+      "explanation": "The provision preserves the deceased brother's family name.",
+      "answer": 0
+    },
+    {
+      "question": "In Mary's song, whom does she identify as her Savior?",
+      "choices": [
+        "Joseph",
+        "Gabriel",
+        "Zechariah",
+        "God"
+      ],
+      "explanation": "Mary praises God in the role of her Savior.",
+      "answer": 3
+    },
+    {
+      "question": "What does Mary anticipate later generations calling her?",
+      "choices": [
+        "High priest",
+        "Governor",
+        "Blessed",
+        "Queen of Rome"
+      ],
+      "explanation": "Mary anticipates being remembered as blessed.",
+      "answer": 2
+    },
+    {
+      "question": "What contrast does Mary's song draw between the powerful and the humble?",
+      "choices": [
+        "God treats power as proof that repentance is unnecessary",
+        "God brings rulers down and raises humble people",
+        "God gives rulers every reward and ignores the humble",
+        "God requires the humble to claim royal ancestry"
+      ],
+      "explanation": "The song describes a reversal of human status.",
+      "answer": 1
+    },
+    {
+      "question": "How does Mary's song contrast hungry and rich people?",
+      "choices": [
+        "God gives both groups royal thrones",
+        "God supplies the hungry while sending the rich away empty",
+        "God feeds only the rich",
+        "God tells the hungry to stop asking for help"
+      ],
+      "explanation": "Mary celebrates God's provision for people in need.",
+      "answer": 1
+    },
+    {
+      "question": "Which ancestral promise is recalled at the end of Mary's song?",
+      "choices": [
+        "The promise to Abraham and his descendants",
+        "A promise to make Herod emperor",
+        "A promise to make Zechariah king",
+        "A promise to replace Israel with Rome"
+      ],
+      "explanation": "The song closes by recalling mercy promised to Abraham's descendants.",
+      "answer": 0
+    },
+    {
+      "question": "With which ancestor does Matthew begin his list of generations?",
+      "choices": [
+        "Adam",
+        "Noah",
+        "Moses",
+        "Abraham"
+      ],
+      "explanation": "Matthew begins the sequence with Abraham.",
+      "answer": 3
+    },
+    {
+      "question": "Whom does Matthew identify as Joseph's father?",
+      "choices": [
+        "Zechariah",
+        "Jesse",
+        "Jacob",
+        "Heli"
+      ],
+      "explanation": "Matthew's list places Jacob immediately before Joseph.",
+      "answer": 2
+    },
+    {
+      "question": "How does Matthew summarize the structure of his genealogy?",
+      "choices": [
+        "Four groups of ten generations",
+        "One uninterrupted group of seventy generations",
+        "Three groups of fourteen generations",
+        "Two groups of twelve generations"
+      ],
+      "explanation": "Matthew summarizes the list in three fourteen-generation groups.",
+      "answer": 2
+    },
+    {
+      "question": "Which event divides the second and third groups in Matthew's summary?",
+      "choices": [
+        "The rebuilding of Herod's palace",
+        "The exile to Babylon",
+        "John's baptism",
+        "The census in Galilee"
+      ],
+      "explanation": "The Babylonian exile marks the division before the final group.",
+      "answer": 1
+    },
+    {
+      "question": "About how old was Jesus when he began his ministry?",
+      "choices": [
+        "Thirty",
+        "Thirteen",
+        "Eighteen",
+        "Fifty"
+      ],
+      "explanation": "Luke gives an approximate age of thirty for Jesus.",
+      "answer": 0
+    },
+    {
+      "question": "In Luke's genealogy, which name follows Joseph as the list continues backward?",
+      "choices": [
+        "Jacob",
+        "Abijah",
+        "Zechariah",
+        "Heli"
+      ],
+      "explanation": "Luke's sequence continues from Joseph to Heli.",
+      "answer": 3
+    },
+    {
+      "question": "How far back does Luke's genealogy reach?",
+      "choices": [
+        "Only to David",
+        "Only to Abraham",
+        "Only to the exile",
+        "To Adam, then God"
+      ],
+      "explanation": "Luke continues the ancestry beyond Abraham to Adam and God.",
+      "answer": 3
+    },
+    {
+      "question": "Why did Joseph initially plan a quiet divorce rather than public proceedings?",
+      "choices": [
+        "He had received orders from John",
+        "He needed to leave for Babylon",
+        "He did not want Mary publicly disgraced",
+        "He wanted a larger royal inheritance"
+      ],
+      "explanation": "Matthew describes Joseph's concern for avoiding Mary's public humiliation.",
+      "answer": 2
+    },
+    {
+      "question": "What reason did the angel give for naming the child Jesus?",
+      "choices": [
+        "He would write both genealogies",
+        "He would save his people from their sins",
+        "He would collect taxes for Judea",
+        "He would replace the priestly division of Abijah"
+      ],
+      "explanation": "The naming instruction is connected with rescuing people from sin.",
+      "answer": 1
+    },
+    {
+      "question": "What does Matthew say Immanuel means?",
+      "choices": [
+        "God with us",
+        "God has heard",
+        "The Lord remembers",
+        "A king from Babylon"
+      ],
+      "explanation": "Matthew explains the name as God's presence with his people.",
+      "answer": 0
+    },
+    {
+      "question": "In which town did Gabriel meet Mary?",
+      "choices": [
+        "Nazareth",
+        "Bethlehem",
+        "Bethany",
+        "Jerusalem"
+      ],
+      "explanation": "Gabriel's visit takes place in Nazareth in Galilee.",
+      "answer": 0
+    },
+    {
+      "question": "How far along was Elizabeth's pregnancy when Gabriel was sent to Mary?",
+      "choices": [
+        "One month",
+        "Three months",
+        "Nine months",
+        "Six months"
+      ],
+      "explanation": "The narrative dates the visit during month six of Elizabeth's pregnancy.",
+      "answer": 3
+    },
+    {
+      "question": "What did Gabriel promise about Jesus's kingdom?",
+      "choices": [
+        "He would govern Babylon for fourteen years",
+        "He would serve one term under Herod",
+        "He would inherit David's throne and his reign would not end",
+        "He would rule only until John began preaching"
+      ],
+      "explanation": "Gabriel links Jesus with David and an enduring reign.",
+      "answer": 2
+    },
+    {
+      "question": "Which relative did Mary visit after the announcement?",
+      "choices": [
+        "Rahab",
+        "Elizabeth",
+        "Ruth",
+        "Tamar"
+      ],
+      "explanation": "Mary went to see her relative Elizabeth.",
+      "answer": 1
+    },
+    {
+      "question": "What happened to Elizabeth's baby when Mary greeted her?",
+      "choices": [
+        "He began to speak aloud",
+        "He leaped in her womb",
+        "He was named Joseph",
+        "He was immediately baptized"
+      ],
+      "explanation": "Elizabeth describes the baby's joyful movement at Mary's greeting.",
+      "answer": 1
+    }
+  ]
+}
