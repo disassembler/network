@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs><linearGradient id="paper" x2="1" y2="1"><stop stop-color="#f8f1e2"/><stop offset="1" stop-color="#e9ddc4"/></linearGradient></defs>
+  <path fill="url(#paper)" d="M0 0h1920v1080H0z"/>
+  <g fill="none" stroke="#b59a60" stroke-width="1.5">
+    <path d="M72 194h1776M72 970h1776M72 210v744M1848 210v744" opacity=".6"/>
+    <path d="M52 72Q70 36 100 54M70 54Q79 74 100 72M1820 54Q1850 36 1868 72M1820 72Q1841 74 1850 54M52 932Q70 968 100 950M70 950Q79 930 100 932M1820 950Q1850 968 1868 932M1820 932Q1841 930 1850 950"/>
+    <path d="M890 238v680" opacity=".4"/>
+    <path d="m960 181 13 13-13 13-13-13z" fill="#b59a60"/>
+  </g>
+  <path fill="#284c3c" d="M0 994h1920v86H0z"/>
+  <path stroke="#b59a60" stroke-width="3" d="M0 994h1920"/>
+</svg>

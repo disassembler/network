@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<theme>
+  <view name="all">
+    <sound name="systembrowse"><path>./sounds/wood.wav</path></sound>
+    <sound name="quicksysselect"><path>./sounds/wood.wav</path></sound>
+    <sound name="scroll"><path>./sounds/wood.wav</path></sound>
+    <sound name="back"><path>./sounds/back.wav</path></sound>
+    <sound name="select"><path>./sounds/bell.wav</path></sound>
+    <sound name="favorite"><path>./sounds/bell.wav</path></sound>
+    <sound name="launch"><path>./sounds/bell.wav</path></sound>
+  </view>
+</theme>

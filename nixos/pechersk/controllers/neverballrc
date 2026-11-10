@@ -1,0 +1,17 @@
+fullscreen              1
+player                  Pechersk
+width                   1920
+height                  1080
+joystick                1
+joystick_device         0
+joystick_axis_x0        0
+joystick_axis_y0        1
+joystick_axis_x1        2
+joystick_axis_y1        3
+joystick_button_a       0
+joystick_button_b       1
+joystick_button_x       2
+joystick_button_y       3
+joystick_button_l1      4
+joystick_button_r1      5
+joystick_button_start   8

@@ -1,0 +1,30 @@
+--- a/src/states.cpp
++++ b/src/states.cpp
+@@ -86,14 +86,11 @@
+ 					break;
+ 				}
+ 
+-				case sf::Event::JoystickMoved: {
+-					float val = event.joystickMove.position / 100.f;
+-					current->Jaxis(event.joystickMove.axis == sf::Joystick::X ? 0 : 1, val);
+-					break;
+-				}
++				// Pechersk's scoped mapper supplies keyboard input in menus
++				// and races. Ignore raw axes/buttons to prevent duplicate input.
++				case sf::Event::JoystickMoved:
+ 				case sf::Event::JoystickButtonPressed:
+ 				case sf::Event::JoystickButtonReleased:
+-					current->Jbutt(event.joystickButton.button, event.type == sf::Event::JoystickButtonPressed);
+ 					break;
+ 
+ 				case sf::Event::Resized:
+--- a/src/racing.cpp
++++ b/src/racing.cpp
+@@ -86,6 +86,7 @@
+ 			right_turn = !release;
+ 			break;
+ 		case sf::Keyboard::Space:
++		case sf::Keyboard::Return: // Same bottom button confirms menus and jumps.
+ 			key_charging = !release;
+ 			break;
+ 		case sf::Keyboard::T:

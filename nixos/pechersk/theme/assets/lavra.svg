@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="820" viewBox="0 0 1200 820">
+  <defs>
+    <linearGradient id="gold"><stop stop-color="#9b7837"/><stop offset=".48" stop-color="#e0c173"/><stop offset=".7" stop-color="#c4a052"/><stop offset="1" stop-color="#a17b36"/></linearGradient>
+    <symbol id="dome" viewBox="0 0 100 155">
+      <g fill="none" stroke="#a48746" stroke-width="2.5"><path d="M50 0v27M40 7h20M34 17h32M42 24l16 4"/></g>
+      <path fill="url(#gold)" stroke="#977b43" stroke-width="1.4" d="M50 29C45 48 18 49 15 70c-2 15 8 26 15 30h40c7-4 17-15 15-30-3-21-30-22-35-41Z"/>
+      <path fill="none" stroke="#f3db98" stroke-width="1.5" d="M50 33C48 56 34 62 34 79c0 10 2 15 5 20M51 34c2 22 15 31 15 45 0 10-2 16-4 20"/>
+      <path fill="#f9f3e5" stroke="#aa946c" stroke-width="1.5" d="M29 101h42v53H29z"/>
+      <path fill="#68726a" d="M43 149v-27c0-11 14-11 14 0v27z"/>
+      <path stroke="#c6ae77" stroke-width="3" d="M25 101h50M25 107h50M25 151h50"/>
+    </symbol>
+    <symbol id="window" viewBox="0 0 36 70">
+      <path fill="#737b71" stroke="#c2ae81" stroke-width="4" d="M4 66V23C4-1 32-1 32 23v43Z"/>
+      <path stroke="#d4c6a8" stroke-width="2" d="M18 12v54M5 37h26"/>
+    </symbol>
+  </defs>
+  <g fill="none" stroke="#c4b489" opacity=".42"><circle cx="740" cy="364" r="284"/><circle cx="740" cy="364" r="294"/><path d="M420 364h640M740 54v620"/></g>
+  <path fill="#bcc1a8" opacity=".55" d="M0 738q140-170 280-48 160-190 325-63 180-100 315-5 150-80 280 90v108H0Z"/>
+  <path fill="#849477" opacity=".42" d="M0 777q160-95 285-15 170-102 340-30 220-66 380 0 130-69 195 13v75H0Z"/>
+  <!-- Original interpretation of the Great Lavra Bell Tower. -->
+  <g stroke="#b29c70" stroke-width="2">
+    <path fill="#f5edda" d="M130 720V530h24V382h22V251h24v-81h102v81h24v131h22v148h24v190Z"/>
+    <path fill="#d9cda7" d="M130 530h242v24H130zM154 382h194v20H154zM176 251h150v17H176zM200 170h102v15H200z"/>
+    <path fill="#f8f2e5" d="M146 558h20v142h-20zM190 558h20v142h-20zM292 558h20v142h-20zM336 558h20v142h-20zM167 408h17v108h-17zM205 408h17v108h-17zM280 408h17v108h-17zM318 408h17v108h-17zM190 275h15v91h-15zM225 275h15v91h-15zM262 275h15v91h-15zM297 275h15v91h-15z"/>
+    <path fill="#68756b" d="M225 698v-96c0-40 52-40 52 0v96zM233 511v-69c0-24 36-24 36 0v69zM242 362v-56c0-15 18-15 18 0v56z"/>
+    <path fill="url(#gold)" d="M200 169c-33-29-25-61 6-80 23-14 36-32 45-49 9 17 22 35 45 49 31 19 39 51 6 80Z"/>
+    <path fill="none" stroke="#eed594" d="M251 45c-9 33-30 47-31 75-1 17 5 33 12 48M252 45c9 33 29 47 30 75 1 17-5 33-12 48"/>
+    <path fill="none" stroke="#a48746" stroke-width="3" d="M251 1v39M238 12h26M231 24h40M242 32l18 5"/>
+    <path fill="#b6a477" d="M119 713h264v17H119z"/>
+  </g>
+  <!-- Domed cathedral, white pilasters and green Baroque rooflines. -->
+  <g stroke="#b39d72" stroke-width="2">
+    <path fill="#f5efdf" d="M423 711V494l52-47h103v-48h209v48h112l53 47v217Z"/>
+    <path fill="#617566" d="m411 494 64-64h103l104-58 105 58h112l66 64H787l-105-37-104 37Z"/>
+    <path fill="#fbf6e9" d="M594 710V485q88-83 176 0v225Z"/>
+    <path fill="#e4d7b5" d="M416 508h543v15H416zM416 687h543v21H416z"/>
+    <path fill="#fcf6e7" d="M442 530h18v143h-18zM521 530h18v143h-18zM601 530h18v143h-18zM745 530h18v143h-18zM822 530h18v143h-18zM902 530h18v143h-18z"/>
+    <path fill="#5f6c61" d="M653 686v-92q29-47 58 0v92Z"/>
+    <path fill="none" stroke="#c6ae77" stroke-width="6" d="M640 688v-94q42-67 84 0v94"/>
+    <path fill="#f9f2df" d="M646 509q36-59 72 0Z"/>
+    <path fill="none" stroke="#a48746" stroke-width="3" d="M682 481v25M671 491h22"/>
+    <path fill="#b9a87f" d="M407 710h557v17H407z"/>
+  </g>
+  <use xlink:href="#dome" x="614" y="150" width="136" height="245"/>
+  <use xlink:href="#dome" x="466" y="292" width="92" height="160"/>
+  <use xlink:href="#dome" x="805" y="292" width="92" height="160"/>
+  <use xlink:href="#dome" x="548" y="238" width="84" height="168"/>
+  <use xlink:href="#dome" x="732" y="238" width="84" height="168"/>
+  <use xlink:href="#window" x="474" y="551" width="30" height="75"/>
+  <use xlink:href="#window" x="552" y="551" width="30" height="75"/>
+  <use xlink:href="#window" x="785" y="551" width="30" height="75"/>
+  <use xlink:href="#window" x="863" y="551" width="30" height="75"/>
+  <path fill="none" stroke="#9c8658" stroke-width="2" d="M96 737h920M69 750h983"/>
+  <g fill="#79886d" opacity=".85"><path d="M1004 742V613c-63 28-70 80-35 104-10 6-9 21-3 25Z"/><path d="M1052 742V631c57 17 65 65 34 84 8 11 5 21-1 27Z"/></g>
+</svg>

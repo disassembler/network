@@ -1,0 +1,6 @@
+(supertux-config
+  (control
+    (joystick
+      (use-game-controller #t)
+      (dead-zone 8000)
+      (jump-with-up #f))))

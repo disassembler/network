@@ -1,0 +1,155 @@
+--- retrotrivia.pygame
++++ retrotrivia.pygame
+@@ -1,4 +1,5 @@
+-#!/usr/bin/env python
++#!/usr/bin/env nix-shell
++#! nix-shell -i python3 -p "python3.withPackages (ps: with ps; [ pygame psutil pyudev evdev ])" ffmpeg
+ # Simple Quiz Game Engine in PyGame
+ # for Batocera Retrotrivia
+ # lbrpdx - 2020/2021
+@@ -18,6 +19,8 @@
+ import math
+ import threading
+ 
++SHUTDOWN = threading.Event()
++
+ #######################################
+ ### Global parameters
+ DEBUG            = 1
+@@ -119,10 +122,11 @@
+         pygame.mixer.music.pause()
+         now = pygame.time.get_ticks()
+         self.last = now
+-        while (now - self.last < delay):
++        while (now - self.last < delay) and not SHUTDOWN.is_set():
+             pygame.time.wait(10)
+             now = pygame.time.get_ticks()
+-        pygame.mixer.music.unpause()
++        if not SHUTDOWN.is_set():
++            pygame.mixer.music.unpause()
+ 
+     def play(self, sound_file, delay=0):
+         if pygame.mixer.get_busy():
+@@ -149,7 +153,7 @@
+ ## Joystick/pad/keyboard events
+ def key_pressed(event, joypads):
+     global DEBUG
+-    if (event.type == pygame.KEYDOWN and joypads == None):
++    if event.type == pygame.KEYDOWN:
+         log ("Keyboard event: {}".format(event.key))
+         # Always player 1 for keyboard
+         if event.key == pygame.K_UP:
+@@ -160,20 +164,22 @@
+             return (0, 'right')
+         elif event.key == pygame.K_DOWN:
+             return (0, 'down')
+-        elif event.key in (97, 98):  # A and B keys
++        elif event.key in (pygame.K_a, pygame.K_b, pygame.K_RETURN, pygame.K_SPACE):
+             return (0, 'action')
+     if joypads == None:
+         return (-1, -1) # keyboard/pad2key only, no initialized joypad
+-    for joypad in joypads:
++    for player, joypad in enumerate(joypads):
+         if joypad == None:
+             continue
+-        id = joypad.get_instance_id()
++        id = player
++        if getattr(event, 'instance_id', None) != joypad.get_instance_id():
++            continue
+         if event.type == pygame.JOYAXISMOTION:  # Analogue Hat
+             try:
+-                if joypad.get_axis(1) <= -1:
++                if joypad.get_axis(1) <= -0.5:
+                     log("Joypad {}: axis {} up".format(id, joypad.get_axis(1)))
+                     return (id, 'up')
+-                elif joypad.get_axis(0) <= -1:
++                elif joypad.get_axis(0) <= -0.5:
+                     log("Joypad {}: axis {} left".format(id, joypad.get_axis(0)))
+                     return (id, 'left')
+                 elif joypad.get_axis(0) >= 0.5:
+@@ -203,29 +209,7 @@
+                     if joypad.get_button(k):
+                         log ("Joypad {}: button {}".format(id,k))
+             try:
+-                if joypad.get_button(0):  # Buttons A or B
+-                    return (id, 'action')
+-                elif joypad.get_button(1):  # Buttons A or B
+-                    return (id, 'action')
+-                elif joypad.get_button(8):
+-                    return (id, 'up')
+-                elif joypad.get_button(10):
+-                    return (id, 'left')
+-                elif joypad.get_button(11):
+-                    return (id, 'right')
+-                elif joypad.get_button(9):
+-                    return (id, 'down')
+-                elif joypad.get_button(13):
+-                    return (id, 'up')
+-                elif joypad.get_button(15):
+-                    return (id, 'left')
+-                elif joypad.get_button(16):
+-                    return (id, 'right')
+-                elif joypad.get_button(14):
+-                    return (id, 'down')
+-                elif joypad.get_button(2):  # Buttons A or B
+-                    return (id, 'action')
+-                elif joypad.get_button(3):  # Buttons A or B
++                if event.button in (0, 1, 2, 3):
+                     return (id, 'action')
+             except Exception as e:
+                     log("Joypad {} error: {}".format(id, e))
+@@ -965,7 +949,7 @@
+     pygame.joystick.init()
+     njoy = pygame.joystick.get_count()
+     log("Number of joysticks found: {}".format(njoy))
+-    for i in range(njoy):
++    for i in range(min(njoy, len(JOYSTICKS))):
+         JOYSTICKS[i] = pygame.joystick.Joystick(i)
+         JOYSTICKS[i].init()
+         log("Joystick {} initialized as {} / {}".format(i, pygame.joystick.Joystick(i).get_guid(),\
+@@ -983,6 +967,9 @@
+     pygame.display.flip()
+     scene.initialize_QB()
+     while scene.QB.loaded_pcent < 100:
++        for event in pygame.event.get():
++            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
++                return
+         scene.additional("LOADING GAMES {}%".format(scene.QB.loaded_pcent))
+         scene.draw()
+         pygame.display.flip()
+@@ -998,7 +985,7 @@
+     while True:
+         events = pygame.event.get(pump=True)
+         for e in events:
+-            if e.type == pygame.QUIT:
++            if e.type == pygame.QUIT or (e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE):
+                 return
+             try:
+                 if JOYSTICKS[0] and JOYSTICKS[0].get_button(12) and JOYSTICKS[0].get_button(17): # hotkey + start for player 1 only
+@@ -1017,4 +1004,25 @@
+ 
+ if __name__ == '__main__':
+     pygame.init()
+-    main()
++    try:
++        main()
++    finally:
++        # Stop delayed audio callbacks before tearing SDL down.
++        SHUTDOWN.set()
++        for thread in threading.enumerate():
++            if thread is not threading.current_thread():
++                thread.join(timeout=2)
++        # Video decoders must not outlive their game session.
++        children = psutil.Process().children(recursive=True)
++        for child in children:
++            try:
++                child.terminate()
++            except psutil.NoSuchProcess:
++                pass
++        _, pending = psutil.wait_procs(children, timeout=2)
++        for child in pending:
++            try:
++                child.kill()
++            except psutil.NoSuchProcess:
++                pass
++        pygame.quit()

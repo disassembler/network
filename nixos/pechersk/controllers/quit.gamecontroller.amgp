@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gamecontroller configversion="19" appversion="3.5.1">
+  <profilename>Pechersk Atari + Start quit</profilename>
+  <sets>
+    <set index="1">
+      <button index="6">
+        <setselect>2</setselect>
+        <setselectcondition>while-held</setselectcondition>
+      </button>
+    </set>
+    <set index="2">
+      <button index="6">
+        <setselect>1</setselect>
+        <setselectcondition>while-held</setselectcondition>
+      </button>
+      <button index="7">
+        <slots>
+          <slot><code>0x1000023</code><mode>keyboard</mode></slot>
+          <slot><code>0x1000033</code><mode>keyboard</mode></slot>
+        </slots>
+      </button>
+    </set>
+  </sets>
+</gamecontroller>

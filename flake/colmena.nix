@@ -83,6 +83,14 @@
 
     # home servers
 
+    pechersk = {...}: {
+      imports = [../nixos/pechersk/configuration.nix];
+    };
+
+    pechersk-upgrade = {...}: {
+      imports = [../nixos/pechersk/upgrade.nix];
+    };
+
     portal = {...}: {
       imports = [
         ../nixos/portal/configuration.nix
