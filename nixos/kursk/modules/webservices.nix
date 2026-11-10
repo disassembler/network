@@ -237,12 +237,14 @@
     };
     unpoller = {
       enable = true;
-      controllers = [{
-        url = "https://127.0.0.1:8443";
-        user = "prometheus";
-        pass = config.sops.secrets."unifi-exporter-password".path;
-        verify_ssl = false;
-      }];
+      controllers = [
+        {
+          url = "https://127.0.0.1:8443";
+          user = "prometheus";
+          pass = config.sops.secrets."unifi-exporter-password".path;
+          verify_ssl = false;
+        }
+      ];
     };
   };
 
@@ -434,17 +436,19 @@
         scrape_interval = "60s";
         metrics_path = "/probe";
         params.module = ["https_2xx"];
-        static_configs = [{
-          targets = [
-            "https://noc.lan.disasm.us"
-            "https://vw.lan.disasm.us"
-            "https://hledger.lan.disasm.us"
-            "https://git.lan.disasm.us"
-            "https://irc.lan.disasm.us"
-            "https://unifi.lan.disasm.us"
-            "https://omada.lan.disasm.us"
-          ];
-        }];
+        static_configs = [
+          {
+            targets = [
+              "https://noc.lan.disasm.us"
+              "https://vw.lan.disasm.us"
+              "https://hledger.lan.disasm.us"
+              "https://git.lan.disasm.us"
+              "https://irc.lan.disasm.us"
+              "https://unifi.lan.disasm.us"
+              "https://omada.lan.disasm.us"
+            ];
+          }
+        ];
         relabel_configs = [
           {
             source_labels = ["__address__"];
@@ -514,10 +518,12 @@
       {
         job_name = "unifi";
         scrape_interval = "30s";
-        static_configs = [{
-          targets = ["localhost:9130"];
-          labels.alias = "kursk.lan.disasm.us";
-        }];
+        static_configs = [
+          {
+            targets = ["localhost:9130"];
+            labels.alias = "kursk.lan.disasm.us";
+          }
+        ];
       }
       {
         job_name = "postgres-ai";
@@ -563,15 +569,17 @@
       enable = true;
       dashboards.settings = {
         apiVersion = 1;
-        providers = [{
-          name = "provisioned";
-          orgId = 1;
-          folder = "Provisioned";
-          type = "file";
-          disableDeletion = false;
-          updateIntervalSeconds = 30;
-          options.path = ./grafana-dashboards;
-        }];
+        providers = [
+          {
+            name = "provisioned";
+            orgId = 1;
+            folder = "Provisioned";
+            type = "file";
+            disableDeletion = false;
+            updateIntervalSeconds = 30;
+            options.path = ./grafana-dashboards;
+          }
+        ];
       };
       datasources.settings.datasources = [
         {

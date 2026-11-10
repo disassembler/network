@@ -6,7 +6,8 @@
   ...
 }: let
   snapshotConverter = inputs.cardano-parts.packages.x86_64-linux.snapshot-converter;
-  nodeConfigForConverter = pkgs.writeText "sc-config.json"
+  nodeConfigForConverter =
+    pkgs.writeText "sc-config.json"
     (builtins.toJSON config.services.cardano-node.nodeConfig);
 in {
   deployment = {

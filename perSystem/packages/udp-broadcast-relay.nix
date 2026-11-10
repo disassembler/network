@@ -1,5 +1,9 @@
 {inputs, ...}: {
-  perSystem = {pkgs, lib, ...}: let
+  perSystem = {
+    pkgs,
+    lib,
+    ...
+  }: let
     craneLib = inputs.crane.mkLib pkgs;
     src = craneLib.cleanCargoSource (pkgs.fetchFromGitHub {
       owner = "BlackHoleFox";

@@ -11,8 +11,8 @@
   services.plex.enable = true;
 
   systemd.services.plex = {
-    after = [ "data-media.mount" "tmp-plex\\x2dtranscode.mount" ];
-    requires = [ "data-media.mount" "tmp-plex\\x2dtranscode.mount" ];
+    after = ["data-media.mount" "tmp-plex\\x2dtranscode.mount"];
+    requires = ["data-media.mount" "tmp-plex\\x2dtranscode.mount"];
   };
 
   services.samba = {
